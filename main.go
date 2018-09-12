@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	fmt.Printf("Going to start listening at port:%s\n", conf.Port)
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
 		ReadTimeout:  5 * time.Minute,
