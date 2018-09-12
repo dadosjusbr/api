@@ -10,8 +10,7 @@ go:
   - "1.11.x"
 
 env:
-  - GO111MODULE=on
-  - GO15VENDOREXPERIMENT=0
+  - GO111MODULE=on GO15VENDOREXPERIMENT=0
 
 matrix:
   # It's ok if our code fails on unstable development versions of Go.
