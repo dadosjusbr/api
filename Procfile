@@ -1,1 +1,1 @@
-web: go build & ./remuneracao-magistrados
+web: remuneracao-magistrados
