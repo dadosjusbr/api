@@ -1,4 +1,3 @@
-// +heroku install
 module github.com/dadosjusbr/remuneracao-magistrados
 
 require (
