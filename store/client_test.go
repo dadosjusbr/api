@@ -1,8 +1,8 @@
 package store
 
 import (
-	"testing"
 	"net/url"
+	"testing"
 )
 
 func TestBuildsUrl(t *testing.T) {
