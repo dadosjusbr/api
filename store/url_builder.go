@@ -4,7 +4,7 @@ import (
 	"net/url"
 )
 
-func buildURL(path string, values url.Values) string {
+func buildPCLoudUrl(path string, values url.Values) string {
 	const (
 		apiScheme = "https"
 		host      = "api.pcloud.com"
