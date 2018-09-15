@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -197,8 +198,7 @@ func TestCreatesFileOnPCloud(t *testing.T) {
 
 		generateLinkURL := buildPCLoudURL("getfilepublink", url.Values{
 			"auth":   {fakeToken},
-			"path":   {"/"},
-			"fileid": {string(fileID)},
+			"fileid": {strconv.Itoa(fileID)},
 		})
 
 		if req.URL.String() == generateLinkURL {
@@ -278,8 +278,7 @@ func TestHandlesPublicLinkGenerationFails(t *testing.T) {
 
 		generateLinkURL := buildPCLoudURL("getfilepublink", url.Values{
 			"auth":   {fakeToken},
-			"path":   {"/"},
-			"fileid": {string(fileID)},
+			"fileid": {strconv.Itoa(fileID)},
 		})
 
 		if req.URL.String() == generateLinkURL {
