@@ -2,6 +2,7 @@ package store
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -19,25 +20,13 @@ type authResponse struct {
 }
 
 // authenticate; sends the HTTP request to authenticate with PCloud using provided credentials.
-func authenticate(c *http.Client, username string, password string) (*http.Response, error) {
-	return c.Get(buildPCLoudURL("userinfo", url.Values{
+func authenticate(c *http.Client, username string, password string) (*authResponse, error) {
+	resp, err := c.Get(buildPCLoudURL("userinfo", url.Values{
 		"getauth":  {"1"},
 		"logout":   {"1"},
 		"username": {username},
 		"password": {password},
 	}))
-}
-
-// NewPCloudClient returns the PCloudClient to interact with PCloudAPI, or error in case using wrong credentials.
-func NewPCloudClient(username string, password string) (*PCloudClient, error) {
-	c := &http.Client{}
-
-	// We are hitting the PCloud API when to create the instance.
-	resp, err := authenticate(c, username, password)
-
-	if err != nil {
-		return nil, err
-	}
 
 	// Converting the JSON response to bytes.
 	data, err := ioutil.ReadAll(resp.Body)
@@ -53,6 +42,24 @@ func NewPCloudClient(username string, password string) (*PCloudClient, error) {
 		return nil, err
 	}
 
+	if jsonResponse.Auth == "" {
+		return nil, fmt.Errorf("Failed to parse the authentication. Response: %s", string(data))
+	}
+
+	return &jsonResponse, err
+}
+
+// NewPCloudClient returns the PCloudClient to interact with PCloudAPI, or error in case using wrong credentials.
+func NewPCloudClient(username string, password string) (*PCloudClient, error) {
+	c := &http.Client{}
+
+	// We are hitting the PCloud API when to create the instance.
+	resp, err := authenticate(c, username, password)
+
+	if err != nil {
+		return nil, err
+	}
+
 	// The instance needs an HTTP client and the token.
-	return &PCloudClient{Client: c, Token: jsonResponse.Auth}, nil
+	return &PCloudClient{Client: c, Token: resp.Auth}, nil
 }
