@@ -1,7 +1,12 @@
+github.com/cenkalti/backoff v2.0.0+incompatible/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
+github.com/dghubble/go-twitter v0.0.0-20180817201112-a34e9059cd58/go.mod h1:6beqTZaXeBPti9pDBcBEqxfJc7uCbSafqZPRDPQOKoM=
+github.com/dghubble/oauth1 v0.4.0/go.mod h1:8V8BMV9DJRREZx/lUaHtrs7GUMXpzbMqJxINCasxYug=
+github.com/dghubble/sling v1.1.0/go.mod h1:ZcPRuLm0qrcULW2gOrjXrAWgf76sahqSyxXyVOvkunE=
 github.com/frictionlessdata/datapackage-go v0.0.0-20180501130247-52f13c3a15d5 h1:tDfUd2cVTn6Rcv9qyWosmfSggpEBIqRwINt8CfSJogU=
 github.com/frictionlessdata/datapackage-go v0.0.0-20180501130247-52f13c3a15d5/go.mod h1:odSmY3YwpNsUAZn2/iOZAhPC0xt+vueuQcjHD2Qoi+U=
 github.com/frictionlessdata/tableschema-go v0.1.4 h1:stew9Dt2YBun3Ja/1tkQhDbQXe/OUAjpym9vNbjBYO4=
 github.com/frictionlessdata/tableschema-go v0.1.4/go.mod h1:rrwgeKUm0tqI2zF4vUIdbjhv++s81zJwPQVHSC0FUUA=
+github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
 github.com/kelseyhightower/envconfig v1.3.0 h1:IvRS4f2VcIQy6j4ORGIf9145T/AsUB+oY8LyvN8BXNM=
 github.com/kelseyhightower/envconfig v1.3.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 github.com/labstack/echo v3.2.1+incompatible h1:J2M7YArHx4gi8p/3fDw8tX19SXhBCoRpviyAZSN3I88=
@@ -22,3 +27,4 @@ github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4 h1:gKMu1Bf6QI
 github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4/go.mod h1:50wTf68f99/Zt14pr046Tgt3Lp2vLyFZKzbFXTOabXw=
 golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b h1:2b9XGzhjiYsYPnKXoEfL7klWZQIt8IfyRCz62gCqqlQ=
 golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
+golang.org/x/net v0.0.0-20180911220305-26e67e76b6c3/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=

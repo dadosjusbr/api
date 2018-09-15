@@ -2,12 +2,12 @@
 module github.com/dadosjusbr/remuneracao-magistrados
 
 require (
-	github.com/frictionlessdata/datapackage-go v0.0.0-20180501130247-52f13c3a15d5
-	github.com/frictionlessdata/tableschema-go v0.1.4
 	github.com/cenkalti/backoff v2.0.0+incompatible // indirect
 	github.com/dghubble/go-twitter v0.0.0-20180817201112-a34e9059cd58
 	github.com/dghubble/oauth1 v0.4.0
 	github.com/dghubble/sling v1.1.0 // indirect
+	github.com/frictionlessdata/datapackage-go v0.0.0-20180501130247-52f13c3a15d5
+	github.com/frictionlessdata/tableschema-go v0.1.4
 	github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135 // indirect
 	github.com/kelseyhightower/envconfig v1.3.0
 	github.com/labstack/echo v3.2.1+incompatible
