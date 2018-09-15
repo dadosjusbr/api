@@ -17,6 +17,8 @@ require (
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/santhosh-tekuri/jsonschema v1.2.2 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
+	github.com/sendgrid/rest v2.4.1+incompatible // indirect
+	github.com/sendgrid/sendgrid-go v3.4.1+incompatible
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4 // indirect
 	golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b // indirect
