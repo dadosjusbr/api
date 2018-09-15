@@ -1,3 +1,7 @@
+github.com/frictionlessdata/datapackage-go v0.0.0-20180501130247-52f13c3a15d5 h1:tDfUd2cVTn6Rcv9qyWosmfSggpEBIqRwINt8CfSJogU=
+github.com/frictionlessdata/datapackage-go v0.0.0-20180501130247-52f13c3a15d5/go.mod h1:odSmY3YwpNsUAZn2/iOZAhPC0xt+vueuQcjHD2Qoi+U=
+github.com/frictionlessdata/tableschema-go v0.1.4 h1:stew9Dt2YBun3Ja/1tkQhDbQXe/OUAjpym9vNbjBYO4=
+github.com/frictionlessdata/tableschema-go v0.1.4/go.mod h1:rrwgeKUm0tqI2zF4vUIdbjhv++s81zJwPQVHSC0FUUA=
 github.com/kelseyhightower/envconfig v1.3.0 h1:IvRS4f2VcIQy6j4ORGIf9145T/AsUB+oY8LyvN8BXNM=
 github.com/kelseyhightower/envconfig v1.3.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 github.com/labstack/echo v3.2.1+incompatible h1:J2M7YArHx4gi8p/3fDw8tX19SXhBCoRpviyAZSN3I88=
@@ -8,6 +12,10 @@ github.com/mattn/go-colorable v0.0.9 h1:UVL0vNpWh04HeJXV0KLcaT7r06gOH2l4OW6ddYRU
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
 github.com/mattn/go-isatty v0.0.4 h1:bnP0vzxcAdeI1zdubAl5PjU6zsERjGZb7raWodagDYs=
 github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
+github.com/santhosh-tekuri/jsonschema v1.2.2 h1:Ccczh1OKk94R6AIeRAD1ue6o3s/jad8TYKhv50K69Lw=
+github.com/santhosh-tekuri/jsonschema v1.2.2/go.mod h1:TEAUOeZSmIxTTuHatJzrvARHiuO9LYd+cIxzgEHCQI4=
+github.com/satori/go.uuid v1.2.0 h1:0uYX9dsZ2yD7q2RtLRtPSdGDWzjeM3TbMJP9utgA0ww=
+github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdhQKdks0=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4 h1:gKMu1Bf6QINDnvyZuTaACm9ofY+PRh+5vFz4oxBZeF8=
