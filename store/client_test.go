@@ -26,9 +26,9 @@ func NewTestClient(fn RoundTripFunc) *http.Client {
 }
 
 func TestBuildsPCloudURL(t *testing.T) {
-	url := buildPCLoudURL("testing", url.Values{"lorem": {"ipsum"}})
+	URL := buildPCLoudURL("testing", url.Values{"lorem": {"ipsum"}})
 
-	if url != "https://api.pcloud.com/testing?lorem=ipsum" {
+	if URL != "https://api.pcloud.com/testing?lorem=ipsum" {
 		t.Error("Could not properly build the URL to pcloud")
 	}
 }
@@ -38,14 +38,14 @@ func TestAuthenticateWithPCloud(t *testing.T) {
 
 	client := NewTestClient(func(req *http.Request) *http.Response {
 		// Test request parameters
-		authUrl := buildPCLoudURL("userinfo", url.Values{
+		authURL := buildPCLoudURL("userinfo", url.Values{
 			"getauth":  {"1"},
 			"logout":   {"1"},
 			"username": {username},
 			"password": {password},
 		})
 
-		if req.URL.String() != authUrl {
+		if req.URL.String() != authURL {
 			t.Error("Authentication is using the wrong URL.")
 		}
 
@@ -78,14 +78,14 @@ func TestAuthenticateHandlesWrongCredentialsResponse(t *testing.T) {
 
 	client := NewTestClient(func(req *http.Request) *http.Response {
 		// Test request parameters
-		authUrl := buildPCLoudURL("userinfo", url.Values{
+		authURL := buildPCLoudURL("userinfo", url.Values{
 			"getauth":  {"1"},
 			"logout":   {"1"},
 			"username": {username},
 			"password": {password},
 		})
 
-		if req.URL.String() != authUrl {
+		if req.URL.String() != authURL {
 			t.Error("Authentication is using the wrong URL.")
 		}
 
@@ -118,14 +118,14 @@ func TestAuthenticationFailsWhenResponseIsNot200OK(t *testing.T) {
 
 	client := NewTestClient(func(req *http.Request) *http.Response {
 		// Test request parameters
-		authUrl := buildPCLoudURL("userinfo", url.Values{
+		authURL := buildPCLoudURL("userinfo", url.Values{
 			"getauth":  {"1"},
 			"logout":   {"1"},
 			"username": {username},
 			"password": {password},
 		})
 
-		if req.URL.String() != authUrl {
+		if req.URL.String() != authURL {
 			t.Error("Authentication is using the wrong URL.")
 		}
 
