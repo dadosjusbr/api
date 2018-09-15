@@ -1,25 +1,34 @@
 package email
 
 import (
-	//"fmt"
+	"errors"
 	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"net/http"
 )
 
 type Client struct {
-	username string
-	password string
+	apiKey string
 }
 
-func NewClient(username, password string) (*Client, error) {
-	if len(username) <= 0 {
-		return nil, error.New("Username should not be empty")
+func NewClient(apiKey string) (*Client, error) {
+	if len(apiKey) <= 0 {
+		return nil, errors.New("Api Key should not be empty")
 	}
-	if len(password) <= 0 {
-		return nil, error.New("Password should not be empty")
-	}
-	return &Client{username, password }, nil
+	return &Client{apiKey }, nil
 }
 
-//func Send(to, subject, body string) error {
-//
-//}
+func (c *Client) Send(from, to, subject, body string) error {
+	fromMail := mail.NewEmail("", from)
+	toMail := mail.NewEmail("", to)
+	message := mail.NewSingleEmail(fromMail, subject, toMail, body, body)
+	client := sendgrid.NewSendClient(c.apiKey)
+	response, err := client.Send(message)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != http.StatusAccepted {
+		return errors.New(response.Body)
+	}
+	return nil
+}
