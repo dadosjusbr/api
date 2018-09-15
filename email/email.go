@@ -2,6 +2,7 @@ package email
 
 import (
 	"errors"
+	"fmt"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"net/http"
@@ -31,7 +32,13 @@ func (c *Client) Send(from, to, subject, body string) error {
 		return err
 	}
 	if response.StatusCode != http.StatusAccepted {
-		return errors.New(response.Body)
+		return fmt.Errorf("An error has ocurred while trying to send an email.\n" +
+			"Status Code: %d\n" +
+			"Body: %s\n" +
+			"Headers: %v",
+			response.StatusCode,
+			response.Body,
+			response.Headers)
 	}
 	return nil
 }
