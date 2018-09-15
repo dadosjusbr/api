@@ -7,34 +7,29 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
-// Client ...
+// Client struct encapsulates a twitter Client object
+// to allow access to twitter API.
 type Client struct {
-	ConsumerKey    string
-	ConsumerSecret string
-	AccessToken    string
-	AccessSecret   string
-	Client         *twitter.Client
+	client *twitter.Client
 }
 
-// NewClient ...
+// NewClient builds some config objects to
+// setup the twitter Client handler
 func NewClient(consumerKey, consumerSecret, accessToken, accessSecret string) *Client {
 	config := oauth1.NewConfig(consumerKey, consumerSecret)
 	token := oauth1.NewToken(accessToken, accessSecret)
 	httpClient := config.Client(oauth1.NoContext, token)
-	client := twitter.NewClient(httpClient)
 
 	return &Client{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-		AccessToken:    accessToken,
-		AccessSecret:   accessSecret,
-		Client:         client,
+		client: twitter.NewClient(httpClient),
 	}
 }
 
-// Post ...
-func (client *Client) Post(message string) error {
-	_, _, err := client.Client.Statuses.Update(message, nil)
+// Post gets a message to be posted on twitter
+// as a string and posts it in the account
+// related to the access keys provided.
+func (c *Client) Post(message string) error {
+	_, _, err := c.client.Statuses.Update(message, nil)
 	if err != nil {
 		fmt.Println(err)
 		return err
