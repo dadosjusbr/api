@@ -16,15 +16,13 @@ import (
 
 const url = "https://remuneracao-magistrados.herokuapp.com/"
 
-var params = map[string]string{"formato_saida": "csv"}
-
 // Parse parses the XLS(X) passed as parameters and returns the CSV contents, the request errors and other errors.
-func Parse(path, paramName string) ([]byte, []interface{}, error) {
+func Parse(path, fileNameParam string, params map[string]string) ([]byte, []interface{}, error) {
 	content, err := zipFile(path)
 	if err != nil {
 		return nil, nil, fmt.Errorf("Error zipping spreadsheet (%s) err:%q", path, err)
 	}
-	req, err := multipart.UploadRequest(url, paramName, "planilha.zip", bytes.NewReader(content), params)
+	req, err := multipart.UploadRequest(url, fileNameParam, "planilha.zip", bytes.NewReader(content), params)
 	if err != nil {
 		return nil, nil, err
 	}
