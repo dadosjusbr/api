@@ -21,7 +21,7 @@ type authResponse struct {
 }
 
 // authenticate; sends the HTTP request to authenticate with PCloud using provided credentials.
-func authenticate(c *http.Client, username string, password string) (*authResponse, error) {
+func authenticate(c *http.Client, username string, password string) (string, error) {
 	resp, err := c.Get(buildPCLoudURL("userinfo", url.Values{
 		"getauth":  {"1"},
 		"logout":   {"1"},
@@ -30,34 +30,34 @@ func authenticate(c *http.Client, username string, password string) (*authRespon
 	}))
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		dump, _ := httputil.DumpResponse(resp, true)
 
-		return nil, fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
+		return "", fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
 	}
 
 	// Converting the JSON response to bytes.
 	data, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// We are going to use this struct to Unmarshal the JSON response from PCloud.
 	jsonResponse := authResponse{}
 
 	if err := json.Unmarshal(data, &jsonResponse); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if jsonResponse.Auth == "" {
-		return nil, fmt.Errorf("Failed to parse the authentication. Response was: \n\n%s", string(data))
+		return "", fmt.Errorf("Failed to parse the authentication. Response was: \n\n%s", string(data))
 	}
 
-	return &jsonResponse, err
+	return jsonResponse.Auth, err
 }
 
 // NewPCloudClient returns the PCloudClient to interact with PCloudAPI, or error in case using wrong credentials.
@@ -65,12 +65,12 @@ func NewPCloudClient(username string, password string) (*PCloudClient, error) {
 	c := &http.Client{}
 
 	// We are hitting the PCloud API when to create the instance.
-	resp, err := authenticate(c, username, password)
+	token, err := authenticate(c, username, password)
 
 	if err != nil {
 		return nil, err
 	}
 
 	// PCloudClient the instance needs an HTTP client and the token.
-	return &PCloudClient{Client: c, Token: resp.Auth}, nil
+	return &PCloudClient{Client: c, Token: token}, nil
 }

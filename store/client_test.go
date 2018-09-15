@@ -58,17 +58,17 @@ func TestAuthenticateWithPCloud(t *testing.T) {
 		}
 	})
 
-	resp, err := authenticate(client, username, password)
+	token, err := authenticate(client, username, password)
 
 	if err != nil {
 		t.Error("Failed to build the authenticationResponse")
 	}
 
-	if resp == nil {
+	if token == "" {
 		t.Error("Expected authentication response to not be nil")
 	}
 
-	if resp.Auth != "fakeToken" {
+	if token != "fakeToken" {
 		t.Error("Failed to get the token from the JSON response")
 	}
 }
@@ -98,13 +98,13 @@ func TestAuthenticateHandlesWrongCredentialsResponse(t *testing.T) {
 		}
 	})
 
-	pcloud, err := authenticate(client, username, password)
+	token, err := authenticate(client, username, password)
 
 	if err == nil {
 		t.Error("Failed to build the authenticationResponse")
 	}
 
-	if pcloud != nil {
+	if token != "" {
 		t.Error("Expected the authResponse to be nil")
 	}
 
@@ -138,13 +138,13 @@ func TestAuthenticationFailsWhenResponseIsNot200OK(t *testing.T) {
 		}
 	})
 
-	pcloud, err := authenticate(client, username, password)
+	token, err := authenticate(client, username, password)
 
 	if err == nil {
 		t.Error("Failed to build the authenticationResponse")
 	}
 
-	if pcloud != nil {
+	if token != "" {
 		t.Error("Expected the authResponse to be nil")
 	}
 
