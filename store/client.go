@@ -1,8 +1,8 @@
 package store
 
-type Client struct {
+type PCloudClient struct {
 }
 
-func NewClient(username string, password string) (*Client, error) {
-	return &Client{}, nil
+func NewPCloudClient(username string, password string) (*PCloudClient, error) {
+	return &PCloudClient{}, nil
 }
