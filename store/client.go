@@ -71,6 +71,6 @@ func NewPCloudClient(username string, password string) (*PCloudClient, error) {
 		return nil, err
 	}
 
-	// The instance needs an HTTP client and the token.
+	// PCloudClient the instance needs an HTTP client and the token.
 	return &PCloudClient{Client: c, Token: resp.Auth}, nil
 }
