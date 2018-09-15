@@ -1,5 +1,6 @@
 package store
 
+// PCloudClient represents the PCloud client instance to interact with PCLoud API.
 type PCloudClient struct {
 }
 
