@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -48,7 +49,7 @@ func TestAuthenticateWithPCloud(t *testing.T) {
 		}
 
 		return &http.Response{
-			StatusCode: 200,
+			StatusCode: http.StatusOK,
 			// Send response to be tested
 			Body: ioutil.NopCloser(bytes.NewBufferString(`{"auth": "fakeToken"}`)),
 			// Must be set to non-nil value or it panics
@@ -88,7 +89,7 @@ func TestAuthenticateHandlesWrongCredentialsResponse(t *testing.T) {
 		}
 
 		return &http.Response{
-			StatusCode: 200,
+			StatusCode: http.StatusOK,
 			// Send response to be tested
 			Body: ioutil.NopCloser(bytes.NewBufferString(`{"error": "Failed to login."}`)),
 			// Must be set to non-nil value or it panics
@@ -96,17 +97,61 @@ func TestAuthenticateHandlesWrongCredentialsResponse(t *testing.T) {
 		}
 	})
 
-	resp, err := authenticate(client, username, password)
+	pcloud, err := authenticate(client, username, password)
 
 	if err == nil {
 		t.Error("Failed to build the authenticationResponse")
 	}
 
-	if resp != nil {
+	if pcloud != nil {
 		t.Error("Expected the authResponse to be nil")
 	}
 
-	if err.Error() != `Failed to parse the authentication. Response: {"error": "Failed to login."}` {
+	if err.Error() != "Failed to parse the authentication. Response was: \n\n{\"error\": \"Failed to login.\"}" {
 		t.Error("Error response should contains the payload.")
+	}
+}
+
+func TestAuthenticationFailsWhenResponseIsNot200OK(t *testing.T) {
+	username, password := "wronguser", "wrongpass"
+
+	client := NewTestClient(func(req *http.Request) *http.Response {
+		// Test request parameters
+		authUrl := buildPCLoudURL("userinfo", url.Values{
+			"getauth":  {"1"},
+			"logout":   {"1"},
+			"username": {username},
+			"password": {password},
+		})
+
+		if req.URL.String() != authUrl {
+			t.Error("Authentication is using the wrong URL.")
+		}
+
+		return &http.Response{
+			StatusCode: http.StatusInternalServerError,
+			// Send response to be tested
+			Body: ioutil.NopCloser(bytes.NewBufferString(``)),
+			// Must be set to non-nil value or it panics
+			Header: make(http.Header),
+		}
+	})
+
+	pcloud, err := authenticate(client, username, password)
+
+	if err == nil {
+		t.Error("Failed to build the authenticationResponse")
+	}
+
+	if pcloud != nil {
+		t.Error("Expected the authResponse to be nil")
+	}
+
+	if !strings.Contains(err.Error(), "Server responded with a non 200 (OK) status code. Response dump: ") {
+		t.Error("Failed to dump the response")
+	}
+
+	if !strings.Contains(err.Error(), "HTTP/0.0 500 Internal Server Error") {
+		t.Error("Failed to dump the response")
 	}
 }

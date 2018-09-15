@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 )
 
@@ -28,6 +29,16 @@ func authenticate(c *http.Client, username string, password string) (*authRespon
 		"password": {password},
 	}))
 
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		dump, _ := httputil.DumpResponse(resp, true)
+
+		return nil, fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
+	}
+
 	// Converting the JSON response to bytes.
 	data, err := ioutil.ReadAll(resp.Body)
 
@@ -43,7 +54,7 @@ func authenticate(c *http.Client, username string, password string) (*authRespon
 	}
 
 	if jsonResponse.Auth == "" {
-		return nil, fmt.Errorf("Failed to parse the authentication. Response: %s", string(data))
+		return nil, fmt.Errorf("Failed to parse the authentication. Response was: \n\n%s", string(data))
 	}
 
 	return &jsonResponse, err
