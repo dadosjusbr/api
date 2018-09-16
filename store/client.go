@@ -60,6 +60,8 @@ func authenticate(c *http.Client, username string, password string) (string, err
 		return "", err
 	}
 
+	defer resp.Body.Close()
+
 	// We are going to use this struct to Unmarshal the JSON response from PCloud.
 	jsonResponse := authResponse{}
 
@@ -126,6 +128,8 @@ func uploadFile(pcloud *PCloudClient, filename string, r io.Reader) (int, error)
 		return 0, err
 	}
 
+	defer resp.Body.Close()
+
 	jsonResp := uploadFileResponse{}
 
 	if err := json.Unmarshal(data, &jsonResp); err != nil {
@@ -164,6 +168,8 @@ func generatePublicLink(pcloud *PCloudClient, fileID int) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	defer resp.Body.Close()
 
 	jsonResp := generateLinkResponse{}
 
