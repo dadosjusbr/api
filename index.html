@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Sticky Footer Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  </head>
+
+  <body>
+
+    <!-- Begin page content -->
+    <main role="main" class="container">
+        <h1 class="mt-5">Mês: {{.Month}}, Ano: {{.Year}}</h1>
+        <p class="lead">
+            
+        </p>
+        <h2>Outros meses:</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Mês/Ano</th>
+                    <th scope="col">Link do Datahub</th>
+                    <th scope="col">Link do Arquivo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ $length := len .PreviousEntries }} 
+                {{ if eq $length 0 }}
+                    <tr>
+                        <td colspan="3">Não há entradas antigas.</td>
+                    </tr>
+                {{ else }}
+                    {{ range .PreviousEntries }}
+                        <tr>
+                            <td scope="row">{{.Indentifier}}</th>
+                            <td><a href="{{.DataHubURL}}">Link</a></td>
+                            <td><a href="{{.PCloudURL}}">Link</a></td>
+                        </tr>
+                    {{ end }}
+                {{ end }}
+                
+            </tbody>
+        </table>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">
+                    Firefest, 2018.
+                </span>
+            </div>
+        </footer>
+  </body>
+</html>
