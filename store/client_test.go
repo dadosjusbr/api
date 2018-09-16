@@ -2,9 +2,11 @@ package store
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -154,5 +156,155 @@ func TestAuthenticationFailsWhenResponseIsNot200OK(t *testing.T) {
 
 	if !strings.Contains(err.Error(), "HTTP/0.0 500 Internal Server Error") {
 		t.Error("Failed to dump the response")
+	}
+}
+
+func successUploadFileResponse(fileID int) *http.Response {
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		// Send response to be tested
+		Body: ioutil.NopCloser(bytes.NewBufferString(fmt.Sprintf("{\"fileids\": [%d]}", fileID))),
+		// Must be set to non-nil value or it panics
+		Header: make(http.Header),
+	}
+}
+
+func successUploadedFileLinkResponse() *http.Response {
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		// Send response to be tested
+		Body: ioutil.NopCloser(bytes.NewBufferString(`{"link": "https://my.pcloud.com/#page=publink&code=LinkCode"}`)),
+		// Must be set to non-nil value or it panics
+		Header: make(http.Header),
+	}
+}
+
+func TestCreatesFileOnPCloud(t *testing.T) {
+	fakeToken := "fakeToken"
+	filename := "loremipsum.txt"
+	fileID := 123
+
+	client := NewTestClient(func(req *http.Request) *http.Response {
+		// Test request parameters
+		uploadURL := buildPCLoudURL("uploadfile", url.Values{
+			"auth":     {fakeToken},
+			"path":     {"/"},
+			"filename": {filename},
+		})
+
+		if req.URL.String() == uploadURL {
+			return successUploadFileResponse(fileID)
+		}
+
+		generateLinkURL := buildPCLoudURL("getfilepublink", url.Values{
+			"auth":   {fakeToken},
+			"fileid": {strconv.Itoa(fileID)},
+		})
+
+		if req.URL.String() == generateLinkURL {
+			return successUploadedFileLinkResponse()
+		}
+
+		t.Error("Unkown mocked request.")
+
+		return nil
+	})
+
+	pcloud := PCloudClient{Client: client, Token: fakeToken}
+
+	r := strings.NewReader("Works")
+
+	URL, _ := pcloud.Put(filename, r)
+
+	if URL != "https://my.pcloud.com/#page=publink&code=LinkCode" {
+		t.Error("Expected mocked public link doesnt exist")
+	}
+}
+
+func TestHandlesErrorWhenUploadFileFails(t *testing.T) {
+	fakeToken := "fakeToken"
+	filename := "loremipsum.txt"
+
+	client := NewTestClient(func(req *http.Request) *http.Response {
+		// Test request parameters
+		uploadURL := buildPCLoudURL("uploadfile", url.Values{
+			"auth":     {fakeToken},
+			"path":     {"/"},
+			"filename": {filename},
+		})
+
+		if req.URL.String() != uploadURL {
+			t.Error("Put is using the wrong URL.")
+		}
+
+		return &http.Response{
+			StatusCode: http.StatusInternalServerError,
+			// Send response to be tested
+			Body: ioutil.NopCloser(bytes.NewBufferString(`{
+				"error": "Something went wrong."
+			}`)),
+			// Must be set to non-nil value or it panics
+			Header: make(http.Header),
+		}
+	})
+
+	pcloud := PCloudClient{Client: client, Token: fakeToken}
+
+	r := strings.NewReader("Works")
+
+	_, err := pcloud.Put(filename, r)
+
+	if err == nil {
+		t.Error("Expected error to be nil")
+	}
+}
+
+func TestHandlesPublicLinkGenerationFails(t *testing.T) {
+	fakeToken := "fakeToken"
+	filename := "loremipsum.txt"
+	fileID := 123
+
+	client := NewTestClient(func(req *http.Request) *http.Response {
+		// Test request parameters
+		uploadURL := buildPCLoudURL("uploadfile", url.Values{
+			"auth":     {fakeToken},
+			"path":     {"/"},
+			"filename": {filename},
+		})
+
+		if req.URL.String() == uploadURL {
+			return successUploadFileResponse(fileID)
+		}
+
+		generateLinkURL := buildPCLoudURL("getfilepublink", url.Values{
+			"auth":   {fakeToken},
+			"fileid": {strconv.Itoa(fileID)},
+		})
+
+		if req.URL.String() == generateLinkURL {
+			return &http.Response{
+				StatusCode: http.StatusInternalServerError,
+				// Send response to be tested
+				Body: ioutil.NopCloser(bytes.NewBufferString(`{
+					"error": "Something went wrong."
+				}`)),
+				// Must be set to non-nil value or it panics
+				Header: make(http.Header),
+			}
+		}
+
+		t.Error("Unkown mocked request.")
+
+		return nil
+	})
+
+	pcloud := PCloudClient{Client: client, Token: fakeToken}
+
+	r := strings.NewReader("Works")
+
+	_, err := pcloud.Put(filename, r)
+
+	if err == nil {
+		t.Error("Expected error to be nil")
 	}
 }
