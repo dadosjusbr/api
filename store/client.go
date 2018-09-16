@@ -48,7 +48,11 @@ func authenticate(c *http.Client, username string, password string) (string, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		dump, _ := httputil.DumpResponse(resp, true)
+		dump, err := httputil.DumpResponse(resp, true)
+
+		if err != nil {
+			return "", fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
+		}
 
 		return "", fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
 	}
@@ -117,7 +121,11 @@ func uploadFile(pcloud *PCloudClient, filename string, r io.Reader) (int, error)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		dump, _ := httputil.DumpResponse(resp, true)
+		dump, err := httputil.DumpResponse(resp, true)
+
+		if err != nil {
+			return 0, fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
+		}
 
 		return 0, fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
 	}
@@ -137,7 +145,12 @@ func uploadFile(pcloud *PCloudClient, filename string, r io.Reader) (int, error)
 	}
 
 	if len(jsonResp.Fileids) != 1 {
-		dump, _ := httputil.DumpResponse(resp, true)
+		dump, err := httputil.DumpResponse(resp, true)
+
+		if err != nil {
+			return 0, fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
+		}
+
 		return 0, fmt.Errorf("Something went wrong. We could not fill get the fileids from the response. Response was: \n\n%s", string(dump))
 	}
 
@@ -158,7 +171,11 @@ func generatePublicLink(pcloud *PCloudClient, fileID int) (string, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		dump, _ := httputil.DumpResponse(resp, true)
+		dump, err := httputil.DumpResponse(resp, true)
+
+		if err != nil {
+			return "", fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
+		}
 
 		return "", fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
 	}
@@ -178,7 +195,12 @@ func generatePublicLink(pcloud *PCloudClient, fileID int) (string, error) {
 	}
 
 	if jsonResp.Link == "" {
-		dump, _ := httputil.DumpResponse(resp, true)
+		dump, err := httputil.DumpResponse(resp, true)
+
+		if err != nil {
+			return "", fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
+		}
+
 		return "", fmt.Errorf("Something went wrong when generating the public link. Response was: \n\n%s", string(dump))
 	}
 
