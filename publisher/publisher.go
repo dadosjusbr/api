@@ -2,6 +2,7 @@ package publisher
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/multipart"
@@ -19,8 +20,12 @@ func Publish(content []byte) error {
 	if err != nil {
 		return nil
 	}
-	if _, err := http.DefaultClient.Do(req); err != nil {
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
 		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Error publishing datapackage: Invalid status code %d (%s)", resp.StatusCode, resp.Status)
 	}
 	return nil
 }

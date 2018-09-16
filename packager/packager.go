@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-
-	"github.com/frictionlessdata/datapackage-go/datapackage"
 )
 
 // Pack creates a zip frictionless data package an returns its contents.
@@ -14,7 +12,7 @@ func Pack(name string, dataFileContents []byte) ([]byte, error) {
 	fName := "data.csv"
 	sch, err := schemaDescriptor()
 	if err != nil {
-		return fmt.Errorf("Error getting schema descritptor:%q", err)
+		return nil, fmt.Errorf("Error getting schema descritptor:%q", err)
 	}
 	d := map[string]interface{}{
 		"name": name,
@@ -28,11 +26,7 @@ func Pack(name string, dataFileContents []byte) ([]byte, error) {
 			},
 		},
 	}
-	pkg, err := datapackage.New(d, ".")
-	if err != nil {
-		return nil, fmt.Errorf("Error creating data package:%q", err)
-	}
-	descriptorContents, err := json.Marshal(pkg.Descriptor())
+	descriptorContents, err := json.Marshal(d)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting descriptor contents: %q", err)
 	}

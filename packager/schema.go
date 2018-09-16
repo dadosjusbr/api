@@ -1,33 +1,20 @@
 package packager
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-
-	"github.com/frictionlessdata/tableschema-go/schema"
 )
 
 func schemaDescriptor() (map[string]interface{}, error) {
-	sch, err := schema.Read(bytes.NewBufferString(schemaStr))
-	if err != nil {
-		return nil, fmt.Errorf("Error reading schema: %q", err)
-	}
-	if err := sch.Validate(); err != nil {
-		return nil, fmt.Errorf("Invalid schema: %q", err)
-	}
-	b, err := json.Marshal(sch)
-	if err != nil {
-		return nil, err
-	}
 	d := make(map[string]interface{})
-	if err := json.Unmarshal(b, &d); err != nil {
+	if err := json.Unmarshal([]byte(schemaStr), &d); err != nil {
 		return nil, fmt.Errorf("Error trying to unmarshal the schema descriptor: %q", err)
 	}
 	return d, nil
 }
 
 var schemaStr = `{
+  "primaryKey":["nome", "mes_ano_referencia", "orgao"],
   "fields": [
     {
       "name": "cpf",
@@ -56,7 +43,7 @@ var schemaStr = `{
     {
       "name": "subsidio",
       "title": "Subsídio",
-      "type": "nunber",
+      "type": "number",
       "description": "Salário recebido pelo magistrado"
     },
     {
