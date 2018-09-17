@@ -1,21 +1,21 @@
 package main
 
 import (
-	"io/ioutil"
+	"archive/zip"
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
-	"archive/zip"
-	"path/filepath"
 
 	"github.com/dadosjusbr/crawler"
 	"github.com/dadosjusbr/remuneracao-magistrados/email"
+	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
-	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -97,8 +97,8 @@ func main() {
 		}
 		fmt.Printf("File %s parsed. %d missing.\n", p, len(paths)-i-1)
 		zipFile, err := spreadsheetZipWriter.Create(filepath.Base(p))
-        if err != nil {
-                log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
 		}
 		c, err := ioutil.ReadFile(p)
 		if err != nil {
@@ -106,14 +106,14 @@ func main() {
 			fmt.Printf("ERROR reading spreadsheet contents (%s):%q", p, err)
 			return
 		}
-        _, err = zipFile.Write(c)
-        if err != nil {
-				// TODO: send email.
-                log.Fatal(err)
+		_, err = zipFile.Write(c)
+		if err != nil {
+			// TODO: send email.
+			log.Fatal(err)
 		}
 	}
 	if err := spreadsheetZipWriter.Close(); err != nil {
-        log.Fatal(err)
+		log.Fatal(err)
 	}
 	rl, err := pcloudClient.Put("2018-04-raw.zip", &spreadsheetZipBuf)
 	if err != nil {
@@ -123,7 +123,7 @@ func main() {
 		fmt.Println("ERROR: " + err.Error())
 		return
 	}
-	fmt.Printf("Parsing OK (%s). Took %v\n",rl, time.Now().Sub(parsingST))
+	fmt.Printf("Parsing OK (%s). Took %v\n", rl, time.Now().Sub(parsingST))
 
 	// Packaging.
 	fmt.Println("Start packaging")
