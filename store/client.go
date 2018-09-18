@@ -19,19 +19,9 @@ type PCloudClient struct {
 	Token  string
 }
 
-// authResponse; internal representation of the auth response. Will be used to Unmarshal the response
-type authResponse struct {
-	Auth string
-}
-
 // uploadFileResponse; internal representation of the upload file response.
 type uploadFileResponse struct {
 	Fileids []int
-}
-
-// generateLinkResponse; internal representation of the public link response generation.
-type generateLinkResponse struct {
-	Link string
 }
 
 // authenticate; sends the HTTP request to authenticate with PCloud using provided credentials.
@@ -49,7 +39,6 @@ func authenticate(c *http.Client, username string, password string) (string, err
 
 	if resp.StatusCode != http.StatusOK {
 		dump, err := httputil.DumpResponse(resp, true)
-
 		if err != nil {
 			return "", fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
 		}
@@ -59,25 +48,22 @@ func authenticate(c *http.Client, username string, password string) (string, err
 
 	// Converting the JSON response to bytes.
 	data, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return "", err
 	}
-
 	defer resp.Body.Close()
 
 	// We are going to use this struct to Unmarshal the JSON response from PCloud.
-	jsonResponse := authResponse{}
-
+	jsonResponse := make(map[string]interface{})
 	if err := json.Unmarshal(data, &jsonResponse); err != nil {
 		return "", err
 	}
 
-	if jsonResponse.Auth == "" {
+	if jsonResponse["auth"] == nil {
 		return "", fmt.Errorf("Failed to parse the authentication. Response was: \n\n%s", string(data))
 	}
 
-	return jsonResponse.Auth, err
+	return jsonResponse["auth"].(string), err
 }
 
 // uploadFile; Uploads files to the PCloud API, returning the fileID.
@@ -107,22 +93,18 @@ func uploadFile(pcloud *PCloudClient, filename string, r io.Reader) (int, error)
 	}
 
 	req, err := http.NewRequest("POST", URL, &b)
-
 	if err != nil {
 		return 0, err
 	}
-
 	req.Header.Set("Content-Type", w.FormDataContentType())
 
 	resp, err := pcloud.Client.Do(req)
-
 	if err != nil {
 		return 0, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		dump, err := httputil.DumpResponse(resp, true)
-
 		if err != nil {
 			return 0, fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
 		}
@@ -135,7 +117,6 @@ func uploadFile(pcloud *PCloudClient, filename string, r io.Reader) (int, error)
 	if err != nil {
 		return 0, err
 	}
-
 	defer resp.Body.Close()
 
 	jsonResp := uploadFileResponse{}
@@ -188,13 +169,13 @@ func generatePublicLink(pcloud *PCloudClient, fileID int) (string, error) {
 
 	defer resp.Body.Close()
 
-	jsonResp := generateLinkResponse{}
+	jsonResp := make(map[string]interface{})
 
 	if err := json.Unmarshal(data, &jsonResp); err != nil {
 		return "", err
 	}
 
-	if jsonResp.Link == "" {
+	if jsonResp["link"] == nil {
 		dump, err := httputil.DumpResponse(resp, true)
 
 		if err != nil {
@@ -204,7 +185,7 @@ func generatePublicLink(pcloud *PCloudClient, fileID int) (string, error) {
 		return "", fmt.Errorf("Something went wrong when generating the public link. Response was: \n\n%s", string(dump))
 	}
 
-	return jsonResp.Link, nil
+	return jsonResp["link"].(string), nil
 }
 
 // NewPCloudClient returns the PCloudClient to interact with PCloudAPI, or error in case using wrong credentials.
