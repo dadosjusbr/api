@@ -21,7 +21,8 @@ type PCloudClient struct {
 
 // authResponse; internal representation of the auth response. Will be used to Unmarshal the response
 type authResponse struct {
-	Auth string
+	Auth  string
+	Error string `json:"error"`
 }
 
 // uploadFileResponse; internal representation of the upload file response.
@@ -42,39 +43,36 @@ func authenticate(c *http.Client, username string, password string) (string, err
 		"username": {username},
 		"password": {password},
 	}))
-
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("[Error] problem sending auth request to pcloud:%q", err)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		dump, err := httputil.DumpResponse(resp, true)
-
 		if err != nil {
-			return "", fmt.Errorf("Server responded with non 200 (OK) status code. Response failed to dump")
+			return "", fmt.Errorf("Server responded with non-200 (OK) status code. Response failed to dump")
 		}
-
-		return "", fmt.Errorf("Server responded with a non 200 (OK) status code. Response dump: \n\n%s", string(dump))
+		return "", fmt.Errorf("[Error] Pcloud server responded with a non-200 (OK) status code. Response dump: \n\n%s", string(dump))
 	}
 
 	// Converting the JSON response to bytes.
 	data, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return "", err
 	}
 
-	defer resp.Body.Close()
-
 	// We are going to use this struct to Unmarshal the JSON response from PCloud.
 	jsonResponse := authResponse{}
-
 	if err := json.Unmarshal(data, &jsonResponse); err != nil {
 		return "", err
 	}
 
+	if jsonResponse.Error != "" {
+		return "", fmt.Errorf("[Error] Pcloud auth request failed:%q. Response:%s", jsonResponse.Error, string(data))
+	}
 	if jsonResponse.Auth == "" {
-		return "", fmt.Errorf("Failed to parse the authentication. Response was: \n\n%s", string(data))
+		return "", fmt.Errorf("[Error] Pcloud auth request failed. Response:%s", string(data))
 	}
 
 	return jsonResponse.Auth, err
