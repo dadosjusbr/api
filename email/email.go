@@ -11,7 +11,7 @@ import (
 
 // Client Class containing the needed methods to send an email
 type Client struct {
-	apiKey string
+	sendgridClient *sendgrid.Client
 }
 
 // NewClient class constructor function
@@ -19,7 +19,8 @@ func NewClient(apiKey string) (*Client, error) {
 	if len(apiKey) <= 0 {
 		return nil, errors.New("Api Key should not be empty")
 	}
-	return &Client{apiKey}, nil
+
+	return &Client{sendgrid.NewSendClient(apiKey)}, nil
 }
 
 // Send an email and return an error if it fails
@@ -27,11 +28,12 @@ func (c *Client) Send(from, to, subject, body string) error {
 	fromMail := mail.NewEmail("", from)
 	toMail := mail.NewEmail("", to)
 	message := mail.NewSingleEmail(fromMail, subject, toMail, body, body)
-	client := sendgrid.NewSendClient(c.apiKey)
-	response, err := client.Send(message)
+	response, err := c.sendgridClient.Send(message)
+
 	if err != nil {
 		return err
 	}
+
 	if response.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("An error has ocurred while trying to send an email.\n"+
 			"Status Code: %d\n"+
@@ -41,5 +43,6 @@ func (c *Client) Send(from, to, subject, body string) error {
 			response.Body,
 			response.Headers)
 	}
+
 	return nil
 }
