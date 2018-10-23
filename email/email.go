@@ -20,9 +20,7 @@ func NewClient(apiKey string) (*Client, error) {
 		return nil, errors.New("Api Key should not be empty")
 	}
 
-	client := sendgrid.NewSendClient(apiKey)
-
-	return &Client{client}, nil
+	return &Client{sendgrid.NewSendClient(apiKey)}, nil
 }
 
 // Send an email and return an error if it fails
@@ -30,8 +28,7 @@ func (c *Client) Send(from, to, subject, body string) error {
 	fromMail := mail.NewEmail("", from)
 	toMail := mail.NewEmail("", to)
 	message := mail.NewSingleEmail(fromMail, subject, toMail, body, body)
-	client := c.sendgridClient
-	response, err := client.Send(message)
+	response, err := c.sendgridClient.Send(message)
 
 	if err != nil {
 		return err
