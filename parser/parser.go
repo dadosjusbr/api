@@ -2,6 +2,7 @@ package parser
 
 import (
 	"strings"
+	"io"
 )
 
 type SheetType int
@@ -47,3 +48,7 @@ func (pe *ParsingErrors) Error() string {
 }
 
 
+// Parses the XLS(X) passed as parameters and returns the CSV contents, the request errors and other errors.
+func Parse(r io.Reader, sheetType SheetType) ([][]string, error) {
+	return nil, &ParsingErrors{}
+}
