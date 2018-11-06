@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"strings"
 	"io"
+	"strings"
 )
 
 type SheetType int
@@ -47,8 +47,7 @@ func (pe *ParsingErrors) Error() string {
 	return strings.Join(errorMessages, ",")
 }
 
-
 // Parses the XLS(X) passed as parameters and returns the CSV contents, the request errors and other errors.
-func Parse(r io.Reader, sheetType SheetType) ([][]string, error) {
-	return nil, &ParsingErrors{}
+func Parse (r io.Reader, sheetType SheetType) ([][]string, error) {
+	return nil, &ParsingErrors{[]ApplicationError{{"Not Implemented yet"}}, []DataError{}}
 }

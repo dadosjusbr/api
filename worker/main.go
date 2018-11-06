@@ -73,28 +73,19 @@ func main() {
 
 	var content bytes.Buffer
 	for i, p := range paths {
-		if i == 0 {
-			// TODO: Treat middle parameter.
-			data, _, err := parser.Parse(p, "planilhas", map[string]string{"formato_saida": "csv"})
-			if err != nil {
-				// TODO: Tweet and save error.
-				return
-			}
-			content.Write(data)
-			content.WriteRune('\n')
-		} else {
-			// TODO: Treat middle parameter.
-			data, _, err := parser.Parse(p, "planilhas", map[string]string{"formato_saida": "headless_csv"})
-			if err != nil {
-				// TODO: Tweet and save error.
-				fmt.Println("ERROR: " + err.Error())
-				return
-			}
-			content.Write(data)
-			if i < len(paths)-1 {
-				content.WriteRune('\n')
-			}
+		// TODO: refactor this code in order to parse the file as soon as the Crawler gets it.
+		sheetReader, err := os.Open(p)
+		data, err := parser.Parse(sheetReader, parser.XLSX)
+
+		if err != nil {
+			// TODO: Tweet and save error.
+			fmt.Println("ERROR: " + err.Error())
+			return
 		}
+
+		content.Write(data)
+		content.WriteRune('\n')
+
 		fmt.Printf("File %s parsed. %d missing.\n", p, len(paths)-i-1)
 		zipFile, err := spreadsheetZipWriter.Create(filepath.Base(p))
 		if err != nil {
