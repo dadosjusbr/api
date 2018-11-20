@@ -35,15 +35,12 @@ type ParsingErrors struct {
 
 func (pe *ParsingErrors) Error() string {
 	var errorMessages []string
-
 	for _, ae := range pe.aplicationErrors {
 		errorMessages = append(errorMessages, ae.Error())
 	}
-
 	for _, de := range pe.dataErrors {
 		errorMessages = append(errorMessages, de.Error())
 	}
-
 	return strings.Join(errorMessages, ",")
 }
 
