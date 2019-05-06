@@ -16,6 +16,7 @@ import (
 	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
+	"github.com/dadosjusbr/remuneracao-magistrados/processor"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -46,6 +47,8 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
+
+	processor.Process(04, 2018, emailClient, pcloudClient);
 
 	// Download files from CNJ.
 	paths, err := crawler.Download(04, 2018)
