@@ -8,12 +8,8 @@ import (
 )
 
 // Pack creates a zip frictionless data package an returns its contents.
-func Pack(name string, dataFileContents []byte) ([]byte, error) {
+func Pack(name string, schema map[string]interface{}, dataFileContents []byte) ([]byte, error) {
 	fName := "data.csv"
-	sch, err := schemaDescriptor()
-	if err != nil {
-		return nil, fmt.Errorf("Error getting schema descritptor:%q", err)
-	}
 	d := map[string]interface{}{
 		"name": name,
 		"resources": []interface{}{
@@ -22,7 +18,7 @@ func Pack(name string, dataFileContents []byte) ([]byte, error) {
 				"path":    fName,
 				"format":  "csv",
 				"profile": "tabular-data-resource",
-				"schema":  sch,
+				"schema":  schema,
 			},
 		},
 	}
