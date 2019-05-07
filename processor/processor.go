@@ -26,6 +26,7 @@ const (
 
 // Process; download, parse, save and publish data of one month.
 func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCloudClient) {
+	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
 	paths, err := crawler.Download(04, 2018)
 	if err != nil {
