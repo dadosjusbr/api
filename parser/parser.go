@@ -74,7 +74,7 @@ func Parse(path, fileNameParam string, params map[string]string) ([]byte, []inte
 	return data.Bytes(), errors, nil
 }
 
-//GetSchema request schema from the Parser service
+// GetSchema returns the schema used to generate the parsed CSV.
 func GetSchema() (map[string]interface{}, error) {
 	resp, err := http.Get(url + schemaResource)
 	if err != nil {

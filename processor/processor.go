@@ -48,6 +48,7 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 	fmt.Println("Start parsing")
 	schema, err := parser.GetSchema()
 	if err != nil {
+		fmt.Println("ERROR: " + err.Error())
 		return
 	}
 
@@ -114,7 +115,7 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 	fmt.Println("Start packaging")
 	packagingST := time.Now()
 	// TODO: Remove this hardcoded package name. Should be based on the worker selected work (timestamp or past).
-	datapackage, err := packager.Pack("2018-04", schema, content.Bytes())
+	datapackage, err := packager.Pack(fmt.Sprintf("%d-%d", year, month), schema, content.Bytes())
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())
