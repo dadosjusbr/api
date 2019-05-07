@@ -1,4 +1,4 @@
-package main
+package processor
 
 import (
 	"archive/zip"
@@ -16,15 +16,7 @@ import (
 	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
-	"github.com/dadosjusbr/remuneracao-magistrados/processor"
-	"github.com/kelseyhightower/envconfig"
 )
-
-type config struct {
-	SendgridAPIKey string `envconfig:"SENDGRID_API_KEY"`
-	PCloudUsername string `envconfig:"PCLOUD_USERNAME"`
-	PCloudPassword string `envconfig:"PCLOUD_PASSWORD"`
-}
 
 const (
 	emailFrom = "no-reply@dadosjusbr.com"
@@ -32,24 +24,9 @@ const (
 	subject   = "remuneracao-magistrados error"
 )
 
-func main() {
-	// TODO: Treat Signals.
-	var conf config
-	err := envconfig.Process("remuneracao-magistrados", &conf)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	emailClient, err := email.NewClient(conf.SendgridAPIKey)
-	if err != nil {
-		log.Fatal("ERROR: ", err.Error())
-	}
-	pcloudClient, err := store.NewPCloudClient(conf.PCloudUsername, conf.PCloudPassword)
-	if err != nil {
-		log.Fatal("ERROR: ", err.Error())
-	}
-
-	processor.Process(04, 2018, emailClient, pcloudClient);
-
+// Process; download, parse, save and publish data of one month.
+func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCloudClient) {
+	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
 	paths, err := crawler.Download(04, 2018)
 	if err != nil {
