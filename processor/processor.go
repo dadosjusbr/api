@@ -24,11 +24,11 @@ const (
 	subject   = "remuneracao-magistrados error"
 )
 
-// Process; download, parse, save and publish data of one month.
+// Process download, parse, save and publish data of one month.
 func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCloudClient) {
 	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
-	paths, err := crawler.Download(04, 2018)
+	paths, err := crawler.Download(month, year)
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())
@@ -46,6 +46,11 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 
 	// Parsing.
 	fmt.Println("Start parsing")
+	schema, err := parser.GetSchema()
+	if err != nil {
+		return
+	}
+
 	parsingST := time.Now()
 	// Create a buffer to write our archive to.
 	var spreadsheetZipBuf bytes.Buffer
@@ -109,7 +114,7 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 	fmt.Println("Start packaging")
 	packagingST := time.Now()
 	// TODO: Remove this hardcoded package name. Should be based on the worker selected work (timestamp or past).
-	datapackage, err := packager.Pack("2018-04", content.Bytes())
+	datapackage, err := packager.Pack("2018-04", schema, content.Bytes())
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())

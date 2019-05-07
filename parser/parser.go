@@ -14,7 +14,8 @@ import (
 	"github.com/dadosjusbr/remuneracao-magistrados/multipart"
 )
 
-const url = "https://remuneracao-magistrados.herokuapp.com/"
+const url = "https://dadosjusbr-parser.herokuapp.com/"
+const schemaResource = "schema"
 
 // Parse parses the XLS(X) passed as parameters and returns the CSV contents, the request errors and other errors.
 func Parse(path, fileNameParam string, params map[string]string) ([]byte, []interface{}, error) {
@@ -71,6 +72,21 @@ func Parse(path, fileNameParam string, params map[string]string) ([]byte, []inte
 		rc.Close()
 	}
 	return data.Bytes(), errors, nil
+}
+
+//GetSchema request schema from the Parser service
+func GetSchema() (map[string]interface{}, error) {
+	resp, err := http.Get(url + schemaResource)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	d := make(map[string]interface{})
+	if err := json.Unmarshal(body, &d); err != nil {
+		return nil, fmt.Errorf("Error trying to unmarshal the schema: %q", err)
+	}
+	return d, nil
 }
 
 func zipFile(path string) ([]byte, error) {
