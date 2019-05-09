@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dadosjusbr/crawler"
+	"github.com/dadosjusbr/remuneracao-magistrados/crawler"
 	"github.com/dadosjusbr/remuneracao-magistrados/email"
 	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"

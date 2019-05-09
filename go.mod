@@ -3,7 +3,8 @@ module github.com/dadosjusbr/remuneracao-magistrados
 
 require (
 	github.com/cenkalti/backoff v2.0.0+incompatible // indirect
-	github.com/dadosjusbr/crawler v0.0.0-20180915211007-7ae6f2e1ac9b
+	github.com/PuerkitoBio/goquery v1.4.1
+	github.com/andybalholm/cascadia v1.0.0 // indirect
 	github.com/dghubble/go-twitter v0.0.0-20180817201112-a34e9059cd58
 	github.com/dghubble/oauth1 v0.4.0
 	github.com/dghubble/sling v1.1.0 // indirect
