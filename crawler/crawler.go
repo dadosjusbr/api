@@ -1,69 +1,43 @@
 package crawler
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-const (
-	basePath        = "http://www.cnj.jus.br"
-	remuneracaoPath = "http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/remuneracao-"
-)
+const basePath = "http://www.cnj.jus.br"
 
-var months = map[int]string{
-	1:  "janeiro",
-	2:  "fevereiro",
-	3:  "marco",
-	4:  "abril",
-	5:  "maio",
-	6:  "junho",
-	7:  "julho",
-	8:  "agosto",
-	9:  "setembro",
-	10: "outubro",
-	11: "novembro",
-	12: "dezembro",
+//Result represents an downloaded spreadsheet with the file name and its bytes.
+type Result struct {
+	Name string
+	Body []byte
 }
 
-// Download download all the spreadsheets related to a month/year and zips it. If successful it returns
-// zip file full path.
-func Download(month, year int) ([]string, error) {
-	if month < 0 || month > 12 {
-		return nil, fmt.Errorf("Invalid month: %d", month)
-	}
-	if year < 2017 {
-		return nil, fmt.Errorf("Invalid year: %d", year)
-	}
-	if year == 2017 && month < 11 {
-		return nil, fmt.Errorf("So far the CNJ have not opened data before this nov-2017. You requested: %d/%d", month, year)
-	}
+//Results is an array of Result
+type Results []Result
 
-	resp, err := http.Get(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year))
+// Crawl download all the spreadsheets related to the page of the given url. If successful it returns
+// an array of results with the name and the bytes of each spreadsheet.
+func Crawl(url string) (Results, error) {
+	resp, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return Results{}, err
 	}
 	// If the page is not yet there, there is nothing we could do.
 	if resp.StatusCode == 404 {
-		return []string{}, nil
+		return Results{}, nil
 	}
 	defer resp.Body.Close()
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return nil, err
+		return Results{}, err
 	}
-	dir, err := ioutil.TempDir("", "dadosjusbr")
-	if err != nil {
-		return nil, fmt.Errorf("Error creating temporary directory to store spreadsheets of %d/%d: %q", month, year, err)
-	}
-
-	var files []string
+	results := Results{}
 	sel := doc.Find("td")
 	for i := range sel.Nodes {
 		item := sel.Eq(i)
@@ -73,38 +47,18 @@ func Download(month, year int) ([]string, error) {
 			dLink := fmt.Sprintf("%s%s", basePath, link)
 			resp, err := http.Get(dLink)
 			if err != nil {
-				return nil, fmt.Errorf("Error making get request (%s): %q", dLink, err)
+				return Results{}, fmt.Errorf("Error making get request (%s): %q", dLink, err)
 			}
+			defer resp.Body.Close()
 			// Reading spreadsheet contents.
 			contents, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				resp.Body.Close()
-				return nil, fmt.Errorf("Error reading response body:%q", err)
+				return Results{}, fmt.Errorf("Error reading response body:%q", err)
 			}
-			resp.Body.Close()
-			outPath := filepath.Join(dir, filepath.Base(dLink))
-			if err := writeFile(outPath, contents); err != nil {
-				return nil, fmt.Errorf("Error writing file contents: %q", err)
-			}
-			files = append(files, outPath)
-			fmt.Printf("%s downloaded to %s\n", dLink, outPath)
+			result := Result{link, contents}
+			results = append(results, result)
+			fmt.Printf("%s downloaded\n", filepath.Base(link))
 		}
 	}
-	return files, nil
-}
-
-func writeFile(name string, contents []byte) error {
-	f, err := os.Create(name)
-	defer f.Close()
-	if err != nil {
-		return err
-	}
-	w := bufio.NewWriter(f)
-	if _, err := w.Write(contents); err != nil {
-		return err
-	}
-	if err := w.Flush(); err != nil {
-		return err
-	}
-	return nil
+	return results, nil
 }
