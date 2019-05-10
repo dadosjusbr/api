@@ -25,7 +25,7 @@ const (
 )
 
 // Process download, parse, save and publish data of one month.
-func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCloudClient) {
+func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) {
 	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
 	paths, err := crawler.Download(month, year)
@@ -45,43 +45,15 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 	}
 
 	// Parsing.
-	fmt.Println("Start parsing")
-	schema, err := parser.GetSchema()
-	if err != nil {
-		fmt.Println("ERROR: " + err.Error())
-		return
-	}
 
 	parsingST := time.Now()
+
 	// Create a buffer to write our archive to.
 	var spreadsheetZipBuf bytes.Buffer
 	spreadsheetZipWriter := zip.NewWriter(&spreadsheetZipBuf)
 
-	var content bytes.Buffer
-	for i, p := range paths {
-		if i == 0 {
-			// TODO: Treat middle parameter.
-			data, _, err := parser.Parse(p, "planilhas", map[string]string{"formato_saida": "csv"})
-			if err != nil {
-				// TODO: Tweet and save error.
-				return
-			}
-			content.Write(data)
-			content.WriteRune('\n')
-		} else {
-			// TODO: Treat middle parameter.
-			data, _, err := parser.Parse(p, "planilhas", map[string]string{"formato_saida": "headless_csv"})
-			if err != nil {
-				// TODO: Tweet and save error.
-				fmt.Println("ERROR: " + err.Error())
-				return
-			}
-			content.Write(data)
-			if i < len(paths)-1 {
-				content.WriteRune('\n')
-			}
-		}
-		fmt.Printf("File %s parsed. %d missing.\n", p, len(paths)-i-1)
+	var spreadsheetContents [][]byte
+	for _, p := range paths {
 		zipFile, err := spreadsheetZipWriter.Create(filepath.Base(p))
 		if err != nil {
 			log.Fatal(err)
@@ -97,10 +69,17 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 			// TODO: send email.
 			log.Fatal(err)
 		}
+		spreadsheetContents = append(spreadsheetContents, c)
 	}
 	if err := spreadsheetZipWriter.Close(); err != nil {
 		log.Fatal(err)
 	}
+	csv, schema, err := parser.Parse(spreadsheetContents)
+	if err != nil {
+		// TODO: Send an email.
+		log.Fatal(err)
+	}
+
 	rl, err := pcloudClient.Put("2018-04-raw.zip", &spreadsheetZipBuf)
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
@@ -115,7 +94,7 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 	fmt.Println("Start packaging")
 	packagingST := time.Now()
 	// TODO: Remove this hardcoded package name. Should be based on the worker selected work (timestamp or past).
-	datapackage, err := packager.Pack(fmt.Sprintf("%d-%d", year, month), schema, content.Bytes())
+	datapackage, err := packager.Pack(fmt.Sprintf("%d-%d", year, month), schema, csv)
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())
