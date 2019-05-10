@@ -47,7 +47,6 @@ func Crawl(url string) (Results, error) {
 			dLink := fmt.Sprintf("%s%s", basePath, link)
 			resp, err := http.Get(dLink)
 			if err != nil {
-				resp.Body.Close()
 				return Results{}, fmt.Errorf("Error making get request (%s): %q", dLink, err)
 			}
 			defer resp.Body.Close()
