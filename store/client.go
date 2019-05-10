@@ -1,6 +1,7 @@
 package store
 
 import (
+	"archive/zip"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -235,4 +236,24 @@ func (pcloud *PCloudClient) Put(filename string, r io.Reader) (string, error) {
 	}
 
 	return URL, nil
+}
+
+// PutZip compress the contents and store it.
+func (pcloud *PCloudClient) PutZip(fName string, names []string, contents [][]byte) (string, error) {
+	if len(names) != len(contents) {
+		return "", fmt.Errorf("error PutZip: names (%d) and contents (%d) must be the same size. ", len(names), len(contents))
+	}
+	buf := new(bytes.Buffer)
+	w := zip.NewWriter(buf)
+	for i := 0; i < len(names); i++ {
+		f, err := w.Create(names[i])
+		if err != nil {
+			return "", err
+		}
+		_, err = f.Write(contents[i])
+		if err != nil {
+			return "", err
+		}
+	}
+	return pcloud.Put(fName, buf)
 }
