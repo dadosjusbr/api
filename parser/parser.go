@@ -13,6 +13,7 @@ import (
 const url = "https://dadosjusbr-parser.herokuapp.com/"
 const schemaResource = "schema"
 
+// ServiceClient parses XLS/XLSX files by delegating requests to the parser service.
 type ServiceClient struct {
 	url    string
 	client *http.Client
