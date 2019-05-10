@@ -1,82 +1,81 @@
 package parser
 
 import (
-	"archive/zip"
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
-	"os"
-	"path/filepath"
-
-	"github.com/dadosjusbr/remuneracao-magistrados/multipart"
+	"time"
 )
 
 const url = "https://dadosjusbr-parser.herokuapp.com/"
 const schemaResource = "schema"
 
-// Parse parses the XLS(X) passed as parameters and returns the CSV contents, the request errors and other errors.
-func Parse(path, fileNameParam string, params map[string]string) ([]byte, []interface{}, error) {
-	content, err := zipFile(path)
-	if err != nil {
-		return nil, nil, fmt.Errorf("Error zipping spreadsheet (%s) err:%q", path, err)
-	}
-	req, err := multipart.UploadRequest(url, fileNameParam, "planilha.zip", bytes.NewReader(content), params)
-	if err != nil {
-		return nil, nil, err
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer resp.Body.Close()
-
-	fZip, err := os.Create("p.zip")
-	if err != nil {
-		return nil, nil, err
-	}
-	_, err = io.Copy(fZip, resp.Body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	r, err := zip.OpenReader(fZip.Name())
-	if err != nil {
-		return nil, nil, fmt.Errorf("Error opening zip file (%s): %q", fZip.Name(), err)
-	}
-	defer r.Close()
-	var data bytes.Buffer
-	var errors []interface{}
-	for _, f := range r.File {
-		rc, err := f.Open()
-		if err != nil {
-			return nil, nil, err
-		}
-		switch f.Name {
-		case "data.csv":
-			_, err = io.Copy(&data, rc)
-			if err != nil {
-				return nil, nil, err
-			}
-		case "errors.txt":
-			b, err := ioutil.ReadAll(rc)
-			if err != nil {
-				return nil, nil, err
-			}
-			if err := json.Unmarshal(b, &errors); err != nil {
-				return nil, nil, err
-			}
-		}
-		rc.Close()
-	}
-	return data.Bytes(), errors, nil
+type ServiceClient struct {
+	url    string
+	client *http.Client
 }
 
-// GetSchema returns the schema used to generate the parsed CSV.
-func GetSchema() (map[string]interface{}, error) {
-	resp, err := http.Get(url + schemaResource)
+// NewServiceClient returns a parser which delegates the parsing process to
+// the dadosjusbr parser microservice.
+func NewServiceClient(url string) *ServiceClient {
+	c := &http.Client{
+		Timeout: 5 * time.Minute,
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout: 1 * time.Minute, // Important because the microsservice could be sleeping.
+			}).Dial,
+		},
+	}
+	return &ServiceClient{url, c}
+}
+
+// Parse parse the spreadsheet contents and returns an unified parsed CSV and its schema.
+func (s *ServiceClient) Parse(contents [][]byte) ([]byte, map[string]interface{}, error) {
+	sch, err := s.getSchema()
+	if err != nil {
+		return nil, nil, err
+	}
+	var result bytes.Buffer
+	for i, c := range contents {
+		if i == 0 {
+			data, err := s.request(s.url, c)
+			if err != nil {
+				return nil, sch, err
+			}
+			result.Write(data)
+			result.WriteRune('\n')
+			continue
+		}
+		data, err := s.request(fmt.Sprint(s.url, "?headless=true"), c)
+		if err != nil {
+			return nil, sch, err
+		}
+		result.Write(data)
+		if i < len(contents)-1 {
+			result.WriteRune('\n')
+		}
+	}
+	return result.Bytes(), sch, nil
+}
+
+func (s *ServiceClient) request(url string, body []byte) ([]byte, error) {
+	resp, err := s.client.Post(s.url, "application/octet-stream", bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("error sending request do parser service(%s):%q", url, err)
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading parser service response(%s):%q", url, err)
+	}
+	return data, nil
+}
+
+func (s *ServiceClient) getSchema() (map[string]interface{}, error) {
+	resp, err := s.client.Get(url + schemaResource)
 	if err != nil {
 		return nil, err
 	}
@@ -87,30 +86,4 @@ func GetSchema() (map[string]interface{}, error) {
 		return nil, fmt.Errorf("Error trying to unmarshal the schema: %q", err)
 	}
 	return d, nil
-}
-
-func zipFile(path string) ([]byte, error) {
-	fPath, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer fPath.Close()
-	content, err := ioutil.ReadAll(fPath)
-	if err != nil {
-		return nil, err
-	}
-	var buf bytes.Buffer
-	w := zip.NewWriter(&buf)
-	fZip, err := w.Create(filepath.Base(fPath.Name()))
-	if err != nil {
-		return nil, err
-	}
-	_, err = fZip.Write(content)
-	if err != nil {
-		return nil, err
-	}
-	if err := w.Close(); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
 }

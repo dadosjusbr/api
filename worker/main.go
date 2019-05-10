@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/email"
+	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/processor"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
 	"github.com/kelseyhightower/envconfig"
@@ -13,6 +14,7 @@ type config struct {
 	SendgridAPIKey string `envconfig:"SENDGRID_API_KEY"`
 	PCloudUsername string `envconfig:"PCLOUD_USERNAME"`
 	PCloudPassword string `envconfig:"PCLOUD_PASSWORD"`
+	ParserURL      string `envconfig:"PARSER_URL"`
 }
 
 const (
@@ -36,6 +38,5 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
-
-	processor.Process(04, 2018, emailClient, pcloudClient)
+	processor.Process(04, 2018, emailClient, parser.NewServiceClient(conf.ParserURL))
 }
