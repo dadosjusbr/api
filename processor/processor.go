@@ -4,10 +4,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -24,28 +22,37 @@ const (
 	subject   = "remuneracao-magistrados error"
 )
 
+const remuneracaoPath = "http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/remuneracao-"
+
+var months = map[int]string{
+	1:  "janeiro",
+	2:  "fevereiro",
+	3:  "marco",
+	4:  "abril",
+	5:  "maio",
+	6:  "junho",
+	7:  "julho",
+	8:  "agosto",
+	9:  "setembro",
+	10: "outubro",
+	11: "novembro",
+	12: "dezembro",
+}
+
 // Process download, parse, save and publish data of one month.
 func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) {
 	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
-	paths, err := crawler.Download(month, year)
+	results, err := crawler.Crawl(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year))
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())
 		}
-		fmt.Println("ERROR: " + err.Error())
-		return
-	}
-	defer removeFiles(paths, emailClient)
-	fmt.Printf("Crawling OK. Download %d files.\n", len(paths))
-
-	if len(paths) == 0 {
-		fmt.Println("No files to download.")
+		fmt.Println("CRAWLING ERROR: " + err.Error())
 		return
 	}
 
 	// Parsing.
-
 	parsingST := time.Now()
 
 	// Create a buffer to write our archive to.
@@ -53,23 +60,17 @@ func Process(month, year int, emailClient *email.Client, pcloudClient *store.PCl
 	spreadsheetZipWriter := zip.NewWriter(&spreadsheetZipBuf)
 
 	var spreadsheetContents [][]byte
-	for _, p := range paths {
-		zipFile, err := spreadsheetZipWriter.Create(filepath.Base(p))
+	for _, r := range results {
+		zipFile, err := spreadsheetZipWriter.Create(r.Name)
 		if err != nil {
 			log.Fatal(err)
 		}
-		c, err := ioutil.ReadFile(p)
-		if err != nil {
-			// TODO: send email.
-			fmt.Printf("ERROR reading spreadsheet contents (%s):%q", p, err)
-			return
-		}
-		_, err = zipFile.Write(c)
+		_, err = zipFile.Write(r.Body)
 		if err != nil {
 			// TODO: send email.
 			log.Fatal(err)
 		}
-		spreadsheetContents = append(spreadsheetContents, c)
+		spreadsheetContents = append(spreadsheetContents, r.Body)
 	}
 	if err := spreadsheetZipWriter.Close(); err != nil {
 		log.Fatal(err)
