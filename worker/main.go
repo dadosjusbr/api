@@ -38,5 +38,5 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
-	processor.Process(04, 2018, emailClient, parser.NewServiceClient(conf.ParserURL))
+	processor.Process(04, 2018, emailClient, pcloudClient, parser.NewServiceClient(conf.ParserURL))
 }
