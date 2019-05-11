@@ -61,8 +61,13 @@ func Crawl(url string) (Results, error) {
 		linkTag := item.Find("a")
 		link, _ := linkTag.Attr("href")
 		if strings.HasSuffix(link, "xls") || strings.HasSuffix(link, "xlsx") {
-			dLink := fmt.Sprintf("%s%s", basePath, link)
-			resp, err := http.Get(dLink)
+			var dLink string
+			if strings.HasPrefix(link, "file://") {
+				dLink = link
+			} else {
+				dLink = fmt.Sprintf("%s%s", basePath, link)
+			}
+			resp, err := client.Get(dLink)
 			if err != nil {
 				return Results{}, fmt.Errorf("Error making get request (%s): %q", dLink, err)
 			}
@@ -72,9 +77,10 @@ func Crawl(url string) (Results, error) {
 			if err != nil {
 				return Results{}, fmt.Errorf("Error reading response body:%q", err)
 			}
-			result := Result{link, contents}
+			fn := filepath.Base(link)
+			result := Result{fn, contents}
 			results = append(results, result)
-			fmt.Printf("%s downloaded\n", filepath.Base(link))
+			fmt.Printf("%s downloaded\n", fn)
 		}
 	}
 	return results, nil

@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/dadosjusbr/remuneracao-magistrados/crawler"
+
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -27,6 +29,16 @@ func main() {
 	indexPath, err := generateIndexMock(conf.SpreadsheetsPath)
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+	defer os.Remove(indexPath)
+
+	results, err := crawler.Crawl(fmt.Sprintf("file://%s", indexPath))
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Println("RESULTS NAMES: ")
+	for _, result := range results {
+		fmt.Println(result.Name)
 	}
 
 	fmt.Println(indexPath)
@@ -54,11 +66,15 @@ func generateIndexMock(spreadsheetsPath string) (string, error) {
 				<title>Any title</title>
 			</head>
 			<body>
-			{{range .}}
-				<td>
-					<a href="{{ . }}" target="_blank" rel="alternate noopener">any text</a>
-				</td>
-			{{end}}
+				<table>
+					<tr>
+					{{range .}}
+						<td>
+							<a href="{{ . }}" target="_blank" rel="alternate noopener">any text</a>
+						</td>
+					{{end}}
+					</tr>
+				</table>
 			</body>
 		</html>`
 
