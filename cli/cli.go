@@ -30,8 +30,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	defer os.Remove(indexPath)
 
-	results, err := crawler.Crawl(indexPath)
+	results, err := crawler.Crawl(fmt.Sprintf("file://%s", indexPath))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -96,5 +97,5 @@ func generateIndexMock(spreadsheetsPath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("file://%s", indexPath), nil
+	return indexPath, nil
 }
