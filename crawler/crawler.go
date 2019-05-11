@@ -3,9 +3,11 @@ package crawler
 import (
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -21,10 +23,25 @@ type Result struct {
 //Results is an array of Result
 type Results []Result
 
+var transport = &http.Transport{
+	Dial: (&net.Dialer{
+		Timeout: 60 * time.Second,
+	}).Dial,
+	TLSHandshakeTimeout: 30 * time.Second,
+}
+var client = &http.Client{
+	Timeout:   60 * time.Second,
+	Transport: transport,
+}
+
+func init() {
+	transport.RegisterProtocol("file", http.NewFileTransport(http.Dir("/")))
+}
+
 // Crawl download all the spreadsheets related to the page of the given url. If successful it returns
 // an array of results with the name and the bytes of each spreadsheet.
 func Crawl(url string) (Results, error) {
-	resp, err := http.Get(url)
+	resp, err := client.Get(url)
 	if err != nil {
 		return Results{}, err
 	}
