@@ -12,7 +12,6 @@ import (
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/processor"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
-
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -24,10 +23,10 @@ type config struct {
 	Month            int    `envconfig:"MONTH"`
 	Year             int    `envconfig:"YEAR"`
 	SpreadsheetsPath string `envconfig:"LOCAL_SPREADSHEETS_PATH"`
+	MonthURL         string `envconfig:"MONTH_URL"`
 }
 
 func main() {
-	// TODO: Treat Signals.
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
@@ -46,13 +45,20 @@ func main() {
 
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
-	indexPath, err := generateIndexMock(conf.SpreadsheetsPath)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	defer os.Remove(indexPath)
+	var indexPath string
 
-	processor.Process(fmt.Sprintf("file://%s", indexPath), fmt.Sprintf("%d-%d", conf.Month, conf.Year), emailClient, pcloudClient, parserClient)
+	if conf.MonthURL != "" {
+		indexPath = conf.MonthURL
+	} else {
+		p, err := generateIndexMock(conf.SpreadsheetsPath)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		defer os.Remove(indexPath)
+		indexPath = fmt.Sprintf("file://%s", p)
+	}
+	fmt.Printf("Processing spreadshets from: %s\n", indexPath)
+	processor.Process(indexPath, fmt.Sprintf("%d-%d", conf.Month, conf.Year), emailClient, pcloudClient, parserClient)
 }
 
 // generateIndexMock create a index.html with the local paths of the files inside the given directory path
