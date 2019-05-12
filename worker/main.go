@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/email"
@@ -17,10 +18,26 @@ type config struct {
 	ParserURL      string `envconfig:"PARSER_URL"`
 }
 
+const remuneracaoPath = "http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/remuneracao-"
+
+var months = map[int]string{
+	1:  "janeiro",
+	2:  "fevereiro",
+	3:  "marco",
+	4:  "abril",
+	5:  "maio",
+	6:  "junho",
+	7:  "julho",
+	8:  "agosto",
+	9:  "setembro",
+	10: "outubro",
+	11: "novembro",
+	12: "dezembro",
+}
+
 const (
-	emailFrom = "no-reply@dadosjusbr.com"
-	emailTo   = "dadosjusbrops@googlegroups.com"
-	subject   = "remuneracao-magistrados error"
+	month = 04
+	year  = 2018
 )
 
 func main() {
@@ -38,5 +55,7 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
-	processor.Process(04, 2018, emailClient, pcloudClient, parser.NewServiceClient(conf.ParserURL))
+	parserClient := parser.NewServiceClient(conf.ParserURL)
+
+	processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), month, year, emailClient, pcloudClient, parserClient)
 }
