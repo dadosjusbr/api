@@ -26,12 +26,6 @@ type config struct {
 	SpreadsheetsPath string `envconfig:"LOCAL_SPREADSHEETS_PATH"`
 }
 
-const (
-	emailFrom = "no-reply@dadosjusbr.com"
-	emailTo   = "dadosjusbrops@googlegroups.com"
-	subject   = "remuneracao-magistrados error"
-)
-
 func main() {
 	// TODO: Treat Signals.
 	var conf config
