@@ -8,23 +8,43 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/dadosjusbr/remuneracao-magistrados/crawler"
+	"github.com/dadosjusbr/remuneracao-magistrados/email"
+	"github.com/dadosjusbr/remuneracao-magistrados/parser"
+	"github.com/dadosjusbr/remuneracao-magistrados/processor"
+	"github.com/dadosjusbr/remuneracao-magistrados/store"
 
 	"github.com/kelseyhightower/envconfig"
 )
 
 type config struct {
+	SendgridAPIKey   string `envconfig:"SENDGRID_API_KEY"`
+	PCloudUsername   string `envconfig:"PCLOUD_USERNAME"`
+	PCloudPassword   string `envconfig:"PCLOUD_PASSWORD"`
+	ParserURL        string `envconfig:"PARSER_URL"`
+	Month            int    `envconfig:"MONTH"`
+	Year             int    `envconfig:"YEAR"`
 	SpreadsheetsPath string `envconfig:"LOCAL_SPREADSHEETS_PATH"`
-	Month            string `envconfig:"MONTH"`
-	Year             string `envconfig:"YEAR"`
 }
 
 func main() {
+	// TODO: Treat Signals.
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	emailClient, err := email.NewClient(conf.SendgridAPIKey)
+	if err != nil {
+		log.Fatal("ERROR: ", err.Error())
+	}
+
+	pcloudClient, err := store.NewPCloudClient(conf.PCloudUsername, conf.PCloudPassword)
+	if err != nil {
+		log.Fatal("ERROR: ", err.Error())
+	}
+
+	parserClient := parser.NewServiceClient(conf.ParserURL)
 
 	indexPath, err := generateIndexMock(conf.SpreadsheetsPath)
 	if err != nil {
@@ -32,16 +52,7 @@ func main() {
 	}
 	defer os.Remove(indexPath)
 
-	results, err := crawler.Crawl(fmt.Sprintf("file://%s", indexPath))
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	fmt.Println("RESULTS NAMES: ")
-	for _, result := range results {
-		fmt.Println(result.Name)
-	}
-
-	fmt.Println(indexPath)
+	processor.Process(fmt.Sprintf("file://%s", indexPath), conf.Month, conf.Year, emailClient, pcloudClient, parserClient)
 }
 
 // generateIndexMock create a index.html with the local paths of the files inside the given directory path
