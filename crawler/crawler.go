@@ -55,11 +55,10 @@ func Crawl(url string) (Results, error) {
 		return Results{}, err
 	}
 	results := Results{}
-	sel := doc.Find("td")
+	sel := doc.Find("a")
 	for i := range sel.Nodes {
 		item := sel.Eq(i)
-		linkTag := item.Find("a")
-		link, _ := linkTag.Attr("href")
+		link, _ := item.Attr("href")
 		if strings.HasSuffix(link, "xls") || strings.HasSuffix(link, "xlsx") {
 			var dLink string
 			if strings.HasPrefix(link, "file://") {
