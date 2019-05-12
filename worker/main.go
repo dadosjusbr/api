@@ -57,5 +57,5 @@ func main() {
 	}
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
-	processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), month, year, emailClient, pcloudClient, parserClient)
+	processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), fmt.Sprintf("%d-%d", month, year), emailClient, pcloudClient, parserClient)
 }

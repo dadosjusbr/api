@@ -52,7 +52,7 @@ func main() {
 	}
 	defer os.Remove(indexPath)
 
-	processor.Process(fmt.Sprintf("file://%s", indexPath), conf.Month, conf.Year, emailClient, pcloudClient, parserClient)
+	processor.Process(fmt.Sprintf("file://%s", indexPath), fmt.Sprintf("%d-%d", conf.Month, conf.Year), emailClient, pcloudClient, parserClient)
 }
 
 // generateIndexMock create a index.html with the local paths of the files inside the given directory path

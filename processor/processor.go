@@ -20,7 +20,7 @@ const (
 )
 
 // Process download, parse, save and publish data of one month.
-func Process(url string, year, month int, emailClient *email.Client, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) {
+func Process(url string, filePre string, emailClient *email.Client, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) {
 	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
 	crawST := time.Now()
@@ -51,7 +51,7 @@ func Process(url string, year, month int, emailClient *email.Client, pcloudClien
 
 	// Backup.
 	backupST := time.Now()
-	rl, err := pcloudClient.PutZip("2018-04-raw.zip", sNames, sContents)
+	rl, err := pcloudClient.PutZip(fmt.Sprintf("%s-raw.zip", filePre), sNames, sContents)
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())
@@ -63,7 +63,7 @@ func Process(url string, year, month int, emailClient *email.Client, pcloudClien
 
 	// Packaging.
 	packagingST := time.Now()
-	datapackage, err := packager.Pack(fmt.Sprintf("%d-%d", year, month), schema, csv)
+	datapackage, err := packager.Pack(fmt.Sprintf("%s-datapackage", filePre), schema, csv)
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR: " + err.Error())
