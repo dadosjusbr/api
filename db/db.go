@@ -19,7 +19,7 @@ type MonthResults struct {
 	Year            int
 	SpreadsheetsURL string
 	DatapackageURL  string
-	Status          string //success or fail (put in consts??)
+	Success         bool
 }
 
 //Client manages all iteractions with mongodb
@@ -39,8 +39,7 @@ func NewClient(url string) (*Client, error) {
 	}
 
 	// Check the connection
-	err = client.Ping(context.TODO(), nil)
-	if err != nil {
+	if err := client.Ping(context.TODO(), nil); err != nil {
 		return nil, err
 	}
 
