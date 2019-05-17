@@ -54,7 +54,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		defer os.Remove(indexPath)
+		defer os.Remove(p)
 		indexPath = fmt.Sprintf("file://%s", p)
 	}
 	fmt.Printf("Processing spreadshets from: %s\n", indexPath)
