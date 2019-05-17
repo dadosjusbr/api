@@ -3,34 +3,23 @@ package processor
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/crawler"
-	"github.com/dadosjusbr/remuneracao-magistrados/email"
 	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
 )
 
-const (
-	emailFrom = "no-reply@dadosjusbr.com"
-	emailTo   = "dadosjusbrops@googlegroups.com"
-	subject   = "remuneracao-magistrados error"
-)
-
 // Process download, parse, save and publish data of one month.
-func Process(url string, filePre string, emailClient *email.Client, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) {
+func Process(url string, filePre string, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) error {
 	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
 	crawST := time.Now()
 	results, err := crawler.Crawl(url)
 	if err != nil {
-		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
-			fmt.Println("ERROR: " + err.Error())
-		}
 		fmt.Println("CRAWLING ERROR: " + err.Error())
-		return
+		return err
 	}
 	fmt.Printf("Crawling OK (%d files). Took %v\n", len(results), time.Now().Sub(crawST))
 
@@ -44,8 +33,8 @@ func Process(url string, filePre string, emailClient *email.Client, pcloudClient
 	}
 	csv, schema, err := parser.Parse(sContents)
 	if err != nil {
-		// TODO: Send an email.
-		log.Fatal(err)
+		fmt.Println("PARSING ERROR: " + err.Error())
+		return err
 	}
 	fmt.Printf("Parsing OK. Took %v\n", time.Now().Sub(parsingST))
 
@@ -53,11 +42,8 @@ func Process(url string, filePre string, emailClient *email.Client, pcloudClient
 	backupST := time.Now()
 	rl, err := pcloudClient.PutZip(fmt.Sprintf("%s-raw.zip", filePre), sNames, sContents)
 	if err != nil {
-		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
-			fmt.Println("ERROR: " + err.Error())
-		}
-		fmt.Println("ERROR: " + err.Error())
-		return
+		fmt.Println("BACKUP ERROR: " + err.Error())
+		return err
 	}
 	fmt.Printf("Spreadsheets backed up OK (%s). Took %v\n", rl, time.Now().Sub(backupST))
 
@@ -65,11 +51,8 @@ func Process(url string, filePre string, emailClient *email.Client, pcloudClient
 	packagingST := time.Now()
 	datapackage, err := packager.Pack(fmt.Sprintf("%s-datapackage", filePre), schema, csv)
 	if err != nil {
-		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
-			fmt.Println("ERROR: " + err.Error())
-		}
-		fmt.Println("ERROR: " + err.Error())
-		return
+		fmt.Println("PACKAGING ERROR: " + err.Error())
+		return err
 	}
 	fmt.Printf("Packaging OK. Took: %s\n", time.Now().Sub(packagingST))
 
@@ -77,11 +60,10 @@ func Process(url string, filePre string, emailClient *email.Client, pcloudClient
 	publishingST := time.Now()
 	dpl, err := pcloudClient.Put("2018-04-datapackage.zip", bytes.NewReader(datapackage))
 	if err != nil {
-		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
-			fmt.Println("ERROR: " + err.Error())
-		}
-		fmt.Println("ERROR: " + err.Error())
-		return
+		fmt.Println("PUBLISHING ERROR: " + err.Error())
+		return err
 	}
 	fmt.Printf("Publishing OK (%s). Took %v\n", dpl, time.Now().Sub(publishingST))
+
+	return nil
 }

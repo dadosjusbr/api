@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/dadosjusbr/remuneracao-magistrados/email"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/processor"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
@@ -16,7 +15,6 @@ import (
 )
 
 type config struct {
-	SendgridAPIKey   string `envconfig:"SENDGRID_API_KEY"`
 	PCloudUsername   string `envconfig:"PCLOUD_USERNAME"`
 	PCloudPassword   string `envconfig:"PCLOUD_PASSWORD"`
 	ParserURL        string `envconfig:"PARSER_URL"`
@@ -31,11 +29,6 @@ func main() {
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
-	}
-
-	emailClient, err := email.NewClient(conf.SendgridAPIKey)
-	if err != nil {
-		log.Fatal("ERROR: ", err.Error())
 	}
 
 	pcloudClient, err := store.NewPCloudClient(conf.PCloudUsername, conf.PCloudPassword)
@@ -58,7 +51,12 @@ func main() {
 		indexPath = fmt.Sprintf("file://%s", p)
 	}
 	fmt.Printf("Processing spreadshets from: %s\n", indexPath)
-	processor.Process(indexPath, fmt.Sprintf("%d-%d", conf.Month, conf.Year), emailClient, pcloudClient, parserClient)
+
+	err = processor.Process(indexPath, fmt.Sprintf("%d-%d", conf.Month, conf.Year), pcloudClient, parserClient)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Month successfuly published.")
 }
 
 // generateIndexMock create a index.html with the local paths of the files inside the given directory path
