@@ -40,6 +40,12 @@ const (
 	year  = 2018
 )
 
+const (
+	emailFrom = "no-reply@dadosjusbr.com"
+	emailTo   = "dadosjusbrops@googlegroups.com"
+	subject   = "remuneracao-magistrados error"
+)
+
 func main() {
 	// TODO: Treat Signals.
 	var conf config
@@ -57,5 +63,11 @@ func main() {
 	}
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
-	processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), fmt.Sprintf("%d-%d", month, year), emailClient, pcloudClient, parserClient)
+	err = processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), fmt.Sprintf("%d-%d", month, year), pcloudClient, parserClient)
+	if err != nil {
+		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
+			fmt.Println("ERROR SENDING EMAIL: " + err.Error())
+		}
+		log.Fatal(err)
+	}
 }
