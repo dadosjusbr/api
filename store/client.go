@@ -250,10 +250,16 @@ func (pcloud *PCloudClient) PutZip(fName string, names []string, contents [][]by
 		if err != nil {
 			return "", err
 		}
-		_, err = f.Write(contents[i])
+		_, err = f.Write([]byte(contents[i]))
 		if err != nil {
 			return "", err
 		}
 	}
+
+	err := w.Close()
+	if err != nil {
+		return "", err
+	}
+
 	return pcloud.Put(fName, buf)
 }
