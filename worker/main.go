@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/dadosjusbr/remuneracao-magistrados/db"
 	"github.com/dadosjusbr/remuneracao-magistrados/email"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/processor"
@@ -16,6 +17,7 @@ type config struct {
 	PCloudUsername string `envconfig:"PCLOUD_USERNAME"`
 	PCloudPassword string `envconfig:"PCLOUD_PASSWORD"`
 	ParserURL      string `envconfig:"PARSER_URL"`
+	DBUrl          string `envconfig:"DADOSJUSBR_DB_URL"`
 }
 
 const remuneracaoPath = "http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/remuneracao-"
@@ -61,9 +63,17 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
+
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
-	err = processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), fmt.Sprintf("%d-%d", month, year), pcloudClient, parserClient)
+	dbClient, err := db.NewClient(conf.DBUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbClient.CloseConnection()
+
+	err = processor.Process(fmt.Sprintf("%s%s-%d", remuneracaoPath, months[month], year), month, year, pcloudClient, parserClient, dbClient)
+
 	if err != nil {
 		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
 			fmt.Println("ERROR SENDING EMAIL: " + err.Error())
