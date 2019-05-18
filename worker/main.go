@@ -17,7 +17,7 @@ type config struct {
 	PCloudUsername string `envconfig:"PCLOUD_USERNAME"`
 	PCloudPassword string `envconfig:"PCLOUD_PASSWORD"`
 	ParserURL      string `envconfig:"PARSER_URL"`
-	DBUrl          string `envconfig:"DADOSJUSBR_DB_URL"`
+	DBUrl          string `envconfig:"MONGODB_URI"`
 }
 
 const remuneracaoPath = "http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/remuneracao-"

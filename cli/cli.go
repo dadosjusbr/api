@@ -23,7 +23,7 @@ type config struct {
 	Year             int    `envconfig:"YEAR"`
 	SpreadsheetsPath string `envconfig:"LOCAL_SPREADSHEETS_PATH"`
 	MonthURL         string `envconfig:"MONTH_URL"`
-	DBUrl            string `envconfig:"DADOSJUSBR_DB_URL"`
+	DBUrl            string `envconfig:"MONGODB_URI"`
 }
 
 func main() {
