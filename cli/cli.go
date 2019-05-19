@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/dadosjusbr/remuneracao-magistrados/db"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/processor"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
@@ -22,6 +23,7 @@ type config struct {
 	Year             int    `envconfig:"YEAR"`
 	SpreadsheetsPath string `envconfig:"LOCAL_SPREADSHEETS_PATH"`
 	MonthURL         string `envconfig:"MONTH_URL"`
+	DBUrl            string `envconfig:"MONGODB_URI"`
 }
 
 func main() {
@@ -38,6 +40,12 @@ func main() {
 
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
+	dbClient, err := db.NewClient(conf.DBUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbClient.CloseConnection()
+
 	var indexPath string
 
 	if conf.MonthURL != "" {
@@ -52,7 +60,7 @@ func main() {
 	}
 	fmt.Printf("Processing spreadshets from: %s\n", indexPath)
 
-	err = processor.Process(indexPath, fmt.Sprintf("%d-%d", conf.Month, conf.Year), pcloudClient, parserClient)
+	err = processor.Process(indexPath, conf.Month, conf.Year, pcloudClient, parserClient, dbClient)
 	if err != nil {
 		log.Fatal(err)
 	}

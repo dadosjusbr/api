@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/crawler"
+	"github.com/dadosjusbr/remuneracao-magistrados/db"
 	"github.com/dadosjusbr/remuneracao-magistrados/packager"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
 )
 
 // Process download, parse, save and publish data of one month.
-func Process(url string, filePre string, pcloudClient *store.PCloudClient, parser *parser.ServiceClient) error {
+func Process(url string, month, year int, pcloudClient *store.PCloudClient, parser *parser.ServiceClient, dbClient *db.Client) error {
 	//TODO: this function shuld return an error if something goes wrong.
 	// Download files from CNJ.
 	crawST := time.Now()
@@ -37,6 +38,8 @@ func Process(url string, filePre string, pcloudClient *store.PCloudClient, parse
 		return err
 	}
 	fmt.Printf("Parsing OK. Took %v\n", time.Now().Sub(parsingST))
+
+	filePre := fmt.Sprintf("%d-%d", year, month)
 
 	// Backup.
 	backupST := time.Now()
@@ -64,6 +67,9 @@ func Process(url string, filePre string, pcloudClient *store.PCloudClient, parse
 		return err
 	}
 	fmt.Printf("Publishing OK (%s). Took %v\n", dpl, time.Now().Sub(publishingST))
+
+	mr := db.MonthResults{Month: month, Year: year, SpreadsheetsURL: rl, DatapackageURL: dpl, Success: true}
+	dbClient.SaveMonthResults(mr)
 
 	return nil
 }
