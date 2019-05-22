@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
 
 	"github.com/kelseyhightower/envconfig"
@@ -113,12 +115,14 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 		}
 
 		monthResults, err := dbClient.GetMonthResults(month, year)
-		if err != nil || !monthResults.Success {
-			//TODO: render a 404 page
-			fmt.Println(err)
-			return c.String(http.StatusNotFound, "not found")
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				//TODO: render a 404 page
+				fmt.Println("Document not found")
+				return c.String(http.StatusNotFound, "not found")
+			}
+			return c.String(http.StatusInternalServerError, "unexpected error")
 		}
-		fmt.Printf("Found a single document: %+v\n", monthResults)
 
 		viewModel := struct {
 			Month           int
@@ -133,7 +137,6 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 			monthResults.SpreadsheetsURL,
 			monthResults.DatapackageURL,
 		}
-
 		return c.Render(http.StatusOK, "monthTemplate.html", viewModel)
 	}
 }

@@ -64,7 +64,11 @@ func (db *Client) SaveMonthResults(mr MonthResults) error {
 
 //GetMonthResults retrieve the specified month information from the DB
 func (db *Client) GetMonthResults(month, year int) (MonthResults, error) {
-	filter := bson.D{{Key: "month", Value: month}, {Key: "year", Value: year}}
+	filter := bson.D{
+		{Key: "month", Value: month},
+		{Key: "year", Value: year},
+		{Key: "success", Value: true},
+	}
 	var result MonthResults
 
 	err := db.getMonthCollection().FindOne(context.TODO(), filter).Decode(&result)
