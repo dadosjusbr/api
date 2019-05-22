@@ -32,7 +32,7 @@ func Process(url string, month, year int, pcloudClient *store.PCloudClient, pars
 		sContents = append(sContents, r.Body)
 		sNames = append(sNames, r.Name)
 	}
-	csv, schema, err := parser.Parse(sContents)
+	csv, schema, err := parser.Parse(sContents, sNames)
 	if err != nil {
 		fmt.Println("PARSING ERROR: " + err.Error())
 		return err

@@ -34,13 +34,18 @@ func NewServiceClient(url string) *ServiceClient {
 }
 
 // Parse parse the spreadsheet contents and returns an unified parsed CSV and its schema.
-func (s *ServiceClient) Parse(contents [][]byte) ([]byte, map[string]interface{}, error) {
+func (s *ServiceClient) Parse(contents [][]byte, names []string) ([]byte, map[string]interface{}, error) {
+	if len(contents) != len(names) {
+		return nil, nil, fmt.Errorf("error Parser: contents (%d) and names (%d) must be the same size. ", len(contents), len(names))
+	}
 	sch, err := s.getSchema()
 	if err != nil {
 		return nil, nil, err
 	}
 	var result bytes.Buffer
 	for i, c := range contents {
+		parseST := time.Now()
+		filename := names[i]
 		if i == 0 {
 			data, err := s.request(s.url, c)
 			if err != nil {
@@ -58,6 +63,7 @@ func (s *ServiceClient) Parse(contents [][]byte) ([]byte, map[string]interface{}
 		if i < len(contents)-1 {
 			result.WriteRune('\n')
 		}
+		fmt.Printf("File (%s) successfuly parsed. Took %v\n", filename, time.Now().Sub(parseST))
 	}
 	return result.Bytes(), sch, nil
 }
