@@ -103,12 +103,12 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		month, err := strconv.Atoi(c.Param("month"))
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(fmt.Errorf("invalid month on the url: (%s) --> %v", c.Param("month"), err))
 			return c.String(http.StatusBadRequest, "invalid month")
 		}
 		year, err := strconv.Atoi(c.Param("year"))
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(fmt.Errorf("invalid year on the url: (%s) --> %v", c.Param("year"), err))
 			return c.String(http.StatusBadRequest, "invalid year")
 		}
 
@@ -147,7 +147,7 @@ func main() {
 
 	dbClient, err := db.NewClient(conf.DBUrl)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
