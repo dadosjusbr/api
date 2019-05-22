@@ -9,12 +9,15 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/dadosjusbr/remuneracao-magistrados/db"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
 )
 
 type config struct {
-	Port int `envconfig:"PORT"`
+	Port  int    `envconfig:"PORT"`
+	DBUrl string `envconfig:"MONGODB_URI"`
 }
 
 // Entry represents each entry of the processed data.
@@ -42,6 +45,21 @@ func loadEntryByMonthAndYear(month int, year int) (Entry, error) {
 	}
 
 	return entry, nil
+}
+
+var months = map[int]string{
+	1:  "Janeiro",
+	2:  "Fevereiro",
+	3:  "Marco",
+	4:  "Abril",
+	5:  "Maio",
+	6:  "Junho",
+	7:  "Julho",
+	8:  "Agosto",
+	9:  "Setembro",
+	10: "Outubro",
+	11: "Novembro",
+	12: "Dezembro",
 }
 
 func loadPreviousEntries() ([2]Entry, error) {
@@ -81,27 +99,78 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
+func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		month, err := strconv.Atoi(c.Param("month"))
+		if err != nil {
+			fmt.Println(fmt.Errorf("invalid month on the url: (%s) --> %v", c.Param("month"), err))
+			return c.String(http.StatusBadRequest, "invalid month")
+		}
+		year, err := strconv.Atoi(c.Param("year"))
+		if err != nil {
+			fmt.Println(fmt.Errorf("invalid year on the url: (%s) --> %v", c.Param("year"), err))
+			return c.String(http.StatusBadRequest, "invalid year")
+		}
+
+		monthResults, err := dbClient.GetMonthResults(month, year)
+		if err != nil {
+			if err == db.ErrDocNotFound {
+				//TODO: render a 404 page
+				fmt.Println("Document not found")
+				return c.String(http.StatusNotFound, "not found")
+			}
+			return c.String(http.StatusInternalServerError, "unexpected error")
+		}
+
+		viewModel := struct {
+			Month           int
+			Year            int
+			MonthLabel      string
+			SpreadsheetsURL string
+			DatapackageURL  string
+		}{
+			monthResults.Month,
+			monthResults.Year,
+			months[monthResults.Month],
+			monthResults.SpreadsheetsURL,
+			monthResults.DatapackageURL,
+		}
+		return c.Render(http.StatusOK, "monthTemplate.html", viewModel)
+	}
+}
+
 func main() {
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	dbClient, err := db.NewClient(conf.DBUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbClient.CloseConnection()
+
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
+
+	e := echo.New()
+
+	renderer := &TemplateRenderer{
+		templates: template.Must(template.ParseGlob("templates/*.html")),
+	}
+
+	e.Renderer = renderer
+
+	e.Static("/static", "templates/assets")
+
+	e.GET("/", handleDashboardRequest)
+	e.GET("/:year/:month", getHandleMonthRequest(dbClient))
+
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
 		ReadTimeout:  5 * time.Minute,
 		WriteTimeout: 5 * time.Minute,
 	}
-
-	e := echo.New()
-
-	renderer := &TemplateRenderer{
-		templates: template.Must(template.ParseGlob("*.html")),
-	}
-
-	e.Renderer = renderer
-
-	e.GET("/", handleDashboardRequest)
 	e.Logger.Fatal(e.StartServer(s))
 }
