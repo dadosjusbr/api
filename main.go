@@ -9,8 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
 
 	"github.com/kelseyhightower/envconfig"
@@ -116,7 +114,7 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 
 		monthResults, err := dbClient.GetMonthResults(month, year)
 		if err != nil {
-			if err == mongo.ErrNoDocuments {
+			if err == db.ErrDocNotFound {
 				//TODO: render a 404 page
 				fmt.Println("Document not found")
 				return c.String(http.StatusNotFound, "not found")

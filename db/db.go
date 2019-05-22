@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -27,6 +28,9 @@ type MonthResults struct {
 type Client struct {
 	client *mongo.Client
 }
+
+//ErrDocNotFound error returned when no document is found in a query
+var ErrDocNotFound = errors.New("no documents in result")
 
 //NewClient returns an db connection instance that can be used for CRUD opetations
 func NewClient(url string) (*Client, error) {
@@ -73,6 +77,9 @@ func (db *Client) GetMonthResults(month, year int) (MonthResults, error) {
 
 	err := db.getMonthCollection().FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return MonthResults{}, ErrDocNotFound
+		}
 		return MonthResults{}, err
 	}
 	return result, nil
