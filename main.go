@@ -152,6 +152,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer dbClient.CloseConnection()
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
 
