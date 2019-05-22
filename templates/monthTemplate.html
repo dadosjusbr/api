@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css"
+    />
+
+    <title>dadosjusbr</title>
+  </head>
+
+  <body style="background-color: #f9f9f9;">
+    <nav class="navbar navbar-light" style="background-color: #00386E">
+      <a class="navbar-brand" href="#" style="color:white">
+        <img
+          src="/static/white_logo.png"
+          width="279"
+          height="49"
+          alt=""
+          style="margin:7px"
+        />
+      </a>
+    </nav>
+    <div
+      style="display: flex; flex-direction: row; margin: 80px 80px 80px 80px; text-align: center; position: absolute; height: 80px"
+    >
+      <aside
+        style="height:700px; min-width: 250px; display: flex; flex-direction: column"
+      >
+        <li
+          class="list-group-item"
+          style="text-align: center; background-color: #00386E; color: white;"
+        >
+          <b>Índice</b>
+        </li>
+        <ul class="list-group" style="text-align: initial; overflow-y:auto;">
+          <li class="list-group-item">
+            <a href="#" style="color: black">{{.MonthLabel}} {{.Year}}</a>
+          </li>
+        </ul>
+      </aside>
+      <div style="padding-left: 80px;">
+        <h1>{{.MonthLabel}} {{.Year}}</h1>
+        <br />
+        <div style="width:600px; height: 400px; margin: auto">
+          <canvas id="myChart" width="600" height="400"></canvas>
+        </div>
+        <p style="text-align: justify">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum
+        </p>
+        <button
+          type="button"
+          class="btn btn-primary btn-lg"
+          onclick="window.open('{{.DatapackageURL}}','_blank')"
+        >
+          Baixar datapackage
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-lg"
+          onclick="window.open('{{.SpreadsheetsURL}}','_blank')"
+        >
+          Baixar planilhas
+        </button>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+
+    <script>
+      const ctx = document.getElementById("myChart");
+      const myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "Total benefício 1",
+            "Total benefício 2",
+            "Total benefício 3",
+            "Total benefício 4",
+            "Contracheque total"
+          ],
+          datasets: [
+            {
+              label: "R$",
+              data: [
+                12 * 1000 * 1000,
+                19 * 1000 * 1000,
+                3 * 1000 * 1000,
+                5 * 1000 * 1000,
+                20 * 1000 * 1000
+              ],
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  //beginAtZero: true
+                }
+              }
+            ]
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

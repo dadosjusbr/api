@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -59,6 +60,18 @@ func (db *Client) SaveMonthResults(mr MonthResults) error {
 	}
 	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
 	return nil
+}
+
+//GetMonthResults retrieve the specified month information from the DB
+func (db *Client) GetMonthResults(month, year int) (MonthResults, error) {
+	filter := bson.D{{Key: "month", Value: month}, {Key: "year", Value: year}}
+	var result MonthResults
+
+	err := db.getMonthCollection().FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		return MonthResults{}, err
+	}
+	return result, nil
 }
 
 //CloseConnection closes the opened connetion to mongodb
