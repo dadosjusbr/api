@@ -69,7 +69,10 @@ func Process(url string, month, year int, pcloudClient *store.PCloudClient, pars
 	fmt.Printf("Publishing OK (%s). Took %v\n", dpl, time.Now().Sub(publishingST))
 
 	mr := db.MonthResults{Month: month, Year: year, SpreadsheetsURL: rl, DatapackageURL: dpl, Success: true}
-	dbClient.SaveMonthResults(mr)
+	err = dbClient.SaveMonthResults(mr)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -24,6 +24,7 @@ type config struct {
 	SpreadsheetsPath string `envconfig:"LOCAL_SPREADSHEETS_PATH"`
 	MonthURL         string `envconfig:"MONTH_URL"`
 	DBUrl            string `envconfig:"MONGODB_URI"`
+	DBName           string `envconfig:"MONGODB_NAME"`
 }
 
 func main() {
@@ -40,7 +41,7 @@ func main() {
 
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
-	dbClient, err := db.NewClient(conf.DBUrl)
+	dbClient, err := db.NewClient(conf.DBUrl, conf.DBName)
 	if err != nil {
 		log.Fatal(err)
 	}
