@@ -47,7 +47,7 @@ func loadEntryByMonthAndYear(month int, year int) (Entry, error) {
 	return entry, nil
 }
 
-var months = map[int]string{
+var monthsLabelMap = map[int]string{
 	1:  "Janeiro",
 	2:  "Fevereiro",
 	3:  "Marco",
@@ -99,6 +99,12 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
+//SidebarElement contains the necessary info to render the sidebar
+type SidebarElement struct {
+	Label string
+	URL   string
+}
+
 func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		month, err := strconv.Atoi(c.Param("month"))
@@ -122,18 +128,36 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 			return c.String(http.StatusInternalServerError, "unexpected error")
 		}
 
+		monthLabel := fmt.Sprintf("%s %d", monthsLabelMap[month], year)
+
+		parsedMonths, err := dbClient.GetParsedMonths()
+		if err != nil {
+			fmt.Println(fmt.Errorf("error retrieving all parsed months from db --> %v", err))
+			return c.String(http.StatusInternalServerError, "unexpected error")
+		}
+
+		var sidebarElements []SidebarElement
+
+		for _, pm := range parsedMonths {
+			label := fmt.Sprintf("%s %d", monthsLabelMap[pm.Month], pm.Year)
+			URL := fmt.Sprintf("/%d/%d", pm.Year, pm.Month)
+			sidebarElements = append(sidebarElements, SidebarElement{Label: label, URL: URL})
+		}
+
 		viewModel := struct {
 			Month           int
 			Year            int
 			MonthLabel      string
 			SpreadsheetsURL string
 			DatapackageURL  string
+			SidebarElements []SidebarElement
 		}{
 			monthResults.Month,
 			monthResults.Year,
-			months[monthResults.Month],
+			monthLabel,
 			monthResults.SpreadsheetsURL,
 			monthResults.DatapackageURL,
+			sidebarElements,
 		}
 		return c.Render(http.StatusOK, "monthTemplate.html", viewModel)
 	}

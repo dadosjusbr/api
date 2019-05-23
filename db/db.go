@@ -85,6 +85,43 @@ func (db *Client) GetMonthResults(month, year int) (MonthResults, error) {
 	return result, nil
 }
 
+//ParsedMonth represents the information from a parsed month
+type ParsedMonth struct {
+	Month int
+	Year  int
+}
+
+//GetParsedMonths retrieve a list with all parsed months sorted in chronological order
+func (db *Client) GetParsedMonths() ([]ParsedMonth, error) {
+	var results []ParsedMonth
+	collection := db.getMonthCollection()
+
+	query := bson.D{{Key: "success", Value: true}}
+
+	options := options.FindOptions{}
+	options.Sort = bson.D{{Key: "year", Value: 1}, {Key: "month", Value: 1}}
+	options.Projection = bson.D{{Key: "month", Value: 1}, {Key: "year", Value: 1}}
+
+	cursor, err := collection.Find(
+		context.TODO(),
+		query,
+		&options,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for cursor.Next(context.TODO()) {
+		var elem ParsedMonth
+		err := cursor.Decode(&elem)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, elem)
+	}
+	return results, nil
+}
+
 //CloseConnection closes the opened connetion to mongodb
 func (db *Client) CloseConnection() error {
 	err := db.client.Disconnect(context.TODO())
