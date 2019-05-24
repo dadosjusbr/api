@@ -21,37 +21,10 @@ type config struct {
 	DBName string `envconfig:"MONGODB_NAME"`
 }
 
-// Entry represents each entry of the processed data.
-type Entry struct {
-	PCloudURL   string
-	DataHubURL  string
-	Success     bool
-	Indentifier string
-}
-
-// EntryViewModel is the one that the template is going to use.
-type EntryViewModel struct {
-	Item            Entry
-	PreviousEntries []Entry
-	Month           int
-	Year            int
-}
-
-func loadEntryByMonthAndYear(month int, year int) (Entry, error) {
-	entry := Entry{
-		PCloudURL:   "https://my.pcloud.com/publink/show?code=XZ7fM17Z6S7V93BsYXhMaT4irtMMO8kXc1IV",
-		DataHubURL:  "https://my.pcloud.com/publink/show?code=XZ7fM17Z6S7V93BsYXhMaT4irtMMO8kXc1IV",
-		Success:     true,
-		Indentifier: strconv.Itoa(month) + "-" + strconv.Itoa(year),
-	}
-
-	return entry, nil
-}
-
 var monthsLabelMap = map[int]string{
 	1:  "Janeiro",
 	2:  "Fevereiro",
-	3:  "Marco",
+	3:  "Março",
 	4:  "Abril",
 	5:  "Maio",
 	6:  "Junho",
@@ -61,33 +34,6 @@ var monthsLabelMap = map[int]string{
 	10: "Outubro",
 	11: "Novembro",
 	12: "Dezembro",
-}
-
-func loadPreviousEntries() ([2]Entry, error) {
-	var entries [2]Entry
-
-	entryA, _ := loadEntryByMonthAndYear(3, 2018)
-	entryB, _ := loadEntryByMonthAndYear(2, 2018)
-
-	entries[0] = entryA
-	entries[1] = entryB
-
-	return entries, nil
-}
-
-func handleDashboardRequest(c echo.Context) error {
-	month, year := 4, 2018
-	entry, _ := loadEntryByMonthAndYear(month, year)
-	oldEntries, _ := loadPreviousEntries()
-
-	data := EntryViewModel{
-		Item:            entry,
-		Month:           month,
-		Year:            year,
-		PreviousEntries: oldEntries[:],
-	}
-
-	return c.Render(http.StatusOK, "index.html", data)
 }
 
 // TemplateRenderer is a custom html/template renderer for Echo framework
@@ -104,6 +50,23 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 type SidebarElement struct {
 	Label string
 	URL   string
+}
+
+func getSidebarElements(dbClient *db.Client) ([]SidebarElement, error) {
+	processedMonths, err := dbClient.GetProcessedMonths()
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving all processed months from db --> %v", err)
+	}
+
+	var sidebarElements []SidebarElement
+
+	for _, pm := range processedMonths {
+		label := fmt.Sprintf("%s %d", monthsLabelMap[pm.Month], pm.Year)
+		URL := fmt.Sprintf("/%d/%d", pm.Year, pm.Month)
+		sidebarElements = append(sidebarElements, SidebarElement{Label: label, URL: URL})
+	}
+
+	return sidebarElements, nil
 }
 
 func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
@@ -126,23 +89,16 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 				fmt.Println("Document not found")
 				return c.String(http.StatusNotFound, "not found")
 			}
+			fmt.Println(fmt.Errorf("unexpected error fetching month data from DB --> %v", err))
 			return c.String(http.StatusInternalServerError, "unexpected error")
 		}
 
 		monthLabel := fmt.Sprintf("%s %d", monthsLabelMap[month], year)
 
-		processedMonths, err := dbClient.GetProcessedMonths()
+		sidebarElements, err := getSidebarElements(dbClient)
 		if err != nil {
-			fmt.Println(fmt.Errorf("error retrieving all parsed months from db --> %v", err))
+			fmt.Println(err)
 			return c.String(http.StatusInternalServerError, "unexpected error")
-		}
-
-		var sidebarElements []SidebarElement
-
-		for _, pm := range processedMonths {
-			label := fmt.Sprintf("%s %d", monthsLabelMap[pm.Month], pm.Year)
-			URL := fmt.Sprintf("/%d/%d", pm.Year, pm.Month)
-			sidebarElements = append(sidebarElements, SidebarElement{Label: label, URL: URL})
 		}
 
 		viewModel := struct {
@@ -161,6 +117,12 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 			sidebarElements,
 		}
 		return c.Render(http.StatusOK, "monthTemplate.html", viewModel)
+	}
+}
+
+func getHandleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return nil
 	}
 }
 
@@ -189,7 +151,7 @@ func main() {
 
 	e.Static("/static", "templates/assets")
 
-	e.GET("/", handleDashboardRequest)
+	e.GET("/", getHandleMainPageRequest(dbClient))
 	e.GET("/:year/:month", getHandleMonthRequest(dbClient))
 
 	s := &http.Server{
