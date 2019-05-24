@@ -61,7 +61,7 @@ func Process(url string, month, year int, pcloudClient *store.PCloudClient, pars
 
 	// Publishing.
 	publishingST := time.Now()
-	dpl, err := pcloudClient.Put("2018-04-datapackage.zip", bytes.NewReader(datapackage))
+	dpl, err := pcloudClient.Put(fmt.Sprintf("%s-datapackage.zip", filePre), bytes.NewReader(datapackage))
 	if err != nil {
 		fmt.Println("PUBLISHING ERROR: " + err.Error())
 		return err

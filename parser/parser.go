@@ -69,7 +69,7 @@ func (s *ServiceClient) Parse(contents [][]byte, names []string) ([]byte, map[st
 }
 
 func (s *ServiceClient) request(url string, body []byte) ([]byte, error) {
-	resp, err := s.client.Post(s.url, "application/octet-stream", bytes.NewReader(body))
+	resp, err := s.client.Post(url, "application/octet-stream", bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("error sending request do parser service(%s):%q", url, err)
 	}
