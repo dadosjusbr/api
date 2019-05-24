@@ -2,3 +2,4 @@ remuneracao-magistrados
 coverage.txt
 .idea/
 .vscode/
+exportEnvVars.sh

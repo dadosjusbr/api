@@ -85,6 +85,43 @@ func (db *Client) GetMonthResults(month, year int) (MonthResults, error) {
 	return result, nil
 }
 
+//ProcessedMonth represents the information from a processed month
+type ProcessedMonth struct {
+	Month int
+	Year  int
+}
+
+//GetProcessedMonths retrieve a list with all processed months sorted in chronological order
+func (db *Client) GetProcessedMonths() ([]ProcessedMonth, error) {
+	var results []ProcessedMonth
+	collection := db.getMonthCollection()
+
+	query := bson.D{{Key: "success", Value: true}}
+
+	options := options.FindOptions{}
+	options.Sort = bson.D{{Key: "year", Value: 1}, {Key: "month", Value: 1}}
+	options.Projection = bson.D{{Key: "month", Value: 1}, {Key: "year", Value: 1}}
+
+	cursor, err := collection.Find(
+		context.TODO(),
+		query,
+		&options,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for cursor.Next(context.TODO()) {
+		var elem ProcessedMonth
+		err := cursor.Decode(&elem)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, elem)
+	}
+	return results, nil
+}
+
 //CloseConnection closes the opened connetion to mongodb
 func (db *Client) CloseConnection() error {
 	err := db.client.Disconnect(context.TODO())
