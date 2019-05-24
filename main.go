@@ -16,8 +16,9 @@ import (
 )
 
 type config struct {
-	Port  int    `envconfig:"PORT"`
-	DBUrl string `envconfig:"MONGODB_URI"`
+	Port   int    `envconfig:"PORT"`
+	DBUrl  string `envconfig:"MONGODB_URI"`
+	DBName string `envconfig:"MONGODB_NAME"`
 }
 
 // Entry represents each entry of the processed data.
@@ -170,7 +171,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	dbClient, err := db.NewClient(conf.DBUrl)
+	dbClient, err := db.NewClient(conf.DBUrl, conf.DBName)
 	if err != nil {
 		log.Fatal(err)
 	}

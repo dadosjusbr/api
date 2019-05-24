@@ -18,6 +18,7 @@ type config struct {
 	PCloudPassword string `envconfig:"PCLOUD_PASSWORD"`
 	ParserURL      string `envconfig:"PARSER_URL"`
 	DBUrl          string `envconfig:"MONGODB_URI"`
+	DBName         string `envconfig:"MONGODB_NAME"`
 }
 
 const remuneracaoPath = "http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/remuneracao-"
@@ -66,7 +67,7 @@ func main() {
 
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
-	dbClient, err := db.NewClient(conf.DBUrl)
+	dbClient, err := db.NewClient(conf.DBUrl, conf.DBName)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -12,7 +12,6 @@ import (
 
 const (
 	monthResultsCollection = "month-results"
-	dbName                 = "dadosjusbr"
 )
 
 //MonthResults is a data model of the results of one month parsing
@@ -27,13 +26,14 @@ type MonthResults struct {
 //Client manages all iteractions with mongodb
 type Client struct {
 	client *mongo.Client
+	dbName string
 }
 
 //ErrDocNotFound error returned when no document is found in a query
 var ErrDocNotFound = errors.New("no documents in result")
 
 //NewClient returns an db connection instance that can be used for CRUD opetations
-func NewClient(url string) (*Client, error) {
+func NewClient(url, dbName string) (*Client, error) {
 	// Set client options
 	clientOptions := options.Client().ApplyURI(url)
 
@@ -49,7 +49,7 @@ func NewClient(url string) (*Client, error) {
 	}
 
 	fmt.Println("Connected to MongoDB!")
-	return &Client{client}, nil
+	return &Client{client, dbName}, nil
 }
 
 //SaveMonthResults save month results
@@ -135,5 +135,5 @@ func (db *Client) CloseConnection() error {
 }
 
 func (db *Client) getMonthCollection() *mongo.Collection {
-	return db.client.Database(dbName).Collection(monthResultsCollection)
+	return db.client.Database(db.dbName).Collection(monthResultsCollection)
 }
