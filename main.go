@@ -130,7 +130,7 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 
 		monthLabel := fmt.Sprintf("%s %d", monthsLabelMap[month], year)
 
-		parsedMonths, err := dbClient.GetParsedMonths()
+		processedMonths, err := dbClient.GetProcessedMonths()
 		if err != nil {
 			fmt.Println(fmt.Errorf("error retrieving all parsed months from db --> %v", err))
 			return c.String(http.StatusInternalServerError, "unexpected error")
@@ -138,7 +138,7 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 
 		var sidebarElements []SidebarElement
 
-		for _, pm := range parsedMonths {
+		for _, pm := range processedMonths {
 			label := fmt.Sprintf("%s %d", monthsLabelMap[pm.Month], pm.Year)
 			URL := fmt.Sprintf("/%d/%d", pm.Year, pm.Month)
 			sidebarElements = append(sidebarElements, SidebarElement{Label: label, URL: URL})

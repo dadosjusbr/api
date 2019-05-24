@@ -85,15 +85,15 @@ func (db *Client) GetMonthResults(month, year int) (MonthResults, error) {
 	return result, nil
 }
 
-//ParsedMonth represents the information from a parsed month
-type ParsedMonth struct {
+//ProcessedMonth represents the information from a processed month
+type ProcessedMonth struct {
 	Month int
 	Year  int
 }
 
-//GetParsedMonths retrieve a list with all parsed months sorted in chronological order
-func (db *Client) GetParsedMonths() ([]ParsedMonth, error) {
-	var results []ParsedMonth
+//GetProcessedMonths retrieve a list with all processed months sorted in chronological order
+func (db *Client) GetProcessedMonths() ([]ProcessedMonth, error) {
+	var results []ProcessedMonth
 	collection := db.getMonthCollection()
 
 	query := bson.D{{Key: "success", Value: true}}
@@ -112,7 +112,7 @@ func (db *Client) GetParsedMonths() ([]ParsedMonth, error) {
 	}
 
 	for cursor.Next(context.TODO()) {
-		var elem ParsedMonth
+		var elem ProcessedMonth
 		err := cursor.Decode(&elem)
 		if err != nil {
 			return nil, err
