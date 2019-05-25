@@ -122,7 +122,17 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 
 func getHandleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		sidebarElements, err := getSidebarElements(dbClient)
+		if err != nil {
+			fmt.Println(err)
+			return c.String(http.StatusInternalServerError, "unexpected error")
+		}
+		viewModel := struct {
+			SidebarElements []SidebarElement
+		}{
+			sidebarElements,
+		}
+		return c.Render(http.StatusOK, "homePageTemplate.html", viewModel)
 	}
 }
 
