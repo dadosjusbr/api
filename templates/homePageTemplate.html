@@ -12,13 +12,20 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" />
 
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/brands.css"
+    integrity="sha384-i2PyM6FMpVnxjRPi0KW/xIS7hkeSznkllv+Hx/MtYDaHA5VcF0yL3KVlvzp8bWjQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/fontawesome.css"
+    integrity="sha384-sri+NftO+0hcisDKgr287Y/1LVnInHJ1l+XC7+FOabmTTIK0HnE2ID+xxvJ21c5J" crossorigin="anonymous">
+
   <title>dadosjusbr</title>
 </head>
 
-<body style="background-color: #f9f9f9;">
+<body style="background-color: #f9f9f9; font-family: 'Roboto', sans-serif;">
   <nav class="navbar navbar-light" style="background-color: #00386E">
     <a class="navbar-brand" href="/" style="color:white">
-      <img src="/static/white_logo.png" width="279" height="49" alt="" style="margin:7px" />
+      <img src="/static/white_logo.png" width="279" height="49" alt="" style="margin:7px;" />
     </a>
   </nav>
   <div style="display: flex; flex-direction: row; margin: 8vh 8vh 0 8vh; text-align: center; position: absolute;">
@@ -27,7 +34,7 @@
         <b>Índice</b>
       </li>
       <ul class="list-group" style="text-align: initial; overflow-y:auto;">
-        {{ $mLabel := .MonthLabel }}
+        {{ $mLabel := "" }}
         {{ range .SidebarElements }}
         <li class="list-group-item">
           <a href="{{ .URL }}"
@@ -37,26 +44,35 @@
       </ul>
     </aside>
     <div style="padding-left: 80px;">
-      <h1>{{ .MonthLabel }}</h1>
-      <br />
-      <div style="width:600px; height: 400px; margin: auto">
-        <canvas id="myChart" width="600" height="400"></canvas>
+      <div>
+        <img src="/static/img-org-djbr.svg" class="img-fluid" alt="" style="margin:0px; height: 25vh; width: auto;" />
+        <h3 style="font-size: 3.5vh">Libertando dados de remunerações para magistrados.</h3>
+        <br />
+        <br />
+        <p style="text-align: justify">
+          O dadosjusbr.online é uma iniciativa que tem como foco incentivar e viabilizar o acesso a informações
+          referentes às remunerações de magistrados publicadas mensalmente na <a
+            href="http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados/" target="_blank">página</a> do
+          Conselho Nacional de
+          Justiça.
+          Aqui você vai encontrar esses dados organizados, limpos e reúnidos em um <a
+            href="https://frictionlessdata.io/data-packages/" target="_blank">datapackage</a> por mês.
+        </p>
+        <br />
+        <div style="width: 100%; text-align: initial">
+          <strong>Acesse os dados de cada mês através do menu lateral.</strong>
+        </div>
+        <br />
+        <br />
       </div>
-      <p style="text-align: justify">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-        minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-        aliquip ex ea commodo consequat. Duis aute irure dolor in
-        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-        culpa qui officia deserunt mollit anim id est laborum
-      </p>
-      <button type="button" class="btn btn-primary btn-lg" onclick="window.open('{{ .DatapackageURL }}','_blank')">
-        Baixar datapackage
-      </button>
-      <button type="button" class="btn btn-secondary btn-lg" onclick="window.open('{{ .SpreadsheetsURL }}','_blank')">
-        Baixar planilhas
-      </button>
+      <div style="width:100%">
+        Nos acompanhe no twitter e github
+        <br>
+        <a href="https://twitter.com/dadosjusbr" target="_blank"
+          style="color: black; font-size: 4vh; margin-right: 1vh"><i class="fab fa-twitter"></i></a>
+        <a href="https://github.com/dadosjusbr/" target="_blank" style="color: black; font-size: 4vh"><i
+            class="fab fa-github"></i></a>
+      </div>
     </div>
   </div>
 
@@ -71,48 +87,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
-
-  <script>
-    const ctx = document.getElementById("myChart");
-    const myChart = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: [
-          "Total benefício 1",
-          "Total benefício 2",
-          "Total benefício 3",
-          "Total benefício 4",
-          "Contracheque total"
-        ],
-        datasets: [
-          {
-            label: "R$",
-            data: [
-              12 * 1000 * 1000,
-              19 * 1000 * 1000,
-              3 * 1000 * 1000,
-              5 * 1000 * 1000,
-              20 * 1000 * 1000
-            ],
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                //beginAtZero: true
-              }
-            }
-          ]
-        }
-      }
-    });
-  </script>
 </body>
 
 </html>
