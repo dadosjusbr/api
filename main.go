@@ -69,7 +69,7 @@ func getSidebarElements(dbClient *db.Client) ([]SidebarElement, error) {
 	return sidebarElements, nil
 }
 
-func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
+func handleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		month, err := strconv.Atoi(c.Param("month"))
 		if err != nil {
@@ -120,7 +120,7 @@ func getHandleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 	}
 }
 
-func getHandleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
+func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		sidebarElements, err := getSidebarElements(dbClient)
 		if err != nil {
@@ -161,8 +161,8 @@ func main() {
 
 	e.Static("/static", "templates/assets")
 
-	e.GET("/", getHandleMainPageRequest(dbClient))
-	e.GET("/:year/:month", getHandleMonthRequest(dbClient))
+	e.GET("/", handleMainPageRequest(dbClient))
+	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
