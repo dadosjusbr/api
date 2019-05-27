@@ -73,6 +73,13 @@ func (s *ServiceClient) request(url string, body []byte) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error sending request do parser service(%s):%q", url, err)
 	}
+
+	fmt.Println("===================")
+	fmt.Println("===================")
+	fmt.Println(resp.StatusCode)
+	fmt.Println("===================")
+	fmt.Println("===================")
+
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

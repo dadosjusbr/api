@@ -6,6 +6,8 @@ require (
 	github.com/dghubble/go-twitter v0.0.0-20190305084156-0022a70e9bee
 	github.com/dghubble/oauth1 v0.5.0
 	github.com/dghubble/sling v1.2.0 // indirect
+	github.com/frictionlessdata/datapackage-go v0.0.0-20190521182031-ebe18689bda7
+	github.com/frictionlessdata/tableschema-go v0.1.5-0.20190521014818-f9bf38926664
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
