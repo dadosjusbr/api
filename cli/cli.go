@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
+	"github.com/dadosjusbr/remuneracao-magistrados/email"
 	"github.com/dadosjusbr/remuneracao-magistrados/parser"
 	"github.com/dadosjusbr/remuneracao-magistrados/processor"
 	"github.com/dadosjusbr/remuneracao-magistrados/store"
@@ -25,7 +26,14 @@ type config struct {
 	MonthURL         string `envconfig:"MONTH_URL"`
 	DBUrl            string `envconfig:"MONGODB_URI"`
 	DBName           string `envconfig:"MONGODB_NAME"`
+	SendgridAPIKey   string `envconfig:"SENDGRID_API_KEY"`
 }
+
+const (
+	emailFrom = "no-reply@dadosjusbr.com"
+	emailTo   = "dadosjusbr.ops@googlegroups.com"
+	subject   = "remuneracao-magistrados error"
+)
 
 func main() {
 	var conf config
@@ -35,6 +43,11 @@ func main() {
 	}
 
 	pcloudClient, err := store.NewPCloudClient(conf.PCloudUsername, conf.PCloudPassword)
+	if err != nil {
+		log.Fatal("ERROR: ", err.Error())
+	}
+
+	emailClient, err := email.NewClient(conf.SendgridAPIKey)
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
@@ -63,9 +76,14 @@ func main() {
 
 	err = processor.Process(indexPath, conf.Month, conf.Year, pcloudClient, parserClient, dbClient)
 	if err != nil {
-		log.Fatal(err)
+		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
+			fmt.Println("ERROR SENDING EMAIL: " + err.Error())
+			log.Fatal(err)
+		}
+		fmt.Printf("an email with the errors was sent to: %s\n", emailTo)
+	} else {
+		fmt.Println("Month successfuly published.")
 	}
-	fmt.Println("Month successfuly published.")
 }
 
 // generateIndexMock create a index.html with the local paths of the files inside the given directory path
