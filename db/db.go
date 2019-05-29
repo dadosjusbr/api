@@ -14,6 +14,13 @@ const (
 	monthResultsCollection = "month-results"
 )
 
+// Statistic represents an collected statistic from the processed data
+type Statistic struct {
+	Name        string
+	Value       float64
+	Description string
+}
+
 //MonthResults is a data model of the results of one month parsing
 type MonthResults struct {
 	Month           int
@@ -21,6 +28,7 @@ type MonthResults struct {
 	SpreadsheetsURL string
 	DatapackageURL  string
 	Success         bool
+	Statistics      []Statistic
 }
 
 //Client manages all iteractions with mongodb

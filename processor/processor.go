@@ -30,19 +30,18 @@ func readZipFile(zf *zip.File) (string, []byte, error) {
 	return fileName, file, err
 }
 
-func getMonthPreviewData(dtpackageZip []byte, resource string) error {
+func getMonthStatistics(dtpackageZip []byte, resource string) ([]db.Statistic, error) {
 	dir, _ := ioutil.TempDir("", "dadosjusbr_temp_dir")
 	zipReader, err := zip.NewReader(bytes.NewReader(dtpackageZip), int64(len(dtpackageZip)))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
-		fmt.Println("Reading file:", zipFile.Name)
 		fileName, file, err := readZipFile(zipFile)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		path := filepath.Join(dir, fileName)
 		ioutil.WriteFile(path, file, 0666)
@@ -51,46 +50,46 @@ func getMonthPreviewData(dtpackageZip []byte, resource string) error {
 	defer os.RemoveAll(dir)
 	pkg, _ := datapackage.Load(descriptorPath, validator.InMemoryLoader())
 	res := pkg.GetResource(resource)
-	/**
-	people := []struct {
-		Name string `tableheader:"nome"`
-	}{}
-	res.Cast(&people)
-	fmt.Printf("%+v", people)
-	**/
-	var diarias []float64
-	res.CastColumn("diarias", &diarias, csv.LoadHeaders())
-	sum(diarias, "diarias")
 
-	var auxAlimentacao []float64
-	res.CastColumn("auxilio_alimentacao", &auxAlimentacao, csv.LoadHeaders())
-	sum(auxAlimentacao, "auxilio alimentacao")
+	diarias, err := getColumnSum("diarias", res)
+	if err != nil {
+		return nil, err
+	}
 
-	var auxSaude []float64
-	res.CastColumn("auxilio_saude", &auxSaude, csv.LoadHeaders())
-	sum(auxSaude, "auxilio saude")
+	auxAlimentacao, err := getColumnSum("auxilio_alimentacao", res)
+	if err != nil {
+		return nil, err
+	}
 
-	var auxMoradia []float64
-	res.CastColumn("auxilio_moradia", &auxMoradia, csv.LoadHeaders())
-	sum(auxMoradia, "auxilio moradia")
+	auxSaude, err := getColumnSum("auxilio_saude", res)
+	if err != nil {
+		return nil, err
+	}
 
-	var auxPreEscolar []float64
-	res.CastColumn("auxilio_pre_escolar", &auxPreEscolar, csv.LoadHeaders())
-	sum(auxPreEscolar, "auxilio pre escolar")
+	auxMoradia, err := getColumnSum("auxilio_moradia", res)
+	if err != nil {
+		return nil, err
+	}
 
-	var ajudaDeCusto []float64
-	res.CastColumn("ajuda_de_custo", &ajudaDeCusto, csv.LoadHeaders())
-	sum(ajudaDeCusto, "ajuda de custo")
-
-	return nil
+	return []db.Statistic{
+		db.Statistic{Name: "Diárias", Value: diarias, Description: "Total gasto com diárias nesse mês"},
+		db.Statistic{Name: "Auxílio Alimentação", Value: auxAlimentacao, Description: "Total gasto com auxílio alimentação nesse mês"},
+		db.Statistic{Name: "Auxílio Saúde", Value: auxSaude, Description: "Total gasto com auxílio saúde nesse mês"},
+		db.Statistic{Name: "Auxílio Moradia", Value: auxMoradia, Description: "Total gasto com auxílio moradia nesse mês"},
+	}, nil
 }
 
-func sum(arr []float64, label string) {
+func getColumnSum(colName string, res *datapackage.Resource) (float64, error) {
+	var arr []float64
 	total := 0.0
+	err := res.CastColumn(colName, &arr, csv.LoadHeaders())
+	if err != nil {
+		return total, err
+	}
 	for _, value := range arr {
 		total = total + value
 	}
-	fmt.Printf("Total %s: %.2f\n", label, total)
+	return total, nil
 }
 
 // Process download, parse, save and publish data of one month.
@@ -140,7 +139,14 @@ func Process(url string, month, year int, pcloudClient *store.PCloudClient, pars
 	}
 	fmt.Printf("Packaging OK. Took: %s\n", time.Now().Sub(packagingST))
 
-	getMonthPreviewData(dtPackage, fmt.Sprintf("%s-datapackage", filePre))
+	// Collect statistics
+	statisticsST := time.Now()
+	statistics, err := getMonthStatistics(dtPackage, fmt.Sprintf("%s-datapackage", filePre))
+	if err != nil {
+		fmt.Println("STATISTICS ERROR: " + err.Error())
+		return err
+	}
+	fmt.Printf("Collected statistics. Took: %s\n", time.Now().Sub(statisticsST))
 
 	// Publishing.
 	publishingST := time.Now()
@@ -151,7 +157,14 @@ func Process(url string, month, year int, pcloudClient *store.PCloudClient, pars
 	}
 	fmt.Printf("Publishing OK (%s). Took %v\n", dpl, time.Now().Sub(publishingST))
 
-	mr := db.MonthResults{Month: month, Year: year, SpreadsheetsURL: rl, DatapackageURL: dpl, Success: true}
+	mr := db.MonthResults{
+		Month:           month,
+		Year:            year,
+		SpreadsheetsURL: rl,
+		DatapackageURL:  dpl,
+		Success:         true,
+		Statistics:      statistics,
+	}
 	err = dbClient.SaveMonthResults(mr)
 	if err != nil {
 		return err
