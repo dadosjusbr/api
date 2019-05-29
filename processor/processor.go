@@ -60,24 +60,25 @@ func getMonthStatistics(dtpackageZip []byte, resource string) ([]db.Statistic, e
 
 	return []db.Statistic{
 		db.Statistic{
-			Name: "Diárias", 
-			Value: diarias, 
-			Description: "Total gasto com diárias nesse mês"
+			Name:        "Diárias",
+			Value:       diarias,
+			Description: "Total gasto com diárias nesse mês",
 		},
 		db.Statistic{
-			Name: "Auxílio Alimentação", 
-			Value: auxAlimentacao, 
-			Description: "Total gasto com auxílio alimentação nesse mês"
+			Name:        "Auxílio Alimentação",
+			Value:       auxAlimentacao,
+			Description: "Total gasto com auxílio alimentação nesse mês",
 		},
 		db.Statistic{
-			Name: "Auxílio Saúde", 
-			Value: auxSaude, 
-			Description: "Total gasto com auxílio saúde nesse mês"
+			Name:        "Auxílio Saúde",
+			Value:       auxSaude,
+			Description: "Total gasto com auxílio saúde nesse mês",
 		},
 		db.Statistic{
-			Name: "Auxílio Moradia", 
-			Value: auxMoradia, 
-			Description: "Total gasto com auxílio moradia nesse mês"},
+			Name:        "Auxílio Moradia",
+			Value:       auxMoradia,
+			Description: "Total gasto com auxílio moradia nesse mês",
+		},
 	}, nil
 }
 
