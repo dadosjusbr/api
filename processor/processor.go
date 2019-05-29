@@ -1,7 +1,6 @@
 package processor
 
 import (
-	"archive/zip"
 	"bytes"
 	"fmt"
 	"io/ioutil"
@@ -19,56 +18,44 @@ import (
 	"github.com/frictionlessdata/tableschema-go/csv"
 )
 
-func readZipFile(zf *zip.File) (string, []byte, error) {
-	f, err := zf.Open()
-	if err != nil {
-		return "", nil, err
-	}
-	defer f.Close()
-	fileName := zf.FileHeader.Name
-	file, err := ioutil.ReadAll(f)
-	return fileName, file, err
-}
-
 func getMonthStatistics(dtpackageZip []byte, resource string) ([]db.Statistic, error) {
-	dir, _ := ioutil.TempDir("", "dadosjusbr_temp_dir")
-	zipReader, err := zip.NewReader(bytes.NewReader(dtpackageZip), int64(len(dtpackageZip)))
+	dir, err := ioutil.TempDir("", "dadosjusbr_temp_dir")
 	if err != nil {
 		return nil, err
 	}
-
-	// Read all the files from zip archive
-	for _, zipFile := range zipReader.File {
-		fileName, file, err := readZipFile(zipFile)
-		if err != nil {
-			return nil, err
-		}
-		path := filepath.Join(dir, fileName)
-		ioutil.WriteFile(path, file, 0666)
-	}
-	descriptorPath := filepath.Join(dir, "datapackage.json")
 	defer os.RemoveAll(dir)
-	pkg, _ := datapackage.Load(descriptorPath, validator.InMemoryLoader())
+	path := filepath.Join(dir, "datapackage.zip")
+	err = ioutil.WriteFile(path, dtpackageZip, 0666)
+	if err != nil {
+		return nil, err
+	}
+	pkg, err := datapackage.Load(path, validator.InMemoryLoader())
+	if err != nil {
+		return nil, err
+	}
 	res := pkg.GetResource(resource)
 
-	diarias, err := getColumnSum("diarias", res)
+	iter, err := res.Iter(csv.LoadHeaders())
 	if err != nil {
 		return nil, err
 	}
-
-	auxAlimentacao, err := getColumnSum("auxilio_alimentacao", res)
+	sch, err := res.GetSchema()
 	if err != nil {
 		return nil, err
 	}
-
-	auxSaude, err := getColumnSum("auxilio_saude", res)
-	if err != nil {
-		return nil, err
-	}
-
-	auxMoradia, err := getColumnSum("auxilio_moradia", res)
-	if err != nil {
-		return nil, err
+	diarias, auxAlimentacao, auxSaude, auxMoradia := 0.0, 0.0, 0.0, 0.0
+	data := struct {
+		Diarias        float64 `tableheader:"diarias"`
+		AuxAlimentacao float64 `tableheader:"auxilio_alimentacao"`
+		AuxSaude       float64 `tableheader:"auxilio_saude"`
+		AuxMoradia     float64 `tableheader:"auxilio_moradia"`
+	}{}
+	for iter.Next() {
+		sch.CastRow(iter.Row(), &data)
+		diarias += data.Diarias
+		auxAlimentacao += data.AuxAlimentacao
+		auxSaude += data.AuxSaude
+		auxMoradia += data.AuxMoradia
 	}
 
 	return []db.Statistic{
