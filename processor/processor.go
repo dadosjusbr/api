@@ -66,19 +66,6 @@ func getMonthStatistics(dtpackageZip []byte, resource string) ([]db.Statistic, e
 	}, nil
 }
 
-func getColumnSum(colName string, res *datapackage.Resource) (float64, error) {
-	var arr []float64
-	total := 0.0
-	err := res.CastColumn(colName, &arr, csv.LoadHeaders())
-	if err != nil {
-		return total, err
-	}
-	for _, value := range arr {
-		total = total + value
-	}
-	return total, nil
-}
-
 // Process download, parse, save and publish data of one month.
 func Process(url string, month, year int, pcloudClient *store.PCloudClient, parser *parser.ServiceClient, dbClient *db.Client) error {
 	//TODO: this function shuld return an error if something goes wrong.
