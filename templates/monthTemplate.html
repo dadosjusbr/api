@@ -13,6 +13,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" />
 
   <title>dadosjusbr</title>
+
+  <style>
+    th,
+    td {
+      padding-right: 15px;
+    }
+  </style>
 </head>
 
 <body style="background-color: #f9f9f9;">
@@ -21,7 +28,8 @@
       <img src="/static/white_logo.png" width="279" height="49" alt="" style="margin:7px" />
     </a>
   </nav>
-  <div style="display: flex; flex-direction: row; margin: 8vh 8vh 0 8vh; text-align: center; position: absolute;">
+  <div
+    style="display: flex; flex-direction: row; margin: 8vh 8vh 0 8vh; text-align: center; position: absolute; width: 90%">
     <aside style="height:75vh; min-width: 250px; display: flex; flex-direction: column">
       <li class="list-group-item" style="text-align: center; background-color: #00386E; color: white;">
         <b>Índice</b>
@@ -36,20 +44,31 @@
         {{ end }}
       </ul>
     </aside>
-    <div style="padding-left: 80px;">
+    <div style="flex-grow: 1">
       <h1>{{ .MonthLabel }}</h1>
       <br />
       <div style="width:600px; height: 400px; margin: auto">
         <canvas id="myChart" width="600" height="400"></canvas>
       </div>
-      <p style="text-align: justify">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-        minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-        aliquip ex ea commodo consequat. Duis aute irure dolor in
-        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-        culpa qui officia deserunt mollit anim id est laborum
+      <br>
+      <table style="margin: auto; border: 0px solid black;">
+        <th></th>
+        <th>Média</th>
+        <th>Mediana</th>
+        <th>Desvio Padrão</th>
+        {{range .Statistics}}
+        <tr>
+          <td>{{.Name}}</td>
+          <td>{{printf " % .2f" .Mean}}</td>
+          <td>{{printf " % .2f" .Median}}</td>
+          <td>{{printf " % .2f" .StdDev}}</td>
+        </tr>
+        {{end}}
+      </table>
+      <br>
+      <p style="text-align: center">
+        Nesse mês foram disponibilizados dados de pagamentos de <strong>{{(index .Statistics 0).SampleSize}}</strong>
+        Magistrados
       </p>
       <button type="button" class="btn btn-primary btn-lg" onclick="window.open('{{ .DatapackageURL }}','_blank')">
         Baixar datapackage
@@ -80,37 +99,52 @@
       type: "bar",
       data: {
         labels: [
-          "Total benefício 1",
-          "Total benefício 2",
-          "Total benefício 3",
-          "Total benefício 4",
-          "Contracheque total"
+          {{ range .Statistics }}
+            "{{.Name}}",
+          {{ end }}
         ],
-        datasets: [
-          {
-            label: "R$",
-            data: [
-              12 * 1000 * 1000,
-              19 * 1000 * 1000,
-              3 * 1000 * 1000,
-              5 * 1000 * 1000,
-              20 * 1000 * 1000
-            ],
-            borderWidth: 1
+    datasets: [
+      {
+        label: "",
+        data: [
+        {{ range .Statistics }}
+          "{{printf " % .2f" .Sum}}",
+        {{ end }}
+    ],
+      borderWidth: 1
           }
         ]
       },
-      options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                //beginAtZero: true
+    options: {
+      tooltips: {
+        callbacks: {
+          label: tooltipItem => {
+            const value = tooltipItem.yLabel;
+            if (parseInt(value) >= 1000) {
+              return 'R$ ' + value.toString().replace(/\./, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            } else {
+              return 'R$ ' + value.toString().replace(/\./, ',');
+            }
+          }
+        }
+      },
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              callback: value => {
+                if (parseInt(value) >= 1000) {
+                  return 'R$ ' + value.toString().replace(/\./, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                } else {
+                  return 'R$ ' + value.toString().replace(/\./, ',');
+                }
               }
             }
-          ]
-        }
+          }
+        ]
       }
+    }
     });
   </script>
 </body>

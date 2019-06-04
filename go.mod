@@ -16,6 +16,7 @@ require (
 	github.com/labstack/gommon v0.2.8 // indirect
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.7 // indirect
+	github.com/montanaflynn/stats v0.5.0
 	github.com/sendgrid/rest v2.4.1+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.4.1+incompatible
 	github.com/valyala/fasttemplate v1.0.1 // indirect
@@ -24,4 +25,5 @@ require (
 	go.mongodb.org/mongo-driver v1.0.1
 	golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529 // indirect
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
+	gonum.org/v1/gonum v0.0.0-20190602094245-c4a599f7b712
 )
