@@ -16,6 +16,7 @@ import (
 	"github.com/frictionlessdata/datapackage-go/datapackage"
 	"github.com/frictionlessdata/datapackage-go/validator"
 	"github.com/frictionlessdata/tableschema-go/csv"
+	"github.com/montanaflynn/stats"
 )
 
 func getMonthStatistics(dtpackageZip []byte, resource string) ([]db.Statistic, error) {
@@ -43,41 +44,102 @@ func getMonthStatistics(dtpackageZip []byte, resource string) ([]db.Statistic, e
 	if err != nil {
 		return nil, err
 	}
-	diarias, auxAlimentacao, auxSaude, auxMoradia := 0.0, 0.0, 0.0, 0.0
+
+	var totalRendimentos []float64
+	var subsidio []float64
+	var totalAuxilios []float64
+
 	data := struct {
-		Diarias        float64 `tableheader:"diarias"`
-		AuxAlimentacao float64 `tableheader:"auxilio_alimentacao"`
-		AuxSaude       float64 `tableheader:"auxilio_saude"`
-		AuxMoradia     float64 `tableheader:"auxilio_moradia"`
+		TotalRendimentos float64 `tableheader:"total_de_rendimentos"`
+		Subsidio         float64 `tableheader:"subsidio"`
 	}{}
+
 	for iter.Next() {
 		sch.CastRow(iter.Row(), &data)
-		diarias += data.Diarias
-		auxAlimentacao += data.AuxAlimentacao
-		auxSaude += data.AuxSaude
-		auxMoradia += data.AuxMoradia
+		totalRendimentos = append(totalRendimentos, data.TotalRendimentos)
+		subsidio = append(subsidio, data.Subsidio)
+		totalAuxilios = append(totalAuxilios, data.TotalRendimentos-data.Subsidio)
+	}
+
+	totalRendimentosSum, err := stats.Sum(totalRendimentos)
+	if err != nil {
+		return nil, err
+	}
+	subsidioSum, err := stats.Sum(subsidio)
+	if err != nil {
+		return nil, err
+	}
+	totalAuxiliosSum, err := stats.Sum(totalAuxilios)
+	if err != nil {
+		return nil, err
+	}
+
+	totalRendimentosMean, err := stats.Mean(totalRendimentos)
+	if err != nil {
+		return nil, err
+	}
+	subsidioMean, err := stats.Mean(subsidio)
+	if err != nil {
+		return nil, err
+	}
+	totalAuxiliosMean, err := stats.Mean(totalAuxilios)
+	if err != nil {
+		return nil, err
+	}
+
+	totalRendimentosMedian, err := stats.Median(totalRendimentos)
+	if err != nil {
+		return nil, err
+	}
+	subsidioMedian, err := stats.Median(subsidio)
+	if err != nil {
+		return nil, err
+	}
+	totalAuxiliosMedian, err := stats.Median(totalAuxilios)
+	if err != nil {
+		return nil, err
+	}
+
+	totalRendimentosStdDev, err := stats.StandardDeviation(totalRendimentos)
+	if err != nil {
+		return nil, err
+	}
+	subsidioStdDev, err := stats.StandardDeviation(subsidio)
+	if err != nil {
+		return nil, err
+	}
+	totalAuxiliosStdDev, err := stats.StandardDeviation(totalAuxilios)
+	if err != nil {
+		return nil, err
 	}
 
 	return []db.Statistic{
 		{
-			Name:        "Diárias",
-			Value:       diarias,
-			Description: "Total gasto com diárias nesse mês",
+			Name:        "Subsídios",
+			Description: "Salário base do magistrado",
+			Sum:         subsidioSum,
+			SampleSize:  len(subsidio),
+			Mean:        subsidioMean,
+			Median:      subsidioMedian,
+			StdDev:      subsidioStdDev,
 		},
 		{
-			Name:        "Auxílio Alimentação",
-			Value:       auxAlimentacao,
-			Description: "Total gasto com auxílio alimentação nesse mês",
+			Name:        "Auxílios",
+			Description: "Descreve quanto o magistrado recebeu em auxílios nesse mês",
+			Sum:         totalAuxiliosSum,
+			SampleSize:  len(totalAuxilios),
+			Mean:        totalAuxiliosMean,
+			Median:      totalAuxiliosMedian,
+			StdDev:      totalAuxiliosStdDev,
 		},
 		{
-			Name:        "Auxílio Saúde",
-			Value:       auxSaude,
-			Description: "Total gasto com auxílio saúde nesse mês",
-		},
-		{
-			Name:        "Auxílio Moradia",
-			Value:       auxMoradia,
-			Description: "Total gasto com auxílio moradia nesse mês",
+			Name:        "Total de Rendimentos",
+			Description: "Soma dos salários brutos de todos os magistrados nesse mês",
+			Sum:         totalRendimentosSum,
+			SampleSize:  len(totalRendimentos),
+			Mean:        totalRendimentosMean,
+			Median:      totalRendimentosMedian,
+			StdDev:      totalRendimentosStdDev,
 		},
 	}, nil
 }

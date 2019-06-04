@@ -17,8 +17,12 @@ const (
 // Statistic represents an collected statistic from the processed data
 type Statistic struct {
 	Name        string
-	Value       float64
 	Description string
+	Sum         float64
+	SampleSize  int
+	Mean        float64
+	Median      float64
+	StdDev      float64
 }
 
 //MonthResults is a data model of the results of one month parsing

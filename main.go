@@ -108,6 +108,7 @@ func handleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 			SpreadsheetsURL string
 			DatapackageURL  string
 			SidebarElements []SidebarElement
+			Statistics      []db.Statistic
 		}{
 			monthResults.Month,
 			monthResults.Year,
@@ -115,6 +116,7 @@ func handleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
 			monthResults.SpreadsheetsURL,
 			monthResults.DatapackageURL,
 			sidebarElements,
+			monthResults.Statistics,
 		}
 		return c.Render(http.StatusOK, "monthTemplate.html", viewModel)
 	}
