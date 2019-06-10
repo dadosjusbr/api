@@ -49,7 +49,7 @@ func (s *ServiceClient) Parse(contents [][]byte, names []string) ([]byte, map[st
 		if i == 0 {
 			data, err := s.request(s.url, c)
 			if err != nil {
-				return nil, sch, fmt.Errorf("the following error was found when parsing the file [%s] \n%v", filename, err)
+				return nil, sch, fmt.Errorf("the following error was found when parsing the file [%s] \n %v\n ", filename, err)
 			}
 			result.Write(data)
 			result.WriteRune('\n')
@@ -57,7 +57,7 @@ func (s *ServiceClient) Parse(contents [][]byte, names []string) ([]byte, map[st
 		}
 		data, err := s.request(fmt.Sprint(s.url, "?headless=true"), c)
 		if err != nil {
-			return nil, sch, fmt.Errorf("the following error was found when parsing the file [%s] \n %v", filename, err)
+			return nil, sch, fmt.Errorf("the following error was found when parsing the file [%s] \\n %v\\n ", filename, err)
 		}
 		result.Write(data)
 		if i < len(contents)-1 {
@@ -92,7 +92,7 @@ func (s *ServiceClient) request(url string, body []byte) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		return data, fmt.Errorf("The request returned an error with http status code %d \nError: [%s]", resp.StatusCode, json)
+		return data, fmt.Errorf("The request returned an error with http status code %d \\n\\nError: [%s]", resp.StatusCode, json)
 	}
 
 	return data, nil
