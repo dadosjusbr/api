@@ -76,13 +76,18 @@ func main() {
 
 	err = processor.Process(indexPath, conf.Month, conf.Year, pcloudClient, parserClient, dbClient)
 	if err != nil {
-		if err := emailClient.Send(emailFrom, emailTo, subject, err.Error()); err != nil {
+		if err := emailClient.SendFailMail(emailFrom, emailTo, conf.Month, conf.Year, err); err != nil {
 			fmt.Println("ERROR SENDING EMAIL: " + err.Error())
 			log.Fatal(err)
 		}
 		fmt.Printf("an email with the errors was sent to: %s\n", emailTo)
 	} else {
 		fmt.Println("Month successfuly published.")
+		fmt.Printf("an email with the results was sent to: %s\n", emailTo)
+		if err := emailClient.SendSuccessMail(emailFrom, emailTo, conf.Month, conf.Year); err != nil {
+			fmt.Println("ERROR SENDING EMAIL: " + err.Error())
+			log.Fatal(err)
+		}
 	}
 }
 
