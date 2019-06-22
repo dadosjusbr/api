@@ -36,7 +36,7 @@ func (c *Client) SendFailMail(from, to string, month, year int, err error) error
 			</head>
 			<body>
 				The pipeline for {{.Month}}/{{.Year}} failed with the following error: 
-				<br><br>
+				<br>
 				{{.Error}}
 			</body>
 		</html>
@@ -46,7 +46,7 @@ func (c *Client) SendFailMail(from, to string, month, year int, err error) error
 		Month int
 		Year  int
 		Error string
-	}{month, year, strings.ReplaceAll(err.Error(), "\\n", "<br>")}
+	}{month, year, strings.Replace(err.Error(), "\\n", "<br>", -1)}
 
 	tmpl, err := template.New("email").Parse(successTemplate)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *Client) SendFailMail(from, to string, month, year int, err error) error
 		return err
 	}
 	body := tpl.String()
-	c.Send(from, to, "remuneracao-magistrados error", body)
+	c.Send(from, to, fmt.Sprintf("remuneracao-magistrados: The pipeline for %d/%d has failed", month, year), body)
 	return nil
 }
 
@@ -89,7 +89,7 @@ func (c *Client) SendSuccessMail(from, to string, month, year int) error {
 		return err
 	}
 	body := tpl.String()
-	c.Send(from, to, "remuneracao-magistrados success", body)
+	c.Send(from, to, fmt.Sprintf("remuneracao-magistrados: The data from %d/%d was successfuly published", month, year), body)
 	return nil
 }
 
