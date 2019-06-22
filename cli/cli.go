@@ -27,11 +27,11 @@ type config struct {
 	DBUrl            string `envconfig:"MONGODB_URI"`
 	DBName           string `envconfig:"MONGODB_NAME"`
 	SendgridAPIKey   string `envconfig:"SENDGRID_API_KEY"`
+	SystemAdminsMail string `envconfig:"SYSTEM_ADMINS_MAIL"`
 }
 
 const (
 	emailFrom = "no-reply@dadosjusbr.com"
-	emailTo   = "dadosjusbr.ops@googlegroups.com"
 	subject   = "remuneracao-magistrados error"
 )
 
@@ -51,6 +51,7 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: ", err.Error())
 	}
+	emailTo := conf.SystemAdminsMail
 
 	parserClient := parser.NewServiceClient(conf.ParserURL)
 
@@ -73,7 +74,6 @@ func main() {
 		indexPath = fmt.Sprintf("file://%s", p)
 	}
 	fmt.Printf("Processing spreadshets from: %s\n", indexPath)
-
 	err = processor.Process(indexPath, conf.Month, conf.Year, pcloudClient, parserClient, dbClient)
 	if err != nil {
 		if err := emailClient.SendFailMail(emailFrom, emailTo, conf.Month, conf.Year, err); err != nil {
