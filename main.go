@@ -181,7 +181,7 @@ func main() {
 
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
-	e.GET("/about", handleAboutPageRequest(dbClient))
+	e.GET("/sobre", handleAboutPageRequest(dbClient))
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
