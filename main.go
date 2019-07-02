@@ -138,6 +138,22 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	}
 }
 
+func handleAboutPageRequest(dbClient *db.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		sidebarElements, err := getSidebarElements(dbClient)
+		if err != nil {
+			fmt.Println(err)
+			return c.String(http.StatusInternalServerError, "unexpected error")
+		}
+		viewModel := struct {
+			SidebarElements []SidebarElement
+		}{
+			sidebarElements,
+		}
+		return c.Render(http.StatusOK, "aboutPageTemplate.html", viewModel)
+	}
+}
+
 func main() {
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
@@ -165,6 +181,7 @@ func main() {
 
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
+	e.GET("/about", handleAboutPageRequest(dbClient))
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
