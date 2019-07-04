@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,6 +28,7 @@ type Statistic struct {
 
 //MonthResults is a data model of the results of one month parsing
 type MonthResults struct {
+	ID              string `json:"id" bson:"_id,omitempty"`
 	Month           int
 	Year            int
 	SpreadsheetsURL string
@@ -46,17 +48,15 @@ var ErrDocNotFound = errors.New("no documents in result")
 
 //NewClient returns an db connection instance that can be used for CRUD opetations
 func NewClient(url, dbName string) (*Client, error) {
-	// Set client options
-	clientOptions := options.Client().ApplyURI(url)
-
-	// Connect to MongoDB
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
 		return nil, err
 	}
 
-	// Check the connection
-	if err := client.Ping(context.TODO(), nil); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	if err := client.Connect(ctx); err != nil {
+		fmt.Printf("could not ping to mongo db service: %v\n", err)
 		return nil, err
 	}
 
@@ -70,12 +70,17 @@ func (db *Client) SaveMonthResults(mr MonthResults) error {
 	collection := db.getMonthCollection()
 
 	// Insert a single document
-	insertResult, err := collection.InsertOne(context.TODO(), mr)
+	mr.ID = getID(mr)
+	_, err := collection.ReplaceOne(context.TODO(), bson.D{{Key: "_id", Value: mr.ID}}, mr, options.Replace().SetUpsert(true))
 	if err != nil {
 		return err
 	}
-	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+	fmt.Printf("Upserted a single document: %s\n", mr.ID)
 	return nil
+}
+
+func getID(mr MonthResults) string {
+	return fmt.Sprintf("%d/%d", mr.Year, mr.Month)
 }
 
 //GetMonthResults retrieve the specified month information from the DB
