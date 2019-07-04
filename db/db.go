@@ -116,6 +116,8 @@ func (db *Client) GetProcessedMonths() ([]ProcessedMonth, error) {
 	query := bson.D{{Key: "success", Value: true}}
 
 	options := options.FindOptions{}
+	options.SetShowRecordID(false)
+	options.SetReturnKey(false)
 	options.Sort = bson.D{{Key: "year", Value: -1}, {Key: "month", Value: -1}}
 	options.Projection = bson.D{{Key: "month", Value: 1}, {Key: "year", Value: 1}}
 
