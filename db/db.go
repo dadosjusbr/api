@@ -28,7 +28,7 @@ type Statistic struct {
 
 //MonthResults is a data model of the results of one month parsing
 type MonthResults struct {
-	ID              string `json:"id" bson:"_id,omitempty"`
+	ID              interface{} `json:"id" bson:"_id,omitempty"`
 	Month           int
 	Year            int
 	SpreadsheetsURL string
