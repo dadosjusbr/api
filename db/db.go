@@ -70,7 +70,7 @@ func (db *Client) SaveMonthResults(mr MonthResults) error {
 	collection := db.getMonthCollection()
 
 	// Insert a single document
-	mr.ID = getID(mr)
+	mr.ID = getID(mr.Year, mr.Month)
 	_, err := collection.ReplaceOne(context.TODO(), bson.D{{Key: "_id", Value: mr.ID}}, mr, options.Replace().SetUpsert(true))
 	if err != nil {
 		return err
@@ -79,8 +79,8 @@ func (db *Client) SaveMonthResults(mr MonthResults) error {
 	return nil
 }
 
-func getID(mr MonthResults) string {
-	return fmt.Sprintf("%d/%d", mr.Year, mr.Month)
+func getID(year, month int) string {
+	return fmt.Sprintf("%d/%d", year, month)
 }
 
 //GetMonthResults retrieve the specified month information from the DB

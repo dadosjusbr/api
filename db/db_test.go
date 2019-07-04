@@ -46,42 +46,53 @@ func TestMain(m *testing.M) {
 }
 
 func TestClient_SaveMonthResults(t *testing.T) {
-	t.Run("FirstInsert", func(t *testing.T) {
+	t.Run("Insert", func(t *testing.T) {
 		is := is.New(t)
-		mr := MonthResults{Year: 2010, Month: 10}
-		is.NoErr(dbClient.SaveMonthResults(mr))
+		is.NoErr(dbClient.SaveMonthResults(MonthResults{Year: 2010, Month: 10, SpreadsheetsURL: "bar"}))
+		is.NoErr(dbClient.SaveMonthResults(MonthResults{Year: 2010, Month: 11, SpreadsheetsURL: "foo"}))
 
 		col := queryClient.Database(dbName).Collection(monthResultsCollection)
-		filter := bson.D{{Key: "_id", Value: getID(mr)}}
-		defer col.DeleteOne(context.Background(), filter)
-		res := col.FindOne(context.Background(), filter)
-		is.NoErr(res.Err())
+		n, err := col.CountDocuments(context.Background(), bson.D{})
+		is.NoErr(err)
+		is.Equal(n, int64(2))
 
-		var resMR MonthResults
-		is.NoErr(res.Decode(&resMR))
-		is.Equal(mr.Year, resMR.Year)
-		is.Equal(mr.Month, resMR.Month)
+		resMR := findAndDeleteMR(t, 2010, 10)
+		is.Equal(resMR.Year, 2010)
+		is.Equal(resMR.Month, 10)
+		is.Equal(resMR.SpreadsheetsURL, "bar")
+
+		resMR = findAndDeleteMR(t, 2010, 11)
+		is.Equal(resMR.Year, 2010)
+		is.Equal(resMR.Month, 11)
+		is.Equal(resMR.SpreadsheetsURL, "foo")
 	})
 
 	t.Run("Upsert", func(t *testing.T) {
 		is := is.New(t)
-		mr := MonthResults{Year: 2010, Month: 10}
-		is.NoErr(dbClient.SaveMonthResults(mr))
-		is.NoErr(dbClient.SaveMonthResults(mr))
+		is.NoErr(dbClient.SaveMonthResults(MonthResults{Year: 2011, Month: 12, DatapackageURL: "foo"}))
+		is.NoErr(dbClient.SaveMonthResults(MonthResults{Year: 2011, Month: 12, DatapackageURL: "bar"}))
 
 		col := queryClient.Database(dbName).Collection(monthResultsCollection)
-		n, err := col.CountDocuments(context.Background(), bson.D{{Key: "month", Value: 10}})
+		n, err := col.CountDocuments(context.Background(), bson.D{})
 		is.NoErr(err)
 		is.Equal(n, int64(1))
 
-		filter := bson.D{{Key: "_id", Value: getID(mr)}}
-		defer col.DeleteOne(context.Background(), filter)
-		res := col.FindOne(context.Background(), filter)
-		is.NoErr(res.Err())
-
-		var resMR MonthResults
-		is.NoErr(res.Decode(&resMR))
-		is.Equal(mr.Year, resMR.Year)
-		is.Equal(mr.Month, resMR.Month)
+		resMR := findAndDeleteMR(t, 2011, 12)
+		is.Equal(resMR.Year, 2011)
+		is.Equal(resMR.Month, 12)
+		is.Equal(resMR.DatapackageURL, "bar")
 	})
+}
+
+func findAndDeleteMR(t *testing.T, year, month int) MonthResults {
+	is := is.New(t)
+	col := queryClient.Database(dbName).Collection(monthResultsCollection)
+	filter := bson.D{{Key: "_id", Value: getID(year, month)}}
+	defer col.DeleteOne(context.Background(), filter)
+	res := col.FindOne(context.Background(), filter)
+	is.NoErr(res.Err())
+
+	var resMR MonthResults
+	is.NoErr(res.Decode(&resMR))
+	return resMR
 }
