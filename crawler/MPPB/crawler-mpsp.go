@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"flag"
+	"strings"
 	"net/http"
 	"io/ioutil"
+	"github.com/jackdanger/collectlinks" //Da uma olhada melhor nessa library
 )
 
 const linkPrincipal = "http://www.mpsp.mp.br/portal/page/portal/Portal_da_Transparencia/Contracheque/"
@@ -29,7 +31,25 @@ func main(){
 	fmt.Println("Ano: ")
 	fmt.Println(*ano)
 
-	imprimeUmaPagina("https://jdanger.com/build-a-web-crawler-in-go.html")
+	imprimeLinksDePlanilhasOds("http://www.mpsp.mp.br/portal/page/portal/Portal_da_Transparencia/Contracheque/Membros_ativos")
+}
+
+func imprimeLinksDePlanilhasOds(url string){
+	resp, erro := http.Get(url)
+
+	if erro != nil {
+		return
+	}
+
+	links := collectlinks.All(resp.Body)  
+
+	for _, link := range(links) {  
+		
+		if strings.HasSuffix(link, "ods") {
+			fmt.Println(link)
+		}
+
+	}  
 }
 
 func imprimeUmaPagina(url string){
