@@ -10,14 +10,17 @@ import (
 )
 
 const linkPrincipal = "http://www.mpsp.mp.br/portal/page/portal/Portal_da_Transparencia/Contracheque/"
-var categorias = [7]string{
+var categorias = [10]string{
 	"Membros_ativos",
 	"Membros_inativos",
 	"Servidores_ativos",
 	"servidores_inativos",
-	"Pensionistas",
+	"Pensionistas/Pensionistas_membros",
+	"Pensionistas/Pensionistas_servidores",
 	"valores_colaboradores",
-	"Verbas-exec-anteriores",
+	"Verbas-exec-anteriores/Verbas-exec-anteriores-Servidores",
+	"/Verbas-exec-anteriores/Verbas-exec-anteriores-Membros/Ativos_membros",
+	"Verbas-exec-anteriores/Verbas-exec-anteriores-Membros/Inativos_membros",
 }
 
 func main(){
@@ -31,9 +34,21 @@ func main(){
 	fmt.Println("Ano: ")
 	fmt.Println(*ano)
 
-	imprimeLinksDePlanilhasOds("http://www.mpsp.mp.br/portal/page/portal/Portal_da_Transparencia/Contracheque/Membros_ativos")
+	linksDePlanilhasPorCategorias()
+
 }
 
+//Imprime os links de todas as planilhas ODS de todas as categorias
+func linksDePlanilhasPorCategorias(){
+	for _, categoria := range categorias {
+		url  := linkPrincipal + categoria
+		fmt.Println("Categoria: ", categoria )
+		imprimeLinksDePlanilhasOds(url)
+	} 
+}
+
+
+//Imprime os links de todas as planilhas ODS de uma pagina com a url passada como parametro.
 func imprimeLinksDePlanilhasOds(url string){
 	resp, erro := http.Get(url)
 
@@ -52,6 +67,7 @@ func imprimeLinksDePlanilhasOds(url string){
 	}  
 }
 
+//Imprime todo o conteudo de uma pagina com a url passada como parametro.
 func imprimeUmaPagina(url string){
 	resp, erro := http.Get(url)
 
