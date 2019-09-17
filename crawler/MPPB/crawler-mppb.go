@@ -5,9 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"strconv"
+)
+
+const (
+	membrosAtivos         = "1"
+	membrosInativos       = "2"
+	servidoresAtivos      = "3"
+	servidoresInativos    = "4"
+	servidoresDisponiveis = "5"
+	aposentados           = "6"
 )
 
 func main() {
@@ -18,22 +26,50 @@ func main() {
 	monthString := strconv.Itoa(*month)
 	yearString := strconv.Itoa(*year)
 
-	resp, _ := http.Get("http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds?mes=" + monthString + "&exercicio=" + yearString + "&tipo=1")
-	dump, _ := httputil.DumpResponse(resp, false)
-	fmt.Println(string(dump))
-	saveToOds(resp, "teste")
-	defer resp.Body.Close()
+	links := getLink(monthString, yearString)
+	saveToOds(links, monthString, yearString)
+
 }
 
-func saveToOds(resp *http.Response, file string) error {
+func getLink(monthString string, yearString string) map[string]string {
+	baseURL := "http://pitagoras.mppb.mp.br/PTMP/"
+	links := map[string]string{
+		"membrosAtivos":         baseURL + "FolhaPagamentoExercicioMesNewOds?" + "mes=" + monthString + "&exercicio=" + yearString + "&tipo=" + membrosAtivos,
+		"membrosInativos":       baseURL + "FolhaPagamentoExercicioMesNewOds?" + "mes=" + monthString + "&exercicio=" + yearString + "&tipo=" + membrosInativos,
+		"servidoresAtivos":      baseURL + "FolhaPagamentoExercicioMesNewOds?" + "mes=" + monthString + "&exercicio=" + yearString + "&tipo=" + servidoresAtivos,
+		"servidoresInativos":    baseURL + "FolhaPagamentoExercicioMesNewOds?" + "mes=" + monthString + "&exercicio=" + yearString + "&tipo=" + servidoresInativos,
+		"servidoresDisponiveis": baseURL + "FolhaPagamentoExercicioMesNewOds?" + "mes=" + monthString + "&exercicio=" + yearString + "&tipo=" + servidoresDisponiveis,
+		"aposentados":           baseURL + "FolhaPagamentoExercicioMesNewOds?" + "mes=" + monthString + "&exercicio=" + yearString + "&tipo=" + aposentados,
+		"anteriores":            baseURL + "FolhaExercicioAnteriorMesNewOds?exercicio=" + yearString + "&mes=" + monthString,
+		"estagio":               baseURL + "FolhaPagamentoEstagiarioExercicioMesOds?mes=" + monthString + "&exercicio=" + yearString,
+	}
 
-	newFile, err := os.Create(file)
-	defer newFile.Close()
+	return links
 
-	bodySave, err := ioutil.ReadAll(resp.Body)
+}
 
-	newFile.Write(bodySave)
+func saveToOds(links map[string]string, monthString string, yearString string) {
 
-	return err
+	for key, value := range links {
+		resp, err := http.Get(value)
+		if err != nil {
+			fmt.Println("Error while getting the response")
+		}
+
+		newFile, err2 := os.Create(key + "-" + monthString + "-" + yearString)
+		if err2 != nil {
+			fmt.Println("Error while creating the file")
+		}
+		defer newFile.Close()
+
+		bodySave, err3 := ioutil.ReadAll(resp.Body)
+		if err3 != nil {
+			fmt.Println("Error writing to file")
+		}
+
+		newFile.Write(bodySave)
+
+		defer resp.Body.Close()
+	}
 
 }
