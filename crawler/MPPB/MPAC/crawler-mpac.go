@@ -46,41 +46,43 @@ var client *http.Client = &http.Client{
 	},
 }
 
-func fetchContent(key int, year string, month string) (string, error) {
+func fetchContent(key int, year string, month string) ([]byte, error) {
+	//Retrieve file location
 	body := strings.NewReader("ano=" + year + "&" + "numMes=" + month)
 	aURL := baseURL + strconv.Itoa(key)
 	res, err := client.Post(aURL, "application/x-www-form-urlencoded", body)
 
 	if err != nil {
-		return "", fmt.Errorf("Error making a post request(%s): %q", aURL, err)
+		return nil, fmt.Errorf("Error making a post request(%s): %q", aURL, err)
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode == 302 {
-		return res.Header.Get("Location"), nil
+	if res.StatusCode != 302 {
+		return nil, fmt.Errorf("Resource not found(%s): statusCode(%d)", aURL, res.StatusCode)
 	}
 
-	return "", fmt.Errorf("Resource not found: %s", aURL)
-}
-
-func saveFile(aURL string, year string, month string, category string) error {
 	//Download target file
-	target, err := http.Get(aURL)
+	targetURL := res.Header.Get("Location")
+	target, err := http.Get(targetURL)
 	if err != nil {
-		return fmt.Errorf("Error making get request (%s): %q", aURL, err)
+		return nil, fmt.Errorf("Error making get request (%s): %q", targetURL, err)
 	}
 	defer target.Body.Close()
 
 	if target.Header.Get("Content-type") != "application/vnd.oasis.opendocument.spreadsheet; charset=UTF-8" {
-		return fmt.Errorf("Request not returning an ODS file(%s): Content-type %s", aURL, target.Header.Get("Content-type"))
+		return nil, fmt.Errorf("Request not returning an ODS file(%s): Content-type %s", targetURL, target.Header.Get("Content-type"))
 	}
 
 	//Transform body in a slice of bytes
 	targetBody, err := ioutil.ReadAll(target.Body)
 	if err != nil {
-		return fmt.Errorf("Error reading response body (%s): %q", aURL, err)
+		return nil, fmt.Errorf("Error reading response body (%s): %q", targetURL, err)
 	}
 
+	return targetBody, nil
+}
+
+func saveFile(fileContent []byte, year string, month string, category string) error {
 	//Create a new file in the cwd
 	fileName := category + "-" + month + "-" + year + fileExtension
 	file, err := os.Create(fileName)
@@ -90,7 +92,7 @@ func saveFile(aURL string, year string, month string, category string) error {
 	defer file.Close()
 
 	//Write to file
-	_, err = file.Write(targetBody)
+	_, err = file.Write(fileContent)
 	if err != nil {
 		return fmt.Errorf("Error writing to file (%s): %q", fileName, err)
 	}
@@ -111,13 +113,13 @@ func main() {
 	year := strconv.Itoa(*yearPtr)
 
 	for key, category := range categories {
-		contentURL, err := fetchContent(key, year, month)
+		fileContent, err := fetchContent(key, year, month)
 		if err != nil {
-			fmt.Printf("Error retrieving resource location: (%s %s-%s): %q\n", category, month, year, err)
+			fmt.Printf("Error retrieving resource: (%s %s-%s): %q\n", category, month, year, err)
 			continue
 		}
 
-		err = saveFile(contentURL, year, month, category)
+		err = saveFile(fileContent, year, month, category)
 		if err != nil {
 			fmt.Printf("Error saving spreedsheet to file (%s %s-%s): %q\n", category, month, year, err)
 		}
