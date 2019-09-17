@@ -10,7 +10,9 @@ import (
 	"strings"
 )
 
-// Categoria para cada tipo de membro
+// Category for each type of spreedsheet.
+// Obtained from http://transparencia.mpac.mp.br/categoria/24
+// Every category got it's own page http://transparencia.mpac.mp.br/categoria/${categoryNumber}
 const (
 	membrosAtivos = iota + 112
 	membrosInativos
@@ -20,11 +22,6 @@ const (
 	colaboradores
 	exerciciosAnteriores
 	indenizacoes
-)
-
-const (
-	baseURL       = "http://transparencia.mpac.mp.br/categoria_arquivos/"
-	fileExtension = ".ods"
 )
 
 var categories = map[int]string{
@@ -38,60 +35,65 @@ var categories = map[int]string{
 	indenizacoes:         "Indenizacoes",
 }
 
-func requireContentURL(key int, bodyStr string) string {
-	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
+const (
+	baseURL       = "http://transparencia.mpac.mp.br/categoria_arquivos/"
+	fileExtension = ".ods"
+)
+
+var client *http.Client = &http.Client{
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	},
+}
+
+func fetchContent(key int, year string, month string) (string, error) {
+	body := strings.NewReader("ano=" + year + "&" + "numMes=" + month)
+	aURL := baseURL + strconv.Itoa(key)
+	res, err := client.Post(aURL, "application/x-www-form-urlencoded", body)
+
+	if err != nil {
+		return "", fmt.Errorf("Error making a post request(%s): %q", aURL, err)
 	}
-
-	body := strings.NewReader(bodyStr)
-	URL := baseURL + strconv.Itoa(key)
-	req, _ := http.NewRequest("POST", URL, body)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Accept", "*/*")
-	//dump, _ := httputil.DumpRequest(req, true)
-	//fmt.Println(string(dump))
-
-	res, _ := client.Do(req)
 	defer res.Body.Close()
 
 	if res.StatusCode == 302 {
-		return res.Header.Get("Location")
+		return res.Header.Get("Location"), nil
 	}
 
-	return ""
+	return "", fmt.Errorf("Resource not found: %s", aURL)
 }
 
-func saveFile(aURL string, fileName string) error {
+func saveFile(aURL string, year string, month string, category string) error {
 	//Download target file
 	target, err := http.Get(aURL)
+	if err != nil {
+		return fmt.Errorf("Error making get request (%s): %q", aURL, err)
+	}
 	defer target.Body.Close()
-	if err != nil {
-		fmt.Printf("Error saving file: %s", fileName)
-		return err
-	}
-	if target.Header.Get("Content-type") == "application/pdf; charset=UTF-8" {
-		fmt.Printf("Request not returning a ODS file: %s\nFile-type: %s\n", fileName, target.Header.Get("Content-type"))
-		return nil
-	}
-	//Create a new file in the cwd
-	file, err := os.Create(fileName)
-	defer file.Close()
-	if err != nil {
-		fmt.Printf("Error creating file: %s", fileName)
-		return err
+
+	if target.Header.Get("Content-type") != "application/vnd.oasis.opendocument.spreadsheet; charset=UTF-8" {
+		return fmt.Errorf("Request not returning an ODS file(%s): Content-type %s", aURL, target.Header.Get("Content-type"))
 	}
 
 	//Transform body in a slice of bytes
 	targetBody, err := ioutil.ReadAll(target.Body)
 	if err != nil {
-		fmt.Printf("Error reading body from target: %s", aURL)
-		return err
+		return fmt.Errorf("Error reading response body (%s): %q", aURL, err)
 	}
 
+	//Create a new file in the cwd
+	fileName := category + "-" + month + "-" + year + fileExtension
+	file, err := os.Create(fileName)
+	if err != nil {
+		return fmt.Errorf("Error creating file(%s): %q", fileName, err)
+	}
+	defer file.Close()
+
 	//Write to file
-	file.Write(targetBody)
+	_, err = file.Write(targetBody)
+	if err != nil {
+		return fmt.Errorf("Error writing to file (%s): %q", fileName, err)
+	}
 	return nil
 }
 
@@ -100,23 +102,24 @@ func main() {
 	yearPtr := flag.Int("ano", 0, "Ano de referência")
 	flag.Parse()
 
-	missingArguments := (*monthPtr == 0) || (*yearPtr == 0)
+	if (*monthPtr == 0) || (*yearPtr == 0) {
+		fmt.Println("Need flags '--mes --ano' to work")
+		return
+	}
 
 	month := strconv.Itoa(*monthPtr)
 	year := strconv.Itoa(*yearPtr)
 
-	if missingArguments {
-		fmt.Println("Need flags '--mes --ano' to work\n")
-	} else {
-		bodyStr := "ano=" + year + "&" + "numMes=" + month
-		for key, category := range categories {
-			contentURL := requireContentURL(key, bodyStr)
-			if contentURL != "" {
-				fileName := category + "-" + month + "-" + year + fileExtension
-				_ = saveFile(contentURL, fileName)
-			} else {
-				fmt.Printf("Error retrieving remunerações for: %s %s/%s\n", category, year, month)
-			}
+	for key, category := range categories {
+		contentURL, err := fetchContent(key, year, month)
+		if err != nil {
+			fmt.Printf("Error retrieving resource location: (%s %s-%s): %q\n", category, month, year, err)
+			continue
+		}
+
+		err = saveFile(contentURL, year, month, category)
+		if err != nil {
+			fmt.Printf("Error saving spreedsheet to file (%s %s-%s): %q\n", category, month, year, err)
 		}
 	}
 }
