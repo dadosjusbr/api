@@ -23,6 +23,11 @@ func main() {
 	year := flag.Int("ano", 0, "Ano a ser analisado")
 	flag.Parse()
 
+	if *month == 0 || *year == 0 {
+		fmt.Println("Need arguments to continue, please try again!")
+		os.Exit(1)
+	}
+
 	monthString := strconv.Itoa(*month)
 	yearString := strconv.Itoa(*year)
 
