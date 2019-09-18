@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -46,10 +45,10 @@ var client *http.Client = &http.Client{
 	},
 }
 
-func fetchContent(key int, year string, month string) ([]byte, error) {
+func fetchContent(key int, year int, month int) ([]byte, error) {
 	//Retrieve file location
-	body := strings.NewReader("ano=" + year + "&" + "numMes=" + month)
-	aURL := baseURL + strconv.Itoa(key)
+	body := strings.NewReader(fmt.Sprintf("ano=%d&numMes=%d", year, month))
+	aURL := fmt.Sprintf("%s%d", baseURL, key)
 	res, err := client.Post(aURL, "application/x-www-form-urlencoded", body)
 
 	if err != nil {
@@ -82,9 +81,9 @@ func fetchContent(key int, year string, month string) ([]byte, error) {
 	return targetBody, nil
 }
 
-func saveFile(fileContent []byte, year string, month string, category string) error {
+func saveFile(c []byte, year int, month int, category string) error {
 	//Create a new file in the cwd
-	fileName := category + "-" + month + "-" + year + fileExtension
+	fileName := fmt.Sprintf("%s-%d-%d%s", category, month, year, fileExtension)
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("Error creating file(%s): %q", fileName, err)
@@ -92,36 +91,30 @@ func saveFile(fileContent []byte, year string, month string, category string) er
 	defer file.Close()
 
 	//Write to file
-	_, err = file.Write(fileContent)
-	if err != nil {
+	if _, err = file.Write(c); err != nil {
 		return fmt.Errorf("Error writing to file (%s): %q", fileName, err)
 	}
 	return nil
 }
 
 func main() {
-	monthPtr := flag.Int("mes", 0, "Mês de referência")
-	yearPtr := flag.Int("ano", 0, "Ano de referência")
+	month := flag.Int("mes", 0, "Mês de referência")
+	year := flag.Int("ano", 0, "Ano de referência")
 	flag.Parse()
 
-	if (*monthPtr == 0) || (*yearPtr == 0) {
+	if (*month == 0) || (*year == 0) {
 		fmt.Println("Need flags '--mes --ano' to work")
 		return
 	}
 
-	month := strconv.Itoa(*monthPtr)
-	year := strconv.Itoa(*yearPtr)
-
 	for key, category := range categories {
-		fileContent, err := fetchContent(key, year, month)
+		c, err := fetchContent(key, *year, *month)
 		if err != nil {
-			fmt.Printf("Error retrieving resource: (%s %s-%s): %q\n", category, month, year, err)
+			fmt.Printf("Error retrieving resource: (%s %d-%d): %q\n", category, *month, *year, err)
 			continue
 		}
-
-		err = saveFile(fileContent, year, month, category)
-		if err != nil {
-			fmt.Printf("Error saving spreedsheet to file (%s %s-%s): %q\n", category, month, year, err)
+		if err = saveFile(c, *year, *month, category); err != nil {
+			fmt.Printf("Error saving spreedsheet to file (%s %d-%d): %q\n", category, *month, *year, err)
 		}
 	}
 }
