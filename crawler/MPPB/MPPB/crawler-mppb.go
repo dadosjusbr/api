@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 var tipos = map[string]int{
@@ -28,31 +27,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	monthString := strconv.Itoa(*month)
-	yearString := strconv.Itoa(*year)
-
-	links := getLinks(monthString, yearString)
-
-	for key, value := range links {
-		c, err := download(value)
+	for typ, url := range links(*month, *year) {
+		c, err := download(url)
 		if err != nil {
 			fmt.Printf("Error while downloading content: %q\n", err)
 			continue
 		}
-		err = saveToOds(c, monthString, yearString, key)
+		err = saveToOds(c, typ, *month, *year)
 		if err != nil {
 			fmt.Printf("Error while saving to file: %q\n", err)
 		}
 	}
 }
 
-func getLinks(month, year string) map[string]string {
+// Generate endpoints able to download
+func links(month, year int) map[string]string {
 	baseURL := "http://pitagoras.mppb.mp.br/PTMP/"
-	links := make(map[string]string, len(tipos)+2)
-	links["anteriores"] = fmt.Sprintf("%sFolhaExercicioAnteriorMesNewOds?exercicio=%s&mes=%s", baseURL, year, month)
-	links["estagio"] = fmt.Sprintf("%sFolhaPagamentoEstagiarioExercicioMesOds?exercicio=%s&mes=%s", baseURL, year, month)
+	links := make(map[string]string, len(tipos)+1)
+	links["estagio"] = fmt.Sprintf("%sFolhaPagamentoEstagiarioExercicioMesOds?exercicio=%d&mes=%d", baseURL, year, month)
 	for t, id := range tipos {
-		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds?mes=%s&exercicio=%s&tipo=%d", baseURL, month, year, id)
+		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds?mes=%d&exercicio=%d&tipo=%d", baseURL, month, year, id)
 	}
 	return links
 }
@@ -70,9 +64,9 @@ func download(url string) ([]byte, error) {
 	return bodySave, nil
 }
 
-func saveToOds(content []byte, monthString, yearString, key string) error {
-
-	newFile, err := os.Create(key + "-" + monthString + "-" + yearString)
+// Receive a slice of bytes after download, write, nominate file and save
+func saveToOds(content []byte, typ string, monthString, yearString int) error {
+	newFile, err := os.Create(fmt.Sprintf("%s-%d-%-d", typ, monthString, yearString))
 	if err != nil {
 		return err
 	}
