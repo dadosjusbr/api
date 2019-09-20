@@ -7,10 +7,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"sort"
 )
 
-const urlPrincipal = "http://www.mpm.mp.br/sistemas/consultaFolha/php/RelatorioRemuneracaoMensal.php?"
-const extensao = ".xlsx"
+const (
+	urlPrincipal = "http://www.mpm.mp.br/sistemas/consultaFolha/php/RelatorioRemuneracaoMensal.php?"
+	extensao     = ".xlsx"
+)
 
 var categorias = map[int]string{
 	1: "Membros_Ativos",
@@ -25,18 +28,17 @@ func main() {
 	mes := flag.Int("mes", -1, "O mês da planilha")
 	ano := flag.Int("ano", -1, "O ano da planilha")
 	flag.Parse()
-	erro := validaFlags(*mes, *ano)
-	if erro != nil {
+	if erro := validaFlags(*mes, *ano); erro != nil {
 		fmt.Println(erro)
 		return
 	}
 	urls := geraUrlsDasPlanilhas(*mes, *ano)
-	for url := range urls {
-		arquivo, erro := baixaArquivo(urls[url])
+	for i, url := range urls {
+		arquivo, erro := baixaArquivo(url)
 		if erro != nil {
 			return
 		}
-		salvaArquivo(arquivo, *ano, *mes, categorias[url])
+		salvaArquivo(arquivo, *ano, *mes, categorias[i+1])
 	}
 }
 
@@ -56,39 +58,40 @@ func salvaArquivo(c []byte, ano int, mes int, categoria string) error {
 func baixaArquivo(url string) ([]byte, error) {
 	body, erro := http.Get(url)
 	if erro != nil {
-		return nil, errors.New("Erro ao ler url") //TODO:colocar nome da url
+		return nil, fmt.Errorf("erro ao ler URL(%s): %q", url, erro)
 	}
 	defer body.Body.Close()
-	arquivo, erro := transformaBodyEmSlices(body)
+
+	// Tranforma o arquivo em um slice de bytes
+	arquivo, erro := ioutil.ReadAll(body.Body)
 	if erro != nil {
-		return nil, errors.New("Erro fazer parser do arquivo") //TODO:colocar nome da url
+		return nil, fmt.Errorf("Erro ao fazer parser do arquivo(%s): %q ", url, erro)
 	}
 	return arquivo, erro
 }
 
-func transformaBodyEmSlices(response *http.Response) ([]byte, error) {
-	targetBody, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, errors.New("Erro ao converter arquivo em slice de bytes")
-	}
-	return targetBody, nil
-}
-
+// Gera a URL de todos os arquivos de um determinado mês e ano
 func geraUrlsDasPlanilhas(mes int, ano int) []string {
 	var urls []string
-	for j := 1; j <= 6; j++ {
-		url := fmt.Sprintf("%sgrupo=%d&mes=%d&ano=%d", urlPrincipal, j, mes, ano)
+	keys := make([]int, 0)
+	for k, _ := range categorias {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	for _, key := range keys {
+		url := fmt.Sprintf("%sgrupo=%d&mes=%d&ano=%d", urlPrincipal, key, mes, ano)
 		urls = append(urls, url)
 	}
 	return urls
 }
 
 func validaFlags(mes int, ano int) error {
-	if mes == -1 || ano == -1 {
+	switch {
+	case mes == -1 || ano == -1:
 		return errors.New("Mês e ano são flags necessarias")
-	} else if ano > 2019 || ano < 2012 {
-		return errors.New(("Ano inválido"))
-	} else if mes > 12 || mes < 1 {
+	case ano > 2019 || ano < 2012:
+		return errors.New("Ano inválido")
+	case mes > 12 || mes < 1:
 		return errors.New("Mês inválido")
 	}
 	return nil
