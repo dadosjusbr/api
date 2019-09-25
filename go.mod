@@ -13,6 +13,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/jackdanger/collectlinks v0.0.0-20160421202702-24c4ee2870ba
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.2.9 // indirect
