@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"sort"
 )
 
 const (
@@ -36,9 +35,10 @@ func main() {
 	for i, url := range urls {
 		arquivo, erro := baixaArquivo(url)
 		if erro != nil {
+			fmt.Println(erro)
 			return
 		}
-		salvaArquivo(arquivo, *ano, *mes, categorias[i+1])
+		salvaArquivo(arquivo, *ano, *mes, categorias[i])
 	}
 }
 
@@ -71,16 +71,11 @@ func baixaArquivo(url string) ([]byte, error) {
 }
 
 // Gera a URL de todos os arquivos de um determinado mês e ano
-func geraUrlsDasPlanilhas(mes int, ano int) []string {
-	var urls []string
-	keys := make([]int, 0)
-	for k, _ := range categorias {
-		keys = append(keys, k)
-	}
-	sort.Ints(keys)
-	for _, key := range keys {
+func geraUrlsDasPlanilhas(mes int, ano int) map[int]string {
+	urls := make(map[int]string)
+	for key, _ := range categorias {
 		url := fmt.Sprintf("%sgrupo=%d&mes=%d&ano=%d", urlPrincipal, key, mes, ano)
-		urls = append(urls, url)
+		urls[key] = url
 	}
 	return urls
 }
