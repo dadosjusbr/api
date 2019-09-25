@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -11,16 +12,17 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-const baseURL = "http://transparencia.mprn.mp.br/"
-const requestListURL = "/home/listarAnexos"
-
 const (
-	membrosAtivos = 82 + iota
-	membrosInativos
-	servidoresAtivos
-	servidoresInativos
-	pensionistas
-	colaboradores
+	baseURL = "http://transparencia.mprn.mp.br/"
+)
+
+// We're not trying to retrieve information about "pensionistas" because the data is not there. Ex: http://transparencia.mprn.mp.br/Arquivos/C0007/2019/R0086/38033.pdf?dt=25092019141321
+const (
+	membrosAtivos        = 82
+	membrosInativos      = 83
+	servidoresAtivos     = 84
+	servidoresInativos   = 85
+	colaboradores        = 87
 	exerciciosAnteriores = 1143
 )
 
@@ -29,7 +31,6 @@ var categories = map[int]string{
 	membrosInativos:      "MembrosInativos",
 	servidoresAtivos:     "ServidoresAtivos",
 	servidoresInativos:   "ServidoresInativos",
-	pensionistas:         "Pensionistas",
 	colaboradores:        "Colaboradores",
 	exerciciosAnteriores: "ExerciciosAnteriores",
 }
@@ -50,48 +51,46 @@ func saveFile(c []byte, month int, year int, category string) error {
 	return nil
 }
 
-func fetchContent(month int, year int, category int) ([]byte, error) {
-	query := fmt.Sprintf("%s%s?idanexo=%d&ano=%d", baseURL, requestListURL, category, year)
+func link(category, month, year int) (string, error) {
+	query := fmt.Sprintf("%s/home/listarAnexos?idanexo=%d&ano=%d", baseURL, category, year)
 	resp, err := http.Get(query)
 	if err != nil {
-		return nil, err
+		return "", fmt.Errorf("Error trying to download html snippet (%s): %q", query, err)
 	}
 	defer resp.Body.Close()
 
-	document, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return nil, err
+		return "", fmt.Errorf("Error trying to make document from reader (%s): %q", query, err)
 	}
-	sel := document.Find("tr")
-	mesAno := fmt.Sprintf("%02d-%d", month, year)
-	var contentURL string
+	sel := doc.Find("tr")
 	//Looking for node with a children that contains the query
 	for i := range sel.Nodes {
-		nodeChildren := sel.Eq(i).Children()
-		if strings.Contains(nodeChildren.Eq(0).Children().Text(), mesAno) {
-			fileNode := nodeChildren.Eq(1).Find("a")
-			if href, ok := fileNode.Attr("href"); ok {
-				contentURL = fmt.Sprintf("%s%s", baseURL, href)
+		c := sel.Eq(i).Children()
+		if strings.Contains(c.Eq(0).Children().Text(), fmt.Sprintf("%02d-%d", month, year)) {
+			f := c.Eq(1).Find("a")
+			if href, ok := f.Attr("href"); ok {
+				return fmt.Sprintf("%s%s", baseURL, href), nil
 			}
 		}
+	}
+	return "", fmt.Errorf("Couldn't find link for the query")
+}
 
-	}
-	if contentURL == "" {
-		return nil, fmt.Errorf("Couldn't find link for the query")
-	}
-	respFile, err := http.Get(contentURL)
+func fetchContent(url string) ([]byte, error) {
+	respFile, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't retrieve content: %s - %d-%d", categories[category], month, year)
+		return nil, fmt.Errorf("couldn't retrieve content (%s): %q", url, err)
 	}
 	defer respFile.Body.Close()
 
 	if respFile.Header.Get("Content-type") != "application/oleobject" {
-		return nil, fmt.Errorf("Request not returning an ODS file(%s): Content-type %s", contentURL, resp.Header.Get("Content-type"))
+		return nil, fmt.Errorf("Request not returning an ODS file(%s): Content-type %s", url, respFile.Header.Get("Content-type"))
 	}
 
 	c, err := ioutil.ReadAll(respFile.Body)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't read content to byte array: %s - %d-%d", categories[category], month, year)
+		return nil, fmt.Errorf("couldn't read content to byte array (%s): %q", url, err)
 	}
 
 	return c, nil
@@ -104,19 +103,21 @@ func main() {
 	flag.Parse()
 
 	if *month == 0 || *year == 0 {
-		fmt.Println("Need flags: \"--month=int --year=int\"")
+		log.Fatalf("Need flags: \"--month=int --year=int\"")
 	}
 
 	for catKey, category := range categories {
-		c, err := fetchContent(*month, *year, catKey)
+		link, err := link(catKey, *month, *year)
 		if err != nil {
-			fmt.Printf("Error fetching content (%s, %d-%d): %q\n", category, *month, *year, err)
-			continue
+			log.Fatalf("Error retrieving content link (%s, %d-%d): %q\n", category, *month, *year, err)
+		}
+		c, err := fetchContent(link)
+		if err != nil {
+			log.Fatalf("Error fetching content (%s, %d-%d): %q\n", category, *month, *year, err)
 		}
 		err = saveFile(c, *month, *year, category)
 		if err != nil {
-			fmt.Printf("Error saving content(%s, %d-%d): %q\n", category, *month, *year, err)
-			continue
+			log.Fatalf("Error saving content(%s, %d-%d): %q\n", category, *month, *year, err)
 		}
 	}
 }
