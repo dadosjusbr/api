@@ -89,13 +89,13 @@ func contentLink(sel *goquery.Selection, month int) (string, error) {
 
 func fetchContent(category string, month int, year int) ([]byte, error) {
 	link := fmt.Sprintf("%s%s", linkPrincipal, category)
-	res, err := http.Get(link)
+	resCategory, err := http.Get(link)
 	if err != nil {
 		return nil, fmt.Errorf("Error while trying to make the Get request to (%s)", link)
 	}
-	defer res.Body.Close()
+	defer resCategory.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	doc, err := goquery.NewDocumentFromReader(resCategory.Body)
 	if err != nil {
 		return nil, fmt.Errorf("Error while casting reader to goquery.document (%s)", link)
 	}
@@ -125,13 +125,13 @@ func fetchContent(category string, month int, year int) ([]byte, error) {
 	}
 
 	//Fetch content
-	res, err = http.Get(ssLink)
+	resFile, err := http.Get(ssLink)
 	if err != nil {
 		return nil, fmt.Errorf("Error while trying to make the Get request to (%s)", ssLink)
 	}
-	defer res.Body.Close()
+	defer resFile.Body.Close()
 
-	content, err := ioutil.ReadAll(res.Body)
+	content, err := ioutil.ReadAll(resFile.Body)
 	if err != nil {
 		return nil, fmt.Errorf("Error while trying to read content from (%s)", ssLink)
 	}
