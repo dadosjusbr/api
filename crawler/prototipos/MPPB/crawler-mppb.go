@@ -41,10 +41,13 @@ func main() {
 }
 
 // Generate endpoints able to download
+//https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019&tipo=
 func links(month, year int) map[string]string {
 	baseURL := "http://pitagoras.mppb.mp.br/PTMP/"
-	links := make(map[string]string, len(tipos)+1)
+	links := make(map[string]string, len(tipos)+2)
 	links["estagio"] = fmt.Sprintf("%sFolhaPagamentoEstagiarioExercicioMesOds?exercicio=%d&mes=%d", baseURL, year, month)
+	links["indenizacoes"] = fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year)
+	fmt.Println(fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year))
 	for t, id := range tipos {
 		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds?mes=%d&exercicio=%d&tipo=%d", baseURL, month, year, id)
 	}
@@ -66,7 +69,7 @@ func download(url string) ([]byte, error) {
 
 // Receive a slice of bytes after download, write, nominate file and save
 func saveToOds(content []byte, typ string, monthString, yearString int) error {
-	newFile, err := os.Create(fmt.Sprintf("%s-%d-%-d", typ, monthString, yearString))
+	newFile, err := os.Create(fmt.Sprintf("%s-%d-%-d.ods", typ, monthString, yearString))
 	if err != nil {
 		return err
 	}
