@@ -1,5 +1,5 @@
 # Ministério Público da Paraíba - Crawler
-Este crawler tem como objetivo a recuperação de informações sobre folhas de pagamentos dos funcionários do Ministério Público da Paraíba. O site com as informações pode ser acessado [aqui](http://pitagoras.mppb.mp.br/PTMP/FolhaListar) 
+Este crawler tem como objetivo a recuperação de informações sobre folhas de pagamentos dos funcionários do Ministério Público da Paraíba. O site com as informações pode ser acessado [aqui](http://pitagoras.mppb.mp.br/PTMP/FolhaListar).
 O crawler está estruturado como uma CLI. Você passa dois argumentos (mês e ano) e serão baixadas seis planilhas no formato ODS, cada planilha é referente a uma destas categorias: Membros Ativos, Membros Inativos, Servidores Ativos, Servidores Inativos, Servidores à Disposição e Aposentados/Pensionistas
 .
 
