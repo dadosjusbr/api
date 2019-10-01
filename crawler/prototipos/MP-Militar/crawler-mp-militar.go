@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -28,15 +29,13 @@ func main() {
 	ano := flag.Int("ano", -1, "O ano da planilha")
 	flag.Parse()
 	if erro := validaFlags(*mes, *ano); erro != nil {
-		fmt.Println(erro)
-		return
+		log.Fatal(erro)
 	}
-	urls := geraUrlsDasPlanilhas(*mes, *ano)
+	urls := geraURLPlanilhas(*mes, *ano)
 	for i, url := range urls {
 		arquivo, erro := baixaArquivo(url)
 		if erro != nil {
 			fmt.Println(erro)
-			return
 		}
 		salvaArquivo(arquivo, *ano, *mes, categorias[i])
 	}
@@ -71,7 +70,7 @@ func baixaArquivo(url string) ([]byte, error) {
 }
 
 // Gera a URL de todos os arquivos de um determinado mês e ano
-func geraUrlsDasPlanilhas(mes int, ano int) map[int]string {
+func geraURLPlanilhas(mes int, ano int) map[int]string {
 	urls := make(map[int]string)
 	for key, _ := range categorias {
 		url := fmt.Sprintf("%sgrupo=%d&mes=%d&ano=%d", urlPrincipal, key, mes, ano)
