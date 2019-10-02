@@ -20,6 +20,7 @@ require (
 	github.com/montanaflynn/stats v0.5.0
 	github.com/sendgrid/rest v2.4.1+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.5.0+incompatible
+	github.com/stretchr/testify v1.3.0
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.0.3
