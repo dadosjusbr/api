@@ -1,8 +1,16 @@
 # Ministério Público da Paraíba - Crawler
 
 Este crawler tem como objetivo a recuperação de informações sobre folhas de pagamentos dos funcionários do Ministério Público da Paraíba. O site com as informações pode ser acessado [aqui](http://pitagoras.mppb.mp.br/PTMP/FolhaListar).
-O crawler está estruturado como uma CLI. Você passa dois argumentos (mês e ano) e serão baixadas seis planilhas no formato ODS, cada planilha é referente a uma destas categorias: Membros Ativos, Membros Inativos, Servidores Ativos, Servidores Inativos, Servidores à Disposição e Aposentados/Pensionistas
-.
+
+O crawler está estruturado como uma CLI. Você passa dois argumentos (mês e ano) e serão baixadas oito planilhas no formato ODS, cada planilha é referente a uma destas categorias: 
+
+- Tipo I - Folha de remunerações: Membros Ativos, Membros Inativos, Servidores Ativos, Servidores Inativos, Servidores à Disposição,  Aposentados/Pensionistas, Estagiários. 
+
+- Tipo II - Verbas Referentes à exercícios anteriores.
+
+- Tipo III - Verbas Indenizatórias e outras remunerações temporárias.
+
+As planilhas estão de acordo com a resolução [89/2012 do CNMP] (http://www.cnmp.mp.br/portal/atos-e-normas/norma/795/). O formato das planilhas segue o definido no anexo desta resolução, com pequenas diferenças .
 
 ## Como usar
 
@@ -39,38 +47,42 @@ As planilhas possuem as seguintes colunas:
 
 ## Planilhas
 
-Seguem o formato do Anexo 1 - CPJ 17/2012 (Similar à Tabela I CNMP 200/2019)
-
 - Lista de planilhas: [http://pitagoras.mppb.mp.br/PTMP/FolhaListar](http://pitagoras.mppb.mp.br/PTMP/FolhaListar)
   
-### Remunerações ###
+### Tipo 1 - Remunerações ###
 
-- URL Base: [http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds)
-- Parâmetros da url: exercicio=[ano]&mes=[mes]&tipo=[Membros Ativos (*1*), Membros Inativos (*2*), Servidores Ativos (*3*), Servidores Inativos (*4*), Servidores à Disposição (*5*), Aposentados/Pensionistas (*6*)]
-- [Exemplo](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds?mes=1&exercicio=2019&tipo=1)
-  
+- **URL Base**: [http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds)
+- **Parâmetros da url**: exercicio=[ano]&mes=[mes]&tipo=[Membros Ativos (*1*), Membros Inativos (*2*), Servidores Ativos (*3*), Servidores Inativos (*4*), Servidores à Disposição (*5*), Aposentados/Pensionistas (*6*)]
+ - [Exemplo](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoExercicioMesNewOds?mes=1&exercicio=2019&tipo=1)
+- **Formato da tabela:** [Tipo I](http://www.cnmp.mp.br/portal/images/Resolucoes/Anexo-200---RES-89.pdf)
 
-
-- Exemplos:
-  - 
-  - [Verbas Referentes a exercícios anteriores](http://pitagoras.mppb.mp.br/PTMP/FolhaExercicioAnteriorMesNewOds?exercicio=2019&mes=1)
-  - [Remuneração de estagiários](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?mes=1&exercicio=2018)
-
-
-### **-  Tabela de remuneração de estagiários**:  
-[http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?mes=1&exercicio=2018](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?mes=1&exercicio=2018)
--   **Formato da tabela:**  Anexo 1 - CPJ 17/2012 (Similar à Tabela I CNMP 200/2019) com algumas diferenças de nomenclatura:
+#### Tabela de remuneração de estagiários:  
+- **URL Base**: [http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?)
+- **Parâmetros da url**: exercicio=[ano]&mes=[mes]
+	- [Exemplo](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?mes=1&exercicio=2019)
+- **Formato da tabela:**  [Tipo I](http://www.cnmp.mp.br/portal/images/Resolucoes/Anexo-200---RES-89.pdf) com algumas diferenças de nomenclatura:
 	- Remuneração de cargo efetivo: Remuneração
 	- Função de Confiança ou Cargo em Comissão: Função de Confiança
 	- Gratificação Natalina: 13º Vencimento 
 	- Férias (⅓ constitucional): Adicional de Férias (Constitucional)
--  **Formato da url:** exercicio=ano, mes=mes, tipo=tipo de servidor
 
-### **-  Tabela de Indenizações**:  
-https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019&tipo=
+### Tipo 2 - Verbas referentes à exercícios anteriores ### 
+- **URL Base**:[http://pitagoras.mppb.mp.br/PTMP/FolhaExercicioAnteriorMesNewOds?](http://pitagoras.mppb.mp.br/PTMP/FolhaExercicioAnteriorMesNewOds?)
+- **Parâmetros da url:** exercicio=[ano]&mes=[mes]
+	- [Exemplo](http://pitagoras.mppb.mp.br/PTMP/FolhaExercicioAnteriorMesNewOds?mes=1&exercicio=2019)
+- **Formato da tabela:** [Tipo II](http://www.cnmp.mp.br/portal/images/Resolucoes/Anexo-200---RES-89.pdf) com algumas diferenças:
+	- Campos inexistentes:
+		- Valor bruto/Líquido
+		- Campos referentes a descontos.
+		- Cargo e lotação do funcionário.
+	- Campos adicionais:
+		- Valor recebido (Parcela)
+		- Valor total remanescente a receber
+		- Número de parcelas restantes a receber
 
--   **Formato da tabela:**  Possui em comum com as tabelas anteriores apenas os campos: Matrícula, Nome, Cargo e lotação. É complemetada por duas supercolunas com cada indenização discriminadas, são elas:
-	- Verbas Indenizatórias 1
-	- Outras remunerações temporárias 2
--  **Formato da url:** exercicio=ano, mes=mes
+### Tipo 3 - Tabela de Indenizações ### 
+- **URL Base**:[https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?](https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019)
+- **Parâmetros da url:** exercicio=[ano]&mes=[mes]
+	- [Exemplo](https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019)
+- **Formato da tabela:** [Tipo III](http://www.cnmp.mp.br/portal/images/Resolucoes/Anexo-200---RES-89.pdf)
 - **Obs**: Indenizações disponíveis apenas para o ano de 2019.
