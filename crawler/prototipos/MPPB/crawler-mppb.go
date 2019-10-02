@@ -44,10 +44,9 @@ func main() {
 // Generate endpoints able to download
 func links(month, year int) map[string]string {
 	baseURL := "http://pitagoras.mppb.mp.br/PTMP/"
-	links := make(map[string]string, len(tipos)+2)
+	links := make(map[string]string, len(tipos))
 	links["estagio"] = fmt.Sprintf("%sFolhaPagamentoEstagiarioExercicioMesOds?exercicio=%d&mes=%d", baseURL, year, month)
 	links["indenizacoes"] = fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year)
-	fmt.Println(fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year))
 	for t, id := range tipos {
 		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds?mes=%d&exercicio=%d&tipo=%d", baseURL, month, year, id)
 	}
@@ -60,11 +59,11 @@ func download(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	bodySave, err := ioutil.ReadAll(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	return bodySave, nil
+	return b, nil
 }
 
 // Receive a slice of bytes after download, write, nominate file and save
