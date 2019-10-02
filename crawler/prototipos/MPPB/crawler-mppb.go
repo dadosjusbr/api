@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -23,28 +24,30 @@ func main() {
 	flag.Parse()
 
 	if *month == 0 || *year == 0 {
-		fmt.Println("Need arguments to continue, please try again!")
-		os.Exit(1)
+		log.Fatalf("Need arguments to continue, please try again!")
 	}
 
 	for typ, url := range links(*month, *year) {
 		c, err := download(url)
 		if err != nil {
-			fmt.Printf("Error while downloading content: %q\n", err)
+			log.Fatalf("Error while downloading content: %q\n", err)
 			continue
 		}
-		err = saveToOds(c, typ, *month, *year)
-		if err != nil {
-			fmt.Printf("Error while saving to file: %q\n", err)
+		name := fmt.Sprintf("%s-%d-%d.ods", typ, *month, *year)
+		if err = save(c, name); err != nil {
+			log.Fatalf("Error while saving to file(%s): %q\n", name, err)
 		}
+		fmt.Printf("File successfully saved:%s", name)
 	}
 }
 
 // Generate endpoints able to download
 func links(month, year int) map[string]string {
 	baseURL := "http://pitagoras.mppb.mp.br/PTMP/"
-	links := make(map[string]string, len(tipos)+1)
+	links := make(map[string]string, len(tipos)+2)
 	links["estagio"] = fmt.Sprintf("%sFolhaPagamentoEstagiarioExercicioMesOds?exercicio=%d&mes=%d", baseURL, year, month)
+	links["indenizacoes"] = fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year)
+	fmt.Println(fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year))
 	for t, id := range tipos {
 		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds?mes=%d&exercicio=%d&tipo=%d", baseURL, month, year, id)
 	}
@@ -65,8 +68,8 @@ func download(url string) ([]byte, error) {
 }
 
 // Receive a slice of bytes after download, write, nominate file and save
-func saveToOds(content []byte, typ string, monthString, yearString int) error {
-	newFile, err := os.Create(fmt.Sprintf("%s-%d-%-d", typ, monthString, yearString))
+func save(content []byte, name string) error {
+	newFile, err := os.Create(name)
 	if err != nil {
 		return err
 	}
