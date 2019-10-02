@@ -58,7 +58,7 @@ As planilhas possuem as seguintes colunas:
 
 #### Tabela de remuneração de estagiários:  
 - **URL Base**: [http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?)
-- ** Parâmetros da url**: exercicio=[ano]&mes=[mes]
+- **Parâmetros da url**: exercicio=[ano]&mes=[mes]
 	- [Exemplo](http://pitagoras.mppb.mp.br/PTMP/FolhaPagamentoEstagiarioExercicioMesOds?mes=1&exercicio=2019)
 - **Formato da tabela:**  [Tipo I](http://www.cnmp.mp.br/portal/images/Resolucoes/Anexo-200---RES-89.pdf) com algumas diferenças de nomenclatura:
 	- Remuneração de cargo efetivo: Remuneração
@@ -81,8 +81,8 @@ As planilhas possuem as seguintes colunas:
 		- Número de parcelas restantes a receber
 
 ### Tipo 3 - Tabela de Indenizações ### 
-- **URL Base**:[https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019&tipo=](https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019&tipo=)
-- **Parâmetros da url:** exercicio=ano, mes=mes
-	- [Exemplo](https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019&tipo=)
+- **URL Base**:[https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?](https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019)
+- **Parâmetros da url:** exercicio=[ano]&mes=[mes]
+	- [Exemplo](https://pitagoras.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds?mes=1&exercicio=2019)
 - **Formato da tabela:** [Tipo III](http://www.cnmp.mp.br/portal/images/Resolucoes/Anexo-200---RES-89.pdf)
 - **Obs**: Indenizações disponíveis apenas para o ano de 2019.
