@@ -16,6 +16,8 @@ var statusCode = map[int]string{
 	500: "Internal Server Error",
 }
 
+const fileExtension = ".json"
+
 func main() {
 	month := flag.Int("mes", 0, "Mês a ser analisado")
 	year := flag.Int("ano", 0, "Ano a ser analisado")
@@ -23,18 +25,17 @@ func main() {
 	if *month == 0 || *year == 0 {
 		log.Fatalf("need arguments to continue, please try again: \"go run crawler-trtpb.go --mes=int --ano=int\"")
 	}
-
-	reqURL := fmt.Sprintf("https://www.trt13.jus.br/transparenciars/api/anexoviii/anexoviii?mes=%02d&ano=%04d", *month, *year)
-	fileName := fmt.Sprintf("remuneracoes-trt13-%02d-%04d", *month, *year)
-
+	fileName := fmt.Sprintf("remuneracoes-trt13-%02d-%04d%s", *month, *year, fileExtension)
 	f, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("error creating file(%s):%q", fileName, err)
 	}
 
+	reqURL := fmt.Sprintf("https://www.trt13.jus.br/transparenciars/api/anexoviii/anexoviii?mes=%02d&ano=%04d", *month, *year)
 	err = download(reqURL, f)
 	if err != nil {
-		log.Fatalf("Error while fetching content (%d-%d): %q", *month, *year, err)
+		os.Remove(fileName)
+		log.Fatalf("error while downloading content (%02d-%04d): %q", *month, *year, err)
 	}
 }
 
