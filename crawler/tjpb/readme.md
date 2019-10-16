@@ -1,6 +1,6 @@
-# Tribunal Regional do Trabalho - 13ª região
+# Tribunal de Justiça da Paraíba
 
-Este crawler tem como objetivo a recuperação de informações sobre folhas de pagamentos dos funcionários do Tribunal Regional do Trabalho - 13ª região. O site com as informações pode ser acessado [aqui](https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal).
+Este crawler tem como objetivo a recuperação de informações sobre folhas de pagamentos dos funcionários do Tribunal de Justiça da Paraíba. O site com as informações pode ser acessado [aqui](https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal).
 
 O crawler está estruturado como uma CLI. Você passa dois argumentos (mês e ano) e serão baixados dois arquivo no formato **PDF** representando a folha de pagamento da instituição, sendo um referente a magistrados e outro referente a servidores.
 
@@ -71,3 +71,4 @@ As planilhas apresentadas nos pdfs contém as seguintes colunas:
 - **URL Base**: [https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal](https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal)
 - **Formato**: PDF
 - **Tipos**: Existe um arquivo referente aos servidores e um referente aos magistrados.
+	- **Obs**: Antes de outubro de 2012 pode-se ter apenas o arquivo de magistrados ou um arquivo geral que não discrimina por funcionário. Esses são nomeados apenas como "remuneracoes-tjpb-mes-ano.pdf" quando baixados.
