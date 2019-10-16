@@ -13,13 +13,13 @@ Os dados devem estar de acordo com a [Resolução 102 do CNJ](https://atos.cnj.j
 - Rode o comando abaixo, com mês e ano que você quer ter acesso as informações
 
 ```sh
-cd crawler/mppb
+cd crawler/trtpb
 go run crawler-trtpb.go --mes=${MES} --ano=${ANO}
 ```
 
 ## Dicionário de Dados
 
-As planilhas possuem as seguintes colunas:
+Para cada funcionário, o JSON possui os seguintes campos:
 
 - **id (Number)**: Matrícula do funcionário  
 - **Nome (String)**: Nome completo do funcionário
