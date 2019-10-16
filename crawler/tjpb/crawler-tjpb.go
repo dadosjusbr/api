@@ -55,6 +55,8 @@ func main() {
 			log.Fatalf("error creating file(%s):%q", fileName, err)
 		}
 		if download(url, f); err != nil {
+			f.Close()
+			os.Remove(fileName)
 			log.Fatalf("error while downloading content (%02d-%04d): %q", *month, *year, err)
 		}
 		f.Close()
