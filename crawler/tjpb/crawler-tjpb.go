@@ -16,6 +16,10 @@ import (
 
 const baseURL = "https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal"
 
+var netClient = &http.Client{
+	Timeout: time.Second * 60,
+}
+
 var monthStr = map[int]string{
 	1:  "Janeiro",
 	2:  "Fevereiro",
@@ -29,10 +33,6 @@ var monthStr = map[int]string{
 	10: "Outubro",
 	11: "Novembro",
 	12: "Dezembro",
-}
-
-var netClient = &http.Client{
-	Timeout: time.Second * 60,
 }
 
 func main() {
@@ -54,6 +54,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("error creating file(%s):%q", fileName, err)
 		}
+
 		if download(url, f); err != nil {
 			f.Close()
 			os.Remove(fileName)
@@ -120,6 +121,7 @@ func download(url string, w io.Writer) error {
 		return fmt.Errorf("error downloading file:%q", err)
 	}
 	defer resp.Body.Close()
+
 	if io.Copy(w, resp.Body); err != nil {
 		return fmt.Errorf("error copying response content:%q", err)
 	}
