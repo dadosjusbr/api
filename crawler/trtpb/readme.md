@@ -39,7 +39,7 @@ Para cada funcionário, o JSON possui os seguintes campos:
 	- **Descontos Diversos**: Cotas de participação de auxílio pré-escolar, auxílio transporte e demais descontos extraordinários de caráter não pessoal. 
 	- **Retenção por Teto Constitucional (Number)**: Valores retidos por excederem ao teto remuneratório constitucional conforme Resoluções nº 13 e 14, do CNJ.
 	- **Total de Debitos (Number)**:  Total dos descontos efetuados no mês
-- **Rendimento Líquido (Number)**: endimento líquido após os descontos referidos nos itens anteriores.
+- **Rendimento Líquido (Number)**: Rendimento líquido após os descontos referidos nos itens anteriores.
 - **Remuneração do órgão de origem (Number)**: Remuneração percebida no órgão de origem por magistrados e servidores, cedidos ou requisitados, optantes por aquela remuneração.
 - **Diárias**:  Valor de diárias efetivamente pago no mês de referência, ainda que o período de afastamento se estenda para além deste.”
 
