@@ -54,7 +54,7 @@ func main() {
 	}
 
 	for typ, url := range mapLinks(nodes, *month, *year) {
-		if save(typ, url); err != nil {
+		if err = save(typ, url); err != nil {
 			log.Fatalf("Error trying to save file: %q", err)
 		}
 	}
