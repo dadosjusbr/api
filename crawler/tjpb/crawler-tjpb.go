@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-const baseURL string = "https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal"
+const baseURL = "https://www.tjpb.jus.br/transparencia/gestao-de-pessoas/folha-de-pagamento-de-pessoal"
 
 var netClient = &http.Client{
 	Timeout: time.Second * 60,
@@ -48,7 +48,7 @@ func main() {
 		log.Fatalf("Error trying to load URL: %q", err)
 	}
 
-	nodes, err := interestNodes(doc, *month, *year)
+	nodes, err := findInterestNodes(doc, *month, *year)
 	if err != nil {
 		log.Fatalf("Error trying to find link nodes of interest: %q", err)
 	}
@@ -60,7 +60,7 @@ func main() {
 	}
 }
 
-//Load HTML document from specified URL.
+// loadURL loads the HTML document from the specified URL, parses it and returns the root node of the document.
 func loadURL(baseURL string) (*html.Node, error) {
 	resp, err := netClient.Get(baseURL)
 	if err != nil {
@@ -75,21 +75,19 @@ func loadURL(baseURL string) (*html.Node, error) {
 	return doc, nil
 }
 
-// Generate a map of endpoints with a named reference to their content as a key.
+// mapLinks generates a map of endpoints with a named reference to their content as a key.
 func mapLinks(nodes []*html.Node, month, year int) map[string]string {
 	links := make(map[string]string)
-
 	for _, node := range nodes {
-		href := node.Attr[0].Val            //href value
-		name := fileName(href, month, year) //Generates name for file.
-		links[name] = href
+		val := node.Attr[0].Val
+		name := fileName(val, month, year)
+		links[name] = val
 	}
-
 	return links
 }
 
-// Make xpath query to find links of interest for a given month and year.
-func interestNodes(doc *html.Node, month, year int) ([]*html.Node, error) {
+// findInterestNodes makes a xpath query to find link nodes of interest for a given month and year.
+func findInterestNodes(doc *html.Node, month, year int) ([]*html.Node, error) {
 	//Sets xpath for interest nodes depending on year and month.
 	xpath := fmt.Sprintf("//*[@id=\"arquivos-%04d-mes-%02d\"]//a", year, month)
 	if year <= 2012 {
@@ -103,20 +101,17 @@ func interestNodes(doc *html.Node, month, year int) ([]*html.Node, error) {
 	return nodeList, nil
 }
 
-// Generates name for href content.
+// fileName generates name for href content.
 func fileName(href string, month, year int) string {
-	var name string
 	if strings.Contains(href, "magistrados") {
-		name = fmt.Sprintf("remuneracoes-magistrados-tjpb-%02d-%04d", month, year)
+		return fmt.Sprintf("remuneracoes-magistrados-tjpb-%02d-%04d", month, year)
 	} else if strings.Contains(href, "servidores") {
-		name = fmt.Sprintf("remuneracoes-servidores-tjpb-%02d-%04d", month, year)
-	} else {
-		name = fmt.Sprintf("remuneracoes-tjpb-%02d-%04d", month, year)
+		return fmt.Sprintf("remuneracoes-servidores-tjpb-%02d-%04d", month, year)
 	}
-	return name
+	return fmt.Sprintf("remuneracoes-tjpb-%02d-%04d", month, year)
 }
 
-// Create file and save content to it.
+// save downloads content from url and save it on a file.
 func save(typ string, url string) error {
 	fileName := fmt.Sprintf("%s.pdf", typ)
 	f, err := os.Create(fileName)
@@ -132,7 +127,7 @@ func save(typ string, url string) error {
 	return nil
 }
 
-// Download from endpoint and copy content to an io.Writer.
+// download gets content from url and copy it to an io.Writer.
 func download(url string, w io.Writer) error {
 	resp, err := netClient.Get(url)
 	if err != nil {

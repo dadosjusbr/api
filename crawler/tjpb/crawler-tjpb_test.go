@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/net/html"
 )
 
 const htmlSample = `<!DOCTYPE html><html lang="en-US">
@@ -41,35 +42,37 @@ func TestLoadURL(t *testing.T) {
 	}
 }
 
-// Test if xpath query is finding the interest nodes for years past 2012
-func TestInterestNodesPast2012(t *testing.T) {
+// Test if xpath query is finding the interest nodes.
+func TestFindInterestNodes(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, htmlSample)
 	}))
 	defer ts.Close()
 
 	doc, _ := loadURL(ts.URL)
-	nodes, err := interestNodes(doc, 1, 2013)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, nodes)
-	assert.Len(t, nodes, 2)
-}
 
-// Test if xpath query is finding the interest nodes for years before 2013
-func TestInterestNodesBefore2013(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, htmlSample)
-	}))
-	defer ts.Close()
+	data := []struct {
+		desc     string
+		month    int
+		year     int
+		node     *html.Node
+		respSize int
+	}{
+		{"Nodes past 2012", 1, 2013, doc, 2},
+		{"Nodes before 2013", 2, 2011, doc, 1},
+	}
 
-	doc, _ := loadURL(ts.URL)
-	nodes, err := interestNodes(doc, 2, 2011)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, nodes)
+	for _, d := range data {
+		t.Run(d.desc, func(t *testing.T) {
+			got, err := findInterestNodes(d.node, d.month, d.year)
+			assert.NoError(t, err)
+			assert.Equal(t, d.respSize, len(got))
+		})
+	}
 }
 
 // Test if interestNodes() returns an error if no node is found.
-func TestInterestNodesError(t *testing.T) {
+func TestFindInterestNodes_Error(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, htmlSample)
 	}))
@@ -77,8 +80,23 @@ func TestInterestNodesError(t *testing.T) {
 
 	doc, _ := loadURL(ts.URL)
 
-	_, err := interestNodes(doc, 13, 2013)
-	assert.Error(t, err)
+	data := []struct {
+		desc      string
+		month     int
+		year      int
+		node      *html.Node
+		errorDesc string
+	}{
+		{"nodes for given month and year not available", 1, 2015, doc, "couldn't find any link for 01-2015"},
+	}
+
+	for _, d := range data {
+		t.Run(d.desc, func(t *testing.T) {
+			_, err := findInterestNodes(d.node, d.month, d.year)
+			assert.Error(t, err)
+			assert.Equal(t, d.errorDesc, err.Error())
+		})
+	}
 }
 
 // Test if file name is returning appropriate names for the files.
@@ -116,7 +134,7 @@ func TestSave(t *testing.T) {
 }
 
 // Test if the file is erased if save returns an error.
-func TestSaveFail(t *testing.T) {
+func TestSave_Error(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 	}))
