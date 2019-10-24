@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -17,7 +19,7 @@ import (
 const (
 	baseURL        = "http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?acao=Anexo_VIII"
 	questionXpath  = "/html/body/form/table/tbody/tr[2]/td/table/tbody/tr[3]/td/table/tbody/tr[3]/td[1]"
-	acessCodeXpath = "//form"
+	acessCodeXpath = "/html/body/form/input[5]"
 )
 
 var monthStr = []string{"janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}
@@ -30,11 +32,19 @@ var netClient = &http.Client{
 }
 
 func main() {
+	month := flag.Int("mes", 0, "Mês a ser analisado")
+	year := flag.Int("ano", 0, "Ano a ser analisado")
+	flag.Parse()
+	if *month == 0 || *year == 0 {
+		log.Fatalf("need arguments to continue, please try again")
+	}
+
 	acessCode, err := login()
 	if err != nil {
-		log.Fatalf("%q", err)
+		log.Fatalf("login error: %q", err)
 	}
 	fmt.Println(acessCode)
+
 }
 
 //Load HTML document from specified URL.
@@ -69,9 +79,14 @@ func login() (string, error) {
 		return "", fmt.Errorf("Error while trying to find answer to question: %q", err)
 	}
 
-	code, err := retrieveAcessCode(question, ans)
+	resp, err := loginRequest(question, ans)
 	if err != nil {
-		return "", fmt.Errorf("Error while trying to retrieve access code: %q", err)
+		return "", fmt.Errorf("error while trying to make a login request: %q", err)
+	}
+
+	code := retrieveAcessCode(resp)
+	if code == "" {
+		return "", fmt.Errorf("couldn't retrieve access code")
 	}
 
 	return code, nil
@@ -90,7 +105,7 @@ func findQuestion(doc *html.Node) (string, error) {
 	return question, nil
 }
 
-func loginRequest(question, ans string) (*html.Node, error) {
+func loginRequest(question, ans string) (io.Reader, error) {
 	body := fmt.Sprintf(
 		`nomeUsuario=Marcos+Barros+de+Medeiros+Filho&cpfUsuario=097.650.704-89&respostaCaptcha=%s&btnLogin=Efetuar+login&identificaUsuario=&perguntaCaptcha=%s`,
 		url.QueryEscape(ans), url.QueryEscape(question))
@@ -114,19 +129,7 @@ func loginRequest(question, ans string) (*html.Node, error) {
 	}
 	defer resp.Body.Close()
 
-	// DEBBUG
-
-	fmt.Println(question, ans, body)
-	saveDebbug(resp.Body)
-
-	//
-
-	doc, err := htmlquery.Parse(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error loading doc from login post response: %q", err)
-	}
-
-	return doc, nil
+	return resp.Body, nil
 }
 
 func saveDebbug(body io.Reader) {
@@ -138,20 +141,26 @@ func saveDebbug(body io.Reader) {
 	io.Copy(out, body)
 }
 
-func retrieveAcessCode(question, ans string) (string, error) {
+// retrieveAcessCode searchs for accessCode inside the page and return if found.
+func retrieveAcessCode(page io.Reader) string {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(page)
+	pageStr := buf.String()
 
-	doc, err := loginRequest(question, ans)
-	if err != nil {
-		return "", fmt.Errorf("error while trying to make a login request: %q", err)
-	}
+	code := substringBetween(pageStr, `<input type="hidden" name="chaveDeAcesso" value="`, `"`)
 
-	codeNode, err := htmlquery.Query(doc, acessCodeXpath)
-	if err != nil {
-		return "", fmt.Errorf("query error: %q", err)
+	if len(code) != 32 {
+		return ""
 	}
-	if codeNode == nil {
-		return "", fmt.Errorf("no matching node found - %s", acessCodeXpath)
-	}
+	return code
+}
 
-	return codeNode.Data, nil
+//substringBetween returns the substring in str between before and after strings.
+func substringBetween(str, before, after string) string {
+	a := strings.SplitAfterN(str, before, 2)
+	b := strings.SplitAfterN(a[len(a)-1], after, 2)
+	if 1 == len(b) {
+		return b[0]
+	}
+	return b[0][0 : len(b[0])-len(after)]
 }
