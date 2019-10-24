@@ -22,8 +22,6 @@ const (
 	acessCodeXpath = "/html/body/form/input[5]"
 )
 
-var monthStr = []string{"janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}
-
 var netClient = &http.Client{
 	Timeout: time.Second * 60,
 	CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -34,20 +32,70 @@ var netClient = &http.Client{
 func main() {
 	month := flag.Int("mes", 0, "Mês a ser analisado")
 	year := flag.Int("ano", 0, "Ano a ser analisado")
+	name := flag.String("nome", "", "Used for login purposes")
+	cpf := flag.String("cpf", "", "used for login purpose. format xxx.xxx.xxx-xx")
 	flag.Parse()
-	if *month == 0 || *year == 0 {
-		log.Fatalf("need arguments to continue, please try again")
+	if *month == 0 || *year == 0 || *cpf == "" || *name == "" {
+		log.Fatalf("Need all arguments to continue, please try again\n")
 	}
 
-	acessCode, err := login()
+	acessCode, err := login(*name, *cpf)
 	if err != nil {
 		log.Fatalf("login error: %q", err)
 	}
-	fmt.Println(acessCode)
+
+	data, err := queryData(acessCode, *month, *year)
+	if err != nil {
+		log.Fatalf("Query data error: %q", err)
+	}
+
+	dataDesc := fmt.Sprintf("remuneracoes-trepb-%02d-%04d", *month, *year)
+
+	if err = save(dataDesc, data); err != nil {
+		log.Fatalf("Error saving data to file: %q", err)
+	}
 
 }
 
-//Load HTML document from specified URL.
+// save downloads content from url and save it on a file.
+func save(desc string, data []*html.Node) error {
+	fileName := fmt.Sprintf("%s.html", desc)
+	f, err := os.Create(fileName)
+	if err != nil {
+		return fmt.Errorf("error creating file(%s):%q", fileName, err)
+	}
+	defer f.Close()
+
+	for _, node := range data {
+		nodeReader := strings.NewReader(htmlquery.OutputHTML(node, true))
+		if io.Copy(f, nodeReader); err != nil {
+			os.Remove(fileName)
+			return fmt.Errorf("error copying response content to file: %q", err)
+		}
+	}
+	return nil
+}
+
+// queryData query server for data of a specified month and year.
+func queryData(acessCode string, month, year int) ([]*html.Node, error) {
+	query := fmt.Sprintf(`acao=AnexoVIII&folha=&valida=true&toExcel=false&chaveDeAcesso=%s&mes=%d&ano=%04d`, acessCode, month, year)
+	queryURL := fmt.Sprintf(`http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?%s`, query)
+	doc, err := loadURL(queryURL)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading url: %q", err)
+	}
+
+	tables, err := htmlquery.QueryAll(doc, "//table")
+	if err != nil {
+		return nil, fmt.Errorf("error while making query for data tables: %q", err)
+	}
+	if len(tables) == 0 {
+		return nil, fmt.Errorf("couldn't find any data tables")
+	}
+	return tables, nil
+}
+
+//loadURL loads HTML document from specified URL.
 func loadURL(baseURL string) (*html.Node, error) {
 	resp, err := netClient.Get(baseURL)
 	if err != nil {
@@ -62,8 +110,8 @@ func loadURL(baseURL string) (*html.Node, error) {
 	return doc, nil
 }
 
-// Returns accessCode for the api.
-func login() (string, error) {
+// login returns the accessCode for the api.
+func login(name, cpf string) (string, error) {
 	doc, err := loadURL(baseURL)
 	if err != nil {
 		return "", fmt.Errorf("Error while trying to load document: %q", err)
@@ -79,19 +127,20 @@ func login() (string, error) {
 		return "", fmt.Errorf("Error while trying to find answer to question: %q", err)
 	}
 
-	resp, err := loginRequest(question, ans)
+	resp, err := loginRequest(question, ans, name, cpf)
 	if err != nil {
 		return "", fmt.Errorf("error while trying to make a login request: %q", err)
 	}
 
 	code := retrieveAcessCode(resp)
 	if code == "" {
-		return "", fmt.Errorf("couldn't retrieve access code")
+		return "", fmt.Errorf("couldn't retrieve access code. Question: %s. Answer: %s", question, ans)
 	}
 
 	return code, nil
 }
 
+// findQuestion makes an xpath query to find captcha question inside the html page.
 func findQuestion(doc *html.Node) (string, error) {
 	qNode, err := htmlquery.Query(doc, questionXpath)
 	if err != nil {
@@ -105,50 +154,36 @@ func findQuestion(doc *html.Node) (string, error) {
 	return question, nil
 }
 
-func loginRequest(question, ans string) (io.Reader, error) {
+//loginRequest makes login request and returns response body as a string
+func loginRequest(question, ans, name, cpf string) (string, error) {
 	body := fmt.Sprintf(
-		`nomeUsuario=Marcos+Barros+de+Medeiros+Filho&cpfUsuario=097.650.704-89&respostaCaptcha=%s&btnLogin=Efetuar+login&identificaUsuario=&perguntaCaptcha=%s`,
-		url.QueryEscape(ans), url.QueryEscape(question))
+		`nomeUsuario=%s&cpfUsuario=%s&respostaCaptcha=%s&btnLogin=Efetuar+login&identificaUsuario=&perguntaCaptcha=%s`,
+		url.QueryEscape(name), cpf, url.QueryEscape(ans), url.QueryEscape(url.QueryEscape(question)))
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?%s", body), nil)
 	if err != nil {
-		return nil, fmt.Errorf("error while trying to make a NewRequest structure: %q", err)
+		return "", fmt.Errorf("error while trying to make a NewRequest structure: %q", err)
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0")
-	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-	req.Header.Set("Accept-Language", "pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3")
+	req.Header.Set("Accept", "text/html")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Referer", "http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?acao=Anexo_VIII")
-	req.Header.Set("Cookie", "JSESSIONID=197709FD583A7E6145E01453E36CAED9")
-	req.Header.Set("Upgrade-Insecure-Requests", "1")
 
 	resp, err := netClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while trying to make the post request: %q", err)
+		return "", fmt.Errorf("error while trying to make the post request: %q", err)
 	}
 	defer resp.Body.Close()
 
-	return resp.Body, nil
-}
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(resp.Body)
+	pageStr := buf.String()
 
-func saveDebbug(body io.Reader) {
-	out, err := os.Create("filename5.html")
-	if err != nil {
-		// panic?
-	}
-	defer out.Close()
-	io.Copy(out, body)
+	return pageStr, nil
 }
 
 // retrieveAcessCode searchs for accessCode inside the page and return if found.
-func retrieveAcessCode(page io.Reader) string {
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(page)
-	pageStr := buf.String()
-
-	code := substringBetween(pageStr, `<input type="hidden" name="chaveDeAcesso" value="`, `"`)
-
+func retrieveAcessCode(page string) string {
+	code := substringBetween(page, `<input type="hidden" name="chaveDeAcesso" value="`, `"`)
 	if len(code) != 32 {
 		return ""
 	}

@@ -6,7 +6,9 @@ import (
 	"strings"
 )
 
-// Gives solution to question.
+var monthStr = []string{"janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}
+
+// solution solves captcha questions
 func solution(question string) (string, error) {
 	if strings.Contains(question, "mês") {
 		ans, err := monthCaptcha(question)
@@ -37,7 +39,7 @@ func solution(question string) (string, error) {
 	return "", fmt.Errorf("Couldn't fit question in any algorithm: %s", question)
 }
 
-// Solve month questions.
+// monthCaptcha solves month questions.
 func monthCaptcha(question string) (string, error) {
 	monthIndex := -1
 	for i, month := range monthStr {
@@ -59,7 +61,7 @@ func monthCaptcha(question string) (string, error) {
 	return monthStr[monthIndex+1], nil
 }
 
-// Solve sequence questions.
+// sequenceCaptcha solves sequence questions.
 func sequenceCaptcha(question string) (string, error) {
 	args := strings.Split(question, ", ")
 	num, err := strconv.Atoi(args[len(args)-1])
@@ -69,7 +71,7 @@ func sequenceCaptcha(question string) (string, error) {
 	return strconv.Itoa(num + 1), nil
 }
 
-// Solve arithmetic questions.
+// arithmeticCaptcha solves arithmetic questions.
 func arithmeticCaptcha(question string) (string, error) {
 	args := strings.Split(question, " ")
 
@@ -94,7 +96,7 @@ func arithmeticCaptcha(question string) (string, error) {
 	return strconv.Itoa(num1 - num2), nil
 }
 
-//Solve even or odd questions
+//evenOrOddCaptcha solves even or odd questions
 func evenOrOddCaptcha(question string) (string, error) {
 	args := strings.Split(question, " ")
 
