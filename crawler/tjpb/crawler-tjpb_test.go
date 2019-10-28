@@ -15,32 +15,47 @@ import (
 	"golang.org/x/net/html"
 )
 
-const htmlSample = `
-<ul id="arquivos-2011">
-	<li><a href="">Fevereiro 2011</a></li>
-</ul>
-<ul id="arquivos-2013-mes-01">
-	<li><a href="servidores.pdf"></a></li>
-	<li><a href="magistrados.pdf"></a></li>
-</ul>
-`
-
-//Test if loadURL is loading the html doc.
+//Test if loadURL is loading the html doc without throwing any errors and with all nodes.
 func TestLoadURL(t *testing.T) {
+	span := "<span></span>"
+	div := fmt.Sprintf("<div>%s</div>", span)
+	body := fmt.Sprintf("<body>%s</body>", div)
+	head := "<head></head>"
+	htmlSample := fmt.Sprintf("<html>%s%s</html>", head, body)
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, htmlSample)
 	}))
 	defer ts.Close()
 
-	_, err := loadURL(ts.URL)
+	doc, err := loadURL(ts.URL)
 	if err != nil {
 		t.Fatal(err)
 	}
+	// HTML parser adds a \n before closing of body tag.
+	body = fmt.Sprintf("<body>%s\n</body>", div)
+	htmlSample = fmt.Sprintf("<html>%s%s</html>", head, body)
+
+	assert.Equal(t, htmlSample, htmlquery.OutputHTML(doc.FirstChild, true))                           //HTML DOC
+	assert.Equal(t, head, htmlquery.OutputHTML(doc.FirstChild.FirstChild, true))                      // Head
+	assert.Equal(t, body, htmlquery.OutputHTML(doc.FirstChild.LastChild, true))                       //Body
+	assert.Equal(t, div, htmlquery.OutputHTML(doc.FirstChild.LastChild.FirstChild, true))             //Div
+	assert.Equal(t, span, htmlquery.OutputHTML(doc.FirstChild.LastChild.FirstChild.FirstChild, true)) //span
 }
 
 // Test if xpath query is finding the interest nodes.
 func TestFindInterestNodes(t *testing.T) {
-	doc, err := html.Parse(strings.NewReader(htmlSample))
+	htmlSample := `
+		<ul id="arquivos-2011">
+			<li><a href="">Fevereiro 2011</a></li>
+		</ul>
+		<ul id="arquivos-2013-mes-01">
+			<li><a href="servidores.pdf"></a></li>
+			<li><a href="magistrados.pdf"></a></li>
+		</ul>
+	`
+
+	doc, err := html.Parse(strings.NewReader(htmlSample)) // LOading a node doc.
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,28 +91,14 @@ func TestFindInterestNodes(t *testing.T) {
 
 // Test if interestNodes() returns an error if no node is found.
 func TestFindInterestNodes_Error(t *testing.T) {
-	doc, err := html.Parse(strings.NewReader(htmlSample)) //LOADING DOC
+	doc, err := html.Parse(strings.NewReader(""))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	data := []struct {
-		desc      string
-		month     int
-		year      int
-		node      *html.Node
-		errorDesc string
-	}{
-		{"nodes for given month and year not available", 1, 2015, doc, "couldn't find any link for 01-2015"},
-	}
-
-	for _, d := range data {
-		t.Run(d.desc, func(t *testing.T) {
-			_, err := findInterestNodes(d.node, d.month, d.year)
-			assert.Error(t, err)
-			assert.Equal(t, d.errorDesc, err.Error())
-		})
-	}
+	_, err = findInterestNodes(doc, 1, 2015)
+	assert.Error(t, err)
+	assert.Equal(t, "couldn't find any link for 01-2015", err.Error())
 }
 
 // Test if file name is returning appropriate names for the files.
