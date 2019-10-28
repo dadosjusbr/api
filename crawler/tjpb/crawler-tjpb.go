@@ -53,7 +53,7 @@ func main() {
 		log.Fatalf("Error trying to find link nodes of interest: %q", err)
 	}
 
-	for typ, url := range mapLinks(nodes, *month, *year) {
+	for typ, url := range fileURLsFromInterestNodes(nodes, *month, *year) {
 		if err = save(typ, url); err != nil {
 			log.Fatalf("Error trying to save file: %q", err)
 		}
@@ -75,8 +75,8 @@ func loadURL(baseURL string) (*html.Node, error) {
 	return doc, nil
 }
 
-// mapLinks generates a map of endpoints with a named reference to their content as a key.
-func mapLinks(nodes []*html.Node, month, year int) map[string]string {
+// fileURLsFromInterestNodes generates a map of endpoints with a named reference to their content as a key.
+func fileURLsFromInterestNodes(nodes []*html.Node, month, year int) map[string]string {
 	links := make(map[string]string)
 	for _, node := range nodes {
 		val := node.Attr[0].Val
