@@ -15,32 +15,21 @@ import (
 	"golang.org/x/net/html"
 )
 
-//Test if loadURL is loading the html doc without throwing any errors and with all nodes.
+//Test if loadURL is loading the html doc without throwing any errors.
 func TestLoadURL(t *testing.T) {
-	span := "<span></span>"
-	div := fmt.Sprintf("<div>%s</div>", span)
-	body := fmt.Sprintf("<body>%s</body>", div)
-	head := "<head></head>"
-	htmlSample := fmt.Sprintf("<html>%s%s</html>", head, body)
-
+	htmlSample := "<html><head></head><body><div><span></span></div></body></html>"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, htmlSample)
 	}))
 	defer ts.Close()
 
 	doc, err := loadURL(ts.URL)
-	if err != nil {
-		t.Fatal(err)
-	}
-	// HTML parser adds a \n before closing of body tag.
-	body = fmt.Sprintf("<body>%s\n</body>", div)
-	htmlSample = fmt.Sprintf("<html>%s%s</html>", head, body)
+	assert.NoError(t, err)
 
-	assert.Equal(t, htmlSample, htmlquery.OutputHTML(doc.FirstChild, true))                           //HTML DOC
-	assert.Equal(t, head, htmlquery.OutputHTML(doc.FirstChild.FirstChild, true))                      // Head
-	assert.Equal(t, body, htmlquery.OutputHTML(doc.FirstChild.LastChild, true))                       //Body
-	assert.Equal(t, div, htmlquery.OutputHTML(doc.FirstChild.LastChild.FirstChild, true))             //Div
-	assert.Equal(t, span, htmlquery.OutputHTML(doc.FirstChild.LastChild.FirstChild.FirstChild, true)) //span
+	var buf bytes.Buffer
+	assert.NoError(t, html.Render(&buf, doc))
+	// HTML parser adds a \n before closing of body tag.
+	assert.Equal(t, "<html><head></head><body><div><span></span></div>\n</body></html>", buf.String())
 }
 
 // Test if xpath query is finding the interest nodes.
