@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/antchfx/htmlquery"
@@ -29,4 +30,14 @@ func loadURL(baseURL string) (*html.Node, error) {
 		return nil, fmt.Errorf("error loading doc (%s): %q", baseURL, err)
 	}
 	return doc, nil
+}
+
+//substringBetween returns the substring in str between before and after strings.
+func substringBetween(str, before, after string) string {
+	a := strings.SplitAfterN(str, before, 2)
+	b := strings.SplitAfterN(a[len(a)-1], after, 2)
+	if 1 == len(b) {
+		return b[0]
+	}
+	return b[0][0 : len(b[0])-len(after)]
 }

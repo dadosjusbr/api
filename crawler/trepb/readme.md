@@ -4,7 +4,7 @@ Este crawler tem como objetivo a recuperação de informações sobre folhas de 
 
 O crawler está estruturado como uma CLI. Você passa quatro argumentos (mês, ano, cpf e nome) e é baixado um arquivo no formato **HTML** representando a folha de pagamento da instituição. O arquivo contêm dois elementos table, sendo a primeira um dicionário dos dados e a segunda a tabela de remunerações.
 
-Os dados de nome e cpf são necessários para obter uma chave de acesso para a api fornecida pelo TRE-PB.
+Os dados de nome e cpf são necessários para obter uma chave de acesso para a api fornecida pelo TRE-PB. O crawler criará um cache dessa chave para diminuir a necessidade de requisições de chave para cada uso.
 
 ## Legislação
 

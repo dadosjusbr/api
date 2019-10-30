@@ -38,25 +38,6 @@ func main() {
 	}
 }
 
-// save downloads content from url and save it on a file.
-func save(desc string, data []*html.Node) error {
-	fileName := fmt.Sprintf("%s.html", desc)
-	f, err := os.Create(fileName)
-	if err != nil {
-		return fmt.Errorf("error creating file(%s):%q", fileName, err)
-	}
-	defer f.Close()
-
-	for _, node := range data {
-		nodeReader := strings.NewReader(htmlquery.OutputHTML(node, true))
-		if io.Copy(f, nodeReader); err != nil {
-			os.Remove(fileName)
-			return fmt.Errorf("error copying response content to file: %q", err)
-		}
-	}
-	return nil
-}
-
 // queryData query server for data of a specified month and year.
 func queryData(acessCode string, month, year int) ([]*html.Node, error) {
 	query := fmt.Sprintf(`acao=AnexoVIII&folha=&valida=true&toExcel=false&chaveDeAcesso=%s&mes=%d&ano=%04d`, acessCode, month, year)
@@ -74,4 +55,23 @@ func queryData(acessCode string, month, year int) ([]*html.Node, error) {
 		return nil, fmt.Errorf("couldn't find any data tables")
 	}
 	return tables, nil
+}
+
+// save creates a file and save the data nodes to it.
+func save(desc string, data []*html.Node) error {
+	fileName := fmt.Sprintf("%s.html", desc)
+	f, err := os.Create(fileName)
+	if err != nil {
+		return fmt.Errorf("error creating file(%s):%q", fileName, err)
+	}
+	defer f.Close()
+
+	for _, node := range data {
+		nodeReader := strings.NewReader(htmlquery.OutputHTML(node, true))
+		if io.Copy(f, nodeReader); err != nil {
+			os.Remove(fileName)
+			return fmt.Errorf("error copying response content to file: %q", err)
+		}
+	}
+	return nil
 }
