@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,11 +14,28 @@ import (
 )
 
 const (
-	baseURL        = "http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?acao=Anexo_VIII"
-	questionXpath  = "/html/body/form/table/tbody/tr[2]/td/table/tbody/tr[3]/td/table/tbody/tr[3]/td[1]"
-	acessCodeXpath = "/html/body/form/input[5]"
-	acessCodeCache = "acessCode.txt"
+	baseURL         = "http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?acao=Anexo_VIII"
+	questionXpath   = "/html/body/form/table/tbody/tr[2]/td/table/tbody/tr[3]/td/table/tbody/tr[3]/td[1]"
+	accessCodeXpath = "/html/body/form/input[5]"
+	accessCodeCache = "acessCode.txt"
 )
+
+// accessCode gets access code from cache file or a new one from TRE-PB server.
+func accessCode(name, cpf string) (string, error) {
+	acessCode, err := retrieveCachedCode()
+	if err != nil {
+		log.Fatalf("Retrieve cached code error: %q", err)
+	}
+
+	if acessCode == "" {
+		acessCode, err = login(name, cpf)
+		if err != nil {
+			log.Fatalf("Retrieve cached code error: %q", err)
+		}
+	}
+
+	return acessCode, nil
+}
 
 // login returns the accessCode for the api.
 func login(name, cpf string) (string, error) {
@@ -46,16 +64,25 @@ func login(name, cpf string) (string, error) {
 		return "", fmt.Errorf("couldn't retrieve access code. Question: %s. Answer: %s", question, ans)
 	}
 
+	err = saveToCache(code)
+	if err != nil {
+		return "", fmt.Errorf("error while saving code to cache file: %q", err)
+	}
+
 	return code, nil
 }
 
+// retrieveChachedCode makes an attempt to retrieve a cached access code.
 func retrieveCachedCode() (string, error) {
-	_, err := os.Stat(acessCodeCache)
+	_, err := os.Stat(accessCodeCache)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return "", nil
+		}
 		return "", err
 	}
 
-	f, err := os.Open(acessCodeCache)
+	f, err := os.Open(accessCodeCache)
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +94,6 @@ func retrieveCachedCode() (string, error) {
 		return "", err
 	}
 	accessCode := buf.String()
-	fmt.Println(accessCode)
 	ok, err := validateKey(accessCode)
 	if err != nil {
 		return "", fmt.Errorf("error while validating key from cache file: %q", err)
@@ -75,10 +101,10 @@ func retrieveCachedCode() (string, error) {
 	if ok {
 		return accessCode, nil
 	}
-
 	return "", nil
 }
 
+// validateKey makes a query to the TRE-PB API to assure key is valid.
 func validateKey(key string) (bool, error) {
 	query := fmt.Sprintf(`acao=AnexoVIII&folha=&valida=true&toExcel=false&chaveDeAcesso=%s&mes=6&ano=2005`, key)
 	requestURL := fmt.Sprintf("http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?%s", query)
@@ -89,7 +115,7 @@ func validateKey(key string) (bool, error) {
 	req.Header.Set("Accept", "text/html")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := netClient.Do(req)
 	if err != nil {
 		return false, fmt.Errorf("error making GET request to %s: %q", requestURL, err)
 	}
@@ -105,6 +131,19 @@ func validateKey(key string) (bool, error) {
 	}
 
 	return len(buf.String()) != 0, nil
+}
+
+func saveToCache(code string) error {
+	f, err := os.Create(accessCodeCache)
+	if err != nil && !os.IsExist(err) {
+		return fmt.Errorf("error creating cache file: %q", err)
+	}
+	defer f.Close()
+	_, err = f.Write([]byte(code))
+	if err != nil && !os.IsExist(err) {
+		return fmt.Errorf("error writing to cache file: %q", err)
+	}
+	return nil
 }
 
 // findQuestion makes an xpath query to find captcha question inside the html page.

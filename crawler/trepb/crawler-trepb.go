@@ -22,9 +22,9 @@ func main() {
 		log.Fatalf("Need all arguments to continue, please try again\n")
 	}
 
-	acessCode, err := login(*name, *cpf)
+	acessCode, err := accessCode(*name, *cpf)
 	if err != nil {
-		log.Fatalf("login error: %q", err)
+		log.Fatalf("Access Code Error: %q", err)
 	}
 
 	data, err := queryData(acessCode, *month, *year)
@@ -33,11 +33,9 @@ func main() {
 	}
 
 	dataDesc := fmt.Sprintf("remuneracoes-trepb-%02d-%04d", *month, *year)
-
 	if err = save(dataDesc, data); err != nil {
 		log.Fatalf("Error saving data to file: %q", err)
 	}
-
 }
 
 // save downloads content from url and save it on a file.
