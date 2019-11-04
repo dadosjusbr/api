@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -27,7 +28,7 @@ func accessCode(name, cpf string) (string, error) {
 	}
 
 	if accessCode == "" {
-		accessCode, err = login(name, cpf)
+		accessCode, err = newAccessCode(name, cpf)
 		if err != nil {
 			return "", fmt.Errorf("login error: %q", err)
 		}
@@ -38,41 +39,6 @@ func accessCode(name, cpf string) (string, error) {
 	}
 
 	return accessCode, nil
-}
-
-// login returns the accessCode for the api.
-func login(name, cpf string) (string, error) {
-	doc, err := loadURL(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("Error while trying to load document: %q", err)
-	}
-
-	question, err := findQuestion(doc, questionXpath)
-	if err != nil {
-		return "", fmt.Errorf("Error while trying to retrieve question from page: %q", err)
-	}
-
-	ans, err := solution(question)
-	if err != nil {
-		return "", fmt.Errorf("Error while trying to find answer to question: %q", err)
-	}
-
-	resp, err := loginRequest(question, ans, name, cpf)
-	if err != nil {
-		return "", fmt.Errorf("error while trying to make a login request: %q", err)
-	}
-
-	code := retrieveAcessCode(resp)
-	if code == "" {
-		return "", fmt.Errorf("couldn't retrieve access code. Question: %s. Answer: %s", question, ans)
-	}
-
-	err = saveToCache(code, accessCodeCache)
-	if err != nil {
-		return "", fmt.Errorf("error while saving code to cache file: %q", err)
-	}
-
-	return code, nil
 }
 
 // retrieveChachedCode makes an attempt to retrieve a cached access code.
@@ -86,17 +52,35 @@ func retrieveCachedCode(cacheFileName string) (string, error) {
 
 	f, err := os.Open(cacheFileName)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error openning cache file(%s): %q", cacheFileName, err)
 	}
 	defer f.Close()
 
-	buf := new(bytes.Buffer)
-	if _, err = buf.ReadFrom(f); err != nil {
-		return "", err
+	ac, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", fmt.Errorf("error reading access code from cache file (%s): %q", cacheFileName, err)
 	}
-	accessCode := buf.String()
+	return string(ac), nil
+}
 
-	return accessCode, nil
+// newAccessCode makes an attempt to get a new access code from the api.
+func newAccessCode(name, cpf string) (string, error) {
+	question, err := captchaQuestion()
+	if err != nil {
+		return "", fmt.Errorf("error while trying to retrieve question: %q", err)
+	}
+
+	ans, err := solution(question)
+	if err != nil {
+		return "", fmt.Errorf("error while trying to find answer to question: %q", err)
+	}
+
+	code, err := login(question, ans, name, cpf)
+	if err != nil {
+		return "", fmt.Errorf("error trying to login: %q", err)
+	}
+
+	return code, nil
 }
 
 // validateKey makes a query to the TRE-PB API to assure key is valid.
@@ -128,17 +112,23 @@ func validateKey(key string) error {
 	return nil
 }
 
-func saveToCache(code, cacheFileName string) error {
-	f, err := os.Create(cacheFileName)
-	if err != nil && !os.IsExist(err) {
-		return fmt.Errorf("error creating cache file: %q", err)
+// captchaQuestion returns the captcha question.
+func captchaQuestion() (string, error) {
+	req, err := http.NewRequest("GET", baseURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("Error creating get request to %s: %q", baseURL, err)
 	}
-	defer f.Close()
-	_, err = f.Write([]byte(code))
-	if err != nil && !os.IsExist(err) {
-		return fmt.Errorf("error writing to cache file: %q", err)
+
+	doc, err := httpReq(req)
+	if err != nil {
+		return "", fmt.Errorf("Error while trying to load document: %q", err)
 	}
-	return nil
+
+	question, err := findQuestion(doc, questionXpath)
+	if err != nil {
+		return "", fmt.Errorf("Error while trying to retrieve question from page: %q", err)
+	}
+	return question, nil
 }
 
 // findQuestion makes an xpath query to find captcha question inside the html page.
@@ -155,13 +145,34 @@ func findQuestion(doc *html.Node, xpath string) (string, error) {
 	return question, nil
 }
 
-//loginRequest makes login request and returns response body as a string
+// login makes a login request and returns an accessCode if found.
+func login(question, ans, name, cpf string) (string, error) {
+	resp, err := loginRequest(question, ans, name, cpf)
+	if err != nil {
+		return "", fmt.Errorf("error while trying to make a login request: %q", err)
+	}
+
+	code := retrieveAcessCode(resp)
+	if code == "" {
+		return "", fmt.Errorf("couldn't retrieve access code. Question: %s. Answer: %s", question, ans)
+	}
+
+	err = saveToCache(code, accessCodeCache)
+	if err != nil {
+		return "", fmt.Errorf("error while saving code to cache file: %q", err)
+	}
+
+	return code, nil
+}
+
+// loginRequest makes login request and returns response body as a string
 func loginRequest(question, ans, name, cpf string) (string, error) {
 	body := fmt.Sprintf(
 		`nomeUsuario=%s&cpfUsuario=%s&respostaCaptcha=%s&btnLogin=Efetuar+login&identificaUsuario=&perguntaCaptcha=%s`,
 		url.QueryEscape(name), cpf, url.QueryEscape(ans), url.QueryEscape(url.QueryEscape(question)))
+	reqURL := fmt.Sprintf("http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?%s", body)
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?%s", body), nil)
+	req, err := http.NewRequest("GET", reqURL, nil)
 	if err != nil {
 		return "", fmt.Errorf("error while trying to make a NewRequest structure: %q", err)
 	}
@@ -169,17 +180,29 @@ func loginRequest(question, ans, name, cpf string) (string, error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Referer", "http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?acao=Anexo_VIII")
 
-	resp, err := netClient.Do(req)
+	doc, err := httpReq(req)
 	if err != nil {
-		return "", fmt.Errorf("error while trying to make the post request: %q", err)
+		return "", fmt.Errorf("Error while executing Get request to %s: %q", reqURL, err)
 	}
-	defer resp.Body.Close()
+	return htmlquery.OutputHTML(doc, true), nil
+}
 
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(resp.Body)
-	pageStr := buf.String()
+// saveToCache saves new code to cache file.
+func saveToCache(code, cacheFileName string) error {
+	f, err := os.Create(cacheFileName)
+	if err != nil {
+		return fmt.Errorf("error creating cache file: %q", err)
+	}
+	defer f.Close()
+	n, err := f.Write([]byte(code))
+	if err != nil {
+		return fmt.Errorf("error writing to cache file: %q", err)
+	}
+	if n != len(code) {
+		return fmt.Errorf("error writing code to cache file: Size of code is different from number of bytes written")
+	}
 
-	return pageStr, nil
+	return nil
 }
 
 // retrieveAcessCode searchs for accessCode inside the page and return if found.

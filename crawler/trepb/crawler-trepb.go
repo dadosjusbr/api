@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
@@ -42,9 +43,14 @@ func main() {
 func queryData(acessCode string, month, year int) ([]*html.Node, error) {
 	query := fmt.Sprintf(`acao=AnexoVIII&folha=&valida=true&toExcel=false&chaveDeAcesso=%s&mes=%d&ano=%04d`, acessCode, month, year)
 	queryURL := fmt.Sprintf(`http://apps.tre-pb.jus.br/transparenciaDadosServidores/infoServidores?%s`, query)
-	doc, err := loadURL(queryURL)
+	req, err := http.NewRequest("GET", queryURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading url: %q", err)
+		return nil, fmt.Errorf("error creating GET request to %s: %q", queryURL, err)
+	}
+
+	doc, err := httpReq(req)
+	if err != nil {
+		return nil, fmt.Errorf("error making data request: %q", err)
 	}
 
 	tables, err := htmlquery.QueryAll(doc, "//table")

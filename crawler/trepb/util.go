@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -17,17 +16,17 @@ var netClient = &http.Client{
 	},
 }
 
-//loadURL loads HTML document from specified URL.
-func loadURL(baseURL string) (*html.Node, error) {
-	resp, err := netClient.Get(baseURL)
+// httpReq makes specified request and returns the html parsed tree.
+func httpReq(req *http.Request) (*html.Node, error) {
+	resp, err := netClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error making GET request to %s: %q", baseURL, err)
+		//return nil, fmt.Errorf("error making request to %s: %q", reqURL., err)
 	}
 	defer resp.Body.Close()
 
 	doc, err := htmlquery.Parse(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error loading doc (%s): %q", baseURL, err)
+		//return nil, fmt.Errorf("error loading doc (%s): %q", reqURL, err)
 	}
 	return doc, nil
 }

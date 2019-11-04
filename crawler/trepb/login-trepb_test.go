@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bytes"
+	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -24,10 +24,9 @@ func Test_saveToCache(t *testing.T) {
 	defer f.Close()
 	assert.NoError(t, err)
 
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(f)
+	r, err := ioutil.ReadAll(f)
 	assert.NoError(t, err)
-	assert.Equal(t, "hello", buf.String())
+	assert.Equal(t, "hello", string(r))
 }
 
 func Test_retrieveCachedCode(t *testing.T) {

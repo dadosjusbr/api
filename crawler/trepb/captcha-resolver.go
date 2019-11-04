@@ -83,15 +83,14 @@ func arithmeticCaptcha(question string) (string, error) {
 
 	arg1 := args[len(args)-3]
 	op := args[len(args)-2]
-	arg2 := args[len(args)-1]
-	arg2 = arg2[:len(arg2)-1] // Removing question mark
+	arg2 := strings.TrimSuffix(args[len(args)-1], "?")
 
 	num1, err := strconv.Atoi(arg1)
 	if err != nil {
 		return "", fmt.Errorf("arithmetic question error (%s): couldn't convert string(%s) to int: %q", question, arg1, err)
 	}
 
-	num2, err := strconv.Atoi(arg2) //Removing question mark
+	num2, err := strconv.Atoi(arg2)
 	if err != nil {
 		return "", fmt.Errorf("arithmetic question error (%s): couldn't convert string(%s) to int: %q", question, arg2, err)
 	}

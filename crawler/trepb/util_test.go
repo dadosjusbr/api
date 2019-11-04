@@ -11,14 +11,18 @@ import (
 	"golang.org/x/net/html"
 )
 
-func Test_loadURL(t *testing.T) {
+// Test if httpReq is making desired request and returning correct parsed document.
+func Test_httpReq(t *testing.T) {
 	htmlSample := "<html><head></head><body><div><span></span></div></body></html>"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, htmlSample)
 	}))
 	defer ts.Close()
 
-	doc, err := loadURL(ts.URL)
+	req, err := http.NewRequest("GET", ts.URL, nil)
+	assert.NoError(t, err)
+
+	doc, err := httpReq(req)
 	assert.NoError(t, err)
 
 	var buf bytes.Buffer
@@ -27,6 +31,7 @@ func Test_loadURL(t *testing.T) {
 	assert.Equal(t, "<html><head></head><body><div><span></span></div>\n</body></html>", buf.String())
 }
 
+// Test if substringBetween is returning the desired strings.
 func Test_substringBetween(t *testing.T) {
 	type args struct {
 		str    string
