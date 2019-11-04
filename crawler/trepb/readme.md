@@ -18,7 +18,8 @@ Os dados devem estar de acordo com a [Resolução 102 do CNJ](https://atos.cnj.j
 
 ```sh
 cd crawler/trepb
-go run crawler-trepb.go --mes=${MES} --ano=${ANO} --nome="${NOME COMPLETO}" --cpf="${CPF}"
+go build
+./trepb --mes=${MES} --ano=${ANO} --nome="${NOME COMPLETO}" --cpf="${CPF}"
 ```
 
 ## Dicionário de Dados
