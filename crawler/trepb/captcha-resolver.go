@@ -16,19 +16,22 @@ func solution(question string) (string, error) {
 			return "", err
 		}
 		return ans, nil
-	} else if strings.Contains(question, "sequência") {
+	}
+	if strings.Contains(question, "sequência") {
 		ans, err := sequenceCaptcha(question)
 		if err != nil {
 			return "", err
 		}
 		return ans, nil
-	} else if strings.Contains(question, "Quanto") {
+	}
+	if strings.Contains(question, "Quanto") {
 		ans, err := arithmeticCaptcha(question)
 		if err != nil {
 			return "", err
 		}
 		return ans, nil
-	} else if strings.Contains(question, "par ou") {
+	}
+	if strings.Contains(question, "par ou") {
 		ans, err := evenOrOddCaptcha(question)
 		if err != nil {
 			return "", err
@@ -57,7 +60,9 @@ func monthCaptcha(question string) (string, error) {
 			return monthStr[11], nil
 		}
 		return monthStr[monthIndex-1], nil
-	} else if strings.Contains(question, "Depois") {
+	}
+
+	if strings.Contains(question, "Depois") {
 		if monthIndex == 11 {
 			return monthStr[0], nil
 		}
