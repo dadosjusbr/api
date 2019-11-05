@@ -41,20 +41,20 @@ type Employee struct {
 	Reg            string // Register number
 	Name           string
 	Role           string
-	Type           string  //
-	Workplace      string  // 'Lotacao'
+	Type           string  // servidor, membro or pensionista
+	Workplace      string  // 'Lotacao' Like '10° Zona eleitoral'
 	Active         bool    // 'Active' Or 'Inactive'
 	GrossIncome    float64 // Income received without discounts applied.
 	TotalDiscounts float64 // Discounts to be applied in Gross Income
-	NetIncome      float64 //
-	Income         Income
+	NetIncome      float64 // Final income received after discounts applied
+	Income         Income  //
 	Discounts      Discount
 }
 
 type Income struct {
-	Wage        float64 // Wage
-	Restitution float64 // Restitution
-	Other       Funds   // Other incom
+	Wage  float64
+	perk  float64
+	Other Funds // other funds that make up the total income of the employee. further details explained below
 }
 
 type Funds struct {
@@ -64,7 +64,7 @@ type Funds struct {
 	Daily            float64 // Employee reimbursement for eventual expenses when working in a different location than usual.
 	Gratification    float64 //
 	OriginPosition   float64 // Wage received from other Agency, transfered employee.
-	Others           float64 //
+	Others           float64 // Any other kind of income that does not have a pattern among the Agencys.
 }
 
 type Discount struct {
