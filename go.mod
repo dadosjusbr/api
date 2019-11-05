@@ -4,6 +4,8 @@ go 1.12
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/antchfx/htmlquery v1.1.0
+	github.com/antchfx/xpath v1.1.0 // indirect
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/dghubble/go-twitter v0.0.0-20190512073027-53f972dc4b06
 	github.com/dghubble/oauth1 v0.5.0
@@ -21,6 +23,7 @@ require (
 	github.com/montanaflynn/stats v0.5.0
 	github.com/sendgrid/rest v2.4.1+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.5.0+incompatible
+	github.com/stretchr/testify v1.3.0
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.0.3
