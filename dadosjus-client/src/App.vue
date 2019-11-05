@@ -4,20 +4,21 @@
       <!-- <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>-->
     </div>
-    <info-card :info="info" />
+    <orgao-summary :orgaoName="orgaoName" :infos="infos" />
   </div>
 </template>
 
 <script>
-import infoCard from "@/components/orgao/infoCard.vue";
+import orgaoSummary from "@/components/orgao/orgaoSummary.vue";
 
 export default {
   components: {
-    infoCard
+    orgaoSummary
   },
   data() {
     return {
-      info: "Hello I am A Circle"
+      orgaoName: "TJPB",
+      infos: ["info 1", "info2", "info 3", "info4"]
     };
   }
 };
