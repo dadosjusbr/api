@@ -4,12 +4,12 @@ package storage
 // Estrutura
 type Agency struct {
 	ID        interface{} `json:"id" bson:"_id,omitempty"`
-	ShortName string
-	Name      string
-	Type      string // "R" for Regional, "M" for Municipal, "F" for Federal, "E" for State.
-	Entity    string // "J" or "MP".
-	UF        string // Short code for federative unity.
-	State     string // Full name of state.
+	ShortName string      // 'trt13'
+	Name      string      // 'Tribunal Regional do Trabalho 13° Região'
+	Type      string      // "R" for Regional, "M" for Municipal, "F" for Federal, "E" for State.
+	Entity    string      // "J" or "MP".
+	UF        string      // Short code for federative unity.
+	State     string      // Full name of state.
 }
 
 // Struct containing all necessary data to build all UI screens
@@ -73,4 +73,13 @@ type Discount struct {
 	IncomeTax        float64 // 'Imposto de renda'
 	Sundry           float64 // 'Diversos'
 
+}
+
+// Could be one file or a array of files. Zip. Struct responsible for storing a file, the date and a file hash to track if there will be any
+// changes in the future.
+type StorageInfo struct {
+	File         []byte
+	FileName     string
+	RetrieveDate string
+	FileHash     string
 }
