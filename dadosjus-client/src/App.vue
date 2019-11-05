@@ -1,12 +1,27 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <!-- <router-link to="/">Home</router-link>|
+      <router-link to="/about">About</router-link>-->
     </div>
-    <router-view />
+    <info-card :info="info" />
   </div>
 </template>
+
+<script>
+import infoCard from "@/components/orgao/infoCard.vue";
+
+export default {
+  components: {
+    infoCard
+  },
+  data() {
+    return {
+      info: "Hello I am A Circle"
+    };
+  }
+};
+</script>
 
 <style>
 #app {
