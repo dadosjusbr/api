@@ -143,16 +143,15 @@ func getTotalsOfOrgaoYear(c echo.Context) error {
 	orgao := c.Param("orgao")
 	year := c.Param("year")
 	msg := "Dados para: " + orgao + ". No year: " + year
-	return (c.String(http.StatusOK, msg))
+	return c.String(http.StatusOK, msg)
 }
 
 func getSummaryOfEntidadesOfState(c echo.Context) error {
-	estado := c.Param("estado")
-	if strings.EqualFold("PB", estado) == true {
+	estado := c.Param("state")
+	if strings.EqualFold("PB", estado) {
 		return (c.String(http.StatusOK, "Resumo Jus e resumo MP"))
 	}
-	return (c.String(http.StatusOK, "Estado não encontrado"))
-
+	return c.String(http.StatusNotFound, "Estado não encontrado")
 }
 
 func getSalaryOfOrgaoMonthYear(c echo.Context) error {
@@ -160,16 +159,15 @@ func getSalaryOfOrgaoMonthYear(c echo.Context) error {
 	year := c.Param("year")
 	month := c.Param("month")
 	msg := "Salarios do orgao: " + orgao + ". No mês: " + month + ". No year: " + year
-	return (c.String(http.StatusOK, msg))
+	return c.String(http.StatusOK, msg)
 }
 
 func getSummaryOfOrgao(c echo.Context) error {
 	orgao := c.Param("orgao")
-	if strings.EqualFold("TJPB", orgao) == true {
+	if strings.EqualFold("TJPB", orgao) {
 		return c.String(http.StatusOK, "infos do TJPB")
 	}
-	return c.String(http.StatusOK, "Não foi possivel achar o orgão")
-
+	return c.String(http.StatusNotFound, "Não foi possivel achar o orgão")
 }
 
 func main() {
@@ -200,16 +198,9 @@ func main() {
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
-	// dadosjus.com/uiapi/v1/orgaos/resumo/${orgao}
 	e.GET("/uiapi/v1/orgaos/summary/:orgao", getSummaryOfOrgao)
-
-	// dadosjus.com/uiapi/orgaos/salary/${orgão}/${year}/${month}
 	e.GET("/uiapi/v1/orgaos/salary/:orgao/:year/:month", getSalaryOfOrgaoMonthYear)
-
-	// dadosjus.comdadosjus.com/uiapi/v1/entidades/resumo/${estado}
-	e.GET("/uiapi/v1/entidades/summary/:estado", getSummaryOfEntidadesOfState)
-
-	//dadosjus.com/uiapi/orgaos/totals/${orgão}/${year}
+	e.GET("/uiapi/v1/entidades/summary/:state", getSummaryOfEntidadesOfState)
 	e.GET("/uiapi/orgaos/totals/:orgao/:year", getTotalsOfOrgaoYear)
 
 	s := &http.Server{
@@ -218,4 +209,45 @@ func main() {
 		WriteTimeout: 5 * time.Minute,
 	}
 	e.Logger.Fatal(e.StartServer(s))
+}
+
+// mockando dados
+type State struct {
+	Name      string
+	ShortName string
+	FlagUrl   string
+	Orgaos    []Orgao
+}
+
+type Orgao struct {
+	Name         string
+	ShortName    string
+	OrgaoSummary OrgaoSummary
+	Employee     []Employee
+}
+
+type Employee struct {
+	Name   string
+	Wage   float64
+	Perks  float64
+	Others float64
+}
+
+type OrgaoSummary struct {
+	Employees  int
+	TotalWage  float64
+	TotalPerks float64
+	MaxWage    float64
+}
+
+type OrgaoTotalsYear struct {
+	Year        int
+	MonthTotals []MonthTotals
+}
+
+type MonthTotals struct {
+	Month  int
+	Wage   float64
+	Perks  float64
+	Others float64
 }
