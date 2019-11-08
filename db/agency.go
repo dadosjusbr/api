@@ -8,9 +8,10 @@
 // The point here is just to guarantee that what appears in the system are real collected data.
 // As disavantage we add some complexity to code knowing that the final value will not be changed anyway.
 // Use Case:
-//
-//
-//
+// Pointers                                 No Pointers
+// daily: nil                              daily: 0
+// perks: nil							   perks: 0
+// total: 0								   total: 0
 
 package storage
 
