@@ -1,3 +1,17 @@
+// About used pointers.
+// All pointers are important to know if in the field has information and this information is 0 or if we do not have information about that field.
+// This is justified because of the use of omitempty. If a collected float64 is 0, it will not appear in the json fields, cause that's it's zero value.
+// Any application consuming this data might not know if the field is really 0 or data is unavailable.
+// For a example, a Funds Daily field with null will represent that we do not have that information, but a Dialy field with 0, represents that we have that information and the employee received 0 Reais in Daily Funds
+// On the other hand, if we dont put pointer in those fields, Funds daily will be setted 0 as a float64 primitive number, and we will not be able to
+// diferenciate if we have the 0 information or if we dont know about it.
+// The point here is just to guarantee that what appears in the system are real collected data.
+// As disavantage we add some complexity to code knowing that the final value will not be changed anyway.
+// Use Case:
+//
+//
+//
+
 package storage
 
 import "time"
@@ -72,14 +86,6 @@ type IncomeDetails struct {
 	Other Funds    `json:"other" bson:"other,omitempty"` // other funds that make up the total income of the employee. further details explained below
 }
 
-// About used pointers.
-// All pointers are important to know if in the field has information and this information is 0 or if we do not have information about that field.
-// For a example, a Funds Daily field with null will represent that we do not have that information, but a Dialy field with 0, represents that we have that information and the employee received 0 Reais in Daily Funds
-// On the other hand, if we dont put pointer in those fields, Funds daily will be setted 0 as a float64 primitive number, and we will not be able to
-// diferenciate if we have the 0 information or if we dont know about it.
-// The point here is just to guarantee that what appears in the system are real collected data.
-// As disavantage we add some complexity to code knowing that the final value will not be changed anyway.
-
 // Struct that details perks that complements an employee's wage.
 type Perks struct {
 	Total         *float64           `json:"total" bson:"total,omitempty"`
@@ -95,7 +101,7 @@ type Perks struct {
 
 // A Struct that details that make up the employee income.
 type Funds struct {
-	Total            float64            `json:"total" bson:"total,omitempty"`
+	Total            *float64           `json:"total" bson:"total,omitempty"`
 	PersonalBenefits *float64           `json:"person_benefits" bson:"person_benefits,omitempty"`     // Permanent Allowance, VPI, Benefits adquired thought judicial demand and others personal.
 	EventualBenefits *float64           `json:"eventual_benefits" bson:"eventual_benefits,omitempty"` // Holidays, Others Temporary Wage,  Christmas bonus and some others eventual.
 	PositionOfTrust  *float64           `json:"trust_position" bson:"trust_position,omitempty"`       // Income given for the importance of the position held.
@@ -107,9 +113,9 @@ type Funds struct {
 
 // A Struct that details all discounts that must be applied to the employee's income.
 type Discount struct {
-	Total            float64  `json:"total" bson:"total,omitempty"`
-	PrevContribution *float64 `json:"prev_contribution" bson:"prev_contribution,omitempty"` // 'Contribuição Previdenciária'
-	CeilRetention    *float64 `json:"ceil_retention" bson:"ceil_retention,omitempty"`       // 'Retenção de teto'
-	IncomeTax        *float64 `json:"income_tax" bson:"income_tax,omitempty"`               // 'Imposto de renda'
-	Sundry           float64  `json:"sundry" bson:"sundry,omitempty"`                       // 'Diversos'
+	Total            *float64           `json:"total" bson:"total,omitempty"`
+	PrevContribution *float64           `json:"prev_contribution" bson:"prev_contribution,omitempty"` // 'Contribuição Previdenciária'
+	CeilRetention    *float64           `json:"ceil_retention" bson:"ceil_retention,omitempty"`       // 'Retenção de teto'
+	IncomeTax        *float64           `json:"income_tax" bson:"income_tax,omitempty"`               // 'Imposto de renda'
+	Others           map[string]float64 `json:"sundry" bson:"sundry,omitempty"`                       // 'Diversos'
 }
