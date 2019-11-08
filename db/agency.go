@@ -76,20 +76,20 @@ type Employee struct {
 	Workplace string        `json:"workplace" bson:"workplace,omitempty"` // 'Lotacao' Like '10° Zona eleitoral'
 	Active    bool          `json:"active" bson:"active,omitempty"`       // 'Active' Or 'Inactive'
 	Income    IncomeDetails `json:"income" bson:"income,omitempty"`
-	Discounts Discount      `json:"discounts" bson:"discounts,omitempty"`
+	Discounts *Discount     `json:"discounts" bson:"discounts,omitempty"`
 }
 
 // Struct that details an employee's income.
 type IncomeDetails struct {
 	Total float64  `json:"total" bson:"total,omitempty"`
 	Wage  *float64 `json:"wage" bson:"wage,omitempty"`
-	Perks Perks    `json:"perks" bson:"perks,omitempty"`
-	Other Funds    `json:"other" bson:"other,omitempty"` // other funds that make up the total income of the employee. further details explained below
+	Perks *Perks   `json:"perks" bson:"perks,omitempty"`
+	Other *Funds   `json:"other" bson:"other,omitempty"` // other funds that make up the total income of the employee. further details explained below
 }
 
 // Struct that details perks that complements an employee's wage.
 type Perks struct {
-	Total         *float64           `json:"total" bson:"total,omitempty"`
+	Total         float64            `json:"total" bson:"total,omitempty"`
 	Food          *float64           `json:"food" bson:"food,omitempty"` // Food Aid
 	Tranportation *float64           `json:"transportation" bson:"transportation,omitempty"`
 	PreSchool     *float64           `json:"pre_school" bson:"pre_school,omitempty"` // Assistance provided before the child enters school.
@@ -102,7 +102,7 @@ type Perks struct {
 
 // A Struct that details that make up the employee income.
 type Funds struct {
-	Total            *float64           `json:"total" bson:"total,omitempty"`
+	Total            float64            `json:"total" bson:"total,omitempty"`
 	PersonalBenefits *float64           `json:"person_benefits" bson:"person_benefits,omitempty"`     // Permanent Allowance, VPI, Benefits adquired thought judicial demand and others personal.
 	EventualBenefits *float64           `json:"eventual_benefits" bson:"eventual_benefits,omitempty"` // Holidays, Others Temporary Wage,  Christmas bonus and some others eventual.
 	PositionOfTrust  *float64           `json:"trust_position" bson:"trust_position,omitempty"`       // Income given for the importance of the position held.
@@ -114,7 +114,7 @@ type Funds struct {
 
 // A Struct that details all discounts that must be applied to the employee's income.
 type Discount struct {
-	Total            *float64           `json:"total" bson:"total,omitempty"`
+	Total            float64            `json:"total" bson:"total,omitempty"`
 	PrevContribution *float64           `json:"prev_contribution" bson:"prev_contribution,omitempty"` // 'Contribuição Previdenciária'
 	CeilRetention    *float64           `json:"ceil_retention" bson:"ceil_retention,omitempty"`       // 'Retenção de teto'
 	IncomeTax        *float64           `json:"income_tax" bson:"income_tax,omitempty"`               // 'Imposto de renda'
