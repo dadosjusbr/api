@@ -139,14 +139,14 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	}
 }
 
-func getTotalsOfOrgaoYear(c echo.Context) error {
+func getTotalsOfAgencyYear(c echo.Context) error {
 	orgao := c.Param("orgao")
 	year := c.Param("year")
 	msg := "Dados para: " + orgao + ". No year: " + year
 	return c.String(http.StatusOK, msg)
 }
 
-func getSummaryOfEntidadesOfState(c echo.Context) error {
+func getSummaryOfEntitiesOfState(c echo.Context) error {
 	estado := c.Param("state")
 	if strings.EqualFold("PB", estado) {
 		return (c.String(http.StatusOK, "Resumo Jus e resumo MP"))
@@ -154,7 +154,7 @@ func getSummaryOfEntidadesOfState(c echo.Context) error {
 	return c.String(http.StatusNotFound, "Estado não encontrado")
 }
 
-func getSalaryOfOrgaoMonthYear(c echo.Context) error {
+func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	orgao := c.Param("orgao")
 	year := c.Param("year")
 	month := c.Param("month")
@@ -162,7 +162,7 @@ func getSalaryOfOrgaoMonthYear(c echo.Context) error {
 	return c.String(http.StatusOK, msg)
 }
 
-func getSummaryOfOrgao(c echo.Context) error {
+func getSummaryOfAgency(c echo.Context) error {
 	orgao := c.Param("orgao")
 	if strings.EqualFold("TJPB", orgao) {
 		return c.String(http.StatusOK, "infos do TJPB")
@@ -198,10 +198,10 @@ func main() {
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
-	e.GET("/uiapi/v1/orgaos/summary/:orgao", getSummaryOfOrgao)
-	e.GET("/uiapi/v1/orgaos/salary/:orgao/:year/:month", getSalaryOfOrgaoMonthYear)
-	e.GET("/uiapi/v1/entidades/summary/:state", getSummaryOfEntidadesOfState)
-	e.GET("/uiapi/orgaos/totals/:orgao/:year", getTotalsOfOrgaoYear)
+	e.GET("/uiapi/v1/orgaos/resumo/:orgao", getSummaryOfAgency)
+	e.GET("/uiapi/v1/orgaos/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
+	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
+	e.GET("/uiapi/v1//orgaos/totals/:orgao/:year", getTotalsOfAgencyYear)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
@@ -234,10 +234,10 @@ type Employee struct {
 }
 
 type OrgaoSummary struct {
-	Employees  int
-	TotalWage  float64
-	TotalPerks float64
-	MaxWage    float64
+	TotalEmployees int
+	TotalWage      float64
+	TotalPerks     float64
+	MaxWage        float64
 }
 
 type OrgaoTotalsYear struct {
