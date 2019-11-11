@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
@@ -140,34 +139,19 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 }
 
 func getTotalsOfAgencyYear(c echo.Context) error {
-	orgao := c.Param("orgao")
-	year := c.Param("year")
-	msg := "Dados para: " + orgao + ". No year: " + year
-	return c.String(http.StatusOK, msg)
+	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
-	estado := c.Param("state")
-	if strings.EqualFold("PB", estado) {
-		return (c.String(http.StatusOK, "Resumo Jus e resumo MP"))
-	}
-	return c.String(http.StatusNotFound, "Estado não encontrado")
+	return c.JSON(http.StatusOK, state)
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
-	orgao := c.Param("orgao")
-	year := c.Param("year")
-	month := c.Param("month")
-	msg := "Salarios do orgao: " + orgao + ". No mês: " + month + ". No year: " + year
-	return c.String(http.StatusOK, msg)
+	return c.JSON(http.StatusOK, employees)
 }
 
 func getSummaryOfAgency(c echo.Context) error {
-	orgao := c.Param("orgao")
-	if strings.EqualFold("TJPB", orgao) {
-		return c.String(http.StatusOK, "infos do TJPB")
-	}
-	return c.String(http.StatusNotFound, "Não foi possivel achar o orgão")
+	return c.JSON(http.StatusOK, agencySummary)
 }
 
 func main() {
@@ -201,7 +185,7 @@ func main() {
 	e.GET("/uiapi/v1/orgaos/resumo/:orgao", getSummaryOfAgency)
 	e.GET("/uiapi/v1/orgaos/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
 	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
-	e.GET("/uiapi/v1//orgaos/totals/:orgao/:year", getTotalsOfAgencyYear)
+	e.GET("/uiapi/v1/orgaos/totals/:orgao/:year", getTotalsOfAgencyYear)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
@@ -216,14 +200,14 @@ type State struct {
 	Name      string
 	ShortName string
 	FlagUrl   string
-	Orgaos    []Orgao
+	Agency    []Agency
 }
 
-type Orgao struct {
-	Name         string
-	ShortName    string
-	OrgaoSummary OrgaoSummary
-	Employee     []Employee
+type Agency struct {
+	Name          string
+	ShortName     string
+	AgencySummary AgencySummary
+	Employee      []Employee
 }
 
 type Employee struct {
@@ -233,14 +217,14 @@ type Employee struct {
 	Others float64
 }
 
-type OrgaoSummary struct {
+type AgencySummary struct {
 	TotalEmployees int
 	TotalWage      float64
 	TotalPerks     float64
 	MaxWage        float64
 }
 
-type OrgaoTotalsYear struct {
+type AgencyTotalsYear struct {
 	Year        int
 	MonthTotals []MonthTotals
 }
@@ -251,3 +235,19 @@ type MonthTotals struct {
 	Perks  float64
 	Others float64
 }
+
+var (
+	agency        = Agency{"Tribunal de Justiça da Paraíba", "TJPB", agencySummary, employees}
+	agencySummary = AgencySummary{100, 250000.0, 100000.0, 26000.0}
+	employee1     = Employee{"Marcos", 30000.0, 14000.0, 25000.0}
+	employee2     = Employee{"Joeberth", 35000.0, 19000.0, 20000.0}
+	employee3     = Employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employees     = []Employee{employee1, employee2, employee3}
+	state         = State{"Paraíba", "pb", "url", []Agency{agency}}
+
+	monthTotals1 = MonthTotals{1, 100000.0, 25000.0, 65000.0}
+	monthTotals2 = MonthTotals{2, 150000.0, 35000.0, 55000.0}
+	monthTotals3 = MonthTotals{3, 120000.0, 28000.0, 49000.0}
+
+	agencyTotalsYear = AgencyTotalsYear{2018, []MonthTotals{monthTotals1, monthTotals2, monthTotals3}}
+)
