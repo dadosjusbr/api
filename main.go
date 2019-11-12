@@ -139,18 +139,34 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 }
 
 func getTotalsOfAgencyYear(c echo.Context) error {
+	monthTotals1 := MonthTotals{1, 100000.0, 25000.0, 65000.0}
+	monthTotals2 := MonthTotals{2, 150000.0, 35000.0, 55000.0}
+	monthTotals3 := MonthTotals{3, 120000.0, 28000.0, 49000.0}
+	agencyTotalsYear := AgencyTotalsYear{2018, []MonthTotals{monthTotals1, monthTotals2, monthTotals3}}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
+	employee1 := Employee{"Marcos", 30000.0, 14000.0, 25000.0}
+	employee2 := Employee{"Joeberth", 35000.0, 19000.0, 20000.0}
+	employee3 := Employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employees := []Employee{employee1, employee2, employee3}
+	agencySummary := AgencySummary{100, 250000.0, 100000.0, 26000.0}
+	agency := Agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
+	state := State{"Paraíba", "pb", "url", []Agency{agency}}
 	return c.JSON(http.StatusOK, state)
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
+	employee1 := Employee{"Marcos", 30000.0, 14000.0, 25000.0}
+	employee2 := Employee{"Joeberth", 35000.0, 19000.0, 20000.0}
+	employee3 := Employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employees := []Employee{employee1, employee2, employee3}
 	return c.JSON(http.StatusOK, employees)
 }
 
 func getSummaryOfAgency(c echo.Context) error {
+	agencySummary := AgencySummary{100, 250000.0, 100000.0, 26000.0}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
@@ -182,10 +198,14 @@ func main() {
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
-	e.GET("/uiapi/v1/orgaos/resumo/:orgao", getSummaryOfAgency)
-	e.GET("/uiapi/v1/orgaos/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
+	// Return a summary of an entity. This information will be used in the head of the entity page.
+	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
+	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
+	e.GET("/uiapi/v1/orgao/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
+	// This will return information of a state and its entities and agencies. This will be used to provide basic information for the state page.
 	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
-	e.GET("/uiapi/v1/orgaos/totals/:orgao/:year", getTotalsOfAgencyYear)
+	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
+	e.GET("/uiapi/v1/orgao/totais/:orgao/:year", getTotalsOfAgencyYear)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
@@ -204,10 +224,11 @@ type State struct {
 }
 
 type Agency struct {
-	Name          string
-	ShortName     string
-	AgencySummary AgencySummary
-	Employee      []Employee
+	Name           string
+	ShortName      string
+	AgencyCategory string
+	AgencySummary  AgencySummary
+	Employee       []Employee
 }
 
 type Employee struct {
@@ -235,19 +256,3 @@ type MonthTotals struct {
 	Perks  float64
 	Others float64
 }
-
-var (
-	agency        = Agency{"Tribunal de Justiça da Paraíba", "TJPB", agencySummary, employees}
-	agencySummary = AgencySummary{100, 250000.0, 100000.0, 26000.0}
-	employee1     = Employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2     = Employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3     = Employee{"Maria", 34000.0, 15000.0, 23000.0}
-	employees     = []Employee{employee1, employee2, employee3}
-	state         = State{"Paraíba", "pb", "url", []Agency{agency}}
-
-	monthTotals1 = MonthTotals{1, 100000.0, 25000.0, 65000.0}
-	monthTotals2 = MonthTotals{2, 150000.0, 35000.0, 55000.0}
-	monthTotals3 = MonthTotals{3, 120000.0, 28000.0, 49000.0}
-
-	agencyTotalsYear = AgencyTotalsYear{2018, []MonthTotals{monthTotals1, monthTotals2, monthTotals3}}
-)
