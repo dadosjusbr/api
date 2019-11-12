@@ -139,34 +139,34 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 }
 
 func getTotalsOfAgencyYear(c echo.Context) error {
-	monthTotals1 := MonthTotals{1, 100000.0, 25000.0, 65000.0}
-	monthTotals2 := MonthTotals{2, 150000.0, 35000.0, 55000.0}
-	monthTotals3 := MonthTotals{3, 120000.0, 28000.0, 49000.0}
-	agencyTotalsYear := AgencyTotalsYear{2018, []MonthTotals{monthTotals1, monthTotals2, monthTotals3}}
+	monthTotals1 := monthTotals{1, 100000.0, 25000.0, 65000.0}
+	monthTotals2 := monthTotals{2, 150000.0, 35000.0, 55000.0}
+	monthTotals3 := monthTotals{3, 120000.0, 28000.0, 49000.0}
+	agencyTotalsYear := agencyTotalsYear{2018, []monthTotals{monthTotals1, monthTotals2, monthTotals3}}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
-	employee1 := Employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2 := Employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3 := Employee{"Maria", 34000.0, 15000.0, 23000.0}
-	employees := []Employee{employee1, employee2, employee3}
-	agencySummary := AgencySummary{100, 250000.0, 100000.0, 26000.0}
-	agency := Agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
-	state := State{"Paraíba", "pb", "url", []Agency{agency}}
+	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
+	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
+	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employees := []employee{employee1, employee2, employee3}
+	agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
+	agency1 := agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
+	state := state{"Paraíba", "pb", "url", []agency{agency1}}
 	return c.JSON(http.StatusOK, state)
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
-	employee1 := Employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2 := Employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3 := Employee{"Maria", 34000.0, 15000.0, 23000.0}
-	employees := []Employee{employee1, employee2, employee3}
+	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
+	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
+	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employees := []employee{employee1, employee2, employee3}
 	return c.JSON(http.StatusOK, employees)
 }
 
 func getSummaryOfAgency(c echo.Context) error {
-	agencySummary := AgencySummary{100, 250000.0, 100000.0, 26000.0}
+	agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
@@ -215,42 +215,41 @@ func main() {
 	e.Logger.Fatal(e.StartServer(s))
 }
 
-// mockando dados
-type State struct {
+type state struct {
 	Name      string
 	ShortName string
-	FlagUrl   string
-	Agency    []Agency
+	FlagURL   string
+	Agency    []agency
 }
 
-type Agency struct {
+type agency struct {
 	Name           string
 	ShortName      string
 	AgencyCategory string
-	AgencySummary  AgencySummary
-	Employee       []Employee
+	AgencySummary  agencySummary
+	Employee       []employee
 }
 
-type Employee struct {
+type employee struct {
 	Name   string
 	Wage   float64
 	Perks  float64
 	Others float64
 }
 
-type AgencySummary struct {
+type agencySummary struct {
 	TotalEmployees int
 	TotalWage      float64
 	TotalPerks     float64
 	MaxWage        float64
 }
 
-type AgencyTotalsYear struct {
+type agencyTotalsYear struct {
 	Year        int
-	MonthTotals []MonthTotals
+	MonthTotals []monthTotals
 }
 
-type MonthTotals struct {
+type monthTotals struct {
 	Month  int
 	Wage   float64
 	Perks  float64
