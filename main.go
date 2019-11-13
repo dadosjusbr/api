@@ -194,6 +194,7 @@ func main() {
 	e.Renderer = renderer
 
 	e.Static("/static", "templates/assets")
+	e.Static("/novo", "ui/dist")
 
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
