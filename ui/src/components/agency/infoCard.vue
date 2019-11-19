@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <div class="circle">{{ info }}</div>
+    <div class="circle">{{ info.name + ": " + info.value }}</div>
   </div>
 </template>
 
@@ -9,8 +9,8 @@ export default {
   name: "infoCard",
   props: {
     info: {
-      type: String,
-      default: "Não foi possível carregar a informação"
+      type: Object,
+      default: null
     }
   }
 };

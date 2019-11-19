@@ -2,7 +2,11 @@
   <div class="summaryContainer">
     <h1>{{ agencyName }}</h1>
     <div class="cards">
-      <info-card v-for="(info, id) in infos" :key="id" :info="info" />
+      <info-card
+        v-for="(value, name, id) in agencySummary"
+        :key="id"
+        :info="{ value, name }"
+      />
     </div>
   </div>
 </template>
@@ -23,11 +27,6 @@ export default {
     agencyName: {
       type: String,
       default: ""
-    }
-  },
-  computed: {
-    infos() {
-      return Object.values(this.agencySummary);
     }
   }
 };

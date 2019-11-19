@@ -18,8 +18,13 @@ export default {
   data() {
     return {
       agencyName: "TJPB",
-      agencySummary: ["info 1", "info2", "info 3", "info4"]
+      agencySummary: null
     };
+  },
+  mounted() {
+    this.$axios
+      .get("http://localhost:8083/uiapi/v1/orgao/resumo/a")
+      .then(response => (this.agencySummary = response.data));
   }
 };
 </script>
