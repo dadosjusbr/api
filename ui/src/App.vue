@@ -1,17 +1,17 @@
 <template>
   <div>
     <nav-bar />
-    <entity-page-container />
+    <agency-page-container />
   </div>
 </template>
 
 <script>
 import navBar from "@/components/nav-bar/navBar.vue";
-import entityPageContainer from "@/components/entity/entityPageContainer.vue";
+import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
 
 export default {
   components: {
-    entityPageContainer,
+    agencyPageContainer,
     navBar
   }
 };
