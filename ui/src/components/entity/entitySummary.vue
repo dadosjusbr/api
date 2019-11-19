@@ -1,6 +1,6 @@
 <template>
   <div class="summaryContainer">
-    <h1>{{ orgaoName }}</h1>
+    <h1>{{ entityName }}</h1>
     <div class="cards">
       <info-card v-for="(info, id) in infos" :key="id" :info="info" />
     </div>
@@ -8,27 +8,27 @@
 </template>
 
 <script>
-import infoCard from "@/components/orgao/infoCard.vue";
+import infoCard from "@/components/entity/infoCard.vue";
 
 export default {
-  name: "orgaoSummary",
+  name: "entitySummary",
   components: {
     infoCard
   },
   props: {
-    orgaoName: {
-      type: String,
-      default: "Erro ao carregar o nome do orgão"
+    entitySummary: {
+      type: Object,
+      default: null
     },
-    infos: {
-      type: Array,
-      dafault: []
+    entityName: {
+      type: String,
+      default: ""
     }
   },
-  data() {
-    return {
-      info: "Hello I am A Circle"
-    };
+  computed: {
+    infos() {
+      return Object.values(this.entitySummary);
+    }
   }
 };
 </script>
