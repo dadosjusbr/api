@@ -13,6 +13,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type config struct {
@@ -190,6 +191,8 @@ func main() {
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("templates/*.html")),
 	}
+
+	e.Use(middleware.CORS())
 
 	e.Renderer = renderer
 
