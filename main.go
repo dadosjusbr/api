@@ -199,9 +199,9 @@ func main() {
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
-	// Return a summary of an entity. This information will be used in the head of the entity page.
+	// Return a summary of an agency. This information will be used in the head of the agency page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
-	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
+	// Return all the salary of a month and year. This will be used in the point chart at the agency page.
 	e.GET("/uiapi/v1/orgao/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
 	// This will return information of a state and its entities and agencies. This will be used to provide basic information for the state page.
 	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
