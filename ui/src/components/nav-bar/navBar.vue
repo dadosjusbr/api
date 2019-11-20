@@ -1,7 +1,6 @@
 <template>
   <div class="topnav">
     <a class="active">DadosJus</a>
-    <input type="text" placeholder="MPPB, Paraíba, RJ..." />
   </div>
 </template>
 
@@ -40,16 +39,6 @@ export default {
 .topnav a.active {
   background-color: #2b60de;
   color: white;
-}
-
-/* Style the search box inside the navigation bar */
-.topnav input[type="text"] {
-  float: right;
-  padding: 6px;
-  border: none;
-  margin-top: 12px;
-  margin-right: 16px;
-  font-size: 17px;
 }
 
 /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
