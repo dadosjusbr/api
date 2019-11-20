@@ -1,13 +1,13 @@
 <template>
   <div>
     <div>
-      <button v-on:click="previousMonth()">Anterior</button>
-      <button v-on:click="nextMonth()">Proximo</button>
+      <button v-on:click="previousMonth()" class="button">Anterior</button>
+      <button v-on:click="nextMonth()" class="button">Proximo</button>
       <div>{{ this.salaryData }}</div>
       <div>{{ this.others }}</div>
       <div>{{ this.names }}</div>
       <div>{{ this.wages }}</div>
-      <div>{{ this.perks }}</div>
+      <div>{{ "other 0 :" + this.others[0] }}</div>
     </div>
     <graph-point
       width="500"
@@ -28,7 +28,7 @@ export default {
   },
   data: function() {
     return {
-      salaryData: {},
+      salaryData: [],
       currentMonthAndYear: { year: 2019, month: 1 },
       chartOptions: {
         tooltip: {
@@ -37,9 +37,6 @@ export default {
               '<div class="arrow_box">' +
               "<span>" +
               series[seriesIndex][dataPointIndex] +
-              "</span>" +
-              "<span>" +
-              this.others[dataPointIndex] +
               "</span>" +
               "</div>"
             );
@@ -61,7 +58,6 @@ export default {
       this.$http
         .get("/orgao/salario/TJPB/" + year + "/" + month)
         .then(response => (this.salaryData = response.data));
-      this.dataToApexData(this.salaryData);
     },
     previousMonth() {
       var year, month;
@@ -116,5 +112,18 @@ export default {
   border: coral 2px solid;
   height: 500px;
   padding-top: 50px;
+  align-self: center;
+}
+.button {
+  background-color: #4caf50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  background-color: #008cba;
+  padding: 10px 24px;
 }
 </style>

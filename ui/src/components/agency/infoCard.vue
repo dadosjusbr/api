@@ -25,6 +25,7 @@ export default {
   font-size: 25px;
   line-height: 250px;
   text-align: center;
+  align-self: center;
   background: #d8bfd8;
 }
 

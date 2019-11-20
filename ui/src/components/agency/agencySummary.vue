@@ -39,11 +39,11 @@ export default {
   border: #82b4b4 2px solid;
   opacity: 10;
   width: 1700px;
-  text-align: center;
+  align-self: center;
 }
 
 .summaryContainer {
-  text-align: center;
+  align-self: center;
 }
 h1 {
   color: #111;
