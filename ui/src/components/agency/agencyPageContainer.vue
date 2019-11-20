@@ -22,8 +22,8 @@ export default {
     };
   },
   mounted() {
-    this.$axios
-      .get("http://localhost:8083/uiapi/v1/orgao/resumo/a")
+    this.$http
+      .get("/orgao/resumo/a")
       .then(response => (this.agencySummary = response.data));
   }
 };

@@ -1,5 +1,4 @@
-
 module.exports = {
-    publicPath: '/novo/',
-    productionSourceMap: false,
-}
+  publicPath: "/novo/",
+  productionSourceMap: false,
+};

@@ -3,12 +3,13 @@
     <div>
       <button v-on:click="previousMonth()">Anterior</button>
       <button v-on:click="nextMonth()">Proximo</button>
+      <div>{{ this.salaryData }}</div>
     </div>
     <graph-point
       width="500"
       type="line"
       :options="chartOptions"
-      :series="series"
+      :series="salaryData"
     ></graph-point>
   </div>
 </template>
@@ -23,51 +24,47 @@ export default {
   },
   data: function() {
     return {
-      chartOptions: {
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-        }
-      },
-      series: [
-        {
-          data: [30, 40, 45, 50, 49, 60, 70, 81]
-        }
-      ]
+      salaryData: {},
+      currentMonthAndYear: { year: 2019, month: 1 }
     };
   },
   methods: {
     nextMonth() {
-      this.chartOptions = {
-        chart: {
-          id: "vuechart-example"
-        },
-        xaxis: {
-          categories: [1991]
-        }
-      };
-      this.series = [
-        {
-          name: "Vue Chart",
-          data: [30]
-        }
-      ];
+      let year, month;
+      if (this.currentMonthAndYear.month === 12) {
+        year = this.currentMonthAndYear.year + 1;
+        month = 1;
+      } else {
+        year = this.currentMonthAndYear;
+        month = this.currentMonthAndYear.month + 1;
+      }
+      this.$http
+        .get("/orgao/salario/TJPB/" + year + "/" + month)
+        .then(response => (this.salaryData = response.data));
     },
     previousMonth() {
-      this.chartOptions = {
-        chart: {
-          id: "vuechart-example"
-        },
-        xaxis: {
-          categories: [1991, 1995]
-        }
-      };
-      this.series = [
-        {
-          name: "Vue Chart",
-          data: [55, 44]
-        }
-      ];
+      var year, month;
+      if (this.currentMonthAndYear.month === 1) {
+        year = this.currentMonthAndYear.year - 1;
+        month = 12;
+      } else {
+        year = this.currentMonthAndYear.year;
+        month = this.currentMonthAndYear.month - 1;
+      }
+      this.$http
+        .get("/orgao/salario/TJPB/" + year + "/" + month)
+        .then(response => (this.salaryData = response.data));
     }
+  },
+  mounted() {
+    this.$http
+      .get(
+        "/orgao/salario/TJPB/" +
+          this.currentMonthAndYear.year +
+          "/" +
+          this.currentMonthAndYear.month
+      )
+      .then(response => (this.salaryData = response.data));
   }
 };
 </script>
