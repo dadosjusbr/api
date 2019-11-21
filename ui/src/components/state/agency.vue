@@ -3,7 +3,7 @@
     <button v-on:click="previousYear()">Anterior</button>
     <button v-on:click="nextYear()">Proximo</button>
     <div>{{ this.data.MonthTotals }}</div>
-    <div>{{ this.series }}</div>
+    <div>{{ this.data }}</div>
     <bar-graph :options="chartOptions" :series="series" />
   </div>
 </template>
@@ -95,7 +95,7 @@ export default {
   },
   mounted() {
     this.$http
-      .get("/orgao/totais/TJPB/" + this.currentYear)
+      .get("/orgao/totais/TJPB/4")
       .then(response => (this.data = response.data));
   }
 };
