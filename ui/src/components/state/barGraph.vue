@@ -1,0 +1,34 @@
+<template>
+  <div>
+      <apexcharts
+      width="80%"
+      height="350"
+      type="bar"
+      :options="options"
+      :series="series"
+    />
+  </div>
+</template>
+
+<script>
+import VueApexCharts from "vue-apexcharts";
+
+export default {
+  name: "barGraph",
+  components: {
+      apexcharts: VueApexCharts,
+  },
+  props: {
+    options: {
+      type: Object,
+      default: null
+    },
+    series: {
+      type: Array,
+      default: null
+    }
+  }
+};
+</script>
+
+<style></style>
