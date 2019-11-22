@@ -1,9 +1,7 @@
 <template>
   <div>
-    <div>{{ this.options }}</div>
-    <div>{{ this.series }}</div>
     <apexcharts
-      width="50%"
+      width="70%"
       height="350"
       type="scatter"
       :options="options"

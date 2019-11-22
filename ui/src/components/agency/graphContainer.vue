@@ -3,11 +3,6 @@
     <div>
       <button v-on:click="previousMonth()" class="button">Anterior</button>
       <button v-on:click="nextMonth()" class="button">Proximo</button>
-      <div>{{ this.salaryData }}</div>
-      <div>{{ this.others }}</div>
-      <div>{{ this.names }}</div>
-      <div>{{ this.wages }}</div>
-      <div>{{ "other 0 :" + this.others[0] }}</div>
     </div>
     <graph-point
       width="500"

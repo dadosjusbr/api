@@ -148,9 +148,9 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
-	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0, 69000.0}
+	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0, 74000.0}
+	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0, 72000.0}
 	employees := []employee{employee1, employee2, employee3}
 	agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
 	agency1 := agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
@@ -159,9 +159,9 @@ func getSummaryOfEntitiesOfState(c echo.Context) error {
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
-	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
+	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0, 69000.0}
+	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0, 74000.0}
+	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0, 72000.0}
 	employees := []employee{employee1, employee2, employee3}
 	return c.JSON(http.StatusOK, employees)
 }
@@ -239,6 +239,7 @@ type employee struct {
 	Wage   float64
 	Perks  float64
 	Others float64
+	Total  float64
 }
 
 type agencySummary struct {
