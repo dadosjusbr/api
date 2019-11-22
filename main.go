@@ -148,13 +148,10 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
-	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0, 69000.0}
-	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0, 74000.0}
-	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0, 72000.0}
-	employees := []employee{employee1, employee2, employee3}
-	agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
-	agency1 := agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
-	state := state{"Paraíba", "pb", "url", []agency{agency1}}
+	agencyBasic1 := agencyBasic{"TJPB", "J"}
+	agencyBasic2 := agencyBasic{"MPPB", "M"}
+	agencyBasic3 := agencyBasic{"TRTPB", "J"}
+	state := state{"Paraíba", "pb", "url", []agencyBasic{agencyBasic1, agencyBasic2, agencyBasic3}}
 	return c.JSON(http.StatusOK, state)
 }
 
@@ -223,7 +220,12 @@ type state struct {
 	Name      string
 	ShortName string
 	FlagURL   string
-	Agency    []agency
+	Agency    []agencyBasic
+}
+
+type agencyBasic struct {
+	Name           string
+	AgencyCategory string
 }
 
 type agency struct {
