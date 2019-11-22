@@ -1,6 +1,8 @@
 <template>
   <div>
-    <agency />
+    <h1>{{ this.entityName }}</h1>
+    <div>{{ "Agencies: " + this.agencies }}</div>
+    <agency v-for="(name, i) in agencies" :agencyName="name" :key="i" />
   </div>
 </template>
 

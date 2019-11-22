@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>{{ this.agencyName }}</h2>
     <button v-on:click="previousYear()">Anterior</button>
     <button v-on:click="nextYear()">Proximo</button>
     <div>{{ this.data.MonthTotals }}</div>
@@ -16,6 +17,12 @@ export default {
   currentYear: 2019,
   components: {
     barGraph
+  },
+  props: {
+    agencyName: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -63,12 +70,12 @@ export default {
   methods: {
     nextYear() {
       this.$http
-        .get("/orgao/totais/TJPB/" + this.currentYear + 1)
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear + 1)
         .then(response => (this.data = response.data));
     },
     previousYear() {
       this.$http
-        .get("/orgao/totais/TJPB/" + this.currentYear - 1)
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear - 1)
         .then(response => (this.data = response.data));
     }
   },
