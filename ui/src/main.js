@@ -6,7 +6,7 @@ import axios from "axios";
 
 Vue.config.productionTip = false;
 const base = axios.create({
-  baseURL: 'http://localhost:8083/uiapi/v1'
+  baseURL: 'http://dadosjusbr.com/uiapi/v1'
 })
 Vue.prototype.$http = base
 
