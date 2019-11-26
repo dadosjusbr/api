@@ -8,21 +8,21 @@
       <div class="cor-4"></div>
       <div class="cor-5"></div>
     </div>
-    <!-- <agency-page-container /> -->
-    <state-page-container />
+    <agency-page-container />
+    <!-- <state-page-container /> -->
   </div>
 </template>
 
 <script>
 import navBar from "@/components/nav-bar/navBar.vue";
-// import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
-import statePageContainer from "@/components/state/statePageContainer.vue";
+import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
+// import statePageContainer from "@/components/state/statePageContainer.vue";
 
 export default {
   components: {
-    // agencyPageContainer,
-    navBar,
-    statePageContainer
+    agencyPageContainer,
+    navBar
+    // statePageContainer
   }
 };
 </script>
