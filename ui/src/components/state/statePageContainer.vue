@@ -73,7 +73,7 @@ export default {
 .image {
   width: 7%;
   position: absolute;
-  top: 80 px;
+  top: 85px;
   right: 17px;
 }
 .header {
