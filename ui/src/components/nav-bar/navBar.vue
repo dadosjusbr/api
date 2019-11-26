@@ -1,6 +1,6 @@
 <template>
   <div class="topnav">
-    <a class="active">DadosJus</a>
+    <img src="../../assets/logo.png" class="active" >
   </div>
 </template>
 
@@ -36,8 +36,8 @@ export default {
 }
 
 /* Style the "active" element to highlight the current page */
-.topnav a.active {
-  background-color: #2b60de;
+.topnav img.active {
+  width: 5%;
   color: white;
 }
 

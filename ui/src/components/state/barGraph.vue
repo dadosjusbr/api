@@ -1,8 +1,8 @@
 <template>
-  <div>
-      <apexcharts
-      width="80%"
-      height="350"
+  <div class="graphContainer">
+    <apexcharts
+      width="90%"
+      height="300"
       type="bar"
       :options="options"
       :series="series"
@@ -16,7 +16,7 @@ import VueApexCharts from "vue-apexcharts";
 export default {
   name: "barGraph",
   components: {
-      apexcharts: VueApexCharts,
+    apexcharts: VueApexCharts
   },
   props: {
     options: {
@@ -31,4 +31,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.graphContainer {
+  width: 1000px;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  position: relative;
+}
+</style>
