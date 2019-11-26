@@ -1,6 +1,6 @@
 <template>
   <div class="topnav">
-    <img src="../../assets/logo.png" class="active" >
+    <img src="../../assets/white_logo.png" class="active" />
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
 /* Add a black background color to the top navigation bar */
 .topnav {
   overflow: hidden;
-  background-color: #e9e9e9;
+  background-color: #2000b1;
 }
 
 /* Style the links inside the navigation bar */
@@ -37,7 +37,7 @@ export default {
 
 /* Style the "active" element to highlight the current page */
 .topnav img.active {
-  width: 5%;
+  width: 15%;
   color: white;
 }
 

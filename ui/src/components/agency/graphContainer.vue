@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <div>
-      <button v-on:click="previousMonth()" class="button">Anterior</button>
-      <button v-on:click="nextMonth()" class="button">Proximo</button>
+  <div class="graphContainer">
+    <div class="buttonContainer">
+      <button v-on:click="previousMonth()" class="button">&#8249;</button>
+      <button v-on:click="nextMonth()" class="button">&#8250;</button>
     </div>
     <graph-point
-      width="500"
+      width="90%"
       type="scatter"
       :options="chartOptions"
       :series="series"
@@ -103,22 +103,24 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  border: coral 2px solid;
-  height: 500px;
-  padding-top: 50px;
-  align-self: center;
-}
 .button {
   background-color: #4caf50; /* Green */
   border: none;
   color: white;
-  padding: 15px 32px;
-  text-align: center;
   text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  background-color: #008cba;
-  padding: 10px 24px;
+  font-size: 30px;
+  position: relative;
+  top: 10px;
+  width: 50px;
+}
+.buttonContainer {
+  width: 200px;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  position: relative;
+}
+.graphContainer {
+  border: 1px solid firebrick;
 }
 </style>

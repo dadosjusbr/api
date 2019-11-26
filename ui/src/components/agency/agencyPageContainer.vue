@@ -1,6 +1,7 @@
 <template>
   <div>
-    <agency-summary :agencyName="agencyName" :agencySummary="agencySummary" />
+    <h1 class="agencyName">{{ agencyName }}</h1>
+    <agency-summary :agencySummary="agencySummary" />
     <graph-container />
   </div>
 </template>
@@ -29,4 +30,11 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.agencyName {
+  font-family: "Montserrat", sans-serif;
+  font-size: 50px;
+  line-height: 40px;
+  padding-left: 15px;
+}
+</style>
