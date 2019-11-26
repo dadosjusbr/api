@@ -1,8 +1,6 @@
 <template>
   <div class="agencyContainer">
     <h2 class="agencyName">{{ this.agencyName }}</h2>
-    <div>{{ this.data.MonthTotals }}</div>
-    <div>{{ this.series }}</div>
     <div class="buttonContainer">
       <button class="button" v-on:click="previousYear()">&#8249;</button>
       <button class="button" v-on:click="nextYear()">&#8250;</button>
@@ -13,6 +11,7 @@
 
 <script>
 import barGraph from "@/components/state/barGraph.vue";
+/* ignore */
 
 export default {
   name: "agency",
@@ -29,6 +28,7 @@ export default {
   data() {
     return {
       data: {},
+      series: [],
       chartOptions: {
         chart: {
           stacked: true,
@@ -70,23 +70,18 @@ export default {
     };
   },
   methods: {
-    async nextYear() {
-      await this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear + 1)
-        .then(response => (this.data = response.data));
+    async fetchData() {
+      const response = await this.$http.get(
+        "/orgao/totais/TJPB/" + this.currentYear
+      );
+      this.data = response.data;
+      this.generateSeries();
     },
-    async previousYear() {
-      await this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear - 1)
-        .then(response => (this.data = response.data));
-    }
-  },
-  computed: {
-    series() {
+    generateSeries() {
       let others = this.data.MonthTotals.map(month => month["Others"]);
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
-      return [
+      this.series = [
         {
           name: "others",
           data: others
@@ -100,12 +95,20 @@ export default {
           data: wages
         }
       ];
+    },
+    async nextYear() {
+      await this.$http
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear + 1)
+        .then(response => (this.data = response.data));
+    },
+    async previousYear() {
+      await this.$http
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear - 1)
+        .then(response => (this.data = response.data));
     }
   },
   async mounted() {
-    await this.$http
-      .get("/orgao/totais/TJPB/" + this.currentYear)
-      .then(response => (this.data = response.data));
+    this.fetchData();
   }
 };
 </script>

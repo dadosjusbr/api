@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div>{{ this.stateData.Agency }}</div>
-    <div>{{ this.mAgencies }}</div>
-    <div>{{ this.jAgencies }}</div>
     <div class="header">
       <h1 class="stateName">{{ this.stateName }}</h1>
       <img class="image" :src="this.flagUrl" />
@@ -25,38 +22,43 @@ export default {
       flagUrl:
         "https://1.bp.blogspot.com/-422XO8VbnkM/WFwr1v6yeoI/AAAAAAACRBM/0wtdW0JfArwQQMucxHxRrLSoHTsy7_6OwCEw/s1600/paraibano%2B2%2Bbandeira.png",
       stateName: "Paraíba",
-      stateData: {}
+      stateData: {},
+      jAgencies: [],
+      mAgencies: []
     };
   },
   methods: {
     async fetchData() {
-      await this.$http
-        .get("/entidades/resumo/PB")
-        .then(response => (this.stateData = response.data));
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  computed: {
-    jAgencies() {
-      let jAgencies = [];
-      this.stateData.Agency.forEach(function(agency) {
-        if (agency.AgencyCategory == "J") {
-          jAgencies.push(agency.Name);
-        }
-      });
-      return jAgencies;
+      const { data } = await this.$http.get("/entidades/resumo/PB");
+      this.stateData = data;
+      this.setjAgencies(data);
+      this.setmAgencies(data);
     },
-    mAgencies() {
+    setjAgencies(stateData) {
+      let jAgencies = [];
+      if (stateData !== {}) {
+        stateData.Agency.forEach(agency => {
+          if (agency.AgencyCategory == "J") {
+            jAgencies.push(agency.Name);
+          }
+        });
+      }
+      this.jAgencies = jAgencies;
+    },
+    setmAgencies(stateData) {
       let mAgencies = [];
-      this.stateData.Agency.forEach(function(agency) {
-        if (agency.AgencyCategory == "M") {
-          mAgencies.push(agency.Name);
-        }
-      });
-      return mAgencies;
+      if (stateData !== {}) {
+        stateData.Agency.forEach(agency => {
+          if (agency.AgencyCategory == "M") {
+            mAgencies.push(agency.Name);
+          }
+        });
+      }
+      this.mAgencies = mAgencies;
     }
+  },
+  mounted() {
+    this.fetchData();
   }
 };
 </script>
@@ -71,7 +73,7 @@ export default {
 .image {
   width: 7%;
   position: absolute;
-  top: 140px;
+  top: 80 px;
   right: 17px;
 }
 .header {
