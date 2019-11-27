@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <h1>{{ this.entityName }}</h1>
-    <div>{{ "Agencies: " + this.agencies }}</div>
+  <div class="entity">
+    <h1 class="entityName">{{ this.entityName }}</h1>
     <agency v-for="(name, i) in agencies" :agencyName="name" :key="i" />
   </div>
 </template>
@@ -29,4 +28,15 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.entityName {
+  font-family: "Montserrat", sans-serif;
+  font-size: 30px;
+  line-height: 40px;
+  padding-left: 15px;
+}
+
+.entity {
+  border: 1px solid firebrick;
+}
+</style>

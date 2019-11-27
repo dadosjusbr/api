@@ -22,14 +22,15 @@ export default {
   height: 250px;
   border-radius: 50%;
   border: purple 3px solid;
-  font-size: 25px;
+  font-size: 20px;
   line-height: 250px;
   text-align: center;
-  align-self: center;
+  font-family: "Montserrat", sans-serif;
   background: #d8bfd8;
 }
 
 .center {
   padding: 10px;
+  align-items: flex-start
 }
 </style>

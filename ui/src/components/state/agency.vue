@@ -1,16 +1,17 @@
 <template>
-  <div>
-    <h2>{{ this.agencyName }}</h2>
-    <button v-on:click="previousYear()">Anterior</button>
-    <button v-on:click="nextYear()">Proximo</button>
-    <div>{{ this.data.MonthTotals }}</div>
-    <div>{{ this.series }}</div>
+  <div class="agencyContainer">
+    <h2 class="agencyName">{{ this.agencyName }}</h2>
+    <div class="buttonContainer">
+      <button class="button" v-on:click="previousYear()">&#8249;</button>
+      <button class="button" v-on:click="nextYear()">&#8250;</button>
+    </div>
     <bar-graph :options="chartOptions" :series="series" />
   </div>
 </template>
 
 <script>
 import barGraph from "@/components/state/barGraph.vue";
+/* ignore */
 
 export default {
   name: "agency",
@@ -27,6 +28,7 @@ export default {
   data() {
     return {
       data: {},
+      series: [],
       chartOptions: {
         chart: {
           stacked: true,
@@ -68,23 +70,18 @@ export default {
     };
   },
   methods: {
-    nextYear() {
-      this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear + 1)
-        .then(response => (this.data = response.data));
+    async fetchData() {
+      const response = await this.$http.get(
+        "/orgao/totais/TJPB/" + this.currentYear
+      );
+      this.data = response.data;
+      this.generateSeries();
     },
-    previousYear() {
-      this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear - 1)
-        .then(response => (this.data = response.data));
-    }
-  },
-  computed: {
-    series() {
+    generateSeries() {
       let others = this.data.MonthTotals.map(month => month["Others"]);
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
-      return [
+      this.series = [
         {
           name: "others",
           data: others
@@ -98,14 +95,49 @@ export default {
           data: wages
         }
       ];
+    },
+    async nextYear() {
+      await this.$http
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear + 1)
+        .then(response => (this.data = response.data));
+    },
+    async previousYear() {
+      await this.$http
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear - 1)
+        .then(response => (this.data = response.data));
     }
   },
-  mounted() {
-    this.$http
-      .get("/orgao/totais/TJPB/" + this.currentYear)
-      .then(response => (this.data = response.data));
+  async mounted() {
+    this.fetchData();
   }
 };
 </script>
 
-<style></style>
+<style scoped>
+.agencyName {
+  font-family: "Montserrat", sans-serif;
+  font-size: 25 px;
+  line-height: 40px;
+  padding-left: 25px;
+}
+.button {
+  background-color: #4caf50; /* Green */
+  border: none;
+  color: white;
+  text-decoration: none;
+  font-size: 30px;
+  position: relative;
+  top: 10px;
+  width: 50px;
+}
+.buttonContainer {
+  width: 200px;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  position: relative;
+}
+.agencyContainer {
+  border: 1px solid firebrick;
+}
+</style>

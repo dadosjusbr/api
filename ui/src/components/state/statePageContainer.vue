@@ -1,10 +1,9 @@
 <template>
   <div>
-    <div>{{ this.stateData.Agency }}</div>
-    <div>{{ this.mAgencies }}</div>
-    <div>{{ this.jAgencies }}</div>
-    <h1>{{ this.stateName }}</h1>
-    <img :src="this.flagUrl" width="10%" />
+    <div class="header">
+      <h1 class="stateName">{{ this.stateName }}</h1>
+      <img class="image" :src="this.flagUrl" />
+    </div>
     <entity :entityName="'Ministério Público'" :agencies="mAgencies" />
     <entity :entityName="'Judiciário'" :agencies="jAgencies" />
   </div>
@@ -22,36 +21,62 @@ export default {
     return {
       flagUrl:
         "https://1.bp.blogspot.com/-422XO8VbnkM/WFwr1v6yeoI/AAAAAAACRBM/0wtdW0JfArwQQMucxHxRrLSoHTsy7_6OwCEw/s1600/paraibano%2B2%2Bbandeira.png",
-      stateName: "Paraíba - PB",
-      stateData: {}
+      stateName: "Paraíba",
+      stateData: {},
+      jAgencies: [],
+      mAgencies: []
     };
   },
-  computed: {
-    jAgencies() {
-      let jAgencies = [];
-      this.stateData.Agency.forEach(function(agency) {
-        if (agency.AgencyCategory == "J") {
-          jAgencies.push(agency.Name);
-        }
-      });
-      return jAgencies;
+  methods: {
+    async fetchData() {
+      const { data } = await this.$http.get("/entidades/resumo/PB");
+      this.stateData = data;
+      this.setjAgencies(data);
+      this.setmAgencies(data);
     },
-    mAgencies() {
+    setjAgencies(stateData) {
+      let jAgencies = [];
+      if (stateData !== {}) {
+        stateData.Agency.forEach(agency => {
+          if (agency.AgencyCategory == "J") {
+            jAgencies.push(agency.Name);
+          }
+        });
+      }
+      this.jAgencies = jAgencies;
+    },
+    setmAgencies(stateData) {
       let mAgencies = [];
-      this.stateData.Agency.forEach(function(agency) {
-        if (agency.AgencyCategory == "M") {
-          mAgencies.push(agency.Name);
-        }
-      });
-      return mAgencies;
+      if (stateData !== {}) {
+        stateData.Agency.forEach(agency => {
+          if (agency.AgencyCategory == "M") {
+            mAgencies.push(agency.Name);
+          }
+        });
+      }
+      this.mAgencies = mAgencies;
     }
   },
   mounted() {
-    this.$http
-      .get("/entidades/resumo/PB")
-      .then(response => (this.stateData = response.data));
+    this.fetchData();
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.stateName {
+  font-family: "Montserrat", sans-serif;
+  font-size: 50px;
+  line-height: 40px;
+  padding-left: 15px;
+}
+.image {
+  width: 7%;
+  position: absolute;
+  top: 85px;
+  right: 17px;
+}
+.header {
+  border: 2px solid #d00000;
+}
+</style>
