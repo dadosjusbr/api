@@ -91,16 +91,16 @@ export default {
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
       this.series = [
-        {
-          name: "others",
+        { 
+          name: "Outros",
           data: others
         },
         {
-          name: "perks",
+          name: "Indenizações",
           data: perks
         },
         {
-          name: "wages",
+          name: "Remunerações",
           data: wages
         }
       ];

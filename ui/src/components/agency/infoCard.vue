@@ -1,6 +1,8 @@
 <template>
   <div class="center">
-    <div class="circle">{{ info.name + ": " + info.value }}</div>
+    <div class="circle">
+      {{ info.name.replace("_", " ") + ": " + info.value }}
+    </div>
   </div>
 </template>
 
@@ -18,8 +20,8 @@ export default {
 
 <style scoped>
 .circle {
-  width: 250px;
-  height: 250px;
+  width: 275px;
+  height: 275px;
   border-radius: 50%;
   border: purple 3px solid;
   font-size: 20px;

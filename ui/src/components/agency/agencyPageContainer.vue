@@ -22,10 +22,19 @@ export default {
       agencySummary: null
     };
   },
+  methods: {
+    async fetchData() {
+      const { data } = await this.$http.get("/orgao/resumo/a");
+      this.agencySummary = {
+        Total_Empregados: data.TotalEmployees,
+        Total_Salários: data.TotalWage,
+        Total_Indenizações: data.TotalPerks,
+        SalárioMaximo: data.MaxWage
+      };
+    }
+  },
   mounted() {
-    this.$http
-      .get("/orgao/resumo/a")
-      .then(response => (this.agencySummary = response.data));
+    this.fetchData();
   }
 };
 </script>
