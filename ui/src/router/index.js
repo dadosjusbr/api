@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import App from "@/App.vue";
+import Home from "@/Home.vue";
+import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
 
 Vue.use(VueRouter);
 
@@ -8,7 +9,12 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: App
+    component: Home
+  },
+  {
+    path: "/orgao/:agencyName",
+    name: "agency",
+    component: agencyPageContainer
   }
 ];
 

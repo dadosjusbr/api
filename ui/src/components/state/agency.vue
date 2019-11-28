@@ -1,6 +1,15 @@
 <template>
   <div class="agencyContainer">
-    <h2 class="agencyName">{{ this.agencyName }}</h2>
+    <h2 class="agencyName">
+      <router-link
+        :to="{
+          name: 'agency',
+          params: { agencyName: this.agencyName.toLowerCase() }
+        }"
+      >
+        {{ this.agencyName }}
+      </router-link>
+    </h2>
     <div class="buttonContainer">
       <button class="button" v-on:click="previousYear()">&#8249;</button>
       <button class="button" v-on:click="nextYear()">&#8250;</button>

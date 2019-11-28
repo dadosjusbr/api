@@ -31,6 +31,6 @@ export default {
 
 .center {
   padding: 10px;
-  align-items: flex-start
+  align-items: flex-start;
 }
 </style>
