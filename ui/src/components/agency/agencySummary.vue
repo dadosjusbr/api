@@ -27,6 +27,7 @@ export default {
 
 <style>
 .cards {
+  justify-content: center;
   display: flex;
   border: firebrick 2px solid;
   opacity: 10;
