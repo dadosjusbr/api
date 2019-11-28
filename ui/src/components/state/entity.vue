@@ -37,6 +37,6 @@ export default {
 }
 
 .entity {
-  border: 1px solid firebrick;
+  border: 1px solid #6a757a;
 }
 </style>

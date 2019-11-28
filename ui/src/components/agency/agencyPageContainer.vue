@@ -29,7 +29,7 @@ export default {
         Total_Empregados: data.TotalEmployees,
         Total_Salários: data.TotalWage,
         Total_Indenizações: data.TotalPerks,
-        SalárioMaximo: data.MaxWage
+        Salário_Maximo: data.MaxWage
       };
     }
   },

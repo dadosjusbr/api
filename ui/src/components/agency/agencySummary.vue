@@ -29,7 +29,7 @@ export default {
 .cards {
   justify-content: center;
   display: flex;
-  border: firebrick 2px solid;
+  border: #6a757a 2px solid;
   opacity: 10;
   width: 100%;
   align-self: center;
