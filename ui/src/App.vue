@@ -8,21 +8,16 @@
       <div class="cor-4"></div>
       <div class="cor-5"></div>
     </div>
-    <agency-page-container />
-    <!-- <state-page-container /> -->
+    <router-view />
   </div>
 </template>
 
 <script>
 import navBar from "@/components/nav-bar/navBar.vue";
-import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
-// import statePageContainer from "@/components/state/statePageContainer.vue";
 
 export default {
   components: {
-    agencyPageContainer,
     navBar
-    // statePageContainer
   }
 };
 </script>
