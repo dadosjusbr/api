@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      agencyName: "TJPB",
+      agencyName: this.$route.params.agencyName.toUpperCase(),
       agencySummary: null
     };
   },
