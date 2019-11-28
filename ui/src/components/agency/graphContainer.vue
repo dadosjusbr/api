@@ -35,7 +35,8 @@ export default {
               "</span>" +
               "</div>"
             );
-          }
+          },
+          colors: ["#00AEEF"]
         }
       }
     };
@@ -104,7 +105,7 @@ export default {
 
 <style scoped>
 .button {
-  background-color: #4caf50; /* Green */
+  background-color: #182825; /* Green */
   border: none;
   color: white;
   text-decoration: none;
@@ -121,6 +122,6 @@ export default {
   position: relative;
 }
 .graphContainer {
-  border: 1px solid firebrick;
+  border: 1px solid #6a757a;
 }
 </style>

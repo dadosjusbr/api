@@ -23,12 +23,12 @@ export default {
   width: 275px;
   height: 275px;
   border-radius: 50%;
-  border: purple 3px solid;
+  border: #182825 3px solid;
   font-size: 20px;
   line-height: 250px;
   text-align: center;
   font-family: "Montserrat", sans-serif;
-  background: #d8bfd8;
+  background: #e1e8ed;
 }
 
 .center {

@@ -39,6 +39,7 @@ export default {
       data: {},
       series: [],
       chartOptions: {
+        colors: ["#991040", "#F9CD30", "#00AEEF"],
         chart: {
           stacked: true,
           toolbar: {
@@ -91,7 +92,7 @@ export default {
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
       this.series = [
-        { 
+        {
           name: "Outros",
           data: others
         },
@@ -130,7 +131,7 @@ export default {
   padding-left: 25px;
 }
 .button {
-  background-color: #4caf50; /* Green */
+  background-color: #182825;
   border: none;
   color: white;
   text-decoration: none;
@@ -147,6 +148,6 @@ export default {
   position: relative;
 }
 .agencyContainer {
-  border: 1px solid firebrick;
+  border: 1px solid #6a757a;
 }
 </style>

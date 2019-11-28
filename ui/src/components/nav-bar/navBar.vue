@@ -14,7 +14,7 @@ export default {
 /* Add a black background color to the top navigation bar */
 .topnav {
   overflow: hidden;
-  background-color: #2000b1;
+  background-color: #182825;
 }
 
 /* Style the links inside the navigation bar */

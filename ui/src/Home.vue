@@ -25,19 +25,19 @@ export default {
 }
 
 .cor-1 {
-  background-color: #d00000;
+  background-color: #6a757a;
 }
 .cor-2 {
-  background-color: #d00000;
+  background-color: #6a757a;
 }
 .cor-3 {
-  background-color: #d00000;
+  background-color: #6a757a;
 }
 .cor-4 {
-  background-color: #d00000;
+  background-color: #6a757a;
 }
 .cor-5 {
-  background-color: #d00000;
+  background-color: #6a757a;
 }
 
 #app {

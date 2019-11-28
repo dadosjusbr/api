@@ -77,6 +77,6 @@ export default {
   right: 17px;
 }
 .header {
-  border: 2px solid #d00000;
+  border: 2px solid #6a757a;
 }
 </style>
