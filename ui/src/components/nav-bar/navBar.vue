@@ -1,6 +1,10 @@
 <template>
   <div class="topnav">
-    <img src="../../assets/white_logo.png" class="active" />
+    <router-link to="/">
+      <a>
+        <img src="../../assets/white_logo.png" class="active" />
+      </a>
+    </router-link>
   </div>
 </template>
 
@@ -30,8 +34,8 @@ export default {
 }
 
 /* Change the color of links on hover */
-.topnav a:hover {
-  background-color: #ddd;
+.topnav img:hover {
+  background-color: black;
   color: black;
 }
 
@@ -54,6 +58,10 @@ export default {
   }
   .topnav input[type="text"] {
     border: 1px solid #ccc;
+  }
+
+  a:hover {
+    background-color: yellow;
   }
 }
 </style>
