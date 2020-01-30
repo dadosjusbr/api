@@ -9,8 +9,12 @@
       <router-link to="/">
         <a> Início </a>
       </router-link>
-      <a> Sobre </a>
-      <a> Contato </a>
+      <router-link to="/sobre">
+        <a> Sobre </a>
+      </router-link>
+      <router-link to="/contato">
+        <a> Contato </a>
+      </router-link>
     </div>
   </div>
 </template>
