@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <p>Sou o footer</p>
+    <img class="logoFooter" src="../../assets/white_logo.png" />
   </div>
 </template>
 
@@ -12,7 +12,18 @@ export default {
 
 <style scoped>
 .footer {
-  background-color: #182825;
-  height: 170px;
+  background-color: black;
+  height: 50px;
+  align-content: center;
+  margin-top: 5px;
+}
+
+.logoFooter {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 15%;
 }
 </style>

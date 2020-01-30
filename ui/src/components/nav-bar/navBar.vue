@@ -27,7 +27,7 @@ export default {
 
 <style>
 .topnav {
-  background-color: #182825;
+  background-color: white;
   height: 170px;
 }
 
@@ -46,7 +46,7 @@ export default {
 }
 
 .navMenus {
-  background-color: #182825;
+  background-color: black;
   text-align: center;
 }
 
