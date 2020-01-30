@@ -69,14 +69,17 @@ export default {
   font-size: 50px;
   line-height: 40px;
   padding-left: 15px;
+  float: left;
 }
 .image {
   width: 7%;
-  position: absolute;
-  top: 85px;
-  right: 17px;
+  margin-top: 5px;
+  margin-left: 30px;
 }
 .header {
   border: 2px solid #6a757a;
+  margin-left: 200px;
+  margin-right: 200px;
+  margin-top: 10px;
 }
 </style>

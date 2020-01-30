@@ -2,6 +2,7 @@
   <div class="graphContainer">
     <div class="buttonContainer">
       <button v-on:click="previousMonth()" class="button">&#8249;</button>
+      <a> {{ this.months[this.currentMonthAndYear.month] }} </a>
       <button v-on:click="nextMonth()" class="button">&#8250;</button>
     </div>
     <graph-point
@@ -23,6 +24,20 @@ export default {
   },
   data: function() {
     return {
+      months: {
+        1: "Janeiro",
+        2: "Fevereiro",
+        3: "Março",
+        4: "Abril",
+        5: "Maio",
+        6: "Junho",
+        7: "Julho",
+        8: "Agosto",
+        9: "Setembro",
+        10: "Outubro",
+        11: "Novembro",
+        12: "Dezembro"
+      },
       salaryData: [],
       currentMonthAndYear: { year: 2019, month: 1 },
       chartOptions: {
@@ -51,6 +66,7 @@ export default {
         year = this.currentMonthAndYear;
         month = this.currentMonthAndYear.month + 1;
       }
+      this.currentMonthAndYear = { year, month };
       this.$http
         .get("/orgao/salario/TJPB/" + year + "/" + month)
         .then(response => (this.salaryData = response.data));
@@ -64,6 +80,7 @@ export default {
         year = this.currentMonthAndYear.year;
         month = this.currentMonthAndYear.month - 1;
       }
+      this.currentMonthAndYear = { year, month };
       this.$http
         .get("/orgao/salario/TJPB/" + year + "/" + month)
         .then(response => (this.salaryData = response.data));
@@ -123,5 +140,10 @@ export default {
 }
 .graphContainer {
   border: 1px solid #6a757a;
+  margin-top: 5px;
+}
+a {
+  font-family: "Montserrat", sans-serif;
+  color: black;
 }
 </style>

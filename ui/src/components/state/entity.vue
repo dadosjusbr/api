@@ -32,11 +32,13 @@ export default {
 .entityName {
   font-family: "Montserrat", sans-serif;
   font-size: 30px;
-  line-height: 40px;
-  padding-left: 15px;
+  padding-left: 10px;
 }
 
 .entity {
   border: 1px solid #6a757a;
+  margin-left: 200px;
+  margin-right: 200px;
+  margin-top: 10px;
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <h1 class="agencyName">{{ agencyName }}</h1>
+  <div class="agencyContainer">
+    <div class="agencyNameContainer">
+      <h1 class="agencyName">{{ agencyName }}</h1>
+    </div>
     <agency-summary :agencySummary="agencySummary" />
     <graph-container />
   </div>
@@ -45,5 +47,15 @@ export default {
   font-size: 50px;
   line-height: 40px;
   padding-left: 15px;
+}
+
+.agencyContainer {
+  margin-left: 200px;
+  margin-right: 200px;
+}
+
+.agencyNameContainer {
+  border: 1px solid #6a757a;
+  margin-top: 5px;
 }
 </style>

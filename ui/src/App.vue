@@ -9,15 +9,18 @@
       <div class="cor-5"></div>
     </div>
     <router-view />
+    <page-footer />
   </div>
 </template>
 
 <script>
 import navBar from "@/components/nav-bar/navBar.vue";
+import pageFooter from "@/components/footer/pageFooter.vue";
 
 export default {
   components: {
-    navBar
+    navBar,
+    pageFooter
   }
 };
 </script>

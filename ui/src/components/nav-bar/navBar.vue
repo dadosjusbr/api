@@ -1,6 +1,21 @@
 <template>
-  <div class="topnav">
-    <img src="../../assets/white_logo.png" class="active" />
+  <div>
+    <div class="topnav">
+      <router-link to="/">
+        <img src="../../assets/logo.png" class="active" />
+      </router-link>
+    </div>
+    <div class="navMenus">
+      <router-link to="/">
+        <a> Início </a>
+      </router-link>
+      <router-link to="/sobre">
+        <a> Sobre </a>
+      </router-link>
+      <router-link to="/contato">
+        <a> Contato </a>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -11,49 +26,38 @@ export default {
 </script>
 
 <style>
-/* Add a black background color to the top navigation bar */
 .topnav {
-  overflow: hidden;
-  background-color: #182825;
+  background-color: white;
+  height: 170px;
 }
 
-/* Style the links inside the navigation bar */
 .topnav a {
-  font-family: "Open Sans Condensed", sans-serif;
-  float: left;
   display: block;
-  color: black;
   text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 25px;
 }
 
-/* Change the color of links on hover */
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
+.topnav img:hover {
+  background-color: whitesmoke;
 }
 
-/* Style the "active" element to highlight the current page */
 .topnav img.active {
+  align-items: center;
   width: 15%;
-  color: white;
 }
 
-/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-@media screen and (max-width: 600px) {
-  .topnav a,
-  .topnav input[type="text"] {
-    float: none;
-    display: block;
-    text-align: left;
-    width: 100%;
-    margin: 0;
-    padding: 14px;
-  }
-  .topnav input[type="text"] {
-    border: 1px solid #ccc;
-  }
+.navMenus {
+  background-color: black;
+  text-align: center;
+}
+
+a {
+  color: white;
+  display: inline-block;
+  margin: 10px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.navMenus a:hover {
+  background-color: black;
 }
 </style>

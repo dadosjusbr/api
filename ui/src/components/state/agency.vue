@@ -12,6 +12,7 @@
     </h2>
     <div class="buttonContainer">
       <button class="button" v-on:click="previousYear()">&#8249;</button>
+      <a> {{ this.currentYear }} </a>
       <button class="button" v-on:click="nextYear()">&#8250;</button>
     </div>
     <bar-graph :options="chartOptions" :series="series" />
@@ -24,7 +25,6 @@ import barGraph from "@/components/state/barGraph.vue";
 
 export default {
   name: "agency",
-  currentYear: 2019,
   components: {
     barGraph
   },
@@ -36,6 +36,7 @@ export default {
   },
   data() {
     return {
+      currentYear: 2019,
       data: {},
       series: [],
       chartOptions: {
@@ -107,13 +108,15 @@ export default {
       ];
     },
     async nextYear() {
+      this.currentYear = this.currentYear + 1;
       await this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear + 1)
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear)
         .then(response => (this.data = response.data));
     },
     async previousYear() {
+      this.currentYear = this.currentYear - 1;
       await this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear - 1)
+        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear)
         .then(response => (this.data = response.data));
     }
   },
@@ -124,6 +127,11 @@ export default {
 </script>
 
 <style scoped>
+a {
+  font-family: "Montserrat", sans-serif;
+  color: black;
+}
+
 .agencyName {
   font-family: "Montserrat", sans-serif;
   font-size: 25 px;
@@ -149,5 +157,9 @@ export default {
 }
 .agencyContainer {
   border: 1px solid #6a757a;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 </style>
