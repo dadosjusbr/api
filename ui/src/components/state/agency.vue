@@ -129,6 +129,7 @@ export default {
 <style scoped>
 a {
   font-family: "Montserrat", sans-serif;
+  color: black;
 }
 
 .agencyName {
@@ -156,5 +157,9 @@ a {
 }
 .agencyContainer {
   border: 1px solid #6a757a;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 </style>
