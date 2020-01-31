@@ -1,11 +1,13 @@
 <template>
-  <apexcharts
-    width="100%"
-    height="350"
-    type="scatter"
-    :options="options"
-    :series="series"
-  />
+  <div class="graph">
+    <apexcharts
+      width="99%"
+      height="350"
+      type="scatter"
+      :options="options"
+      :series="series"
+    />
+  </div>
 </template>
 
 <script>
@@ -31,10 +33,6 @@ export default {
 
 <style>
 .graph {
-  width: 95%;
-  height: auto;
-  margin: 0 auto;
-  padding: 10px;
-  position: relative;
+  align-self: center;
 }
 </style>

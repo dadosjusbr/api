@@ -66,7 +66,7 @@ export default {
 <style scoped>
 .stateName {
   font-family: "Montserrat", sans-serif;
-  font-size: 50px;
+  font-size: 3rem;
   line-height: 40px;
   padding-left: 15px;
   float: left;

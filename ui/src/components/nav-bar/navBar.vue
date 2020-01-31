@@ -43,6 +43,7 @@ export default {
 .topnav img.active {
   align-items: center;
   width: 15%;
+  height: 15%;
 }
 
 .navMenus {
