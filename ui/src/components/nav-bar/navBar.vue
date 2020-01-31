@@ -59,6 +59,7 @@ a {
 }
 
 .navMenus a:hover {
-  background-color: black;
+  font-weight: 1000;
+  color: lightblue;
 }
 </style>
