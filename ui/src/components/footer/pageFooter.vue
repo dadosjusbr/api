@@ -1,6 +1,8 @@
 <template>
   <div class="footer">
-    <img class="logoFooter" src="../../assets/white_logo.png" />
+    <div class="logoContainer">
+      <img class="logoFooter" src="../../assets/white_logo.png" />
+    </div>
   </div>
 </template>
 
@@ -12,19 +14,22 @@ export default {
 
 <style scoped>
 .footer {
-  padding-top: 5px;
+  padding-top: 8px;
+  padding-bottom: 5px;
   background-color: black;
-  height: 70px;
-  align-content: center;
+  height: 50px;
   margin-top: 5px;
 }
 
-.logoFooter {
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  width: 15%;
+.logoContainer {
+  height: 50px;
+  width: 250px;
+  margin: 0 auto;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 </style>
