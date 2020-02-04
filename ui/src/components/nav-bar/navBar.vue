@@ -42,7 +42,8 @@ export default {
 
 .topnav img.active {
   align-items: center;
-  width: 15%;
+  width: 282px;
+  height: 158px;
 }
 
 .navMenus {
@@ -58,6 +59,7 @@ a {
 }
 
 .navMenus a:hover {
-  background-color: black;
+  font-weight: 1000;
+  color: lightblue;
 }
 </style>

@@ -6,7 +6,7 @@
       <button v-on:click="nextMonth()" class="button">&#8250;</button>
     </div>
     <graph-point
-      width="90%"
+      width="100%"
       type="scatter"
       :options="chartOptions"
       :series="series"
@@ -141,9 +141,11 @@ export default {
 .graphContainer {
   border: 1px solid #6a757a;
   margin-top: 5px;
+  text-align: center;
 }
 a {
   font-family: "Montserrat", sans-serif;
+  font-size: 14px;
   color: black;
 }
 </style>

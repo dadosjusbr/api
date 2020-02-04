@@ -66,20 +66,28 @@ export default {
 <style scoped>
 .stateName {
   font-family: "Montserrat", sans-serif;
-  font-size: 50px;
+  font-size: 3rem;
   line-height: 40px;
   padding-left: 15px;
   float: left;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .image {
-  width: 7%;
+  width: 100px;
   margin-top: 5px;
   margin-left: 30px;
+  position: absolute;
+  left: 200px;
+  bottom: 3px;
 }
 .header {
   border: 2px solid #6a757a;
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
+  position: relative;
+  height: 80px;
 }
 </style>
