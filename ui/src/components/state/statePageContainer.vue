@@ -68,19 +68,16 @@ export default {
   font-family: "Montserrat", sans-serif;
   font-size: 3rem;
   line-height: 40px;
-  padding-left: 15px;
   float: left;
-  position: absolute;
   top: 0;
   left: 0;
 }
 .image {
   width: 100px;
-  margin-top: 5px;
-  margin-left: 30px;
+  height: 70px;
   position: absolute;
-  left: 200px;
-  bottom: 3px;
+  top: 5px;
+  padding-left: 10px;
 }
 .header {
   border: 2px solid #6a757a;

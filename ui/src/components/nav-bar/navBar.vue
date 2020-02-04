@@ -1,10 +1,11 @@
 <template>
   <div>
-    <div class="topnav">
+    <div class="logo">
       <router-link to="/">
         <img src="../../assets/logo.png" class="active" />
       </router-link>
     </div>
+
     <div class="navMenus">
       <router-link to="/">
         <a> Início </a>
@@ -26,24 +27,21 @@ export default {
 </script>
 
 <style>
-.topnav {
+img {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.logo {
   background-color: white;
-  height: 170px;
+  height: 185px;
+  width: 330px;
+  margin: 0 auto;
 }
 
-.topnav a {
-  display: block;
-  text-align: center;
-}
-
-.topnav img:hover {
+.logo img:hover {
   background-color: whitesmoke;
-}
-
-.topnav img.active {
-  align-items: center;
-  width: 282px;
-  height: 158px;
 }
 
 .navMenus {
