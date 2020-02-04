@@ -142,6 +142,7 @@ export default {
   border: 1px solid #6a757a;
   margin-top: 5px;
   text-align: center;
+  overflow: hidden;
 }
 a {
   font-family: "Montserrat", sans-serif;
