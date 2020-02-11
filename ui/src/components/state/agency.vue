@@ -11,9 +11,19 @@
       </router-link>
     </h2>
     <div class="buttonContainer">
-      <button class="button" v-on:click="previousYear()">&#8249;</button>
+      <button
+        class="button"
+        v-if="checkPreviousYear"
+        v-on:click="previousYear()"
+      >
+        &#60;
+      </button>
+      <button class="deactivatedButton" v-else>&#60;</button>
       <a> {{ this.currentYear }} </a>
-      <button class="button" v-on:click="nextYear()">&#8250;</button>
+      <button class="button" v-if="checkNextYear" v-on:click="nextYear()">
+        &#62;
+      </button>
+      <button class="deactivatedButton" v-else>&#62;</button>
     </div>
     <bar-graph :options="chartOptions" :series="series" />
   </div>
@@ -79,6 +89,22 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    checkNextYear() {
+      if (this.currentYear >= 2020) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    checkPreviousYear() {
+      if (this.currentYear <= 2015) {
+        return false;
+      } else {
+        return true;
+      }
+    }
   },
   methods: {
     async fetchData() {
@@ -162,5 +188,16 @@ a {
   margin-bottom: 5px;
   margin-right: 5px;
   margin-left: 5px;
+}
+
+.deactivatedButton {
+  background-color: grey; /* Green */
+  border: none;
+  color: white;
+  text-decoration: none;
+  font-size: 30px;
+  position: relative;
+  top: 10px;
+  width: 50px;
 }
 </style>

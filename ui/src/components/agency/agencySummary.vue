@@ -35,6 +35,6 @@ export default {
   align-self: center;
   align-content: center;
   margin-top: 5px;
-  overflow: hidden;
+  overflow: scroll;
 }
 </style>
