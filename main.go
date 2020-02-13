@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
+	"github.com/dadosjusbr/storage"
+	"github.com/joho/godotenv"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
@@ -19,6 +21,12 @@ type config struct {
 	Port   int    `envconfig:"PORT"`
 	DBUrl  string `envconfig:"MONGODB_URI"`
 	DBName string `envconfig:"MONGODB_NAME"`
+
+	// StorageDB config
+	SDBUri   string `envconfig:"SDB_URI"`
+	SDBName  string `envconfig:"SDB_NAME"`
+	SDBMiCol string `envconfig:"SDB_MICOL"`
+	SDBAgCol string `envconfig:"SDB_AGCOL"`
 }
 
 var monthsLabelMap = map[int]string{
@@ -35,6 +43,8 @@ var monthsLabelMap = map[int]string{
 	11: "Novembro",
 	12: "Dezembro",
 }
+
+var client *storage.Client
 
 // TemplateRenderer is a custom html/template renderer for Echo framework
 type TemplateRenderer struct {
@@ -138,6 +148,20 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	}
 }
 
+// newClient Creates client to connect with DB and Cloud5
+func newClient(c config) (*storage.Client, error) {
+	db, err := storage.NewDBClient(c.SDBUri, c.SDBName, c.SDBMiCol, c.SDBAgCol)
+	if err != nil {
+		return nil, fmt.Errorf("error creating DB client: %q", err)
+	}
+	db.Collection(c.SDBMiCol)
+	client, err := storage.NewClient(db, &storage.BackupClient{})
+	if err != nil {
+		return nil, fmt.Errorf("error creating storage.client: %q", err)
+	}
+	return client, nil
+}
+
 func getTotalsOfAgencyYear(c echo.Context) error {
 	monthTotals1 := monthTotals{1, 100000.0, 25000.0, 65000.0}
 	monthTotals2 := monthTotals{2, 150000.0, 35000.0, 55000.0}
@@ -147,13 +171,31 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
-	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
-	employees := []employee{employee1, employee2, employee3}
-	agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
-	agency1 := agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
-	state := state{"Paraíba", "pb", "url", []agency{agency1}}
+	// employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
+	// employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
+	// employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
+	// employees := []employee{employee1, employee2, employee3}
+	// agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
+	//agency1 := agency{"Tribunal de Justiça da Paraíba", "TJPB", "J", agencySummary, employees}
+	state := state{"Paraíba", "pb", "url", nil}
+
+	return c.JSON(http.StatusOK, state)
+}
+
+func getBasicInfoOfState(c echo.Context) error {
+	stateName := c.Param("estado")
+	agencies, _, err := client.GetDataForFirstScreen(stateName, 2019)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var agenciesBasic []agencyBasic
+	for k := range agencies {
+		agenciesBasic = append(agenciesBasic, agencyBasic{agencies[k].Name, agencies[k].ID, agencies[k].Entity})
+	}
+
+	state := state{stateName, "", "", agenciesBasic}
+
 	return c.JSON(http.StatusOK, state)
 }
 
@@ -171,6 +213,9 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
@@ -182,6 +227,12 @@ func main() {
 		log.Fatal(err)
 	}
 	defer dbClient.CloseConnection()
+
+	// Criando o client do storage
+	client, err = newClient(conf)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
 
@@ -206,6 +257,8 @@ func main() {
 	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	e.GET("/uiapi/v1/orgao/totais/:orgao/:year", getTotalsOfAgencyYear)
+	// Return basic information of a state
+	e.GET("/uiapi/v1/orgao/:estado", getBasicInfoOfState)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
@@ -219,7 +272,13 @@ type state struct {
 	Name      string
 	ShortName string
 	FlagURL   string
-	Agency    []agency
+	Agency    []agencyBasic
+}
+
+type agencyBasic struct {
+	Name           string
+	ShortName      string
+	AgencyCategory string
 }
 
 type agency struct {
