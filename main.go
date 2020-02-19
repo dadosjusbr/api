@@ -191,7 +191,7 @@ func getBasicInfoOfState(c echo.Context) error {
 
 	var agenciesBasic []agencyBasic
 	for k := range agencies {
-		agenciesBasic = append(agenciesBasic, agencyBasic{agencies[k].Name, agencies[k].ID, agencies[k].Entity})
+		agenciesBasic = append(agenciesBasic, agencyBasic{agencies[k].ID, agencies[k].Entity})
 	}
 
 	state := state{stateName, "", "", agenciesBasic}
@@ -277,7 +277,6 @@ type state struct {
 
 type agencyBasic struct {
 	Name           string
-	ShortName      string
 	AgencyCategory string
 }
 
