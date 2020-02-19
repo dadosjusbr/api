@@ -162,18 +162,6 @@ func newClient(c config) (*storage.Client, error) {
 	return client, nil
 }
 
-// type agencyTotalsYear struct {
-// 	Year        int
-// 	MonthTotals []monthTotals
-// }
-
-// type monthTotals struct {
-// 	Month  int
-// 	Wage   float64
-// 	Perks  float64
-// 	Others float64
-// }
-
 func getTotalsOfAgencyYear(c echo.Context) error {
 	stateName := c.Param("estado")
 	year, err := strconv.Atoi(c.Param("ano"))
@@ -201,6 +189,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 }
 
 func getSummaryOfEntitiesOfState(c echo.Context) error {
+
 	// employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
 	// employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
 	// employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
@@ -230,10 +219,28 @@ func getBasicInfoOfState(c echo.Context) error {
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
-	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0}
-	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0}
-	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0}
-	employees := []employee{employee1, employee2, employee3}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	agencyName := c.Param("orgao")
+
+	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var employees []employee
+
+	for _, employeeAux := range agencyMonthlyInfo.Employee {
+		newEmployee := employee{employeeAux.Name, *employeeAux.Income.Wage, employeeAux.Income.Perks.Total, employeeAux.Income.Other.Total}
+		employees = append(employees, newEmployee)
+	}
 	return c.JSON(http.StatusOK, employees)
 }
 
