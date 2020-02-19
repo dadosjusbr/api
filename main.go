@@ -162,11 +162,41 @@ func newClient(c config) (*storage.Client, error) {
 	return client, nil
 }
 
+// type agencyTotalsYear struct {
+// 	Year        int
+// 	MonthTotals []monthTotals
+// }
+
+// type monthTotals struct {
+// 	Month  int
+// 	Wage   float64
+// 	Perks  float64
+// 	Others float64
+// }
+
 func getTotalsOfAgencyYear(c echo.Context) error {
-	monthTotals1 := monthTotals{1, 100000.0, 25000.0, 65000.0}
-	monthTotals2 := monthTotals{2, 150000.0, 35000.0, 55000.0}
-	monthTotals3 := monthTotals{3, 120000.0, 28000.0, 49000.0}
-	agencyTotalsYear := agencyTotalsYear{2018, []monthTotals{monthTotals1, monthTotals2, monthTotals3}}
+	stateName := c.Param("estado")
+	year, err := strconv.Atoi(c.Param("ano"))
+	agencyName := c.Param("orgao")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, agenciesMonthlyInfo, err := client.GetDataForFirstScreen(stateName, year)
+
+	var monthTotalsOfYear []monthTotals
+
+	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
+		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Others.Total}
+		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	agencyTotalsYear := agencyTotalsYear{year, monthTotalsOfYear}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
@@ -252,11 +282,11 @@ func main() {
 	// Return a summary of an entity. This information will be used in the head of the entity page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
-	e.GET("/uiapi/v1/orgao/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
+	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// This will return information of a state and its entities and agencies. This will be used to provide basic information for the state page.
 	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
-	e.GET("/uiapi/v1/orgao/totais/:orgao/:year", getTotalsOfAgencyYear)
+	e.GET("/uiapi/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	e.GET("/uiapi/v1/orgao/:estado", getBasicInfoOfState)
 
