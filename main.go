@@ -148,7 +148,7 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	}
 }
 
-// newClient Creates client to connect with DB and Cloud5
+// newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
 	db, err := storage.NewDBClient(c.SDBUri, c.SDBName, c.SDBMiCol, c.SDBAgCol)
 	if err != nil {
@@ -165,66 +165,53 @@ func newClient(c config) (*storage.Client, error) {
 func getTotalsOfAgencyYear(c echo.Context) error {
 	stateName := c.Param("estado")
 	year, err := strconv.Atoi(c.Param("ano"))
-	agencyName := c.Param("orgao")
-
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
-
+	agencyName := c.Param("orgao")
 	_, agenciesMonthlyInfo, err := client.GetDataForFirstScreen(stateName, year)
-
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 	var monthTotalsOfYear []monthTotals
-
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
 		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Others.Total}
 		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	agencyTotalsYear := agencyTotalsYear{year, monthTotalsOfYear}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
 func getBasicInfoOfState(c echo.Context) error {
-	yearOfConsult := 2019
+	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
 	agencies, _, err := client.GetDataForFirstScreen(stateName, yearOfConsult)
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
-
 	var agenciesBasic []agencyBasic
 	for k := range agencies {
 		agenciesBasic = append(agenciesBasic, agencyBasic{agencies[k].ID, agencies[k].Entity})
 	}
-
 	state := state{stateName, "", "", agenciesBasic}
-
 	return c.JSON(http.StatusOK, state)
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 	agencyName := c.Param("orgao")
-
 	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
-
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
-
 	var employees []employee
-
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
 		newEmployee := employee{employeeAux.Name, *employeeAux.Income.Wage, employeeAux.Income.Perks.Total, employeeAux.Income.Other.Total}
 		employees = append(employees, newEmployee)
@@ -233,20 +220,24 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 }
 
 func getSummaryOfAgency(c echo.Context) error {
-	yearOfCosult := 2019
-	monthOfConsult := 8
+	yearOfCosult := time.Now().Year()
+	monthOfConsult := 1 //int(time.Now().Month()) Tem um erro na api de leitura enquanto não ajeitar deixei hardcoded aqui.
 	agencyName := c.Param("orgao")
-	state := c.Param("estado")
-
-	_, agencyMonthlyInfo, err := client.GetDataForFirstScreen(state, yearOfCosult)
-	agency := agencyMonthlyInfo[agencyName][monthOfConsult]
-
-	agencySummary := agencySummary{agency.Summary.Count, agency.Summary.Wage.Total, agency.Summary.Perks.Total, agency.Summary.Wage.Max}
-
-	if err != nil {
-		log.Fatal(err)
+	var agencyMonthlyInfo *storage.AgencyMonthlyInfo
+	var err error
+	for i := monthOfConsult; i > 0; i-- {
+		agencyMonthlyInfo, err = client.GetDataForSecondScreen(monthOfConsult, yearOfCosult, agencyName)
+		if err == nil {
+			break
+		}
 	}
-
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	agencySummary := agencySummary{agencyMonthlyInfo.Summary.Count, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Wage.Max}
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
@@ -288,7 +279,7 @@ func main() {
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
 	// Return a summary of an entity. This information will be used in the head of the entity page.
-	e.GET("/uiapi/v1/orgao/resumo/:estado/:orgao", getSummaryOfAgency)
+	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
