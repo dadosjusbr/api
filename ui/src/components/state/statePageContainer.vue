@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      const { data } = await this.$http.get("/entidades/resumo/PB");
+      const { data } = await this.$http.get("entidades/resumo/a");
       this.stateData = data;
       this.setjAgencies(data);
       this.setmAgencies(data);
