@@ -29,12 +29,10 @@ export default {
 .cards {
   justify-content: center;
   display: flex;
-  border: #6a757a 1px solid;
   opacity: 10;
   width: 100%;
   align-self: center;
   align-content: center;
   margin-top: 5px;
-  overflow: scroll;
 }
 </style>
