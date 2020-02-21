@@ -23,10 +23,10 @@ type config struct {
 	DBName string `envconfig:"MONGODB_NAME"`
 
 	// StorageDB config
-	SDBUri   string `envconfig:"SDB_URI"`
-	SDBName  string `envconfig:"SDB_NAME"`
-	SDBMiCol string `envconfig:"SDB_MICOL"`
-	SDBAgCol string `envconfig:"SDB_AGCOL"`
+	MongoURI    string `envconfig:"MONGODB_DBURI"`
+	MongoDBName string `envconfig:"MONGODB_DBNAME"`
+	MongoMICol  string `envconfig:"MONGODB_MICOL"`
+	MongoAgCol  string `envconfig:"MONGODB_AGCOL"`
 }
 
 var monthsLabelMap = map[int]string{
@@ -150,11 +150,11 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
-	db, err := storage.NewDBClient(c.SDBUri, c.SDBName, c.SDBMiCol, c.SDBAgCol)
+	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DB client: %q", err)
 	}
-	db.Collection(c.SDBMiCol)
+	db.Collection(c.MongoMICol)
 	client, err := storage.NewClient(db, &storage.BackupClient{})
 	if err != nil {
 		return nil, fmt.Errorf("error creating storage.client: %q", err)
