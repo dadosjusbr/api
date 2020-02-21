@@ -1,8 +1,8 @@
 <template>
   <div class="graphContainer">
     <apexcharts
-      width="90%"
-      height="300"
+      width="100%"
+      height="400"
       type="bar"
       :options="options"
       :series="series"
