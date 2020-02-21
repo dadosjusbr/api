@@ -166,12 +166,12 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	stateName := c.Param("estado")
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
 	agencyName := c.Param("orgao")
 	_, agenciesMonthlyInfo, err := client.GetDataForFirstScreen(stateName, year)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou estado=%s inválidos", year, stateName))
 	}
 	var monthTotalsOfYear []monthTotals
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
@@ -187,7 +187,10 @@ func getBasicInfoOfState(c echo.Context) error {
 	stateName := c.Param("estado")
 	agencies, _, err := client.GetDataForFirstScreen(stateName, yearOfConsult)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		agencies, _, err = client.GetDataForFirstScreen(stateName, yearOfConsult-1)
+	}
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
 	}
 	var agenciesBasic []agencyBasic
 	for k := range agencies {
@@ -200,16 +203,16 @@ func getBasicInfoOfState(c echo.Context) error {
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
 	}
 	agencyName := c.Param("orgao")
 	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 	var employees []employee
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
@@ -232,12 +235,9 @@ func getSummaryOfAgency(c echo.Context) error {
 		}
 	}
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
 	}
 	agencySummary := agencySummary{agencyMonthlyInfo.Summary.Count, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Wage.Max}
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
-	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
