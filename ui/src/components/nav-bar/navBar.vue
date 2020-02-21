@@ -8,7 +8,7 @@
 
     <div class="navMenus">
       <router-link to="/">
-        <a> Início </a>
+        <a class="i"> Início </a>
       </router-link>
       <router-link to="/sobre">
         <a> Sobre </a>
@@ -26,7 +26,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 img {
   width: 100%;
   height: 100%;
@@ -45,11 +45,14 @@ img {
 }
 
 .navMenus {
+  width: 100%;
   background-color: black;
   text-align: center;
 }
 
 a {
+  font-size: 25px;
+  text-decoration-color: white;
   color: white;
   display: inline-block;
   margin: 10px;

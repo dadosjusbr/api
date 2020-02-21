@@ -159,8 +159,7 @@ a {
 }
 
 .agencyName {
-  font-family: "Montserrat", sans-serif;
-  font-size: 25 px;
+  font-size: 40px;
   line-height: 40px;
   padding-left: 25px;
 }
@@ -182,7 +181,7 @@ a {
   position: relative;
 }
 .agencyContainer {
-  border: 1px solid #6a757a;
+   border-block-end: solid 1px black;
   overflow: auto;
   margin-top: 5px;
   margin-bottom: 5px;
