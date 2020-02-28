@@ -1,6 +1,6 @@
 module github.com/dadosjusbr/remuneracao-magistrados
 
-go 1.12
+go 1.14
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0
@@ -11,9 +11,11 @@ require (
 	github.com/dghubble/go-twitter v0.0.0-20190512073027-53f972dc4b06
 	github.com/dghubble/oauth1 v0.5.0
 	github.com/dghubble/sling v1.2.0 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/frictionlessdata/datapackage-go v0.0.0-20190521182031-ebe18689bda7
 	github.com/frictionlessdata/tableschema-go v0.1.5-0.20190521014818-f9bf38926664
 	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.10.0 // indirect
 	github.com/labstack/echo v3.3.10+incompatible

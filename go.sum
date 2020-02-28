@@ -20,6 +20,9 @@ github.com/dghubble/oauth1 v0.5.0 h1:uJqX7Rzr3QRmp2slUWqI9Sm8NoP65AMiyXiijOWWLvQ
 github.com/dghubble/oauth1 v0.5.0/go.mod h1:8V8BMV9DJRREZx/lUaHtrs7GUMXpzbMqJxINCasxYug=
 github.com/dghubble/sling v1.2.0 h1:PYGS9ofwbV9nfhB1kYjB1vtXshMxlp2oQxTMMXVJ5pE=
 github.com/dghubble/sling v1.2.0/go.mod h1:ZcPRuLm0qrcULW2gOrjXrAWgf76sahqSyxXyVOvkunE=
+github.com/dgrijalva/jwt-go v1.0.2 h1:KPldsxuKGsS2FPWsNeg9ZO18aCrGKujPoWXn2yo+KQM=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/frictionlessdata/datapackage-go v0.0.0-20190521182031-ebe18689bda7 h1:U7a/0aKJSqg+6z2br+5dpL/0DWkie3yFPMqyCgkw6XU=
 github.com/frictionlessdata/datapackage-go v0.0.0-20190521182031-ebe18689bda7/go.mod h1:d6CbzM3Xw9JOsz0AemqOX8DJa315xow0hsw6eTgiDKE=
 github.com/frictionlessdata/tableschema-go v0.1.4 h1:stew9Dt2YBun3Ja/1tkQhDbQXe/OUAjpym9vNbjBYO4=
