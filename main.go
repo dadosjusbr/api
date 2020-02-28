@@ -24,8 +24,8 @@ type config struct {
 	DBName string `envconfig:"MONGODB_NAME"`
 
 	// StorageDB config
-	MongoURI    string `envconfig:"MONGODB_DBURI"`
-	MongoDBName string `envconfig:"MONGODB_DBNAME"`
+	MongoURI    string `envconfig:"MONGODB_URI"`
+	MongoDBName string `envconfig:"MONGODB_NAME"`
 	MongoMICol  string `envconfig:"MONGODB_MICOL"`
 	MongoAgCol  string `envconfig:"MONGODB_AGCOL"`
 }
