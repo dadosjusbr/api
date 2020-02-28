@@ -30,13 +30,11 @@ export default {
 
 <style scoped>
 .entityName {
-  font-family: "Montserrat", sans-serif;
-  font-size: 30px;
-  padding-left: 10px;
+  font-size: 60px;
+  padding-left: 20px;
 }
 
 .entity {
-  border: 1px solid #6a757a;
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;

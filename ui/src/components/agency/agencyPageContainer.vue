@@ -43,10 +43,9 @@ export default {
 
 <style scoped>
 .agencyName {
-  font-family: "Montserrat", sans-serif;
-  font-size: 50px;
-  line-height: 40px;
-  padding-left: 15px;
+  font-size: 5rem;
+  float: left;
+  margin: 30px auto;
 }
 
 .agencyContainer {
@@ -55,7 +54,7 @@ export default {
 }
 
 .agencyNameContainer {
-  border: 1px solid #6a757a;
   margin-top: 5px;
+  height: 150px;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
     <div class="logoContainer">
-      <img class="logoFooter" src="../../assets/white_logo.png" />
+      <img src="../../assets/white_logo.png" />
     </div>
   </div>
 </template>
@@ -17,17 +17,17 @@ export default {
   padding-top: 8px;
   padding-bottom: 5px;
   background-color: black;
-  height: 50px;
+  height: 70px;
   margin-top: 5px;
 }
 
 .logoContainer {
-  height: 50px;
+  height: 60px;
   width: 250px;
   margin: 0 auto;
 }
 
-.img {
+img {
   width: 100%;
   height: 100%;
   border: 0;

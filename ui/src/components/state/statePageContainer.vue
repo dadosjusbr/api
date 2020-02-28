@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="header">
-      <h1 class="stateName">{{ this.stateName }}</h1>
-      <img class="image" :src="this.flagUrl" />
+      <h1 class="stateName text-left">{{ this.stateName }}</h1>
+      <img class="image rounded float-left" :src="this.flagUrl" />
     </div>
     <entity :entityName="'Ministério Público'" :agencies="mAgencies" />
     <entity :entityName="'Judiciário'" :agencies="jAgencies" />
@@ -65,26 +65,20 @@ export default {
 
 <style scoped>
 .stateName {
-  font-family: "Montserrat", sans-serif;
-  font-size: 3rem;
-  line-height: 40px;
+  font-size: 5rem;
   float: left;
-  top: 0;
-  left: 0;
+  margin: 30px auto;
 }
 .image {
-  width: 100px;
-  height: 70px;
-  position: absolute;
-  top: 5px;
-  padding-left: 10px;
+  width: 200px;
+  height: 130px;
+  margin: 9px auto;
+  margin-left: 20px;
 }
 .header {
-  border: 2px solid #6a757a;
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
-  position: relative;
-  height: 80px;
+  height: 150px;
 }
 </style>

@@ -1,9 +1,13 @@
 <template>
   <div class="graphContainer">
     <div class="buttonContainer">
-      <button v-on:click="previousMonth()" class="button">&#8249;</button>
+      <button v-on:click="previousMonth()" class="button btn btn-dark">
+        &#8249;
+      </button>
       <a> {{ this.months[this.currentMonthAndYear.month] }} </a>
-      <button v-on:click="nextMonth()" class="button">&#8250;</button>
+      <button v-on:click="nextMonth()" class="button btn btn-dark">
+        &#8250;
+      </button>
     </div>
     <graph-point
       width="100%"
@@ -139,7 +143,6 @@ export default {
   position: relative;
 }
 .graphContainer {
-  border: 1px solid #6a757a;
   margin-top: 5px;
   text-align: center;
   overflow: hidden;

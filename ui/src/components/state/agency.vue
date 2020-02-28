@@ -12,15 +12,19 @@
     </h2>
     <div class="buttonContainer">
       <button
-        class="button"
+        class="button btn btn-dark"
         v-if="checkPreviousYear"
         v-on:click="previousYear()"
       >
         &#60;
       </button>
       <button class="deactivatedButton" v-else>&#60;</button>
-      <a> {{ this.currentYear }} </a>
-      <button class="button" v-if="checkNextYear" v-on:click="nextYear()">
+      <a class="year"> {{ this.currentYear }} </a>
+      <button
+        class="button btn btn-dark"
+        v-if="checkNextYear"
+        v-on:click="nextYear()"
+      >
         &#62;
       </button>
       <button class="deactivatedButton" v-else>&#62;</button>
@@ -154,15 +158,19 @@ export default {
 
 <style scoped>
 a {
-  font-family: "Montserrat", sans-serif;
   color: black;
 }
 
+.year {
+  color: black;
+  font-size: 25px;
+}
+
 .agencyName {
-  font-family: "Montserrat", sans-serif;
-  font-size: 25 px;
+  font-size: 40px;
   line-height: 40px;
   padding-left: 25px;
+  text-decoration: underline;
 }
 .button {
   background-color: #182825;
@@ -182,7 +190,7 @@ a {
   position: relative;
 }
 .agencyContainer {
-  border: 1px solid #6a757a;
+  border-block-end: solid 1px black;
   overflow: auto;
   margin-top: 5px;
   margin-bottom: 5px;
