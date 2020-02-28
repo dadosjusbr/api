@@ -15,6 +15,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type config struct {
@@ -182,6 +183,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
+
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
@@ -271,14 +273,17 @@ func main() {
 		templates: template.Must(template.ParseGlob("templates/*.html")),
 	}
 
+	e.Use(middleware.CORS())
+
 	e.Renderer = renderer
 
 	e.Static("/static", "templates/assets")
+	e.Static("/novo", "ui/dist")
 
 	e.GET("/", handleMainPageRequest(dbClient))
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
-	// Return a summary of an entity. This information will be used in the head of the entity page.
+	// Return a summary of an agency. This information will be used in the head of the agency page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
@@ -312,6 +317,7 @@ type employee struct {
 	Wage   float64
 	Perks  float64
 	Others float64
+	Total  float64
 }
 
 type agencySummary struct {
