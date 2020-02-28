@@ -248,9 +248,7 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
+	godotenv.Load() // There is no problem if the .env can not be loaded.
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
