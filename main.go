@@ -176,19 +176,19 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	}
 	var monthTotalsOfYear []monthTotals
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
-		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Others.Total}
+		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.General.Wage.Total, agencyMonthlyInfo.Summary.General.Perks.Total, agencyMonthlyInfo.Summary.General.Others.Total}
 		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 	}
 	agencyTotalsYear := agencyTotalsYear{year, monthTotalsOfYear}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
-
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
 	agencies, _, err := client.GetDataForFirstScreen(stateName, yearOfConsult)
 	if err != nil {
+		err = nil
 		agencies, _, err = client.GetDataForFirstScreen(stateName, yearOfConsult-1)
 	}
 	if err != nil {
@@ -218,7 +218,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 	var employees []employee
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
-		newEmployee := employee{employeeAux.Name, *employeeAux.Income.Wage, employeeAux.Income.Perks.Total, employeeAux.Income.Other.Total}
+		newEmployee := employee{employeeAux.Name, *employeeAux.Income.Wage, employeeAux.Income.Perks.Total, employeeAux.Income.Other.Total, employeeAux.Income.Total}
 		employees = append(employees, newEmployee)
 	}
 	return c.JSON(http.StatusOK, employees)
@@ -237,9 +237,10 @@ func getSummaryOfAgency(c echo.Context) error {
 		}
 	}
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
 	}
-	agencySummary := agencySummary{agencyMonthlyInfo.Summary.Count, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Wage.Max}
+	agencySummary := agencySummary{agencyMonthlyInfo.Summary.General.Count, agencyMonthlyInfo.Summary.General.Wage.Total, agencyMonthlyInfo.Summary.General.Perks.Total, agencyMonthlyInfo.Summary.General.Wage.Max}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
