@@ -183,7 +183,6 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
-
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
@@ -218,7 +217,12 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 	var employees []employee
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
-		newEmployee := employee{employeeAux.Name, *employeeAux.Income.Wage, employeeAux.Income.Perks.Total, employeeAux.Income.Other.Total}
+		newEmployee := employee{
+			employeeAux.Name,
+			*employeeAux.Income.Wage,
+			employeeAux.Income.Perks.Total,
+			employeeAux.Income.Other.Total,
+			employeeAux.Income.Total}
 		employees = append(employees, newEmployee)
 	}
 	return c.JSON(http.StatusOK, employees)
