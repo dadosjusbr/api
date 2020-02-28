@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
+	"github.com/dadosjusbr/storage"
+	"github.com/joho/godotenv"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
@@ -20,6 +22,12 @@ type config struct {
 	Port   int    `envconfig:"PORT"`
 	DBUrl  string `envconfig:"MONGODB_URI"`
 	DBName string `envconfig:"MONGODB_NAME"`
+
+	// StorageDB config
+	MongoURI    string `envconfig:"MONGODB_DBURI"`
+	MongoDBName string `envconfig:"MONGODB_DBNAME"`
+	MongoMICol  string `envconfig:"MONGODB_MICOL"`
+	MongoAgCol  string `envconfig:"MONGODB_AGCOL"`
 }
 
 var monthsLabelMap = map[int]string{
@@ -36,6 +44,8 @@ var monthsLabelMap = map[int]string{
 	11: "Novembro",
 	12: "Dezembro",
 }
+
+var client *storage.Client
 
 // TemplateRenderer is a custom html/template renderer for Echo framework
 type TemplateRenderer struct {
@@ -139,36 +149,104 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	}
 }
 
+// newClient takes a config struct and creates a client to connect with DB and Cloud5
+func newClient(c config) (*storage.Client, error) {
+	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol)
+	if err != nil {
+		return nil, fmt.Errorf("error creating DB client: %q", err)
+	}
+	db.Collection(c.MongoMICol)
+	client, err := storage.NewClient(db, &storage.BackupClient{})
+	if err != nil {
+		return nil, fmt.Errorf("error creating storage.client: %q", err)
+	}
+	return client, nil
+}
+
 func getTotalsOfAgencyYear(c echo.Context) error {
-	monthTotals1 := monthTotals{1, 100000.0, 25000.0, 65000.0}
-	monthTotals2 := monthTotals{2, 150000.0, 35000.0, 55000.0}
-	monthTotals3 := monthTotals{3, 120000.0, 28000.0, 49000.0}
-	agencyTotalsYear := agencyTotalsYear{2018, []monthTotals{monthTotals1, monthTotals2, monthTotals3}}
+	stateName := c.Param("estado")
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	agencyName := c.Param("orgao")
+	_, agenciesMonthlyInfo, err := client.GetDataForFirstScreen(stateName, year)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou estado=%s inválidos", year, stateName))
+	}
+	var monthTotalsOfYear []monthTotals
+	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
+		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Others.Total}
+		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+	}
+	agencyTotalsYear := agencyTotalsYear{year, monthTotalsOfYear}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
-func getSummaryOfEntitiesOfState(c echo.Context) error {
-	agencyBasic1 := agencyBasic{"TJPB", "J"}
-	agencyBasic2 := agencyBasic{"MPPB", "M"}
-	agencyBasic3 := agencyBasic{"TRTPB", "J"}
-	state := state{"Paraíba", "pb", "url", []agencyBasic{agencyBasic1, agencyBasic2, agencyBasic3}}
+
+func getBasicInfoOfState(c echo.Context) error {
+	yearOfConsult := time.Now().Year()
+	stateName := c.Param("estado")
+	agencies, _, err := client.GetDataForFirstScreen(stateName, yearOfConsult)
+	if err != nil {
+		agencies, _, err = client.GetDataForFirstScreen(stateName, yearOfConsult-1)
+	}
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
+	}
+	var agenciesBasic []agencyBasic
+	for k := range agencies {
+		agenciesBasic = append(agenciesBasic, agencyBasic{agencies[k].ID, agencies[k].Entity})
+	}
+	state := state{stateName, "", "", agenciesBasic}
 	return c.JSON(http.StatusOK, state)
 }
 
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
-	employee1 := employee{"Marcos", 30000.0, 14000.0, 25000.0, 69000.0}
-	employee2 := employee{"Joeberth", 35000.0, 19000.0, 20000.0, 74000.0}
-	employee3 := employee{"Maria", 34000.0, 15000.0, 23000.0, 72000.0}
-	employees := []employee{employee1, employee2, employee3}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
+	}
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
+	}
+	agencyName := c.Param("orgao")
+	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
+	}
+	var employees []employee
+	for _, employeeAux := range agencyMonthlyInfo.Employee {
+		newEmployee := employee{employeeAux.Name, *employeeAux.Income.Wage, employeeAux.Income.Perks.Total, employeeAux.Income.Other.Total}
+		employees = append(employees, newEmployee)
+	}
 	return c.JSON(http.StatusOK, employees)
 }
 
 func getSummaryOfAgency(c echo.Context) error {
-	agencySummary := agencySummary{100, 250000.0, 100000.0, 26000.0}
+	yearOfCosult := time.Now().Year()
+	monthOfConsult := 1 //int(time.Now().Month()) Tem um erro na api de leitura enquanto não ajeitar deixei hardcoded aqui.
+	agencyName := c.Param("orgao")
+	var agencyMonthlyInfo *storage.AgencyMonthlyInfo
+	var err error
+	for i := monthOfConsult; i > 0; i-- {
+		agencyMonthlyInfo, err = client.GetDataForSecondScreen(monthOfConsult, yearOfCosult, agencyName)
+		if err == nil {
+			break
+		}
+	}
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
+	}
+	agencySummary := agencySummary{agencyMonthlyInfo.Summary.Count, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Wage.Max}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
 	var conf config
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
@@ -180,6 +258,12 @@ func main() {
 		log.Fatal(err)
 	}
 	defer dbClient.CloseConnection()
+
+	// Criando o client do storage
+	client, err = newClient(conf)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
 
@@ -201,12 +285,12 @@ func main() {
 
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
-	// Return all the salary of a month and year. This will be used in the point chart at the agency page.
-	e.GET("/uiapi/v1/orgao/salario/:orgao/:year/:month", getSalaryOfAgencyMonthYear)
-	// This will return information of a state and its entities and agencies. This will be used to provide basic information for the state page.
-	e.GET("/uiapi/v1/entidades/resumo/:estado", getSummaryOfEntitiesOfState)
+	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
+	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
-	e.GET("/uiapi/v1/orgao/totais/:orgao/:year", getTotalsOfAgencyYear)
+	e.GET("/uiapi/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
+	// Return basic information of a state
+	e.GET("/uiapi/v1/orgao/:estado", getBasicInfoOfState)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
@@ -226,14 +310,6 @@ type state struct {
 type agencyBasic struct {
 	Name           string
 	AgencyCategory string
-}
-
-type agency struct {
-	Name           string
-	ShortName      string
-	AgencyCategory string
-	AgencySummary  agencySummary
-	Employee       []employee
 }
 
 type employee struct {
