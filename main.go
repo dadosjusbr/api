@@ -137,7 +137,7 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		sidebarElements, err := getSidebarElements(dbClient)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("Error getting sidebar elements: %q", err)
 			return c.String(http.StatusInternalServerError, "unexpected error")
 		}
 		viewModel := struct {
@@ -169,12 +169,14 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
-	agencyName := c.Param("orgao")
+
 	_, agenciesMonthlyInfo, err := client.GetDataForFirstScreen(stateName, year)
 	if err != nil {
+		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, stateName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou estado=%s inválidos", year, stateName))
 	}
 	var monthTotalsOfYear []monthTotals
+	agencyName := c.Param("orgao")
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
 		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Others.Total}
 		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
@@ -188,9 +190,12 @@ func getBasicInfoOfState(c echo.Context) error {
 	stateName := c.Param("estado")
 	agencies, _, err := client.GetDataForFirstScreen(stateName, yearOfConsult)
 	if err != nil {
-		agencies, _, err = client.GetDataForFirstScreen(stateName, yearOfConsult-1)
+		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
+		yearOfConsult = yearOfConsult - 1
 	}
+	agencies, _, err = client.GetDataForFirstScreen(stateName, yearOfConsult)
 	if err != nil {
+		log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
 	}
 	var agenciesBasic []agencyBasic
@@ -213,6 +218,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
 	if err != nil {
+		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 	var employees []employee
