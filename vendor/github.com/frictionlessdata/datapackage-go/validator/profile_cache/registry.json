@@ -1,0 +1,44 @@
+[
+    {
+      "id": "data-package",
+      "title": "Data Package",
+      "schema": "/data-package.json",
+      "schema_path": "/data-package.json",
+      "specification": "https://specs.frictionlessdata.io/data-package/"
+    },
+    {
+      "id": "tabular-data-package",
+      "title": "Tabular Data Package",
+      "schema": "/tabular-data-package.json",
+      "schema_path": "/tabular-data-package.json",
+      "specification": "http://specs.frictionlessdata.io/tabular-data-package/"
+    },
+    {
+      "id": "fiscal-data-package",
+      "title": "Fiscal Data Package",
+      "schema": "/fiscal-data-package.json",
+      "schema_path": "/fiscal-data-package.json",
+      "specification": "https://specs.frictionlessdata.io/fiscal-data-package/"
+    },
+    {
+      "id": "data-resource",
+      "title": "Data Resource",
+      "schema": "/data-resource.json",
+      "schema_path": "/data-resource.json",
+      "specification": "https://specs.frictionlessdata.io/data-resource"
+    },
+    {
+      "id": "tabular-data-resource",
+      "title": "Tabular Data Resource",
+      "schema": "/tabular-data-resource.json",
+      "schema_path": "/tabular-data-resource.json",
+      "specification": "https://specs.frictionlessdata.io/tabular-data-resource"
+    },
+    {
+      "id": "table-schema",
+      "title": "Table Schema",
+      "schema": "/table-schema.json",
+      "schema_path": "/table-schema.json",
+      "specification": "https://specs.frictionlessdata.io/table-schema/"
+    }
+]
