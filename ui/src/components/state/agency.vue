@@ -113,7 +113,7 @@ export default {
   methods: {
     async fetchData() {
       const response = await this.$http.get(
-        "/orgao/totais/TJPB/" + this.currentYear
+        "/orgao/totais/PB/"+ this.agencyName + "/" + this.currentYear
       );
       this.data = response.data;
       this.generateSeries();
