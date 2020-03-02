@@ -178,7 +178,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	var monthTotalsOfYear []monthTotals
 	agencyName := c.Param("orgao")
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
-		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Others.Total}
+		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.General.Wage.Total, agencyMonthlyInfo.Summary.General.Perks.Total, agencyMonthlyInfo.Summary.General.Others.Total}
 		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 	}
 	agencyTotalsYear := agencyTotalsYear{year, monthTotalsOfYear}
@@ -249,7 +249,7 @@ func getSummaryOfAgency(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
 	}
-	agencySummary := agencySummary{agencyMonthlyInfo.Summary.Count, agencyMonthlyInfo.Summary.Wage.Total, agencyMonthlyInfo.Summary.Perks.Total, agencyMonthlyInfo.Summary.Wage.Max}
+	agencySummary := agencySummary{agencyMonthlyInfo.Summary.General.Count, agencyMonthlyInfo.Summary.General.Wage.Total, agencyMonthlyInfo.Summary.General.Perks.Total, agencyMonthlyInfo.Summary.General.Wage.Max}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
