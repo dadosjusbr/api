@@ -4,8 +4,6 @@ go 1.14
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0
-	github.com/antchfx/htmlquery v1.1.0
-	github.com/antchfx/xpath v1.1.0 // indirect
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/dadosjusbr/storage v0.0.0-20200302174211-3a8750fdc72d
 	github.com/dghubble/go-twitter v0.0.0-20190512073027-53f972dc4b06
@@ -27,11 +25,9 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sendgrid/rest v2.4.1+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.5.0+incompatible
-	github.com/stretchr/objx v0.2.0 // indirect
-	github.com/stretchr/testify v1.4.0
 	github.com/valyala/fasttemplate v1.1.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.0
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d // indirect
-	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect
 )
