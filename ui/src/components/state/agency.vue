@@ -154,8 +154,6 @@ export default {
     },
     generateSeries() {
       let others = this.data.MonthTotals.map(month => month["Others"]);
-      // eslint-disable-next-line
-      console.log(others);
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
       this.series = [
