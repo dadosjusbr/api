@@ -7,7 +7,7 @@
           params: { agencyName: this.agencyName.toLowerCase() }
         }"
       >
-        {{ this.agencyName }}
+        {{ this.agencyName.toUpperCase() }}
       </router-link>
     </h2>
     <div class="buttonContainer">
@@ -58,7 +58,7 @@ export default {
         chart: {
           stacked: true,
           toolbar: {
-            show: true
+            show: false
           },
           zoom: {
             enabled: true
@@ -82,14 +82,30 @@ export default {
           }
         },
         xaxis: {
-          categories: ["JAN", "FEV", "MAR"]
+          categories: [
+            "JAN",
+            "FEV",
+            "MAR",
+            "ABR",
+            "MAI",
+            "JUN",
+            "JUL",
+            "AGO",
+            "SET",
+            "OUT",
+            "NOV",
+            "DEZ"
+          ]
         },
         legend: {
           position: "right",
-          offsetY: 40
+          offsetY: 120
         },
         fill: {
           opacity: 1
+        },
+        dataLabels: {
+          enabled: false
         }
       }
     };
@@ -113,7 +129,7 @@ export default {
   methods: {
     async fetchData() {
       const response = await this.$http.get(
-        "/orgao/totais/PB/"+ this.agencyName + "/" + this.currentYear
+        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
       );
       this.data = response.data;
       this.generateSeries();
@@ -163,11 +179,11 @@ a {
 
 .year {
   color: black;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .agencyName {
-  font-size: 40px;
+  font-size: 30px;
   line-height: 40px;
   padding-left: 25px;
   text-decoration: underline;
@@ -177,7 +193,7 @@ a {
   border: none;
   color: white;
   text-decoration: none;
-  font-size: 30px;
+  font-size: 20px;
   position: relative;
   top: 10px;
   width: 50px;

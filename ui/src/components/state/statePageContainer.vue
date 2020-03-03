@@ -65,13 +65,13 @@ export default {
 
 <style scoped>
 .stateName {
-  font-size: 5rem;
+  font-size: 4rem;
   float: left;
   margin: 30px auto;
 }
 .image {
-  width: 200px;
-  height: 130px;
+  width: 160px;
+  height: 80x;
   margin: 9px auto;
   margin-left: 20px;
 }

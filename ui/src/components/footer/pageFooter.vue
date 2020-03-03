@@ -17,12 +17,12 @@ export default {
   padding-top: 8px;
   padding-bottom: 5px;
   background-color: black;
-  height: 70px;
+  height: 50px;
   margin-top: 5px;
 }
 
 .logoContainer {
-  height: 60px;
+  height: 40px;
   width: 250px;
   margin: 0 auto;
 }
