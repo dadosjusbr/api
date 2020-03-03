@@ -81,6 +81,24 @@ export default {
             horizontal: false
           }
         },
+        yaxis: {
+          decimalsInFloat: 2,
+          labels: {
+            show: true,
+            minWidth: 0,
+            maxWidth: 160,
+            style: {
+              colors: [],
+              fontSize: "16px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              cssClass: "apexcharts-yaxis-label"
+            },
+            formatter: function(value) {
+              return (value / 1000000).toFixed(1) + "M R$";
+            }
+          }
+        },
         xaxis: {
           categories: [
             "JAN",
