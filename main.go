@@ -6,10 +6,12 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
+	"github.com/dadosjusbr/remuneracao-magistrados/models"
 	"github.com/dadosjusbr/storage"
 	"github.com/joho/godotenv"
 
@@ -175,13 +177,20 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, stateName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou estado=%s inválidos", year, stateName))
 	}
-	var monthTotalsOfYear []monthTotals
+	var monthTotalsOfYear []models.MonthTotals
 	agencyName := c.Param("orgao")
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
-		monthTotals := monthTotals{agencyMonthlyInfo.Month, agencyMonthlyInfo.Summary.General.Wage.Total, agencyMonthlyInfo.Summary.General.Perks.Total, agencyMonthlyInfo.Summary.General.Others.Total}
+		monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
+			Wage:   agencyMonthlyInfo.Summary.General.Wage.Total,
+			Perks:  agencyMonthlyInfo.Summary.General.Perks.Total,
+			Others: agencyMonthlyInfo.Summary.General.Others.Total,
+		}
 		monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 	}
-	agencyTotalsYear := agencyTotalsYear{year, monthTotalsOfYear}
+	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
+		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month
+	})
+	agencyTotalsYear := models.AgencyTotalsYear{Year: year, MonthTotals: monthTotalsOfYear}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
@@ -198,11 +207,11 @@ func getBasicInfoOfState(c echo.Context) error {
 		log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
 	}
-	var agenciesBasic []agencyBasic
+	var agenciesBasic []models.AgencyBasic
 	for k := range agencies {
-		agenciesBasic = append(agenciesBasic, agencyBasic{agencies[k].ID, agencies[k].Entity})
+		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, AgencyCategory: agencies[k].Entity})
 	}
-	state := state{stateName, "", "", agenciesBasic}
+	state := models.State{Name: stateName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
 	return c.JSON(http.StatusOK, state)
 }
 
@@ -221,14 +230,14 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
-	var employees []employee
+	var employees []models.Employee
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
-		newEmployee := employee{
-			employeeAux.Name,
-			*employeeAux.Income.Wage,
-			employeeAux.Income.Perks.Total,
-			employeeAux.Income.Other.Total,
-			employeeAux.Income.Total}
+		newEmployee := models.Employee{
+			Name:   employeeAux.Name,
+			Wage:   *employeeAux.Income.Wage,
+			Perks:  employeeAux.Income.Perks.Total,
+			Others: employeeAux.Income.Other.Total,
+			Total:  employeeAux.Income.Total}
 		employees = append(employees, newEmployee)
 	}
 	return c.JSON(http.StatusOK, employees)
@@ -249,7 +258,11 @@ func getSummaryOfAgency(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
 	}
-	agencySummary := agencySummary{agencyMonthlyInfo.Summary.General.Count, agencyMonthlyInfo.Summary.General.Wage.Total, agencyMonthlyInfo.Summary.General.Perks.Total, agencyMonthlyInfo.Summary.General.Wage.Max}
+	agencySummary := models.AgencySummary{
+		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
+		TotalWage:      agencyMonthlyInfo.Summary.General.Wage.Total,
+		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
+		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
@@ -306,43 +319,4 @@ func main() {
 		WriteTimeout: 5 * time.Minute,
 	}
 	e.Logger.Fatal(e.StartServer(s))
-}
-
-type state struct {
-	Name      string
-	ShortName string
-	FlagURL   string
-	Agency    []agencyBasic
-}
-
-type agencyBasic struct {
-	Name           string
-	AgencyCategory string
-}
-
-type employee struct {
-	Name   string
-	Wage   float64
-	Perks  float64
-	Others float64
-	Total  float64
-}
-
-type agencySummary struct {
-	TotalEmployees int
-	TotalWage      float64
-	TotalPerks     float64
-	MaxWage        float64
-}
-
-type agencyTotalsYear struct {
-	Year        int
-	MonthTotals []monthTotals
-}
-
-type monthTotals struct {
-	Month  int
-	Wage   float64
-	Perks  float64
-	Others float64
 }
