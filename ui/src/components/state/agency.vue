@@ -83,18 +83,18 @@ export default {
         },
         xaxis: {
           categories: [
-            "JANEIRO",
-            "FEVEREIRO",
-            "MARÇO",
-            "ABRIL",
-            "MAIO",
-            "JUNHO",
-            "JULHO",
-            "AGOSTO",
-            "SETEMBRO",
-            "OUTUBRO",
-            "NOVEMBRO",
-            "DEZEMBRO"
+            "JAN",
+            "FEV",
+            "MAR",
+            "ABR",
+            "MAI",
+            "JUN",
+            "JUL",
+            "AGO",
+            "SET",
+            "OUT",
+            "NOV",
+            "DEZ"
           ]
         },
         legend: {
