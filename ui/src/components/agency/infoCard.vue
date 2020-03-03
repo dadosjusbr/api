@@ -1,7 +1,7 @@
 <template>
   <div class="center">
     <div class="circle">
-      {{ info.name.replace("_", " ") + ":" + "\n" + info.value.toFixed(2) }}
+      {{ info.name.replace("_", " ") + ":" + "\n" + info.value }}
     </div>
   </div>
 </template>
@@ -24,7 +24,7 @@ export default {
   height: 275px;
   border-radius: 50%;
   border: #182825 3px solid;
-  font-size: 17px;
+  font-size: 20px;
   line-height: 250px;
   text-align: center;
   font-family: "Montserrat", sans-serif;
