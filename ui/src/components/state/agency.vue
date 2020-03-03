@@ -81,6 +81,24 @@ export default {
             horizontal: false
           }
         },
+        yaxis: {
+          decimalsInFloat: 2,
+          labels: {
+            show: true,
+            minWidth: 0,
+            maxWidth: 160,
+            style: {
+              colors: [],
+              fontSize: "16px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              cssClass: "apexcharts-yaxis-label"
+            },
+            formatter: function(value) {
+              return value / 1000000 + "M R$";
+            }
+          }
+        },
         xaxis: {
           categories: [
             "JAN",
@@ -136,6 +154,8 @@ export default {
     },
     generateSeries() {
       let others = this.data.MonthTotals.map(month => month["Others"]);
+      // eslint-disable-next-line
+      console.log(others);
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
       this.series = [
