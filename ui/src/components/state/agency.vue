@@ -173,15 +173,27 @@ export default {
     },
     async nextYear() {
       this.currentYear = this.currentYear + 1;
-      await this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear)
-        .then(response => (this.data = response.data));
+      let resp = await this.$http.get(
+        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+      );
+      if (resp.data.MonthTotals == null) {
+        alert("Não existem dados disponíveis para o ano: " + this.currentYear);
+      } else {
+        this.data = resp.data;
+        this.generateSeries();
+      }
     },
     async previousYear() {
       this.currentYear = this.currentYear - 1;
-      await this.$http
-        .get("/orgao/totais/" + this.agencyName + "/" + this.currentYear)
-        .then(response => (this.data = response.data));
+      let resp = await this.$http.get(
+        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+      );
+      if (resp.data.MonthTotals == null) {
+        alert("Não existem dados disponíveis para o ano: " + this.currentYear);
+      } else {
+        this.data = resp.data;
+        this.generateSeries();
+      }
     }
   },
   async mounted() {
