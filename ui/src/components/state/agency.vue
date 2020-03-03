@@ -95,7 +95,7 @@ export default {
               cssClass: "apexcharts-yaxis-label"
             },
             formatter: function(value) {
-              return value / 1000000 + "M R$";
+              return (value / 1000000).toFixed(1) + "M R$";
             }
           }
         },
