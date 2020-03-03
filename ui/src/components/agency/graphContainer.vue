@@ -28,6 +28,7 @@ export default {
   },
   data: function() {
     return {
+      agencyName: this.$route.params.agencyName,
       months: {
         1: "Janeiro",
         2: "Fevereiro",
@@ -72,7 +73,7 @@ export default {
       }
       this.currentMonthAndYear = { year, month };
       this.$http
-        .get("/orgao/salario/TJPB/" + year + "/" + month)
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => (this.salaryData = response.data));
     },
     previousMonth() {
@@ -86,7 +87,7 @@ export default {
       }
       this.currentMonthAndYear = { year, month };
       this.$http
-        .get("/orgao/salario/TJPB/" + year + "/" + month)
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => (this.salaryData = response.data));
     }
   },
@@ -114,7 +115,9 @@ export default {
   mounted() {
     this.$http
       .get(
-        "/orgao/salario/TJPB/" +
+        "/orgao/salario/" +
+          this.agencyName +
+          "/" +
           this.currentMonthAndYear.year +
           "/" +
           this.currentMonthAndYear.month

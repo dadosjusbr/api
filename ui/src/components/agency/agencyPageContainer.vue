@@ -1,7 +1,7 @@
 <template>
   <div class="agencyContainer">
     <div class="agencyNameContainer">
-      <h1 class="agencyName">{{ agencyName }}</h1>
+      <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
     <agency-summary :agencySummary="agencySummary" />
     <graph-container />
@@ -20,13 +20,13 @@ export default {
   },
   data() {
     return {
-      agencyName: this.$route.params.agencyName.toUpperCase(),
+      agencyName: this.$route.params.agencyName,
       agencySummary: null
     };
   },
   methods: {
     async fetchData() {
-      const { data } = await this.$http.get("/orgao/resumo/a");
+      const { data } = await this.$http.get("/orgao/resumo/" + this.agencyName);
       this.agencySummary = {
         Total_Empregados: data.TotalEmployees,
         Total_Salários: data.TotalWage,
@@ -43,7 +43,7 @@ export default {
 
 <style scoped>
 .agencyName {
-  font-size: 5rem;
+  font-size: 3.5rem;
   float: left;
   margin: 30px auto;
 }
@@ -54,7 +54,7 @@ export default {
 }
 
 .agencyNameContainer {
-  margin-top: 5px;
-  height: 150px;
+  margin-top: 1px;
+  height: 100px;
 }
 </style>
