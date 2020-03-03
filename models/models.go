@@ -1,18 +1,18 @@
-package main
+package models
 
-type state struct {
+type State struct {
 	Name      string
 	ShortName string
 	FlagURL   string
-	Agency    []agencyBasic
+	Agency    []AgencyBasic
 }
 
-type agencyBasic struct {
+type AgencyBasic struct {
 	Name           string
 	AgencyCategory string
 }
 
-type employee struct {
+type Employee struct {
 	Name   string
 	Wage   float64
 	Perks  float64
@@ -20,19 +20,19 @@ type employee struct {
 	Total  float64
 }
 
-type agencySummary struct {
+type AgencySummary struct {
 	TotalEmployees int
 	TotalWage      float64
 	TotalPerks     float64
 	MaxWage        float64
 }
 
-type agencyTotalsYear struct {
+type AgencyTotalsYear struct {
 	Year        int
-	MonthTotals []monthTotals
+	MonthTotals []MonthTotals
 }
 
-type monthTotals struct {
+type MonthTotals struct {
 	Month  int
 	Wage   float64
 	Perks  float64
