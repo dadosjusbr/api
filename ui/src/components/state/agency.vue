@@ -179,11 +179,11 @@ a {
 
 .year {
   color: black;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .agencyName {
-  font-size: 40px;
+  font-size: 30px;
   line-height: 40px;
   padding-left: 25px;
   text-decoration: underline;
@@ -193,7 +193,7 @@ a {
   border: none;
   color: white;
   text-decoration: none;
-  font-size: 30px;
+  font-size: 20px;
   position: relative;
   top: 10px;
   width: 50px;

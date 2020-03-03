@@ -48,13 +48,13 @@ img {
   width: 100%;
   background-color: black;
   text-align: center;
+  height: 40px;
+  padding-top: 7px;
 }
 
 a {
-  font-size: 25px;
-  text-decoration-color: white;
+  font-size: 15px;
   color: white;
-  display: inline-block;
   margin: 10px;
   font-family: "Montserrat", sans-serif;
 }

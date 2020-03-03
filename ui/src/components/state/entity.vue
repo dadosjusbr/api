@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .entityName {
-  font-size: 60px;
+  font-size: 50px;
   padding-left: 20px;
 }
 
