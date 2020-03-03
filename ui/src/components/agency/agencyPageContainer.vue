@@ -43,7 +43,7 @@ export default {
 
 <style scoped>
 .agencyName {
-  font-size: 5rem;
+  font-size: 3.5rem;
   float: left;
   margin: 30px auto;
 }
@@ -54,7 +54,7 @@ export default {
 }
 
 .agencyNameContainer {
-  margin-top: 5px;
-  height: 150px;
+  margin-top: 1px;
+  height: 100px;
 }
 </style>
