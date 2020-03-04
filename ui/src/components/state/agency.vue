@@ -153,6 +153,9 @@ export default {
       this.generateSeries();
     },
     generateSeries() {
+      if (this.data.MonthTotals.length != 12) {
+        this.addMonthsWithNoValue();
+      }
       let others = this.data.MonthTotals.map(month => month["Others"]);
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
@@ -170,6 +173,25 @@ export default {
           data: wages
         }
       ];
+    },
+    addMonthsWithNoValue() {
+      var existingMonths = new Array();
+      this.data.MonthTotals.forEach(monthTotal => {
+        existingMonths.push(monthTotal.Month);
+      });
+      for (let i = 1; i <= 12; i++) {
+        if (!existingMonths.includes(i)) {
+          this.data.MonthTotals.push({
+            Month: i,
+            Others: 0,
+            Perks: 0,
+            Wage: 0
+          });
+        }
+      }
+      this.data.MonthTotals.sort((a, b) => {
+        return a.Month - b.Month;
+      });
     },
     async nextYear() {
       this.currentYear = this.currentYear + 1;
