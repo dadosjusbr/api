@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -294,7 +295,15 @@ func main() {
 		templates: template.Must(template.ParseGlob("templates/*.html")),
 	}
 
-	e.Use(middleware.CORS())
+	// Enable access from all dadosjusbr domains.
+	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"https://dadosjusbr.com", "https://dadosjusbr.org"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+	} else {
+		e.Use(middleware.CORS())
+	}
 
 	e.Renderer = renderer
 
