@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -294,7 +295,21 @@ func main() {
 		templates: template.Must(template.ParseGlob("templates/*.html")),
 	}
 
-	e.Use(middleware.CORS())
+	// Enable access from all dadosjusbr domains.
+	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+		log.Println("Using production CORS")
+	} else {
+		host := fmt.Sprintf(":%d", conf.Port)
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{host},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+		log.Println("Using development CORS: " + host)
+	}
 
 	e.Renderer = renderer
 

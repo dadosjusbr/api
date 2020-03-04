@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 Vue.config.productionTip = false;
 const base = axios.create({
-  baseURL: "http://dadosjusbr.com/uiapi/v1"
+  baseURL: process.env.VUE_APP_API_BASE_URL
 });
 Vue.prototype.$http = base;
 
