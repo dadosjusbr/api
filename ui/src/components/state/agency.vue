@@ -137,7 +137,7 @@ export default {
       }
     },
     checkPreviousYear() {
-      if (this.currentYear <= 2015) {
+      if (this.currentYear <= 2018) {
         return false;
       } else {
         return true;
@@ -178,6 +178,7 @@ export default {
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
+        this.currentYear = this.currentYear - 1;
       } else {
         this.data = resp.data;
         this.generateSeries();
@@ -190,6 +191,7 @@ export default {
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
+        this.currentYear = this.currentYear + 1;
       } else {
         this.data = resp.data;
         this.generateSeries();
