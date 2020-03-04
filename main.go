@@ -298,7 +298,7 @@ func main() {
 	// Enable access from all dadosjusbr domains.
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"https://dadosjusbr.com", "https://dadosjusbr.org"},
+			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 		}))
 	} else {
