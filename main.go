@@ -301,8 +301,14 @@ func main() {
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 		}))
+		log.Println("Using production CORS")
 	} else {
-		e.Use(middleware.CORS())
+		host := fmt.Sprintf(":%d", conf.Port)
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{host},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+		log.Println("Using development CORS: " + host)
 	}
 
 	e.Renderer = renderer
