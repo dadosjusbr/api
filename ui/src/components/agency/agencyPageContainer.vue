@@ -28,10 +28,10 @@ export default {
     async fetchData() {
       const { data } = await this.$http.get("/orgao/resumo/" + this.agencyName);
       this.agencySummary = {
-        Total_Empregados: data.TotalEmployees,
-        Total_Salários: data.TotalWage,
-        Total_Indenizações: data.TotalPerks,
-        Salário_Maximo: data.MaxWage
+        Total_Empregados: Math.trunc(data.TotalEmployees),
+        Total_Salários: data.TotalWage.toFixed(2),
+        Total_Indenizações: data.TotalPerks.toFixed(2),
+        Salário_Maximo: data.MaxWage.toFixed(2)
       };
     }
   },

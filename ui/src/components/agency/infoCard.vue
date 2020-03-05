@@ -1,7 +1,7 @@
 <template>
   <div class="center">
     <div class="circle">
-      {{ info.name.replace("_", " ") + ":" + "\n" + info.value.toFixed(2) }}
+      {{ info.name.replace("_", " ") + ":" + "\n" + info.value }}
     </div>
   </div>
 </template>
