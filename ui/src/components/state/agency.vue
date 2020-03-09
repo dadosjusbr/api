@@ -137,7 +137,7 @@ export default {
       }
     },
     checkPreviousYear() {
-      if (this.currentYear <= 2015) {
+      if (this.currentYear <= 2018) {
         return false;
       } else {
         return true;
@@ -153,6 +153,9 @@ export default {
       this.generateSeries();
     },
     generateSeries() {
+      if (this.data.MonthTotals.length != 12) {
+        this.addMonthsWithNoValue();
+      }
       let others = this.data.MonthTotals.map(month => month["Others"]);
       let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let perks = this.data.MonthTotals.map(month => month["Perks"]);
@@ -171,6 +174,25 @@ export default {
         }
       ];
     },
+    addMonthsWithNoValue() {
+      var existingMonths = new Array();
+      this.data.MonthTotals.forEach(monthTotal => {
+        existingMonths.push(monthTotal.Month);
+      });
+      for (let i = 1; i <= 12; i++) {
+        if (!existingMonths.includes(i)) {
+          this.data.MonthTotals.push({
+            Month: i,
+            Others: 0,
+            Perks: 0,
+            Wage: 0
+          });
+        }
+      }
+      this.data.MonthTotals.sort((a, b) => {
+        return a.Month - b.Month;
+      });
+    },
     async nextYear() {
       this.currentYear = this.currentYear + 1;
       let resp = await this.$http.get(
@@ -178,6 +200,7 @@ export default {
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
+        this.currentYear = this.currentYear - 1;
       } else {
         this.data = resp.data;
         this.generateSeries();
@@ -190,6 +213,7 @@ export default {
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
+        this.currentYear = this.currentYear + 1;
       } else {
         this.data = resp.data;
         this.generateSeries();
