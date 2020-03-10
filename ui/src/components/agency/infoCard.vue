@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <h2 class="score">
-      {{ info.name.replace("_", " ")}}
-      <p class="text"> {{ info.value }}</p>
+      {{ info.name.replace("_", " ") }}
+      <p class="text">{{ info.value }}</p>
     </h2>
   </div>
 </template>
