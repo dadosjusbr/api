@@ -30,7 +30,6 @@ export default {
   justify-content: center;
   display: flex;
   opacity: 10;
-  height: 200px;
   width: 100%;
   align-self: center;
   align-content: center;
