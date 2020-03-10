@@ -1,9 +1,8 @@
 <template>
-  <div class="container">
-    <h2 class="score">
-      {{ info.name.replace("_", " ")}}
-      <p class="text"> {{ info.value }}</p>
-    </h2>
+  <div class="center">
+    <div class="circle">
+      {{ info.name.replace("_", " ") + ":" + "\n" + info.value.toFixed(2) }}
+    </div>
   </div>
 </template>
 
@@ -20,30 +19,20 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  height: 200px;
-  width: 200px;
-}
-
-.score {
+.circle {
+  width: 275px;
+  height: 275px;
+  border-radius: 50%;
+  border: #182825 3px solid;
+  font-size: 17px;
+  line-height: 250px;
   text-align: center;
+  font-family: "Montserrat", sans-serif;
   background: #e1e8ed;
-  border: 3px solid #182825;
-  border-radius: 30px;
-  padding-top: 30px;
-  font-size: 33px;
-  height: 180px;
-  width: 200px;
-  color: black;
-  font-weight: 500;
-  margin-bottom: 0;
 }
 
-.text {
-  padding-top: 40px;
-  position: relative;
-  font-weight: 200;
-  margin-top: -20px !important;
-  font-size: 20px;
+.center {
+  padding: 10px;
+  align-items: flex-start;
 }
 </style>
