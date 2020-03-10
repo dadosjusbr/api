@@ -1,13 +1,20 @@
 <template>
   <div class="graphContainer">
     <div class="buttonContainer">
-      <button v-on:click="previousMonth()" class="button btn btn-dark">
+      <button 
+        v-if="checkPreviousDate(this.currentMonthAndYear)"
+        v-on:click="previousMonth()" class="button btn btn-dark">
         &#8249;
       </button>
+      <button class="deactivatedButton" v-else>&#60;</button>
       <a> {{ this.months[this.currentMonthAndYear.month] }} </a>
-      <button v-on:click="nextMonth()" class="button btn btn-dark">
+      <button 
+        v-if="checkNextDate(this.currentMonthAndYear)"
+        v-on:click="nextMonth()" 
+        class="button btn btn-dark">
         &#8250;
       </button>
+      <button class="deactivatedButton" v-else>&#62;</button>
     </div>
     <graph-point
       width="100%"
@@ -44,6 +51,7 @@ export default {
         12: "Dezembro"
       },
       salaryData: [],
+      actualMonthAndYear: {year: new Date().getFullYear(), month: new Date().getMonth()},
       currentMonthAndYear: { year: 2019, month: 1 },
       chartOptions: {
         tooltip: {
@@ -68,7 +76,7 @@ export default {
         year = this.currentMonthAndYear.year + 1;
         month = 1;
       } else {
-        year = this.currentMonthAndYear;
+        year = this.currentMonthAndYear.year;
         month = this.currentMonthAndYear.month + 1;
       }
       this.currentMonthAndYear = { year, month };
@@ -89,7 +97,23 @@ export default {
       this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => (this.salaryData = response.data));
-    }
+    },
+    checkPreviousDate(currentDate) {
+      if(currentDate.year === 2018 && currentDate.month === 1) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    },
+    checkNextDate(currentDate) {
+      if(currentDate.year == this.actualMonthAndYear.year && currentDate.month == this.actualMonthAndYear.month ) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    },
   },
   computed: {
     series: function() {
@@ -154,5 +178,15 @@ a {
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
   color: black;
+}
+.deactivatedButton {
+  background-color: grey; /* Green */
+  border: none;
+  color: white;
+  text-decoration: none;
+  font-size: 30px;
+  position: relative;
+  top: 10px;
+  width: 50px;
 }
 </style>

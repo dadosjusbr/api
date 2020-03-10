@@ -50,7 +50,7 @@ export default {
   },
   data() {
     return {
-      currentYear: 2019,
+      currentYear: new Date().getFullYear(),
       data: {},
       series: [],
       chartOptions: {
@@ -130,7 +130,7 @@ export default {
   },
   computed: {
     checkNextYear() {
-      if (this.currentYear >= 2020) {
+      if (this.currentYear >= new Date().getFullYear()) {
         return false;
       } else {
         return true;
@@ -146,9 +146,14 @@ export default {
   },
   methods: {
     async fetchData() {
-      const response = await this.$http.get(
+      var response = await this.$http.get(
         "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
       );
+      while (response.data.MonthTotals == null) {
+        this.currentYear -= 1;
+        response = await this.$http.get(
+        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear);
+      }
       this.data = response.data;
       this.generateSeries();
     },
