@@ -12,6 +12,8 @@
 import agencySummary from "@/components/agency/agencySummary.vue";
 import graphContainer from "@/components/agency/graphContainer.vue";
 
+const formatter = new Intl.NumberFormat("de-DE");
+
 export default {
   name: "agencyPageContainer",
   components: {
@@ -28,10 +30,11 @@ export default {
     async fetchData() {
       const { data } = await this.$http.get("/orgao/resumo/" + this.agencyName);
       this.agencySummary = {
-        Total_Empregados: data.TotalEmployees,
-        Total_Salários: data.TotalWage,
-        Total_Indenizações: data.TotalPerks,
-        Salário_Maximo: data.MaxWage
+        Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
+        Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
+        Total_Indenizações:
+          "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
+        Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2))
       };
     }
   },
