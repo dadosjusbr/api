@@ -123,8 +123,6 @@ export default {
           this.currentMonthAndYear.month
       )
       .then(response => (this.salaryData = response.data));
-       // eslint-disable-next-line
-       console.log( this.currentMonthAndYear.year, this.currentMonthAndYear.month)
   }
 };
 </script>
