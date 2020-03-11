@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <h2 class="score">
-      {{ info.name.replace("_", " ") }}
-      <p class="text">{{ info.value }}</p>
+      {{ info.value }}
+      <p class="text">{{ info.name.replace("_", " ") }}</p>
     </h2>
   </div>
 </template>
@@ -26,24 +26,25 @@ export default {
 }
 
 .score {
+  padding-top: 75px;
   text-align: center;
   background: #e1e8ed;
   border: 3px solid #182825;
-  border-radius: 30px;
-  padding-top: 30px;
-  font-size: 33px;
+  margin-top: 10px;
+  font-size: 23px;
   height: 180px;
   width: 200px;
   color: black;
   font-weight: 500;
-  margin-bottom: 0;
 }
 
 .text {
-  padding-top: 40px;
+  padding-top: 60px;
+  padding-left: 5px;
+  text-align: left;
   position: relative;
   font-weight: 200;
   margin-top: -20px !important;
-  font-size: 20px;
+  font-size: 17px;
 }
 </style>

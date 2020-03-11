@@ -34,7 +34,7 @@ export default {
         Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
         Total_Indenizações:
           "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
-        Salário_Maximo: "R$ " + formatter.format(data.MaxWage.toFixed(2))
+        Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2))
       };
     }
   },
