@@ -20,7 +20,7 @@
       <b>Minitério Público da Paraíba</b>.
     </p>
 
-    <h3>SEJA UM COLABORADOR</h3>
+    <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
       O Poder Judiciário Brasileiro é composto por xxx órgãos, uma quantidade
