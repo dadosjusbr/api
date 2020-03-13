@@ -1,4 +1,6 @@
-# dadosjusbr.com
+# dadosjusbr.org/novo
+
+> Ao mudar o foco para o sistema de justiça (incluindo MPs, Procuradorias e Defensorias) tivemos que mudar o formato de dados, coletores e o site. Estamos trabalhando árduamente para chegar na versão 1.0, o que deve acontecer no primeiro semestre de 2020.
 
 [![Build Status](https://travis-ci.org/dadosjusbr/remuneracoes.svg?branch=master)](https://travis-ci.org/dadosjusbr/remuneracoes) [![codecov](https://codecov.io/gh/dadosjusbr/remuneracoes/branch/master/graph/badge.svg)](https://codecov.io/gh/dadosjusbr/remuneracoes) [![Go Report Card](https://goreportcard.com/badge/github.com/dadosjusbr/remuneracoes)](https://goreportcard.com/report/github.com/dadosjusbr/remuneracoes)
 
