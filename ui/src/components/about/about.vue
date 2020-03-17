@@ -31,17 +31,75 @@
 
     <h2>EQUIPE</h2>
     <div class="teamPhotosContainer">
-      <profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card>
-      <profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card
-      ><profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card
-      ><profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card>
+      <profile-card
+        :name="'Daniel Fireman'"
+        :role="'Professor'"
+        :image="
+          'https://avatars2.githubusercontent.com/u/8951363?s=400&u=acdedbbd00a15d2f913e3e1bde6b14f2c7451f90&v=4'
+        "
+        :github="'https://github.com/danielfireman'"
+      >
+      </profile-card>
+      <profile-card
+        :name="'Joeberth Souza'"
+        :role="'Desenvolvedor'"
+        :image="'https://avatars3.githubusercontent.com/u/33490097?s=460&v=4'"
+        :github="'https://github.com/joeberth'"
+      >
+      </profile-card>
+      <profile-card
+        :name="'Lorena Pereira'"
+        :role="'Desenvolvedora'"
+        :image="
+          'https://avatars1.githubusercontent.com/u/9660774?s=460&u=ac2f817f4ca07be4b34d9534759409a2f52be269&v=4'
+        "
+        :github="'https://github.com/Lorenaps'"
+      >
+      </profile-card>
+      <profile-card
+        :name="'David Eduardo'"
+        :role="'Desenvolvedor'"
+        :image="
+          'https://avatars3.githubusercontent.com/u/25506334?s=460&u=46b571dfa3e0ed7c134f21a787954c2230ab9e68&v=4'
+        "
+        :github="'https://github.com/davidedup'"
+      >
+      </profile-card>
     </div>
 
     <div class="teamPhotosContainer">
-      <profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card
-      ><profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card
-      ><profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card
-      ><profile-card :name="'Maria Souza'" :role="'Dev'"> </profile-card>
+      <profile-card
+        :name="'João Brunet'"
+        :role="'Professor'"
+        :image="'https://avatars0.githubusercontent.com/u/5099338?s=460&v=4'"
+        :github="'https://github.com/joaoarthurbm'"
+      >
+      </profile-card>
+      <profile-card
+        :name="'Marcos Barros'"
+        :role="'Desenvolvedor'"
+        :image="'https://avatars3.githubusercontent.com/u/34271729?s=460&v=4'"
+        :github="'https://github.com/marcosbmf'"
+      >
+      </profile-card>
+      <profile-card
+        :name="'Nazareno Andrade'"
+        :role="'Professor'"
+        :image="
+          'https://avatars0.githubusercontent.com/u/1053850?s=460&u=e1cbfe4f7cba06cf5908f8967c2db24e142ff7c7&v=4  '
+        "
+        :github="'https://github.com/nazareno'"
+      >
+      </profile-card>
+      <profile-card
+        :name="'Vinicius Agostini'"
+        :role="'Desenvolvedor'"
+        :image="
+          'https://avatars1.githubusercontent.com/u/12215291?s=460&u=313fcc28f44cb90215a50a7d512abf2b61768155&v=4'
+        "
+        :github="'https://github.com/viniagostini'"
+      >
+      </profile-card>
     </div>
 
     <!-- <div class="logoContainer">
