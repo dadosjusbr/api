@@ -54,7 +54,7 @@ export default {
       data: {},
       series: [],
       chartOptions: {
-        colors: ["#991040", "#F9CD30", "#00AEEF"],
+        colors: ["#c9e4ca", "#87bba2", "#364958"],
         chart: {
           stacked: true,
           toolbar: {
