@@ -1,6 +1,8 @@
 <template>
   <div class="teamPhotoCard">
-    <img class="profilePhoto" src="https://via.placeholder.com/180" />
+    <a :href="this.github" target="_blank">
+      <img class="profilePhoto" :src="this.image" />
+    </a>
     <h4>{{ this.name }}</h4>
     <h5>{{ this.role }}</h5>
   </div>
@@ -21,6 +23,10 @@ export default {
     name: {
       type: String,
       default: ""
+    },
+    github: {
+      type: String,
+      default: ""
     }
   }
 };
@@ -29,6 +35,8 @@ export default {
 <style scoped>
 .profilePhoto {
   border-radius: 50%;
+  width: 150px;
+  height: 150px;
 }
 
 .teamPhotoCard {
