@@ -1,6 +1,6 @@
 <template>
   <div class="entity">
-    <h1 class="entityName">{{ this.entityName }}</h1>
+    <h1 class="entityName">{{ this.entityName.toUpperCase() }}</h1>
     <agency v-for="(name, i) in agencies" :agencyName="name" :key="i" />
   </div>
 </template>
@@ -30,8 +30,11 @@ export default {
 
 <style scoped>
 .entityName {
-  font-size: 50px;
-  padding-left: 20px;
+  font-size: 1.5em;
+  width: 20%;
+  padding-left: 4%;
+  margin-top: 2%;
+  font-weight: bold;
 }
 
 .entity {

@@ -21,7 +21,7 @@ export default {
     return {
       flagUrl:
         "https://1.bp.blogspot.com/-422XO8VbnkM/WFwr1v6yeoI/AAAAAAACRBM/0wtdW0JfArwQQMucxHxRrLSoHTsy7_6OwCEw/s1600/paraibano%2B2%2Bbandeira.png",
-      stateName: "Paraíba",
+      stateName: "PARAÍBA",
       stateData: {},
       jAgencies: [],
       mAgencies: []
@@ -65,20 +65,23 @@ export default {
 
 <style scoped>
 .stateName {
-  font-size: 4rem;
+  font-size: 3rem;
   float: left;
-  margin: 30px auto;
+  margin-left: 3%;
+  margin-top: 2%;
+  margin-bottom: 0%;
 }
 .image {
-  width: 160px;
+  width: 5%;
   height: 80x;
-  margin: 9px auto;
-  margin-left: 20px;
+  margin-left: 2%;
+  margin-top: 2%;
 }
 .header {
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
-  height: 150px;
+  height: 80px;
 }
+
 </style>
