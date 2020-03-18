@@ -1,5 +1,12 @@
 <template>
   <div class="agencyContainer">
+    <div class="resume">
+     <md-card>
+      <md-card-content>
+      </md-card-content>
+    </md-card>
+    </div>
+    
     <h2 class="agencyName">
       <router-link
         :to="{
@@ -7,29 +14,25 @@
           params: { agencyName: this.agencyName.toLowerCase() }
         }"
       >
-        {{ this.agencyName.toUpperCase() }}
+        {{ this.agencyName.toUpperCase() }}>
       </router-link>
     </h2>
     <div class="buttonContainer">
-      <button
-        class="button btn btn-dark"
-        v-if="checkPreviousYear"
-        v-on:click="previousYear()"
-      >
-        &#60;
-      </button>
-      <button class="deactivatedButton" v-else>&#60;</button>
+      <md-button  v-if="checkPreviousYear"
+        v-on:click="previousYear()">
+        <img src="../../assets/previous.png">
+      </md-button>
+      <md-button class="deactivatedButton" v-else><img src="../../assets/previousd.png"></md-button>
       <a class="year"> {{ this.currentYear }} </a>
-      <button
-        class="button btn btn-dark"
+      <md-button
         v-if="checkNextYear"
         v-on:click="nextYear()"
       >
-        &#62;
-      </button>
-      <button class="deactivatedButton" v-else>&#62;</button>
+      <img src="../../assets/next.png">
+      </md-button>
+      <md-button class="deactivatedButton" v-else><img src="../../assets/nextd.png"></md-button>
     </div>
-    <bar-graph :options="chartOptions" :series="series" />
+    <bar-graph class="graph" :options="chartOptions" :series="series" />
   </div>
 </template>
 
@@ -239,14 +242,14 @@ a {
 
 .year {
   color: black;
-  font-size: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
 .agencyName {
-  font-size: 30px;
-  line-height: 40px;
-  padding-left: 25px;
-  text-decoration: underline;
+  font-size: 1.5em;
+  margin-left: 15%;
+  font-weight: bold;
 }
 .button {
   background-color: #182825;
@@ -259,10 +262,10 @@ a {
   width: 50px;
 }
 .buttonContainer {
-  width: 200px;
-  height: auto;
-  margin: 0 auto;
-  padding: 10px;
+  float: left;
+  width: 15%;
+  height: 30em;
+  padding: 5px;
   position: relative;
 }
 .agencyContainer {
@@ -275,13 +278,32 @@ a {
 }
 
 .deactivatedButton {
-  background-color: grey; /* Green */
+  background-color: white;
   border: none;
   color: white;
-  text-decoration: none;
-  font-size: 30px;
-  position: relative;
-  top: 10px;
-  width: 50px;
 }
+
+.md-card {
+  width: 12%;
+  margin-left: 2%;
+  background-color: #362fbb;
+  height: 32em;
+  border-style: solid;
+  float: left;
+}
+
+.agencyYear {
+  float:left;
+}
+
+.md-button {
+  min-width: 0%;
+  height: 36px;
+  margin: 0 0px;
+}
+
+.graph {
+  float: right;
+}
+
 </style>
