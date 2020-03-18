@@ -82,7 +82,7 @@ a {
 }
 
 .logoContainer img {
-      width: 70%;
+  width: 60%;
 }
 
 .links {
@@ -91,3 +91,4 @@ a {
 }
 
 </style>
+
