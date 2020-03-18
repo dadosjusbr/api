@@ -1,5 +1,6 @@
 <template>
   <div>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
     <nav-bar />
     <router-view />
     <page-footer />
@@ -21,5 +22,3 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
 </style>
-
-
