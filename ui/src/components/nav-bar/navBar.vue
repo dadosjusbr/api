@@ -82,7 +82,7 @@ a {
 }
 
 .logoContainer img {
-  width: 60%;
+  width: 80%;
 }
 
 .links {

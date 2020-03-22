@@ -46,9 +46,9 @@ export default {
 
 <style scoped>
 .agencyName {
-  font-size: 3.5rem;
-  float: left;
-  margin: 30px auto;
+  font-size: 1.5em;
+  margin-left: 13%;
+  font-weight: bold;
 }
 
 .agencyContainer {
