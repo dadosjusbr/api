@@ -67,7 +67,6 @@ export default {
 .stateName {
   font-size: 3rem;
   float: left;
-  margin-left: 3%;
   margin-top: 2%;
   margin-bottom: 0%;
 }
@@ -78,10 +77,9 @@ export default {
   margin-top: 2%;
 }
 .header {
-  margin-left: 200px;
-  margin-right: 200px;
-  margin-top: 10px;
-  height: 80px;
+  margin-left: 10%;
+  margin-top: 1%;
+  height: 5em;
 }
 
 </style>

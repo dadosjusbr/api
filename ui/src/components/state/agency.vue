@@ -242,7 +242,7 @@ a {
 
 .year {
   color: black;
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight: bold;
 }
 
@@ -263,9 +263,9 @@ a {
 }
 .buttonContainer {
   float: left;
-  width: 15%;
+  width: 17%;
   height: 30em;
-  padding: 5px;
+  padding: 1px;
   position: relative;
 }
 .agencyContainer {
@@ -299,7 +299,7 @@ a {
 .md-button {
   min-width: 0%;
   height: 36px;
-  margin: 0 0px;
+  margin-top: -3%;
 }
 
 .graph {

@@ -32,14 +32,16 @@ export default {
 .entityName {
   font-size: 1.5em;
   width: 20%;
-  padding-left: 4%;
+  padding-left: 1%;
   margin-top: 2%;
   font-weight: bold;
+  margin-bottom: 2%;
+  margin-left: 2%;
 }
 
 .entity {
-  margin-left: 200px;
-  margin-right: 200px;
-  margin-top: 10px;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 2%;
 }
 </style>

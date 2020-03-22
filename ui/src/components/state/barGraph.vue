@@ -33,9 +33,8 @@ export default {
 
 <style scoped>
 .graphContainer {
-  width: 1000px;
+  width: 69%;
   height: auto;
-  margin: 0 auto;
   padding: 10px;
   position: relative;
 }
