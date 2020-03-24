@@ -69,7 +69,7 @@ export default {
         },
         responsive: [
           {
-            breakpoint: 480,
+            breakpoint: 770,
             options: {
               legend: {
                 position: "bottom",
@@ -304,6 +304,47 @@ a {
 
 .graph {
   float: right;
+}
+
+@media only screen and (max-width: 770px) {
+
+  .buttonContainer {
+    float: left;
+    width: 30%; 
+    height: 2em;
+    /* padding: 1px; */
+    position: relative;
+    margin-left: 34%;
+    margin-top: -6%;  
+  }
+
+  .md-card {
+  display: none;
+  width: 12%;
+  margin-left: 2%;
+  background-color: #362fbb;
+  height: 32em;
+  border-style: solid;
+  float: left;
+}
+
+  .agencyName {
+    margin-left: 2%;
+  } 
+}
+
+@media only screen and  (min-width: 771px) and (max-width: 1025px) {
+
+    .buttonContainer {
+      float: left;
+      width: 30%; 
+      height: 2em;
+      /* padding: 1px; */
+      position: relative;
+      margin-left: 34%;
+      margin-top: -4%;  
+    }
+
 }
 
 </style>

@@ -38,4 +38,25 @@ export default {
   padding: 10px;
   position: relative;
 }
+
+@media only screen and (max-width: 770px) {
+  .graphContainer {
+    width: 102%;
+    height: auto;
+    padding: 10px;
+    position: relative;
+  }
+}
+
+@media only screen and  (min-width: 771px) and (max-width: 1025px)  {
+  .graphContainer {
+    width: 86%;
+    height: auto;
+    padding: 10px;
+    position: relative;
+  }
+}
+
+
+
 </style>

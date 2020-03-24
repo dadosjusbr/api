@@ -44,4 +44,17 @@ export default {
   margin-right: 10%;
   margin-top: 2%;
 }
+
+@media only screen and (max-width: 770px) {
+  
+  .entityName[data-v-44f4c2b1] {
+      font-size: 1.5em;
+      width: 60%;
+      padding-left: 1%;
+      margin-top: 0%;
+      font-weight: bold;
+      margin-bottom: 3%;
+      margin-left: 2%;
+  }
+}
 </style>

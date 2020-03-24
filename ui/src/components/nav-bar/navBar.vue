@@ -90,5 +90,20 @@ a {
   margin-right: 3%;
 }
 
+@media only screen and (max-width: 770px) {
+  .logoContainer {
+    width: 20%;
+  }
+}
+
+@media only screen and (min-width: 771px) and (max-width: 1025px) {
+  .logoContainer {
+    width: 15%;
+    margin: 0 auto;
+    margin-left: 7%;
+  }
+}
+
+
 </style>
 
