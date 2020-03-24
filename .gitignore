@@ -4,3 +4,4 @@ coverage.txt
 .vscode/
 exportEnvVars.sh
 .env
+node_modules/
