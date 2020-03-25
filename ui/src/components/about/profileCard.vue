@@ -35,18 +35,61 @@ export default {
 <style scoped>
 .profilePhoto {
   border-radius: 50%;
-  width: 150px;
-  height: 150px;
+  width: 125px;
+  height: 125px;
 }
 
 .teamPhotoCard {
   text-align: center;
-  margin-right: 70px;
-  margin-left: 70px;
+  margin-right: 40px;
+  margin-left: 40px;
+  height: 250px;
+  width: 200px;
+}
+
+@media only screen and (max-width: 1276px) {
+  .teamPhotoCard {
+    text-align: center;
+    margin-right: 5px;
+    margin-left: 5px;
+    height: 200px;
+    width: 200px;
+  }
+  .profilePhoto {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+  }
+  h4 {
+    font-size: 20px;
+  }
+  h5 {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+  .teamPhotoCard {
+    text-align: center;
+    margin-right: 5px;
+    margin-left: 5px;
+    height: 125px;
+    width: 200px;
+  }
+  .profilePhoto {
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+  }
+  h4 {
+    font-size: 15px;
+  }
+  h5 {
+    font-size: 10px;
+  }
 }
 
 h4 {
-  margin-top: 7px;
   font-weight: 600;
 }
 </style>

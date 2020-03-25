@@ -23,10 +23,14 @@
     <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
-      O Poder Judiciário Brasileiro é composto por xxx órgãos, uma quantidade
-      muito grande para um único time explorar todos eles. Por isso precisamos
-      de contribuidores para criar crawlers e parsers para alimentar nossa base
-      de dados. Saiba mais <a>aqui</a>.
+      O Poder Judiciário Brasileiro é composto por muitos órgãos distribuídos
+      Por todo o território nacional, devido a essa quantidade muito grande
+      torna-se inviável para um único time explorar todos eles. Por isso
+      precisamos de contribuidores para criar crawlers e parsers para alimentar
+      nossa base de dados. Saiba mais
+      <a href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
+        >aqui</a
+      >.
     </p>
 
     <h2>EQUIPE</h2>
@@ -121,14 +125,12 @@ export default {
 
 <style scoped>
 .teamPhotosContainer {
-  padding-top: 50px;
-  padding-right: 50px;
-  padding-bottom: 50px;
-  padding-left: 50px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
   margin-top: 20px;
-  margin-left: 100px;
-  margin-right: 100px;
-  height: 300;
+  height: 300px;
   justify-content: center;
   display: flex;
   align-self: center;
@@ -146,7 +148,7 @@ export default {
   margin-right: 200px;
   margin-top: 10px;
   background-color: #6a757a;
-  height: 1400px;
+  height: 1450px;
   margin-bottom: 10px;
 }
 
@@ -193,5 +195,100 @@ p {
   text-align: justify;
   color: white;
   font-size: 20px;
+}
+
+@media only screen and (max-width: 1276px) {
+  .teamPhotosContainer {
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    margin-top: 20px;
+    height: 150px;
+    justify-content: center;
+    display: flex;
+    align-self: center;
+    align-content: center;
+  }
+
+  .aboutContainer {
+    border: 1px solid #6a757a;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 10px;
+    background-color: #6a757a;
+    height: 1200px;
+    margin-bottom: 10px;
+  }
+}
+
+@media only screen and (max-width: 1150px) {
+  .teamPhotosContainer {
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    margin-top: 20px;
+    height: 150px;
+    justify-content: center;
+    display: flex;
+    align-self: center;
+    align-content: center;
+  }
+
+  .aboutContainer {
+    border: 1px solid #6a757a;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    height: 1200px;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+  .teamPhotosContainer {
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    margin-top: 20px;
+    height: 150px;
+    justify-content: center;
+    display: flex;
+    align-self: center;
+    align-content: center;
+  }
+
+  .aboutContainer {
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 1300px;
+  }
+}
+
+@media only screen and (max-width: 730px) {
+  .aboutContainer {
+    height: 1390px;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .aboutContainer {
+    height: 1220px;
+  }
+  p {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .aboutContainer {
+    margin-left: 0px;
+    margin-right: 0px;
+    height: 1800px;
+  }
+  p {
+    font-size: 15px;
+  }
 }
 </style>
