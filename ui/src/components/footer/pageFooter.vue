@@ -75,4 +75,13 @@ a {
   margin-right: 3%;
 }
 
+@media only screen and (min-width: 380px) and  (max-width: 600px) {
+    .logoContainer img {
+    width: 180%;
+    max-width: 220%;
+    margin-left: 490%;
+  }
+}
+
+
 </style>

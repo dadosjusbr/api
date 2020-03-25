@@ -75,6 +75,24 @@ export default {
                 position: "bottom",
                 offsetX: -10,
                 offsetY: 0
+              },
+              yaxis: {
+                decimalsInFloat: 2,
+                labels: {
+                  show: true,
+                  minWidth: 0,
+                  maxWidth: 50,
+                  style: {
+                    colors: [],
+                    fontSize: "12px",
+                    fontFamily: "Helvetica, Arial, sans-serif",
+                    fontWeight: 600,
+                    cssClass: "apexcharts-yaxis-label"
+                  },
+                  formatter: function(value) {
+                    return "R$ " + (value / 1000000).toFixed(1) + "M";
+                  }
+                }
               }
             }
           }
@@ -306,7 +324,29 @@ a {
   float: right;
 }
 
-@media only screen and (max-width: 770px) {
+@media only screen and (min-width: 380px) and (max-width: 600px) {
+
+  .buttonContainer {
+    float: left;
+    width: 45%;
+    height: 0em;
+    padding: 0px; 
+    position: relative;
+    margin-left: 40%;
+    margin-top: -9%;
+  }
+
+  .md-card {
+    display: none;
+  }
+
+  .agencyName {
+    margin-top: 2%;
+  }
+
+}
+
+@media only screen and (min-width: 601px) and  (max-width: 770px) {
 
   .buttonContainer {
     float: left;
