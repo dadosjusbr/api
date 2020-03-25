@@ -283,9 +283,31 @@ p {
 
 @media only screen and (max-width: 550px) {
   .aboutContainer {
-    margin-left: 0px;
-    margin-right: 0px;
-    height: 1800px;
+    margin-left: 2px;
+    margin-right: 2px;
+    height: 1650px;
+  }
+  p {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .aboutContainer {
+    margin-left: 2px;
+    margin-right: 2px;
+    height: 1620px;
+  }
+  p {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .aboutContainer {
+    margin-left: 2px;
+    margin-right: 2px;
+    height: 1900px;
   }
   p {
     font-size: 15px;
