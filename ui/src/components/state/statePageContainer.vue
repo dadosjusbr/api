@@ -82,6 +82,29 @@ export default {
   height: 5em;
 }
 
+@media only screen and (max-width: 379px) {
+
+  .stateName {
+      font-size: 2.2rem;
+      float: left;
+      margin-top: 4%;
+      margin-left: 13%;
+      margin-bottom: 0%;
+  }
+
+  .image {
+    width: 12%;
+    margin-left: 6%;
+    margin-top: 6%;
+  }
+
+  .header {
+    margin-left: 10%;
+    margin-top: 1%;
+    height: 4em;
+  } 
+
+}
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
 
@@ -100,8 +123,6 @@ export default {
   }
 
 }
-
-
 
 @media only screen and (min-width: 601px) and (max-width: 770px) {
   .stateName {

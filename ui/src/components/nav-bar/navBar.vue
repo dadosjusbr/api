@@ -90,6 +90,42 @@ a {
   margin-right: 3%;
 }
 
+@media only screen and (max-width: 379px) {
+  .logo {
+    background-color: white;
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 0%;
+    height: 0%;
+  }
+
+  .logo img {
+    width: 60%;
+    height: 60%;
+    border: 0;
+    margin-top: 1%;
+    margin-left: 15%;
+  }
+
+  .logoContainer {
+    display: none;
+    width: 0%;
+    margin: 0 0;
+    margin-left: 0%;
+  }
+
+  .links {
+    margin-top: 0%;
+    margin-right: 0%;
+    margin-left: 10%;
+  }
+
+  .links a {
+    font-size: 14px;
+  }
+}
+
+
 @media only screen and (min-width: 380px) and (max-width: 600px) {
   .logo {
     background-color: white;

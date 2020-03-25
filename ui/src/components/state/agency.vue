@@ -324,6 +324,29 @@ a {
   float: right;
 }
 
+@media only screen and (max-width: 379px) {
+
+  .buttonContainer {
+    float: left;
+    width: 60%;
+    height: 0em;
+    padding: 0px; 
+    position: relative;
+    margin-left: 40%;
+    margin-top: -9%;
+  }
+
+  .md-card {
+    display: none;
+  }
+
+  .agencyName {
+    font-size: 1.1em;
+    margin-top: 2%;
+    margin-left: 2%;
+  }
+}
+
 @media only screen and (min-width: 380px) and (max-width: 600px) {
 
   .buttonContainer {
@@ -343,7 +366,6 @@ a {
   .agencyName {
     margin-top: 2%;
   }
-
 }
 
 @media only screen and (min-width: 601px) and  (max-width: 770px) {

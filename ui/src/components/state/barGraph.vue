@@ -39,6 +39,16 @@ export default {
   position: relative;
 }
 
+@media only screen and  (max-width: 379px) {
+  .graphContainer {
+    width: 100%;
+    height: auto;
+    padding: 8px;
+    position: relative;
+    margin-top: -7%;
+  }
+}
+
 @media only screen and (min-width: 380px) and  (max-width: 600px) {
   .graphContainer {
     width: 100%;
