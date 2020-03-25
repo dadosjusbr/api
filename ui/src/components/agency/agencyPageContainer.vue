@@ -60,4 +60,22 @@ export default {
   margin-top: 1px;
   height: 100px;
 }
+
+@media only screen and (max-width: 379px) {
+
+  .agencyName {
+    margin-left: 16%;
+    margin-top: 2%;
+  }
+}
+
+@media only screen and (min-width: 380px) and (max-width: 600px) {
+
+  .agencyName {
+    margin-left: 16%;
+    margin-top: 2%;
+  }
+}
+
+
 </style>

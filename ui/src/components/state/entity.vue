@@ -44,4 +44,61 @@ export default {
   margin-right: 10%;
   margin-top: 2%;
 }
+
+@media only screen and (max-width: 379px) {
+  
+  .entityName {
+    text-align: center;
+    font-size: 1.2rem;
+    width: 80%;
+    padding-left: 7%;
+    margin-top: 0%;
+    font-weight: bold;
+    margin-bottom: 5%;
+    margin-left: 4%;
+  }
+
+  .entity {
+    margin-left: 2%;
+    margin-right: 0%;
+    margin-top: 2%;
+  }
+
+
+}
+
+@media only screen and (min-width: 380px) and (max-width: 600px) {
+  
+  .entityName {
+    text-align: center;
+    font-size: 1.5rem;
+    width: 80%;
+    padding-left: 7%;
+    margin-top: 0%;
+    font-weight: bold;
+    margin-bottom: 5%;
+    margin-left: 5%;
+  }
+
+  .entity {
+    margin-left: 2%;
+    margin-right: 0%;
+    margin-top: 2%;
+  }
+
+
+}
+
+@media only screen and (min-width: 601px) and (max-width: 770px) {
+  
+  .entityName {
+      font-size: 1.5em;
+      width: 60%;
+      padding-left: 1%;
+      margin-top: 0%;
+      font-weight: bold;
+      margin-bottom: 3%;
+      margin-left: 2%;
+  }
+}
 </style>

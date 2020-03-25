@@ -75,4 +75,21 @@ a {
   margin-right: 3%;
 }
 
+@media only screen and  (max-width: 379px) {
+    .logoContainer img {
+    width: 220%;
+    max-width: 220%;
+    margin-left: 460%;
+  }
+}
+
+@media only screen and (min-width: 380px) and  (max-width: 600px) {
+    .logoContainer img {
+    width: 180%;
+    max-width: 220%;
+    margin-left: 490%;
+  }
+}
+
+
 </style>

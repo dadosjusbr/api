@@ -69,12 +69,30 @@ export default {
         },
         responsive: [
           {
-            breakpoint: 480,
+            breakpoint: 770,
             options: {
               legend: {
                 position: "bottom",
                 offsetX: -10,
                 offsetY: 0
+              },
+              yaxis: {
+                decimalsInFloat: 2,
+                labels: {
+                  show: true,
+                  minWidth: 0,
+                  maxWidth: 50,
+                  style: {
+                    colors: [],
+                    fontSize: "12px",
+                    fontFamily: "Helvetica, Arial, sans-serif",
+                    fontWeight: 600,
+                    cssClass: "apexcharts-yaxis-label"
+                  },
+                  formatter: function(value) {
+                    return "R$ " + (value / 1000000).toFixed(1) + "M";
+                  }
+                }
               }
             }
           }
@@ -304,6 +322,91 @@ a {
 
 .graph {
   float: right;
+}
+
+@media only screen and (max-width: 379px) {
+
+  .buttonContainer {
+    float: left;
+    width: 60%;
+    height: 0em;
+    padding: 0px; 
+    position: relative;
+    margin-left: 40%;
+    margin-top: -9%;
+  }
+
+  .md-card {
+    display: none;
+  }
+
+  .agencyName {
+    font-size: 1.1em;
+    margin-top: 2%;
+    margin-left: 2%;
+  }
+}
+
+@media only screen and (min-width: 380px) and (max-width: 600px) {
+
+  .buttonContainer {
+    float: left;
+    width: 45%;
+    height: 0em;
+    padding: 0px; 
+    position: relative;
+    margin-left: 40%;
+    margin-top: -9%;
+  }
+
+  .md-card {
+    display: none;
+  }
+
+  .agencyName {
+    margin-top: 2%;
+  }
+}
+
+@media only screen and (min-width: 601px) and  (max-width: 770px) {
+
+  .buttonContainer {
+    float: left;
+    width: 30%; 
+    height: 2em;
+    /* padding: 1px; */
+    position: relative;
+    margin-left: 34%;
+    margin-top: -6%;  
+  }
+
+  .md-card {
+  display: none;
+  width: 12%;
+  margin-left: 2%;
+  background-color: #362fbb;
+  height: 32em;
+  border-style: solid;
+  float: left;
+}
+
+  .agencyName {
+    margin-left: 2%;
+  } 
+}
+
+@media only screen and  (min-width: 771px) and (max-width: 1025px) {
+
+    .buttonContainer {
+      float: left;
+      width: 30%; 
+      height: 2em;
+      /* padding: 1px; */
+      position: relative;
+      margin-left: 34%;
+      margin-top: -4%;  
+    }
+
 }
 
 </style>
