@@ -67,4 +67,50 @@ img {
   align-self: center;
   align-content: center;
 }
+
+@media only screen and (max-width: 1150px) {
+  .img2 {
+    margin-left: 200px;
+  }
+  .contactContainer {
+    margin-left: 100px;
+    margin-right: 100px;
+  }
+}
+
+@media only screen and (max-width: 895px) {
+  .img2 {
+    margin-left: 100px;
+  }
+  .contactContainer {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
+@media only screen and (max-width: 544px) {
+  .img2 {
+    margin-left: 100px;
+  }
+  .contactContainer {
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 600px;
+  }
+  .logoContainer {
+    margin-top: 100px;
+  }
+  p {
+    font-size: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  h1 {
+    font-size: 40px;
+  }
+  img {
+    width: 50px;
+    height: 50px;
+  }
+}
 </style>
