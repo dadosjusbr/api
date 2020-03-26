@@ -14,7 +14,7 @@
           params: { agencyName: this.agencyName.toLowerCase() }
         }"
       >
-        {{ this.agencyName.toUpperCase() }}>
+        {{ this.agencyName.toUpperCase() }}
       </router-link>
     </h2>
     <div class="buttonContainer">
@@ -92,6 +92,11 @@ export default {
                   formatter: function(value) {
                     return "R$ " + (value / 1000000).toFixed(1) + "M";
                   }
+                }
+              },
+              xaxis: {
+                labels: {
+                  rotate: -45
                 }
               }
             }
