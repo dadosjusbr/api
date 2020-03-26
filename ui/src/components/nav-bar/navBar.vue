@@ -68,7 +68,7 @@ a {
 .md-toolbar {
     text-align: center;
     width: 100%;
-    background-color: #352eba;
+    background-color: #2ab38b;
     padding: 0 5%;
     z-index: 5;
     height: 3em;
@@ -117,7 +117,7 @@ a {
   .links {
     margin-top: 0%;
     margin-right: 0%;
-    margin-left: 10%;
+    margin-left: 5%;
   }
 
   .links a {

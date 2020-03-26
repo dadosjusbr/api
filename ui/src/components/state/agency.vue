@@ -14,7 +14,7 @@
           params: { agencyName: this.agencyName.toLowerCase() }
         }"
       >
-        {{ this.agencyName.toUpperCase() }}>
+        {{ this.agencyName.toUpperCase() }}
       </router-link>
     </h2>
     <div class="buttonContainer">
@@ -92,6 +92,11 @@ export default {
                   formatter: function(value) {
                     return "R$ " + (value / 1000000).toFixed(1) + "M";
                   }
+                }
+              },
+              xaxis: {
+                labels: {
+                  rotate: -45
                 }
               }
             }
@@ -304,7 +309,7 @@ a {
 .md-card {
   width: 12%;
   margin-left: 2%;
-  background-color: #362fbb;
+  background-color: #2ab38b;
   height: 32em;
   border-style: solid;
   float: left;
@@ -384,7 +389,7 @@ a {
   display: none;
   width: 12%;
   margin-left: 2%;
-  background-color: #362fbb;
+  background-color: #2ab38b;
   height: 32em;
   border-style: solid;
   float: left;
