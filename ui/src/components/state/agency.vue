@@ -309,7 +309,7 @@ a {
 .md-card {
   width: 12%;
   margin-left: 2%;
-  background-color: #362fbb;
+  background-color: #2ab38b;
   height: 32em;
   border-style: solid;
   float: left;
@@ -389,7 +389,7 @@ a {
   display: none;
   width: 12%;
   margin-left: 2%;
-  background-color: #362fbb;
+  background-color: #2ab38b;
   height: 32em;
   border-style: solid;
   float: left;
