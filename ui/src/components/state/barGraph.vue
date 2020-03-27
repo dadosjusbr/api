@@ -43,7 +43,7 @@ export default {
   .graphContainer {
     width: 100%;
     height: auto;
-    padding: 8px;
+    padding: 0%;
     position: relative;
     margin-top: -7%;
   }
