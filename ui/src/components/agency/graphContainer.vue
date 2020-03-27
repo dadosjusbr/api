@@ -1,16 +1,16 @@
 <template>
   <div class="graphContainer">
     <div class="buttonContainer">
-      <button v-on:click="previousMonth()" class="button btn btn-dark">
-        &#8249;
-      </button>
+      <md-button v-on:click="previousMonth()">
+        <img src="../../assets/previous.png" />
+      </md-button>
       <a> {{ this.months[this.currentMonthAndYear.month] }} </a>
-      <button v-on:click="nextMonth()" class="button btn btn-dark">
-        &#8250;
-      </button>
+      <md-button v-on:click="nextMonth()">
+        <img src="../../assets/next.png" />
+      </md-button>
     </div>
     <graph-bar
-      width="100%"
+      width="75%"
       type="scatter"
       :options="chartOptions"
       :series="series"
@@ -205,20 +205,22 @@ export default {
   width: 50px;
 }
 .buttonContainer {
-  width: 200px;
-  height: auto;
   margin: 0 auto;
-  padding: 10px;
+  width: 50%;
+  padding: 1px;
   position: relative;
 }
 .graphContainer {
   margin-top: 5px;
   text-align: center;
   overflow: hidden;
+  /* background-color:  rgb(4, 4, 173); */
+  margin-bottom: 10px;
 }
 a {
-  font-family: "Montserrat", sans-serif;
-  font-size: 14px;
   color: black;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 5px;
 }
 </style>

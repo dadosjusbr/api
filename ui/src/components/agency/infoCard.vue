@@ -26,15 +26,15 @@ export default {
 }
 
 .score {
-  padding-top: 75px;
+  padding-top: 60px;
   text-align: center;
-  background: #e1e8ed;
-  border: 3px solid #182825;
+  background: white;
+  border: 3px solid rgb(4, 4, 173);
   margin-top: 10px;
-  font-size: 23px;
-  height: 180px;
-  width: 200px;
-  color: black;
+  font-size: 20px;
+  height: 150px;
+  width: 180px;
+  color:rgb(4, 4, 173);
   font-weight: 500;
 }
 
@@ -45,6 +45,7 @@ export default {
   position: relative;
   font-weight: 200;
   margin-top: -20px !important;
-  font-size: 17px;
+  font-size: 15px;
+  color: rgb(4, 4, 173);
 }
 </style>
