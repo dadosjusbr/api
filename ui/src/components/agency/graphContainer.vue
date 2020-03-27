@@ -9,26 +9,27 @@
         &#8250;
       </button>
     </div>
-    <graph-point
+    <graph-bar
       width="100%"
       type="scatter"
       :options="chartOptions"
       :series="series"
-    ></graph-point>
+    ></graph-bar>
   </div>
 </template>
 
 <script>
-import graphPoint from "@/components/agency/graphPoint.vue";
+import graphBar from "@/components/agency/graphBar.vue";
 
 export default {
   name: "graphContainer",
   components: {
-    graphPoint
+    graphBar
   },
   data: function() {
     return {
       agencyName: this.$route.params.agencyName,
+      series: [],
       months: {
         1: "Janeiro",
         2: "Fevereiro",
@@ -46,17 +47,67 @@ export default {
       salaryData: [],
       currentMonthAndYear: { year: 2019, month: 1 },
       chartOptions: {
-        tooltip: {
-          custom: function({ series, seriesIndex, dataPointIndex }) {
-            return (
-              '<div class="arrow_box">' +
-              "<span>" +
-              series[seriesIndex][dataPointIndex] +
-              "</span>" +
-              "</div>"
-            );
+        colors: ["#c9e4ca", "#87bba2", "#364958"],
+        chart: {
+          stacked: true,
+          toolbar: {
+            show: false
           },
-          colors: ["#00AEEF"]
+          zoom: {
+            enabled: true
+          }
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: "bottom",
+                offsetX: -10,
+                offsetY: 0
+              }
+            }
+          }
+        ],
+        plotOptions: {
+          bar: {
+            horizontal: true
+          }
+        },
+        yaxis: {
+          decimalsInFloat: 2,
+          labels: {
+            show: true,
+            minWidth: 0,
+            maxWidth: 160,
+            style: {
+              colors: [],
+              fontSize: "16px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              cssClass: "apexcharts-yaxis-label"
+            }
+          }
+        },
+        xaxis: {
+          categories: [
+            "> R$ 50 mil",
+            "R$ 40~50 mil",
+            "R$ 30~40 mil",
+            "R$ 20~30 mil",
+            "R$ 10~20 mil",
+            "< R$ 10 mil"
+          ]
+        },
+        legend: {
+          position: "right",
+          offsetY: 120
+        },
+        fill: {
+          opacity: 1
+        },
+        dataLabels: {
+          enabled: false
         }
       }
     };
@@ -74,7 +125,7 @@ export default {
       this.currentMonthAndYear = { year, month };
       this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => (this.salaryData = response.data));
+        .then(response => this.generateSeries(response.data));
     },
     previousMonth() {
       var year, month;
@@ -88,41 +139,56 @@ export default {
       this.currentMonthAndYear = { year, month };
       this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => (this.salaryData = response.data));
+        .then(response => this.generateSeries(response.data));
+    },
+    generateSeries(data) {
+      this.series = [
+        {
+          name: "Membros",
+          data: [
+            data.Members["-1"],
+            data.Members["50000"],
+            data.Members["40000"],
+            data.Members["30000"],
+            data.Members["20000"],
+            data.Members["10000"]
+          ]
+        },
+        {
+          name: "Servidores",
+          data: [
+            data.Servers["-1"],
+            data.Servers["50000"],
+            data.Servers["40000"],
+            data.Servers["30000"],
+            data.Servers["20000"],
+            data.Servers["10000"]
+          ]
+        },
+        {
+          name: "Inativos",
+          data: [
+            data.Inactives["-1"],
+            data.Inactives["50000"],
+            data.Inactives["40000"],
+            data.Inactives["30000"],
+            data.Inactives["20000"],
+            data.Inactives["10000"]
+          ]
+        }
+      ];
     }
   },
-  computed: {
-    series: function() {
-      let dataToPlot = this.salaryData.map((employee, index) => [
-        employee["Total"],
-        index + 1
-      ]);
-      return [{ name: "total", data: dataToPlot }];
-    },
-    names: function() {
-      return this.salaryData.map(employee => employee["Name"]);
-    },
-    wages: function() {
-      return this.salaryData.map(employee => employee["Wage"]);
-    },
-    others: function() {
-      return this.salaryData.map(employee => employee["Others"]);
-    },
-    perks: function() {
-      return this.salaryData.map(employee => employee["Perks"]);
-    }
-  },
-  mounted() {
-    this.$http
-      .get(
-        "/orgao/salario/" +
-          this.agencyName +
-          "/" +
-          this.currentMonthAndYear.year +
-          "/" +
-          this.currentMonthAndYear.month
-      )
-      .then(response => (this.salaryData = response.data));
+  async mounted() {
+    const { data } = await this.$http.get(
+      "/orgao/salario/" +
+        this.agencyName +
+        "/" +
+        this.currentMonthAndYear.year +
+        "/" +
+        this.currentMonthAndYear.month
+    );
+    this.generateSeries(data);
   }
 };
 </script>
