@@ -231,17 +231,45 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
-	var employees []models.Employee
+	members := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
+	servers := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
+	inactive := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
+	maxSalary := 0.0
+
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
-		newEmployee := models.Employee{
-			Name:   employeeAux.Name,
-			Wage:   *employeeAux.Income.Wage,
-			Perks:  employeeAux.Income.Perks.Total,
-			Others: employeeAux.Income.Other.Total,
-			Total:  employeeAux.Income.Total}
-		employees = append(employees, newEmployee)
+		if employeeAux.Income.Total > maxSalary {
+			maxSalary = employeeAux.Income.Total
+		}
+		salary := employeeAux.Income.Total
+		var salaryRange int
+		if salary <= 10000 {
+			salaryRange = 10000
+		} else if salary <= 20000 {
+			salaryRange = 20000
+		} else if salary <= 30000 {
+			salaryRange = 30000
+		} else if salary <= 40000 {
+			salaryRange = 40000
+		} else if salary <= 50000 {
+			salaryRange = 50000
+		} else {
+			salaryRange = -1 // -1 is maker when the salary is over 50000
+		}
+		if employeeAux.Type == "membro" && employeeAux.Active == true {
+			members[salaryRange]++
+		} else if employeeAux.Type == "servidor" && employeeAux.Active == true {
+			servers[salaryRange]++
+		} else if employeeAux.Active == false {
+			inactive[salaryRange]++
+		}
 	}
-	return c.JSON(http.StatusOK, employees)
+
+	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
+		Members:   members,
+		Servers:   servers,
+		Inactives: inactive,
+		MaxSalary: maxSalary,
+	})
 }
 
 func getSummaryOfAgency(c echo.Context) error {

@@ -21,6 +21,8 @@ type Employee struct {
 	Perks  float64
 	Others float64
 	Total  float64
+	Type   string
+	Active bool
 }
 
 // AgencySummary - Summary of an agency
@@ -43,4 +45,11 @@ type MonthTotals struct {
 	Wage   float64
 	Perks  float64
 	Others float64
+}
+
+type DataForChartAtAgencyScreen struct {
+	Members   map[int]int
+	Servers   map[int]int
+	Inactives map[int]int
+	MaxSalary float64
 }
