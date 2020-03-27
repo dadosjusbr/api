@@ -8,13 +8,15 @@
       <md-button v-on:click="nextMonth()">
         <img src="../../assets/next.png" />
       </md-button>
+      <md-button>
+        <img src="../../assets/previous.png" />
+      </md-button>
+      <a> {{ this.currentMonthAndYear.year }} </a>
+      <md-button>
+        <img src="../../assets/next.png" />
+      </md-button>
     </div>
-    <graph-bar
-      width="75%"
-      type="scatter"
-      :options="chartOptions"
-      :series="series"
-    ></graph-bar>
+    <graph-bar :options="chartOptions" :series="series"></graph-bar>
   </div>
 </template>
 
@@ -44,8 +46,7 @@ export default {
         11: "Novembro",
         12: "Dezembro"
       },
-      salaryData: [],
-      currentMonthAndYear: { year: 2019, month: 1 },
+      currentMonthAndYear: { year: 2020, month: 1 },
       chartOptions: {
         colors: ["#c9e4ca", "#87bba2", "#364958"],
         chart: {
@@ -114,32 +115,38 @@ export default {
   },
   methods: {
     nextMonth() {
-      let year, month;
+      let month;
       if (this.currentMonthAndYear.month === 12) {
-        year = this.currentMonthAndYear.year + 1;
         month = 1;
       } else {
-        year = this.currentMonthAndYear;
         month = this.currentMonthAndYear.month + 1;
       }
-      this.currentMonthAndYear = { year, month };
+      this.currentMonthAndYear.month = month;
       this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .get(
+          "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + month
+        )
         .then(response => this.generateSeries(response.data));
     },
     previousMonth() {
-      var year, month;
+      var month;
       if (this.currentMonthAndYear.month === 1) {
-        year = this.currentMonthAndYear.year - 1;
         month = 12;
       } else {
-        year = this.currentMonthAndYear.year;
         month = this.currentMonthAndYear.month - 1;
       }
-      this.currentMonthAndYear = { year, month };
+      this.currentMonthAndYear.month = month;
       this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .get(
+          "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + month
+        )
         .then(response => this.generateSeries(response.data));
+    },
+    nextYear() {
+      this.currentMonthAndYear.year = this.currentMonthAndYear.year + 1;
+    },
+    previousYear() {
+      this.currentMonthAndYear.year = this.currentMonthAndYear.year - 1;
     },
     generateSeries(data) {
       this.series = [
@@ -194,24 +201,13 @@ export default {
 </script>
 
 <style scoped>
-.button {
-  background-color: #182825; /* Green */
-  border: none;
-  color: white;
-  text-decoration: none;
-  font-size: 30px;
-  position: relative;
-  top: 10px;
-  width: 50px;
-}
 .buttonContainer {
   margin: 0 auto;
-  width: 50%;
-  padding: 1px;
+  width: 70%;
+  height: 40px;
   position: relative;
 }
 .graphContainer {
-  margin-top: 5px;
   text-align: center;
   overflow: hidden;
   /* background-color:  rgb(4, 4, 173); */
@@ -219,8 +215,7 @@ export default {
 }
 a {
   color: black;
-  font-size: 1.5em;
+  font-size: 1.4em;
   font-weight: bold;
-  margin-top: 5px;
 }
 </style>

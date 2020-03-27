@@ -28,8 +28,8 @@ export default {
 <style>
 .cards {
   justify-content: center;
-  display: flex;
-  opacity: 10;
+  display: flex;  
+  height: 160px;
   width: 100%;
   align-self: center;
   align-content: center;

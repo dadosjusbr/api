@@ -21,31 +21,32 @@ export default {
 
 <style scoped>
 .container {
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 180px;
+  padding: 0px;
 }
 
 .score {
-  padding-top: 60px;
+  padding-top: 50px;
   text-align: center;
   background: white;
   border: 3px solid rgb(4, 4, 173);
   margin-top: 10px;
   font-size: 20px;
-  height: 150px;
+  height: 135px;
   width: 180px;
   color:rgb(4, 4, 173);
   font-weight: 500;
 }
 
 .text {
-  padding-top: 60px;
+  padding-top: 50px;
   padding-left: 5px;
   text-align: left;
   position: relative;
-  font-weight: 200;
+  font-weight: 410;
   margin-top: -20px !important;
-  font-size: 15px;
+  font-size: 16px;
   color: rgb(4, 4, 173);
 }
 </style>
