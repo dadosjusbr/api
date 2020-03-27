@@ -47,7 +47,7 @@ type MonthTotals struct {
 	Others float64
 }
 
-type DataForChart struct {
+type DataForChartAtAgencyScreen struct {
 	Members   map[int]int
 	Servers   map[int]int
 	Inactives map[int]int

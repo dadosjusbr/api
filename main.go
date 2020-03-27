@@ -244,15 +244,15 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		var salaryRange int
 		if salary <= 10000 {
 			salaryRange = 10000
-		} else if salary > 10000 && salary <= 20000 {
+		} else if salary <= 20000 {
 			salaryRange = 20000
-		} else if salary > 20000 && salary <= 30000 {
+		} else if salary <= 30000 {
 			salaryRange = 30000
-		} else if salary > 30000 && salary <= 40000 {
+		} else if salary <= 40000 {
 			salaryRange = 40000
-		} else if salary > 40000 && salary <= 50000 {
+		} else if salary <= 50000 {
 			salaryRange = 50000
-		} else if salary > 50000 {
+		} else {
 			salaryRange = -1 // -1 is maker when the salary is over 50000
 		}
 		if employeeAux.Type == "membro" && employeeAux.Active == true {
@@ -264,7 +264,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		}
 	}
 
-	return c.JSON(http.StatusOK, models.DataForChart{
+	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
 		Members:   members,
 		Servers:   servers,
 		Inactives: inactive,
