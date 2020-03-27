@@ -43,8 +43,8 @@ export default {
 
 .logo {
   background-color: white;
-  height: 185px;
-  width: 330px;
+  height: 130px;
+  width: 225px;
   margin: 0 auto;
   
 }
