@@ -3,7 +3,7 @@
     <apexcharts
       width="99%"
       height="500"
-      type="scatter"
+      type="bar"
       :options="options"
       :series="series"
     />
@@ -14,7 +14,7 @@
 import VueApexCharts from "vue-apexcharts";
 
 export default {
-  name: "graphPoint",
+  name: "graphBar",
   components: {
     apexcharts: VueApexCharts
   },
