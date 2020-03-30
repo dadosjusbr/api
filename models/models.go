@@ -47,6 +47,7 @@ type MonthTotals struct {
 	Others float64
 }
 
+// DataForChartAtAgencyScreen - contains all necessary data to load chart
 type DataForChartAtAgencyScreen struct {
 	Members   map[int]int
 	Servers   map[int]int
