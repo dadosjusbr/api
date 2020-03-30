@@ -1,7 +1,7 @@
 <template>
   <div class="graph">
     <apexcharts
-      width="99%"
+      width="100%"
       height="500"
       type="bar"
       :options="options"

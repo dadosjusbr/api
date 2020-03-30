@@ -21,30 +21,31 @@ export default {
 
 <style scoped>
 .container {
-  height: 200px;
-  width: 200px;
+  height: 120px;
+  width: 180px;
 }
 
 .score {
-  padding-top: 75px;
+  padding-top: 29%;
   text-align: center;
-  background: #e1e8ed;
-  border: 3px solid #182825;
+  background: #87bba2;
+  border: 1px solid black;
   margin-top: 10px;
-  font-size: 23px;
-  height: 180px;
-  width: 200px;
+  font-size: 20px;
+  height: 120px;
+  width: 180px;
   color: black;
   font-weight: 500;
 }
 
 .text {
-  padding-top: 60px;
+  padding-top: 50px;
   padding-left: 5px;
   text-align: left;
   position: relative;
-  font-weight: 200;
+  font-weight: 410;
   margin-top: -20px !important;
-  font-size: 17px;
+  font-size: 16px;
+  color: black;
 }
 </style>

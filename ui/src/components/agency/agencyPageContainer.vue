@@ -46,23 +46,20 @@ export default {
 
 <style scoped>
 .agencyName {
-  font-size: 1.5em;
-  margin-left: 13%;
   font-weight: bold;
 }
 
 .agencyContainer {
-  margin-left: 200px;
-  margin-right: 200px;
+  margin-left: 14%;
+  margin-right: 14%;
 }
 
 .agencyNameContainer {
-  margin-top: 1px;
-  height: 100px;
+  padding-top: 2.4%;
+  text-align: center;
 }
 
 @media only screen and (max-width: 379px) {
-
   .agencyName {
     margin-left: 16%;
     margin-top: 2%;
@@ -70,12 +67,9 @@ export default {
 }
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
-
   .agencyName {
     margin-left: 16%;
     margin-top: 2%;
   }
 }
-
-
 </style>

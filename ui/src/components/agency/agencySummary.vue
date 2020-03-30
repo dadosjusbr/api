@@ -28,11 +28,10 @@ export default {
 <style>
 .cards {
   justify-content: center;
-  display: flex;
-  opacity: 10;
+  display: flex;  
+  height: 145px;
   width: 100%;
   align-self: center;
   align-content: center;
-  margin-top: 5px;
 }
 </style>
