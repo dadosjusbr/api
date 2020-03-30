@@ -29,10 +29,9 @@ export default {
 .cards {
   justify-content: center;
   display: flex;  
-  height: 160px;
+  height: 145px;
   width: 100%;
   align-self: center;
   align-content: center;
-  margin-top: 5px;
 }
 </style>

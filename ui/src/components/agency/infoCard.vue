@@ -21,21 +21,20 @@ export default {
 
 <style scoped>
 .container {
-  height: 150px;
+  height: 120px;
   width: 180px;
-  padding: 0px;
 }
 
 .score {
-  padding-top: 50px;
+  padding-top: 29%;
   text-align: center;
-  background: white;
-  border: 3px solid rgb(4, 4, 173);
+  background: #87bba2;
+  border: 1px solid black;
   margin-top: 10px;
   font-size: 20px;
-  height: 135px;
+  height: 120px;
   width: 180px;
-  color:rgb(4, 4, 173);
+  color: black;
   font-weight: 500;
 }
 
@@ -47,6 +46,6 @@ export default {
   font-weight: 410;
   margin-top: -20px !important;
   font-size: 16px;
-  color: rgb(4, 4, 173);
+  color: black;
 }
 </style>

@@ -1,20 +1,25 @@
 <template>
   <div class="graphContainer">
     <div class="buttonContainer">
-      <md-button v-on:click="previousMonth()">
+      <md-button v-if="checkPreviousYear" v-on:click="previousMonth()">
         <img src="../../assets/previous.png" />
       </md-button>
-      <a> {{ this.months[this.currentMonthAndYear.month] }} </a>
-      <md-button v-on:click="nextMonth()">
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/previousd.png"
+      /></md-button>
+      <a>
+        {{
+          this.months[this.currentMonthAndYear.month] +
+            ", " +
+            this.currentMonthAndYear.year
+        }}
+      </a>
+      <md-button v-if="checkNextYear" v-on:click="nextMonth()">
         <img src="../../assets/next.png" />
       </md-button>
-      <md-button>
-        <img src="../../assets/previous.png" />
-      </md-button>
-      <a> {{ this.currentMonthAndYear.year }} </a>
-      <md-button>
-        <img src="../../assets/next.png" />
-      </md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/nextd.png"
+      /></md-button>
     </div>
     <graph-bar :options="chartOptions" :series="series"></graph-bar>
   </div>
@@ -115,38 +120,46 @@ export default {
   },
   methods: {
     nextMonth() {
-      let month;
+      let month = this.currentMonthAndYear.month;
+      let year = this.currentMonthAndYear.year;
       if (this.currentMonthAndYear.month === 12) {
         month = 1;
+        year = year + 1;
       } else {
-        month = this.currentMonthAndYear.month + 1;
+        month = month + 1;
       }
-      this.currentMonthAndYear.month = month;
+      this.currentMonthAndYear = { month, year };
       this.$http
-        .get(
-          "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + month
-        )
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => this.generateSeries(response.data));
     },
     previousMonth() {
-      var month;
+      let month = this.currentMonthAndYear.month;
+      let year = this.currentMonthAndYear.year;
       if (this.currentMonthAndYear.month === 1) {
         month = 12;
+        year = year - 1;
       } else {
         month = this.currentMonthAndYear.month - 1;
       }
-      this.currentMonthAndYear.month = month;
+      this.currentMonthAndYear = { month, year };
       this.$http
-        .get(
-          "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + month
-        )
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => this.generateSeries(response.data));
     },
-    nextYear() {
-      this.currentMonthAndYear.year = this.currentMonthAndYear.year + 1;
+    checkNextYear() {
+      if (this.currentMonthAndYear.year >= new Date().getFullYear()) {
+        return false;
+      } else {
+        return true;
+      }
     },
-    previousYear() {
-      this.currentMonthAndYear.year = this.currentMonthAndYear.year - 1;
+    checkPreviousYear() {
+      if (this.currentMonthAndYear.year <= 2018) {
+        return false;
+      } else {
+        return true;
+      }
     },
     generateSeries(data) {
       this.series = [
@@ -204,7 +217,7 @@ export default {
 .buttonContainer {
   margin: 0 auto;
   width: 70%;
-  height: 40px;
+  height: 10%;
   position: relative;
 }
 .graphContainer {

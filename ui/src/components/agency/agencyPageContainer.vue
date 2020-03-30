@@ -47,20 +47,15 @@ export default {
 <style scoped>
 .agencyName {
   font-weight: bold;
-  color: white;
 }
 
 .agencyContainer {
-  margin-left: 200px;
-  margin-right: 200px;
+  margin-left: 14%;
+  margin-right: 14%;
 }
 
 .agencyNameContainer {
-  padding: 25px;
-  border: 1px solid #666;
-  margin-top: 8px;
-  height: 100px;
-  background-color: rgb(4, 4, 173);
+  padding-top: 2.4%;
   text-align: center;
 }
 
