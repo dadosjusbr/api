@@ -293,7 +293,6 @@ a {
   position: relative;
 }
 .agencyContainer {
-  border-block-end: solid 1px black;
   overflow: auto;
   margin-top: 5px;
   margin-bottom: 5px;
