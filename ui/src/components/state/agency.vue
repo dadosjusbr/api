@@ -69,7 +69,7 @@ export default {
         },
         responsive: [
           {
-            breakpoint: 770,
+            breakpoint: 601,
             options: {
               legend: {
                 position: "bottom",
@@ -96,7 +96,8 @@ export default {
               },
               xaxis: {
                 labels: {
-                  rotate: -45
+                  rotate: -45,
+                  rotateAlways: true
                 }
               }
             }
