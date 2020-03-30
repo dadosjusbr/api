@@ -1,7 +1,10 @@
 <template>
   <div class="graphContainer">
     <div class="buttonContainer">
-      <md-button v-if="checkPreviousYear" v-on:click="previousMonth()">
+      <md-button
+        v-if="this.activateButton.previous"
+        v-on:click="previousMonth()"
+      >
         <img src="../../assets/previous.png" />
       </md-button>
       <md-button class="deactivatedButton" v-else
@@ -14,7 +17,7 @@
             this.currentMonthAndYear.year
         }}
       </a>
-      <md-button v-if="checkNextYear" v-on:click="nextMonth()">
+      <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
         <img src="../../assets/next.png" />
       </md-button>
       <md-button class="deactivatedButton" v-else
@@ -36,6 +39,7 @@ export default {
   data: function() {
     return {
       agencyName: this.$route.params.agencyName,
+      activateButton: { previous: true, next: true },
       series: [],
       months: {
         1: "Janeiro",
@@ -119,7 +123,24 @@ export default {
     };
   },
   methods: {
-    nextMonth() {
+    async checkNextYear() {
+      var { month, year } = this.getNextDate();
+      await this.$http
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .catch(err => {
+          this.activateButton.next = false;
+        });
+    },
+    async checkPreviousYear() {
+      var { month, year } = this.getPreviousDate();
+      await this.$http
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .catch(err => {
+          this.activateButton.previous = false;
+        });
+    },
+
+    getNextDate() {
       let month = this.currentMonthAndYear.month;
       let year = this.currentMonthAndYear.year;
       if (this.currentMonthAndYear.month === 12) {
@@ -128,12 +149,9 @@ export default {
       } else {
         month = month + 1;
       }
-      this.currentMonthAndYear = { month, year };
-      this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => this.generateSeries(response.data));
+      return { month, year };
     },
-    previousMonth() {
+    getPreviousDate() {
       let month = this.currentMonthAndYear.month;
       let year = this.currentMonthAndYear.year;
       if (this.currentMonthAndYear.month === 1) {
@@ -142,24 +160,25 @@ export default {
       } else {
         month = this.currentMonthAndYear.month - 1;
       }
+      return { month, year };
+    },
+    async nextMonth() {
+      var { month, year } = this.getNextDate();
       this.currentMonthAndYear = { month, year };
-      this.$http
+      this.activateButton.previous = true;
+      await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => this.generateSeries(response.data));
+        .then(response => this.generateSeries(response.data))
+        .then(this.checkNextYear());
     },
-    checkNextYear() {
-      if (this.currentMonthAndYear.year >= new Date().getFullYear()) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    checkPreviousYear() {
-      if (this.currentMonthAndYear.year <= 2018) {
-        return false;
-      } else {
-        return true;
-      }
+    async previousMonth() {
+      var { month, year } = this.getPreviousDate();
+      this.activateButton.next = true;
+      this.currentMonthAndYear = { month, year };
+      await this.$http
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .then(response => this.generateSeries(response.data))
+        .then(this.checkPreviousYear());
     },
     generateSeries(data) {
       this.series = [
@@ -222,8 +241,7 @@ export default {
 }
 .graphContainer {
   text-align: center;
-  overflow: hidden;
-  /* background-color:  rgb(4, 4, 173); */
+  overflow: hidde;
   margin-bottom: 10px;
 }
 a {
