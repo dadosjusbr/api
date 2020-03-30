@@ -74,7 +74,7 @@ export default {
   width: 5%;
   height: 80x;
   margin-left: 2%;
-  margin-top: 2%;
+  margin-top: 2.5%;
 }
 .header {
   margin-left: 10%;
