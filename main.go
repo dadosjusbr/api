@@ -295,6 +295,28 @@ func getSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+func getSummaryOfAgency2(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
+	}
+	agencyName := c.Param("orgao")
+	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
+	}
+	agencySummary := models.AgencySummary{
+		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
+		TotalWage:      agencyMonthlyInfo.Summary.General.Wage.Total,
+		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
+		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max}
+	return c.JSON(http.StatusOK, agencySummary)
+}
+
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	var conf config
@@ -347,6 +369,8 @@ func main() {
 
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
+	// Return a summary of an agency. This information will be used in the head of the agency page.
+	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency2)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
