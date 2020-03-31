@@ -4,7 +4,7 @@
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
     <agency-summary :agencySummary="agencySummary" />
-    <graph-container />
+    <graph-container @change="date" />
   </div>
 </template>
 
@@ -23,12 +23,27 @@ export default {
   data() {
     return {
       agencyName: this.$route.params.agencyName,
-      agencySummary: null
+      agencySummary: null,
+      dateForSummary: { year: 2020, month: 1 }
     };
   },
   methods: {
+    date(date) {
+      this.dateForSummary = date;
+      this.fetchData();
+    },
     async fetchData() {
-      const { data } = await this.$http.get("/orgao/resumo/" + this.agencyName);
+      let month, year;
+      if (this.dateForSummary == undefined) {
+        month = 1;
+        year = 2020;
+      } else {
+        month = this.dateForSummary.month;
+        year = this.dateForSummary.year;
+      }
+      const { data } = await this.$http.get(
+        "/orgao/resumo/" + this.agencyName + "/" + year + "/" + month
+      );
       this.agencySummary = {
         Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
         Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
