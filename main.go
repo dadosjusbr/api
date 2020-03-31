@@ -273,29 +273,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 }
 
 func getSummaryOfAgency(c echo.Context) error {
-	yearOfCosult := time.Now().Year()
-	monthOfConsult := 1 //int(time.Now().Month()) Tem um erro na api de leitura enquanto não ajeitar deixei hardcoded aqui.
-	agencyName := c.Param("orgao")
-	var agencyMonthlyInfo *storage.AgencyMonthlyInfo
-	var err error
-	for i := monthOfConsult; i > 0; i-- {
-		agencyMonthlyInfo, err = client.GetDataForSecondScreen(monthOfConsult, yearOfCosult, agencyName)
-		if err == nil {
-			break
-		}
-	}
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
-	}
-	agencySummary := models.AgencySummary{
-		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
-		TotalWage:      agencyMonthlyInfo.Summary.General.Wage.Total,
-		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
-		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max}
-	return c.JSON(http.StatusOK, agencySummary)
-}
-
-func getSummaryOfAgency2(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
@@ -368,9 +345,7 @@ func main() {
 	e.GET("/:year/:month", handleMonthRequest(dbClient))
 
 	// Return a summary of an agency. This information will be used in the head of the agency page.
-	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
-	// Return a summary of an agency. This information will be used in the head of the agency page.
-	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency2)
+	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
