@@ -169,7 +169,8 @@ export default {
       await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => this.generateSeries(response.data))
-        .then(this.checkNextYear());
+        .then(this.checkNextYear())
+        .then(this.$emit("change", { year, month }));
     },
     async previousMonth() {
       var { month, year } = this.getPreviousDate();
@@ -178,7 +179,8 @@ export default {
       await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
         .then(response => this.generateSeries(response.data))
-        .then(this.checkPreviousYear());
+        .then(this.checkPreviousYear())
+        .then(this.$emit("change", { year, month }));
     },
     generateSeries(data) {
       this.series = [
