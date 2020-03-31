@@ -1,4 +1,7 @@
 module.exports = {
   publicPath: "/novo/",
-  productionSourceMap: false
+  productionSourceMap: false,
+  configureWebpack: {
+    performance: { hints: false },
+  }
 };
