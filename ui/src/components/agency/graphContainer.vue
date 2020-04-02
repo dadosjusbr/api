@@ -269,7 +269,7 @@ button {
   margin-top: -0.4%;
 }
 
-@media only screen and (max-width: 340px) {
+@media only screen and (max-width: 360px) {
   .buttonContainer[data-v-5ab2e3bd] {
     width: 100%;
     margin-top: 11%;
@@ -285,7 +285,4 @@ button {
     width: 103%;
   }
 }
-
-
-
 </style>
