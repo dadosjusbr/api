@@ -29,9 +29,18 @@ export default {
 .cards {
   justify-content: center;
   display: flex;  
-  height: 145px;
+  flex-wrap: wrap;
+  height: 11vw;
   width: 100%;
   align-self: center;
   align-content: center;
 }
+
+
+@media only screen and (max-width: 550px) {
+  .cards {
+  height: 50vw;
+  }
+}
+
 </style>
