@@ -249,10 +249,10 @@ export default {
 
 <style scoped>
 .buttonContainer {
-  margin: auto auto;
-  width: 70%;
+  width: 105%;
   height: 10%;
   margin-top: 8%;
+  margin-left: -3%;
 }
 .graphContainer {
   text-align: center;
@@ -269,20 +269,4 @@ button {
   margin-top: -0.4%;
 }
 
-@media only screen and (max-width: 360px) {
-  .buttonContainer[data-v-5ab2e3bd] {
-    width: 100%;
-    margin-top: 11%;
-  }
-
-  .md-button {
-    min-width: 50px;
-  }
-}
-
-@media only screen and (max-width: 550px) {
-  .buttonContainer[data-v-5ab2e3bd] {
-    width: 103%;
-  }
-}
 </style>
