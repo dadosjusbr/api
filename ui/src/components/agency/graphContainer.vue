@@ -75,13 +75,26 @@ export default {
                 position: "bottom",
                 offsetX: -10,
                 offsetY: 0
+              },
+              yaxis: {
+                labels: {
+                  maxWidth: 120,
+                  style: {
+                    colors: [],
+                    fontSize: "12px",
+                    fontFamily: "Helvetica, Arial, sans-serif",
+                    fontWeight: 600,
+                    cssClass: "apexcharts-yaxis-label"
+                  }
+                }
               }
             }
           }
         ],
         plotOptions: {
           bar: {
-            horizontal: true
+            horizontal: true,
+            barHeight: '70%',
           }
         },
         yaxis: {
@@ -92,7 +105,7 @@ export default {
             maxWidth: 160,
             style: {
               colors: [],
-              fontSize: "16px",
+              fontSize: "14px",
               fontFamily: "Helvetica, Arial, sans-serif",
               fontWeight: 600,
               cssClass: "apexcharts-yaxis-label"
@@ -236,9 +249,10 @@ export default {
 
 <style scoped>
 .buttonContainer {
-  margin: 0 auto;
+  margin: auto auto;
   width: 70%;
   height: 10%;
+  margin-top: 8%;
 }
 .graphContainer {
   text-align: center;
@@ -254,4 +268,24 @@ a {
 button {
   margin-top: -0.4%;
 }
+
+@media only screen and (max-width: 340px) {
+  .buttonContainer[data-v-5ab2e3bd] {
+    width: 100%;
+    margin-top: 11%;
+  }
+
+  .md-button {
+    min-width: 50px;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .buttonContainer[data-v-5ab2e3bd] {
+    width: 103%;
+  }
+}
+
+
+
 </style>

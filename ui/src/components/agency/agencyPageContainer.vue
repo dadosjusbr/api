@@ -3,8 +3,12 @@
     <div class="agencyNameContainer">
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
-    <agency-summary :agencySummary="agencySummary" />
-    <graph-container @change="date" />
+    <div>
+      <agency-summary :agencySummary="agencySummary" />
+    </div>
+    <div>
+      <graph-container @change="date" />
+    </div>
   </div>
 </template>
 
@@ -76,15 +80,27 @@ export default {
 
 @media only screen and (max-width: 379px) {
   .agencyName {
-    margin-left: 16%;
-    margin-top: 2%;
+    margin-left: 0%;
+    margin-top: 0%;
   }
+
+  .agencyContainer {
+    margin-left: 1%;
+    margin-right: 1%;
+  }
+
 }
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
   .agencyName {
-    margin-left: 16%;
-    margin-top: 2%;
+    margin-left: 0%;
+    margin-top: 0%;
   }
+
+  .agencyContainer {
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
 }
 </style>
