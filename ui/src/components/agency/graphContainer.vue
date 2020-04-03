@@ -94,11 +94,21 @@ export default {
         plotOptions: {
           bar: {
             horizontal: true,
-            barHeight: '70%',
+            barHeight: "70%"
           }
         },
         yaxis: {
           decimalsInFloat: 2,
+          title: {
+            text: "Remuneração",
+            offsetX: 6,
+            style: {
+              fontSize: "16px",
+              fontWeight: "bold",
+              fontFamily: undefined,
+              color: "#263238"
+            }
+          },
           labels: {
             show: true,
             minWidth: 0,
@@ -120,7 +130,17 @@ export default {
             "R$ 20~30 mil",
             "R$ 10~20 mil",
             "< R$ 10 mil"
-          ]
+          ],
+          title: {
+            text: "Quantidade de funcionários",
+            margin: 10,
+            style: {
+              fontSize: "16px",
+              fontWeight: "bold",
+              fontFamily: undefined,
+              color: "#263238"
+            }
+          }
         },
         legend: {
           position: "right",
@@ -268,5 +288,4 @@ a {
 button {
   margin-top: -0.4%;
 }
-
 </style>
