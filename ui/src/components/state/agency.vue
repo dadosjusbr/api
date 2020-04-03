@@ -1,12 +1,11 @@
 <template>
   <div class="agencyContainer">
     <div class="resume">
-     <md-card>
-      <md-card-content>
-      </md-card-content>
-    </md-card>
+      <md-card>
+        <md-card-content> </md-card-content>
+      </md-card>
     </div>
-    
+
     <h2 class="agencyName">
       <router-link
         :to="{
@@ -18,19 +17,19 @@
       </router-link>
     </h2>
     <div class="buttonContainer">
-      <md-button  v-if="checkPreviousYear"
-        v-on:click="previousYear()">
-        <img src="../../assets/previous.png">
+      <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
+        <img src="../../assets/previous.png" />
       </md-button>
-      <md-button class="deactivatedButton" v-else><img src="../../assets/previousd.png"></md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/previousd.png"
+      /></md-button>
       <a class="year"> {{ this.currentYear }} </a>
-      <md-button
-        v-if="checkNextYear"
-        v-on:click="nextYear()"
-      >
-      <img src="../../assets/next.png">
+      <md-button v-if="checkNextYear" v-on:click="nextYear()">
+        <img src="../../assets/next.png" />
       </md-button>
-      <md-button class="deactivatedButton" v-else><img src="../../assets/nextd.png"></md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/nextd.png"
+      /></md-button>
     </div>
     <bar-graph class="graph" :options="chartOptions" :series="series" />
   </div>
@@ -110,6 +109,16 @@ export default {
         },
         yaxis: {
           decimalsInFloat: 2,
+          title: {
+            text: "Total remunerções",
+            offsetY: 10,
+            style: {
+              fontSize: "14px",
+              fontWeight: "bold",
+              fontFamily: undefined,
+              color: "#263238"
+            }
+          },
           labels: {
             show: true,
             minWidth: 0,
@@ -140,7 +149,17 @@ export default {
             "OUT",
             "NOV",
             "DEZ"
-          ]
+          ],
+          title: {
+            text: "Meses",
+            offsetX: 6,
+            style: {
+              fontSize: "15px",
+              fontWeight: "bold",
+              fontFamily: undefined,
+              color: "#263238"
+            }
+          }
         },
         legend: {
           position: "right",
@@ -202,7 +221,7 @@ export default {
           data: perks
         },
         {
-          name: "Remunerações",
+          name: "Salário",
           data: wages
         }
       ];
@@ -316,7 +335,7 @@ a {
 }
 
 .agencyYear {
-  float:left;
+  float: left;
 }
 
 .md-button {
@@ -330,12 +349,11 @@ a {
 }
 
 @media only screen and (max-width: 379px) {
-
   .buttonContainer {
     float: left;
     width: 60%;
     height: 0em;
-    padding: 0px; 
+    padding: 0px;
     position: relative;
     margin-left: 40%;
     margin-top: -9%;
@@ -353,12 +371,11 @@ a {
 }
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
-
   .buttonContainer {
     float: left;
     width: 45%;
     height: 0em;
-    padding: 0px; 
+    padding: 0px;
     position: relative;
     margin-left: 40%;
     margin-top: -9%;
@@ -373,45 +390,41 @@ a {
   }
 }
 
-@media only screen and (min-width: 601px) and  (max-width: 770px) {
-
+@media only screen and (min-width: 601px) and (max-width: 770px) {
   .buttonContainer {
     float: left;
-    width: 30%; 
+    width: 30%;
     height: 2em;
     /* padding: 1px; */
     position: relative;
     margin-left: 34%;
-    margin-top: -6%;  
+    margin-top: -6%;
   }
 
   .md-card {
-  display: none;
-  width: 12%;
-  margin-left: 2%;
-  background-color: #2ab38b;
-  height: 32em;
-  border-style: solid;
-  float: left;
-}
+    display: none;
+    width: 12%;
+    margin-left: 2%;
+    background-color: #2ab38b;
+    height: 32em;
+    border-style: solid;
+    float: left;
+  }
 
   .agencyName {
     margin-left: 2%;
-  } 
+  }
 }
 
-@media only screen and  (min-width: 771px) and (max-width: 1025px) {
-
-    .buttonContainer {
-      float: left;
-      width: 30%; 
-      height: 2em;
-      /* padding: 1px; */
-      position: relative;
-      margin-left: 34%;
-      margin-top: -4%;  
-    }
-
+@media only screen and (min-width: 771px) and (max-width: 1025px) {
+  .buttonContainer {
+    float: left;
+    width: 30%;
+    height: 2em;
+    /* padding: 1px; */
+    position: relative;
+    margin-left: 34%;
+    margin-top: -4%;
+  }
 }
-
 </style>
