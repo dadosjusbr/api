@@ -342,10 +342,7 @@ func main() {
 	e.Renderer = renderer
 
 	e.Static("/static", "templates/assets")
-	e.Static("/novo", "ui/dist")
-
-	e.GET("/", handleMainPageRequest(dbClient))
-	e.GET("/:year/:month", handleMonthRequest(dbClient))
+	e.Static("/", "ui/dist")
 
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency)
