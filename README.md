@@ -1,4 +1,4 @@
-# dadosjusbr.org/novo
+# dadosjusbr.org
 
 > Ao mudar o foco para o sistema de justiça (incluindo MPs, Procuradorias e Defensorias) tivemos que mudar o formato de dados, coletores e o site. Estamos trabalhando árduamente para chegar na versão 1.0, o que deve acontecer no primeiro semestre de 2020.
 
