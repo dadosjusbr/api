@@ -356,7 +356,7 @@ a {
     padding: 0px;
     position: relative;
     margin-left: 40%;
-    margin-top: -9%;
+    margin-top: -7%;
   }
 
   .md-card {
@@ -367,6 +367,7 @@ a {
     font-size: 1.1em;
     margin-top: 2%;
     margin-left: 2%;
+    margin-bottom: 0%;
   }
 }
 
