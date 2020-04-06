@@ -2,34 +2,53 @@
   <div class="aboutContainer">
     <h1>SOBRE</h1>
     <p>
-      A <i>Lei da Transparência</i>, obriga os órgãos públicos a disponibilizar
-      seus dados de gastos de forma online e pública. Um dos maiores gastos
-      desses órgão é proveniente da folha de pagamento de funcionários. Essas
-      folhas de pagamentos são normalmente disponibilizadas em arquivos de
-      diversos formatos nos sites de cada um dos órgãos. Devido a essas
-      características realizar um controle social sobre esses dados de gastos
-      públicos é um tarefa difícil.
+      Os funcionários e funcionárias do poder judiciário brasileiro recebem
+      outras verbas, além de seus salários, para exercerem seus cargos. Dentre
+      elas encontramos auxílio moradia, despesas com saúde, auxílio transporte,
+      gratificações, diárias, entre outros benefícios. O objetivo do DadosJusBr
+      é apresentar de forma detalhada e unificada os dados de gastos com
+      remuneração dos órgãos que constituem o poder judiciário brasileiro, assim
+      facilitando o acesso e promovendo o controle social sobre esses gastos do
+      poder judiciário.
     </p>
 
     <p>
-      O <b> DadosJus</b> surgiu com a proposta de realizar a unificação,
-      libertação e normalização dos dados de remuneração dos órgãos que
-      constituem o Poder Judiciário Brasileiro. O DadosJus é fruto da
-      colaboração entre <b>Laboratório Analytics</b>,
-      <b>Universidade Federal de Campina Grande</b> e o
-      <b>Minitério Público da Paraíba</b>.
+      A
+      <a
+        href="http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
+        ><b>Lei Federal 12.527/2011</b></a
+      >, ou mais comumente conhecida como Lei da Transparência, diz que é “<i
+        >obrigatória a divulgação em sítios oficiais da rede mundial de
+        computadores (internet)</i
+      >” d  os dados de gastos públicos. Porém, a lei da transparência pouco diz
+      sobre a forma como esses dado devem ser disponibilizados. Por isso, nos
+      sites dos órgãos são encontrados arquivos em diversos formatos (pdf, html,
+      planilhas eletrônicas, json e etc), além disso nomenclaturas e formatação
+      são muitas vezes diferentes para cada órgão. Devido a essas
+      características realizar um controle social e financeiro sobre essa enorme
+      quantidade de dados de gastos públicos é um tarefa difícil para o humano.
+      O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
+      promovendo um acesso mais democrático e fácil aos dados de remuneração do
+      poder judiciário brasileiro.
+    </p>
+
+    <p>
+      No DadosJusBr podemos entender como cada juiz, promotor e desembargador
+      são remunerados. Quais auxílios recebem? Quais os valores destes auxílios?
+      Quanto além do salário um funcionário recebeu em determinado mês? Quanto
+      um órgão gastou em determinado mês? Todas essas perguntas podem ser
+      respondidas através do DadosJusBr.
     </p>
 
     <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
-      O Poder Judiciário Brasileiro é composto por muitos órgãos distribuídos
-      Por todo o território nacional, devido a essa quantidade muito grande
-      torna-se inviável para um único time explorar todos eles. Por isso
-      precisamos de contribuidores para criar crawlers e parsers para alimentar
-      nossa base de dados. Saiba mais
-      <a href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
-        >aqui</a
+      O Judiciário Brasileiro é composto por uma grande quantidade de órgãos
+      distribuídos por todo o território nacional. Por isso, precisamos de
+      contribuidores para criar crawlers e parsers para alimentar nossa base de
+      dados. Saiba mais
+      <a href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md">
+        <b> aqui </b></a
       >.
     </p>
 
@@ -119,7 +138,7 @@ import profileCard from "@/components/about/profileCard.vue";
 
 export default {
   name: "about",
-  components: { profileCard }
+  components: { profileCard },
 };
 </script>
 
@@ -148,7 +167,6 @@ export default {
   margin-right: 200px;
   margin-top: 10px;
   background-color: #6a757a;
-  height: 1450px;
   margin-bottom: 10px;
 }
 
@@ -197,6 +215,10 @@ p {
   font-size: 20px;
 }
 
+a {
+  color: white;
+}
+
 @media only screen and (max-width: 1276px) {
   .teamPhotosContainer {
     padding-top: 5px;
@@ -217,7 +239,6 @@ p {
     margin-right: 100px;
     margin-top: 10px;
     background-color: #6a757a;
-    height: 1200px;
     margin-bottom: 10px;
   }
 }
@@ -241,7 +262,6 @@ p {
     margin-left: 20px;
     margin-right: 20px;
     margin-top: 10px;
-    height: 1200px;
   }
 }
 
@@ -262,20 +282,10 @@ p {
   .aboutContainer {
     margin-left: 10px;
     margin-right: 10px;
-    height: 1300px;
-  }
-}
-
-@media only screen and (max-width: 730px) {
-  .aboutContainer {
-    height: 1390px;
   }
 }
 
 @media only screen and (max-width: 650px) {
-  .aboutContainer {
-    height: 1220px;
-  }
   p {
     font-size: 15px;
   }
@@ -285,7 +295,6 @@ p {
   .aboutContainer {
     margin-left: 2px;
     margin-right: 2px;
-    height: 1650px;
   }
   p {
     font-size: 15px;
@@ -296,7 +305,6 @@ p {
   .aboutContainer {
     margin-left: 2px;
     margin-right: 2px;
-    height: 1620px;
   }
   p {
     font-size: 15px;
@@ -307,7 +315,6 @@ p {
   .aboutContainer {
     margin-left: 2px;
     margin-right: 2px;
-    height: 1900px;
   }
   p {
     font-size: 15px;
