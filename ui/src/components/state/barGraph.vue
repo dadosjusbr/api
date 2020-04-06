@@ -45,7 +45,6 @@ export default {
     height: auto;
     padding: 0%;
     position: relative;
-    margin-top: -7%;
   }
 }
 
@@ -55,7 +54,6 @@ export default {
     height: auto;
     padding: 8px;
     position: relative;
-    margin-top: -7%;
   }
 }
 
