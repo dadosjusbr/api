@@ -1,158 +1,291 @@
 <template>
   <div class="graphContainer">
     <div class="buttonContainer">
-      <button v-on:click="previousMonth()" class="button btn btn-dark">
-        &#8249;
-      </button>
-      <a> {{ this.months[this.currentMonthAndYear.month] }} </a>
-      <button v-on:click="nextMonth()" class="button btn btn-dark">
-        &#8250;
-      </button>
+      <md-button
+        v-if="this.activateButton.previous"
+        v-on:click="previousMonth()"
+      >
+        <img src="../../assets/previous.png" />
+      </md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/previousd.png"
+      /></md-button>
+      <a>
+        {{
+          this.months[this.currentMonthAndYear.month] +
+            ", " +
+            this.currentMonthAndYear.year
+        }}
+      </a>
+      <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
+        <img src="../../assets/next.png" />
+      </md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/nextd.png"
+      /></md-button>
     </div>
-    <graph-point
-      width="100%"
-      type="scatter"
-      :options="chartOptions"
-      :series="series"
-    ></graph-point>
+    <graph-bar :options="chartOptions" :series="series"></graph-bar>
   </div>
 </template>
 
 <script>
-import graphPoint from "@/components/agency/graphPoint.vue";
+import graphBar from "@/components/agency/graphBar.vue";
 
 export default {
   name: "graphContainer",
   components: {
-    graphPoint
+    graphBar
   },
   data: function() {
     return {
       agencyName: this.$route.params.agencyName,
+      activateButton: { previous: true, next: true },
+      series: [],
       months: {
-        1: "Janeiro",
-        2: "Fevereiro",
-        3: "Março",
-        4: "Abril",
-        5: "Maio",
-        6: "Junho",
-        7: "Julho",
-        8: "Agosto",
-        9: "Setembro",
-        10: "Outubro",
-        11: "Novembro",
-        12: "Dezembro"
+        1: "Jan",
+        2: "Fev",
+        3: "Mar",
+        4: "Abr",
+        5: "Mai",
+        6: "Jun",
+        7: "Jul",
+        8: "Ago",
+        9: "Set",
+        10: "Out",
+        11: "Nov",
+        12: "Dez"
       },
-      salaryData: [],
-      currentMonthAndYear: { year: 2019, month: 1 },
+      currentMonthAndYear: { year: 2020, month: 1 },
       chartOptions: {
-        tooltip: {
-          custom: function({ series, seriesIndex, dataPointIndex }) {
-            return (
-              '<div class="arrow_box">' +
-              "<span>" +
-              series[seriesIndex][dataPointIndex] +
-              "</span>" +
-              "</div>"
-            );
+        colors: ["#c9e4ca", "#87bba2", "#364958"],
+        chart: {
+          stacked: true,
+          toolbar: {
+            show: false
           },
-          colors: ["#00AEEF"]
+          zoom: {
+            enabled: true
+          }
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: "bottom",
+                offsetX: -10,
+                offsetY: 0
+              },
+              yaxis: {
+                labels: {
+                  maxWidth: 120,
+                  style: {
+                    colors: [],
+                    fontSize: "12px",
+                    fontFamily: "Helvetica, Arial, sans-serif",
+                    fontWeight: 600,
+                    cssClass: "apexcharts-yaxis-label"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            barHeight: "70%"
+          }
+        },
+        yaxis: {
+          decimalsInFloat: 2,
+          title: {
+            text: "Remuneração",
+            offsetX: 6,
+            style: {
+              fontSize: "16px",
+              fontWeight: "bold",
+              fontFamily: undefined,
+              color: "#263238"
+            }
+          },
+          labels: {
+            show: true,
+            minWidth: 0,
+            maxWidth: 160,
+            style: {
+              colors: [],
+              fontSize: "14px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              cssClass: "apexcharts-yaxis-label"
+            }
+          }
+        },
+        xaxis: {
+          categories: [
+            "> R$ 50 mil",
+            "R$ 40~50 mil",
+            "R$ 30~40 mil",
+            "R$ 20~30 mil",
+            "R$ 10~20 mil",
+            "< R$ 10 mil"
+          ],
+          title: {
+            text: "Quantidade de funcionários",
+            margin: 10,
+            style: {
+              fontSize: "16px",
+              fontWeight: "bold",
+              fontFamily: undefined,
+              color: "#263238"
+            }
+          }
+        },
+        legend: {
+          position: "right",
+          offsetY: 120
+        },
+        fill: {
+          opacity: 1
+        },
+        dataLabels: {
+          enabled: false
         }
       }
     };
   },
   methods: {
-    nextMonth() {
-      let year, month;
-      if (this.currentMonthAndYear.month === 12) {
-        year = this.currentMonthAndYear.year + 1;
-        month = 1;
-      } else {
-        year = this.currentMonthAndYear;
-        month = this.currentMonthAndYear.month + 1;
-      }
-      this.currentMonthAndYear = { year, month };
-      this.$http
+    async checkNextYear() {
+      var { month, year } = this.getNextDate();
+      await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => (this.salaryData = response.data));
+        .catch(err => {
+          this.activateButton.next = false;
+        });
     },
-    previousMonth() {
-      var year, month;
-      if (this.currentMonthAndYear.month === 1) {
-        year = this.currentMonthAndYear.year - 1;
-        month = 12;
+    async checkPreviousYear() {
+      var { month, year } = this.getPreviousDate();
+      await this.$http
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .catch(err => {
+          this.activateButton.previous = false;
+        });
+    },
+
+    getNextDate() {
+      let month = this.currentMonthAndYear.month;
+      let year = this.currentMonthAndYear.year;
+      if (this.currentMonthAndYear.month === 12) {
+        month = 1;
+        year = year + 1;
       } else {
-        year = this.currentMonthAndYear.year;
+        month = month + 1;
+      }
+      return { month, year };
+    },
+    getPreviousDate() {
+      let month = this.currentMonthAndYear.month;
+      let year = this.currentMonthAndYear.year;
+      if (this.currentMonthAndYear.month === 1) {
+        month = 12;
+        year = year - 1;
+      } else {
         month = this.currentMonthAndYear.month - 1;
       }
-      this.currentMonthAndYear = { year, month };
-      this.$http
+      return { month, year };
+    },
+    async nextMonth() {
+      var { month, year } = this.getNextDate();
+      this.currentMonthAndYear = { month, year };
+      this.activateButton.previous = true;
+      await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => (this.salaryData = response.data));
+        .then(response => this.generateSeries(response.data))
+        .then(this.checkNextYear())
+        .then(this.$emit("change", { year, month }));
+    },
+    async previousMonth() {
+      var { month, year } = this.getPreviousDate();
+      this.activateButton.next = true;
+      this.currentMonthAndYear = { month, year };
+      await this.$http
+        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .then(response => this.generateSeries(response.data))
+        .then(this.checkPreviousYear())
+        .then(this.$emit("change", { year, month }));
+    },
+    generateSeries(data) {
+      this.series = [
+        {
+          name: "Membros",
+          data: [
+            data.Members["-1"],
+            data.Members["50000"],
+            data.Members["40000"],
+            data.Members["30000"],
+            data.Members["20000"],
+            data.Members["10000"]
+          ]
+        },
+        {
+          name: "Servidores",
+          data: [
+            data.Servers["-1"],
+            data.Servers["50000"],
+            data.Servers["40000"],
+            data.Servers["30000"],
+            data.Servers["20000"],
+            data.Servers["10000"]
+          ]
+        },
+        {
+          name: "Inativos",
+          data: [
+            data.Inactives["-1"],
+            data.Inactives["50000"],
+            data.Inactives["40000"],
+            data.Inactives["30000"],
+            data.Inactives["20000"],
+            data.Inactives["10000"]
+          ]
+        }
+      ];
     }
   },
-  computed: {
-    series: function() {
-      let dataToPlot = this.salaryData.map((employee, index) => [
-        employee["Total"],
-        index + 1
-      ]);
-      return [{ name: "total", data: dataToPlot }];
-    },
-    names: function() {
-      return this.salaryData.map(employee => employee["Name"]);
-    },
-    wages: function() {
-      return this.salaryData.map(employee => employee["Wage"]);
-    },
-    others: function() {
-      return this.salaryData.map(employee => employee["Others"]);
-    },
-    perks: function() {
-      return this.salaryData.map(employee => employee["Perks"]);
-    }
-  },
-  mounted() {
-    this.$http
-      .get(
-        "/orgao/salario/" +
-          this.agencyName +
-          "/" +
-          this.currentMonthAndYear.year +
-          "/" +
-          this.currentMonthAndYear.month
-      )
-      .then(response => (this.salaryData = response.data));
+  async mounted() {
+    const { data } = await this.$http.get(
+      "/orgao/salario/" +
+        this.agencyName +
+        "/" +
+        this.currentMonthAndYear.year +
+        "/" +
+        this.currentMonthAndYear.month
+    );
+    this.generateSeries(data);
   }
 };
 </script>
 
 <style scoped>
-.button {
-  background-color: #182825; /* Green */
-  border: none;
-  color: white;
-  text-decoration: none;
-  font-size: 30px;
-  position: relative;
-  top: 10px;
-  width: 50px;
-}
 .buttonContainer {
-  width: 200px;
-  height: auto;
-  margin: 0 auto;
-  padding: 10px;
-  position: relative;
+  width: 105%;
+  height: 10%;
+  margin-top: 8%;
+  margin-left: -3%;
 }
 .graphContainer {
-  margin-top: 5px;
   text-align: center;
-  overflow: hidden;
+  overflow: hidde;
+  margin-bottom: 10px;
 }
 a {
-  font-family: "Montserrat", sans-serif;
-  font-size: 14px;
   color: black;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+button {
+  margin-top: -0.4%;
 }
 </style>

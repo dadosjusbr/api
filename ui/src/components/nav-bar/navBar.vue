@@ -43,8 +43,8 @@ export default {
 
 .logo {
   background-color: white;
-  height: 185px;
-  width: 330px;
+  height: 130px;
+  width: 225px;
   margin: 0 auto;
   
 }
@@ -68,7 +68,7 @@ a {
 .md-toolbar {
     text-align: center;
     width: 100%;
-    background-color: #352eba;
+    background-color: #2ab38b;
     padding: 0 5%;
     z-index: 5;
     height: 3em;
@@ -89,6 +89,88 @@ a {
   margin-top: 0%;
   margin-right: 3%;
 }
+
+@media only screen and (max-width: 379px) {
+  .logo {
+    background-color: white;
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 0%;
+    height: 0%;
+  }
+
+  .logo img {
+    width: 60%;
+    height: 60%;
+    border: 0;
+    margin-top: 1%;
+    margin-left: 15%;
+  }
+
+  .logoContainer {
+    display: none;
+    width: 0%;
+    margin: 0 0;
+    margin-left: 0%;
+  }
+
+  .links {
+    margin-top: 0%;
+    margin-right: 0%;
+    margin-left: 5%;
+  }
+
+  .links a {
+    font-size: 14px;
+  }
+}
+
+
+@media only screen and (min-width: 380px) and (max-width: 600px) {
+  .logo {
+    background-color: white;
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 0%;
+    height: 0%;
+  }
+
+  .logo img {
+    width: 60%;
+    height: 60%;
+    border: 0;
+    margin-top: 1%;
+    margin-left: 15%;
+  }
+
+  .logoContainer {
+    display: none;
+    width: 0%;
+    margin: 0 0;
+    margin-left: 0%;
+  }
+
+  .links {
+    margin-top: 0%;
+    margin-right: 0%;
+    margin-left: 13%;
+  }
+}
+
+@media only screen and (min-width: 601px) and  (max-width: 770px) {
+  .logoContainer {
+    width: 20%;
+  }
+}
+
+@media only screen and (min-width: 771px) and (max-width: 1025px) {
+  .logoContainer {
+    width: 15%;
+    margin: 0 auto;
+    margin-left: 7%;
+  }
+}
+
 
 </style>
 

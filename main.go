@@ -29,8 +29,8 @@ type config struct {
 	// StorageDB config
 	MongoURI    string `envconfig:"MONGODB_URI"`
 	MongoDBName string `envconfig:"MONGODB_NAME"`
-	MongoMICol  string `envconfig:"MONGODB_MICOL"`
-	MongoAgCol  string `envconfig:"MONGODB_AGCOL"`
+	MongoMICol  string `envconfig:"MONGODB_MICOL" required:"true"`
+	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
 }
 
 var monthsLabelMap = map[int]string{
@@ -154,6 +154,9 @@ func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
+	if c.MongoMICol == "" || c.MongoAgCol == "" {
+		return nil, fmt.Errorf("error creating storage client: db collections must not be empty. MI:\"%s\", AG:\"%s\"", c.MongoMICol, c.MongoAgCol)
+	}
 	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DB client: %q", err)
@@ -231,33 +234,60 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
-	var employees []models.Employee
+	members := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
+	servers := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
+	inactive := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
+	maxSalary := 0.0
+
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
-		newEmployee := models.Employee{
-			Name:   employeeAux.Name,
-			Wage:   *employeeAux.Income.Wage,
-			Perks:  employeeAux.Income.Perks.Total,
-			Others: employeeAux.Income.Other.Total,
-			Total:  employeeAux.Income.Total}
-		employees = append(employees, newEmployee)
+		if employeeAux.Income.Total > maxSalary {
+			maxSalary = employeeAux.Income.Total
+		}
+		salary := employeeAux.Income.Total
+		var salaryRange int
+		if salary <= 10000 {
+			salaryRange = 10000
+		} else if salary <= 20000 {
+			salaryRange = 20000
+		} else if salary <= 30000 {
+			salaryRange = 30000
+		} else if salary <= 40000 {
+			salaryRange = 40000
+		} else if salary <= 50000 {
+			salaryRange = 50000
+		} else {
+			salaryRange = -1 // -1 is maker when the salary is over 50000
+		}
+		if employeeAux.Type == "membro" && employeeAux.Active == true {
+			members[salaryRange]++
+		} else if employeeAux.Type == "servidor" && employeeAux.Active == true {
+			servers[salaryRange]++
+		} else if employeeAux.Active == false {
+			inactive[salaryRange]++
+		}
 	}
-	return c.JSON(http.StatusOK, employees)
+
+	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
+		Members:   members,
+		Servers:   servers,
+		Inactives: inactive,
+		MaxSalary: maxSalary,
+	})
 }
 
 func getSummaryOfAgency(c echo.Context) error {
-	yearOfCosult := time.Now().Year()
-	monthOfConsult := 1 //int(time.Now().Month()) Tem um erro na api de leitura enquanto não ajeitar deixei hardcoded aqui.
-	agencyName := c.Param("orgao")
-	var agencyMonthlyInfo *storage.AgencyMonthlyInfo
-	var err error
-	for i := monthOfConsult; i > 0; i-- {
-		agencyMonthlyInfo, err = client.GetDataForSecondScreen(monthOfConsult, yearOfCosult, agencyName)
-		if err == nil {
-			break
-		}
-	}
+	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", yearOfCosult, monthOfConsult, agencyName))
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
+	}
+	agencyName := c.Param("orgao")
+	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 	agencySummary := models.AgencySummary{
 		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
@@ -312,13 +342,10 @@ func main() {
 	e.Renderer = renderer
 
 	e.Static("/static", "templates/assets")
-	e.Static("/novo", "ui/dist")
-
-	e.GET("/", handleMainPageRequest(dbClient))
-	e.GET("/:year/:month", handleMonthRequest(dbClient))
+	e.Static("/", "ui/dist")
 
 	// Return a summary of an agency. This information will be used in the head of the agency page.
-	e.GET("/uiapi/v1/orgao/resumo/:orgao", getSummaryOfAgency)
+	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.

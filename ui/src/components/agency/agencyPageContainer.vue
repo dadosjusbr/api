@@ -3,8 +3,12 @@
     <div class="agencyNameContainer">
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
-    <agency-summary :agencySummary="agencySummary" />
-    <graph-container />
+    <div>
+      <agency-summary :agencySummary="agencySummary" />
+    </div>
+    <div>
+      <graph-container @change="date" />
+    </div>
   </div>
 </template>
 
@@ -23,12 +27,27 @@ export default {
   data() {
     return {
       agencyName: this.$route.params.agencyName,
-      agencySummary: null
+      agencySummary: null,
+      dateForSummary: { year: 2020, month: 1 }
     };
   },
   methods: {
+    date(date) {
+      this.dateForSummary = date;
+      this.fetchData();
+    },
     async fetchData() {
-      const { data } = await this.$http.get("/orgao/resumo/" + this.agencyName);
+      let month, year;
+      if (this.dateForSummary == undefined) {
+        month = 1;
+        year = 2020;
+      } else {
+        month = this.dateForSummary.month;
+        year = this.dateForSummary.year;
+      }
+      const { data } = await this.$http.get(
+        "/orgao/resumo/" + this.agencyName + "/" + year + "/" + month
+      );
       this.agencySummary = {
         Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
         Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
@@ -46,18 +65,42 @@ export default {
 
 <style scoped>
 .agencyName {
-  font-size: 1.5em;
-  margin-left: 13%;
   font-weight: bold;
 }
 
 .agencyContainer {
-  margin-left: 200px;
-  margin-right: 200px;
+  margin-left: 14%;
+  margin-right: 14%;
 }
 
 .agencyNameContainer {
-  margin-top: 1px;
-  height: 100px;
+  padding-top: 2.4%;
+  text-align: center;
+}
+
+@media only screen and (max-width: 379px) {
+  .agencyName {
+    margin-left: 0%;
+    margin-top: 0%;
+  }
+
+  .agencyContainer {
+    margin-left: 1%;
+    margin-right: 1%;
+  }
+
+}
+
+@media only screen and (min-width: 380px) and (max-width: 600px) {
+  .agencyName {
+    margin-left: 0%;
+    margin-top: 0%;
+  }
+
+  .agencyContainer {
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
 }
 </style>

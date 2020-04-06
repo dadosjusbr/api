@@ -28,11 +28,19 @@ export default {
 <style>
 .cards {
   justify-content: center;
-  display: flex;
-  opacity: 10;
+  display: flex;  
+  flex-wrap: wrap;
+  height: 11vw;
   width: 100%;
   align-self: center;
   align-content: center;
-  margin-top: 5px;
 }
+
+
+@media only screen and (max-width: 550px) {
+  .cards {
+  height: 50vw;
+  }
+}
+
 </style>
