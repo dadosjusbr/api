@@ -155,10 +155,6 @@ export default {
   background-color: white;
 }
 
-.tooltip {
-  background-color: chartreuse;
-}
-
 img {
   margin-left: 10%;
   margin-right: 10%;
