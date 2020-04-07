@@ -9,7 +9,7 @@
       é apresentar de forma detalhada, organizada e unificada os dados de gastos com
       remuneração dos órgãos que constituem o poder judiciário brasileiro, assim
       facilitando o acesso e promovendo o controle social sobre esses gastos do
-      poder judiciário.
+      poder judiciário, ministério público, defensoria pública e procuradorias.
     </p>
 
     <p>
