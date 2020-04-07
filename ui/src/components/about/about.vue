@@ -17,7 +17,7 @@
       <a
         href="http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
         ><b>Lei Federal 12.527/2011</b></a
-      >, ou mais comumente conhecida como Lei da Transparência, diz que é “<i
+      >, ou mais comumente conhecida como Lei de Acesso à Informação (LAI), diz que é “<i
         >obrigatória a divulgação em sítios oficiais da rede mundial de
         computadores (internet)</i
       >” d  os dados de gastos públicos. Porém, a lei da transparência pouco diz
