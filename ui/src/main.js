@@ -22,7 +22,7 @@ Vue.filter( 'formatDate', function(value) {
   moment.locale('pt-BR')
   if (value) {
     return moment(String(value)).format('DD ') + 'de ' + 
-        moment(String(value)).format('MMMM ') + 'ás ' +  moment(String(value)).format('hh:mm')
+        moment(String(value)).format('MMMM ') + 'às ' +  moment(String(value)).format('hh:mm')
   }
 });
 
