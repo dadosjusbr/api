@@ -17,7 +17,9 @@
       A
       <a
         href="http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
-        ><b>Lei Federal 12.527/2011</b></a
+        data-toggle="tooltip"
+        title="É obrigação dos órgãos, independentemente de requerimentos, a divulgação em local de fácil acesso, dos seus registros de despesas. Também assegurado pela Lei Complementar 101/2000 (Lei de Responsabilidade Fiscal) a transparência é assegurada quando houver a liberação, em tempo real, de informações pormenorizadas sobre a execução orçamentária e financeira, em meios eletrônicos de acesso público"
+        >Lei Federal 12.527/2011</a
       >, ou mais comumente conhecida como Lei de Acesso à Informação (LAI), diz
       que é “<i
         >obrigatória a divulgação em sítios oficiais da rede mundial de
@@ -41,7 +43,7 @@
       um órgão gastou em determinado mês? Todas essas perguntas podem ser
       respondidas através do DadosJusBr.
     </p>
-s
+    s
     <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
@@ -153,6 +155,10 @@ export default {
   background-color: white;
 }
 
+.tooltip {
+  background-color: chartreuse;
+}
+
 img {
   margin-left: 10%;
   margin-right: 10%;
@@ -230,6 +236,7 @@ p {
 
 a {
   color: white;
+  font-weight: 500;
 }
 
 @media only screen and (max-width: 1276px) {
