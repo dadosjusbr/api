@@ -2,7 +2,7 @@
   <div class="aboutContainer">
     <h1>SOBRE</h1>
     <p>
-      Os funcionários e funcionárias do poder judiciário brasileiro recebem
+      Os agentes públicos do sistema de justiça brasileiro recebem
       outras verbas, além de seus salários, para exercerem seus cargos. Dentre
       elas encontramos auxílio moradia, despesas com saúde, auxílio transporte,
       gratificações, diárias, entre outros benefícios. O objetivo do DadosJusBr
