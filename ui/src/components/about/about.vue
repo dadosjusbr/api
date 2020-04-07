@@ -29,7 +29,7 @@
       quantidade de dados de gastos públicos é uma tarefa difícil para uma pessoa.
       O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
       promovendo um acesso mais democrático e fácil aos dados de remuneração do
-      poder judiciário brasileiro.
+      sistema de justiça brasileiro.
     </p>
 
     <p>
