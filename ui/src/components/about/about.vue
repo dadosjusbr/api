@@ -21,7 +21,7 @@
         >obrigatória a divulgação em sítios oficiais da rede mundial de
         computadores (internet)</i
       >” d  os dados de gastos públicos. Porém, a lei da transparência pouco diz
-      sobre a forma como esses dado devem ser disponibilizados. Por isso, nos
+      sobre a forma como esses dados devem ser disponibilizados. Por isso, nos
       sites dos órgãos são encontrados arquivos em diversos formatos (pdf, html,
       planilhas eletrônicas, json e etc), além disso nomenclaturas e formatação
       são muitas vezes diferentes para cada órgão. Devido a essas
