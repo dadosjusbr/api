@@ -20,7 +20,7 @@
       >, ou mais comumente conhecida como Lei de Acesso à Informação (LAI), diz que é “<i
         >obrigatória a divulgação em sítios oficiais da rede mundial de
         computadores (internet)</i
-      >” d  os dados de gastos públicos. Porém, a lei da transparência pouco diz
+      >”  os dados de gastos públicos. Porém, a LAI pouco diz
       sobre a forma como esses dados devem ser disponibilizados. Por isso, nos
       sites dos órgãos são encontrados arquivos em diversos formatos (pdf, html,
       planilhas eletrônicas, json e etc), além disso nomenclaturas e formatação
