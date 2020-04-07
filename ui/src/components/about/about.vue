@@ -26,7 +26,7 @@
       planilhas eletrônicas, json e etc), além disso nomenclaturas e formatação
       são muitas vezes diferentes para cada órgão. Devido a essas
       características realizar um controle social e financeiro sobre essa enorme
-      quantidade de dados de gastos públicos é um tarefa difícil para o humano.
+      quantidade de dados de gastos públicos é uma tarefa difícil para uma pessoa.
       O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
       promovendo um acesso mais democrático e fácil aos dados de remuneração do
       poder judiciário brasileiro.
