@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // State - Struct cotains information of a state ans its agencies
 type State struct {
 	Name      string
@@ -31,6 +33,7 @@ type AgencySummary struct {
 	TotalWage      float64
 	TotalPerks     float64
 	MaxWage        float64
+	CrawlingTime   time.Time
 }
 
 // AgencyTotalsYear - Represents the totals of an year
