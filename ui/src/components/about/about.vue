@@ -41,7 +41,7 @@
       um órgão gastou em determinado mês? Todas essas perguntas podem ser
       respondidas através do DadosJusBr.
     </p>
-
+s
     <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
@@ -127,11 +127,15 @@
       </profile-card>
     </div>
 
-    <!-- <div class="logoContainer">
-      <img class="img1" src="../../assets/logo_ufcg.png" />
-      <img class="img3" src="../../assets/logo_mppb.png" />
-      <img class="img2" src="../../assets/logo_analytics.png" />
-    </div> -->
+    <div class="partnerContainer">
+      <h2 style="color: black">PARCEIROS</h2>
+      <div class="partnerCard">
+        <img class="img1" src="../../assets/logo_analytics.png" />
+        <img class="img2" src="../../assets/logo_shuttleworth.png" />
+        <img class="img1" src="../../assets/logo_ufcg.png" />
+        <img class="img2" src="../../assets/logo_mppb.png" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -145,6 +149,19 @@ export default {
 </script>
 
 <style scoped>
+.partnerContainer {
+  background-color: white;
+}
+
+img {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.partnerCard {
+  align-content: center;
+  text-align: center;
+}
+
 .teamPhotosContainer {
   padding-top: 5px;
   padding-right: 5px;
@@ -158,18 +175,17 @@ export default {
   align-content: center;
 }
 
-.logoContainer {
-  border: 3px black;
-  text-align: center;
-}
-
 .aboutContainer {
-  border: 1px solid #6a757a;
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
   background-color: #6a757a;
   margin-bottom: 10px;
+}
+
+.partnerCard {
+  background-color: white;
+  color: black;
 }
 
 h1 {
@@ -194,16 +210,11 @@ h3 {
 }
 
 .img1 {
-  width: 200px;
-  height: 200px;
+  width: 25%;
+  height: 25%;
 }
 
 .img2 {
-  width: 200px;
-  height: 200px;
-}
-
-.img3 {
   width: 30%;
   height: 20%;
 }
@@ -236,7 +247,6 @@ a {
   }
 
   .aboutContainer {
-    border: 1px solid #6a757a;
     margin-left: 100px;
     margin-right: 100px;
     margin-top: 10px;
@@ -260,7 +270,6 @@ a {
   }
 
   .aboutContainer {
-    border: 1px solid #6a757a;
     margin-left: 20px;
     margin-right: 20px;
     margin-top: 10px;
