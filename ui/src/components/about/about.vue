@@ -2,14 +2,15 @@
   <div class="aboutContainer">
     <h1>SOBRE</h1>
     <p>
-      Os agentes públicos do sistema de justiça brasileiro recebem
-      outras verbas, além de seus salários, para exercerem seus cargos. Dentre
-      elas encontramos auxílio moradia, despesas com saúde, auxílio transporte,
+      Os agentes públicos do sistema de justiça brasileiro recebem outras
+      verbas, além de seus salários, para exercerem seus cargos. Dentre elas
+      encontramos auxílio moradia, despesas com saúde, auxílio transporte,
       gratificações, diárias, entre outros benefícios. O objetivo do DadosJusBr
-      é apresentar de forma detalhada, organizada e unificada os dados de gastos com
-      remuneração dos órgãos que constituem o sistema de justiça brasileiro, assim
-      facilitando o acesso e promovendo o controle social sobre esses gastos do
-      poder judiciário, ministério público, defensoria pública e procuradorias.
+      é apresentar de forma detalhada, organizada e unificada os dados de gastos
+      com remuneração dos órgãos que constituem o sistema de justiça brasileiro,
+      assim facilitando o acesso e promovendo o controle social sobre esses
+      gastos do poder judiciário, ministério público, defensoria pública e
+      procuradorias.
     </p>
 
     <p>
@@ -17,19 +18,20 @@
       <a
         href="http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
         ><b>Lei Federal 12.527/2011</b></a
-      >, ou mais comumente conhecida como Lei de Acesso à Informação (LAI), diz que é “<i
+      >, ou mais comumente conhecida como Lei de Acesso à Informação (LAI), diz
+      que é “<i
         >obrigatória a divulgação em sítios oficiais da rede mundial de
         computadores (internet)</i
-      >”  os dados de gastos públicos. Porém, a LAI pouco diz
-      sobre a forma como esses dados devem ser disponibilizados. Por isso, nos
-      sites dos órgãos são encontrados arquivos em diversos formatos (pdf, html,
-      planilhas eletrônicas, json e etc), além disso nomenclaturas e formatação
-      são muitas vezes diferentes para cada órgão. Devido a essas
-      características realizar um controle social e financeiro sobre essa enorme
-      quantidade de dados de gastos públicos é uma tarefa difícil para uma pessoa.
-      O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
-      promovendo um acesso mais democrático e fácil aos dados de remuneração do
-      sistema de justiça brasileiro.
+      >” dos dados de gastos públicos. Porém, a LAI pouco diz sobre a forma como
+      esses dados devem ser disponibilizados. Por isso, nos sites dos órgãos são
+      encontrados arquivos em diversos formatos (pdf, html, planilhas
+      eletrônicas, json e etc), além disso nomenclaturas e formatação são muitas
+      vezes diferentes para cada órgão. Devido a essas características realizar
+      um controle social e financeiro sobre essa enorme quantidade de dados de
+      gastos públicos é uma tarefa difícil para uma pessoa. O DadosJusBr utiliza
+      a inteligência de dados para a ação cidadã, promovendo um acesso mais
+      democrático e fácil aos dados de remuneração do sistema de justiça
+      brasileiro.
     </p>
 
     <p>
@@ -43,10 +45,10 @@
     <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
-      O sistema de justiça brasileiro é composto por uma grande quantidade de órgãos federais e estaduais
-      distribuídos por todo o território nacional. Por isso, precisamos de
-      contribuidores para criar crawlers e parsers para alimentar nossa base de
-      dados. Saiba mais
+      O sistema de justiça brasileiro é composto por uma grande quantidade de
+      órgãos federais e estaduais distribuídos por todo o território nacional.
+      Por isso, precisamos de contribuidores para criar crawlers e parsers para
+      alimentar nossa base de dados. Saiba mais
       <a href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md">
         <b> aqui </b></a
       >.
