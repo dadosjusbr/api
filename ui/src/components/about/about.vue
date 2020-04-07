@@ -7,7 +7,7 @@
       elas encontramos auxílio moradia, despesas com saúde, auxílio transporte,
       gratificações, diárias, entre outros benefícios. O objetivo do DadosJusBr
       é apresentar de forma detalhada, organizada e unificada os dados de gastos com
-      remuneração dos órgãos que constituem o poder judiciário brasileiro, assim
+      remuneração dos órgãos que constituem o sistema de justiça brasileiro, assim
       facilitando o acesso e promovendo o controle social sobre esses gastos do
       poder judiciário, ministério público, defensoria pública e procuradorias.
     </p>
