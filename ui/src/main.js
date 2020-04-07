@@ -9,11 +9,21 @@ import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/vue-material.css";
 import "vue-material/dist/vue-material.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import moment from 'moment'
+
 
 Vue.config.productionTip = false;
 Vue.use(VueMaterial);
 Vue.use(VueGtag, {
   config: { id: "UA-143064237-1" }
+});
+
+Vue.filter( 'formatDate', function(value) {
+  moment.locale('pt-BR')
+  if (value) {
+    return moment(String(value)).format('DD ') + 'de ' + 
+        moment(String(value)).format('MMMM ') + 'ás ' +  moment(String(value)).format('hh:mm')
+  }
 });
 
 const base = axios.create({

@@ -9,6 +9,7 @@
     <div>
       <graph-container @change="date" />
     </div>
+      <div class="cr">Dados Capturados em {{Crawling_Timestamp | formatDate}}, horário de Brasília.</div>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ export default {
     return {
       agencyName: this.$route.params.agencyName,
       agencySummary: null,
+      Crawling_Timestamp: null,
       dateForSummary: { year: 2020, month: 1 }
     };
   },
@@ -53,8 +55,10 @@ export default {
         Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
         Total_Indenizações:
           "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
-        Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2))
+        Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2)),
       };
+      this.Crawling_Timestamp = data.CrawlingTime
+      
     }
   },
   mounted() {
@@ -78,10 +82,20 @@ export default {
   text-align: center;
 }
 
+.cr {
+  text-align: center;
+  font-size: 1.1em;
+}
+
 @media only screen and (max-width: 379px) {
   .agencyName {
     margin-left: 0%;
     margin-top: 0%;
+  }
+
+  .cr {
+  text-align: center;
+  font-size: 0.85em;
   }
 
   .agencyContainer {
