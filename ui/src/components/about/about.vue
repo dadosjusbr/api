@@ -43,7 +43,7 @@
     <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
     <p>
-      O Judiciário Brasileiro é composto por uma grande quantidade de órgãos
+      O sistema de justiça brasileiro é composto por uma grande quantidade de órgãos federais e estaduais
       distribuídos por todo o território nacional. Por isso, precisamos de
       contribuidores para criar crawlers e parsers para alimentar nossa base de
       dados. Saiba mais
