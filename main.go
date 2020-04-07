@@ -297,7 +297,6 @@ func getSummaryOfAgency(c echo.Context) error {
 		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
 		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max,
 		CrawlingTime:   agencyMonthlyInfo.CrawlingTimestamp}
-	fmt.Println(agencySummary)
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
