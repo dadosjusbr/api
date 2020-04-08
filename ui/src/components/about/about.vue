@@ -155,13 +155,15 @@ export default {
   background-color: white;
 }
 
+.partnerCard {
+  text-align: center;
+  background-color: white;
+  color: black;
+}
+
 img {
   margin-left: 10%;
   margin-right: 10%;
-}
-.partnerCard {
-  align-content: center;
-  text-align: center;
 }
 
 .teamPhotosContainer {
@@ -183,11 +185,6 @@ img {
   margin-top: 10px;
   background-color: #6a757a;
   margin-bottom: 10px;
-}
-
-.partnerCard {
-  background-color: white;
-  color: black;
 }
 
 h1 {
