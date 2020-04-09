@@ -34,7 +34,7 @@ Dentro do diretório remuneraçoes usar o auxiliador de pacotes para instalar as
 $ cd remuneracoes
 $ npm i
 ```
-Renomear o arquivo .env.sample na raiz do projeto para .env e configurar suas variáveis de ambiente
+Renomear o arquivo `.env.sample` na raiz do projeto para `.env` e configurar suas variáveis de ambiente
  
 ### Para rodar o servidor:
 ```console
