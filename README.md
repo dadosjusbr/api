@@ -13,8 +13,9 @@ No entanto, essas publicações são realizadas mensalmente através de um conju
 Pensando nisso, o projeto [dadosjusbr](https://github.com/dadosjusbr) tem como principal objetivo prover acesso às informações de remunerações do sistema judiciário de forma consolidada e em formato aberto. Para tal, criamos sistemas computacionais que realizam a conversão, consolidação e validação dos dados de forma contínua. Com o monitoramento contínuo, podemos cobrar a disponiblização ou correção de informações, caso necessário. Por fim, disponibilizamos o [dadosjusbr.online](https://dadosjusbr.online), um portal onde os dados são publicados em um formato amplamente compatível com ferramentas de análise e processamento de dados e estão organizados em uma página por mês de referência.
 
 ### Como rodar a aplicaçao?
-[nesta página](http://www.cnj.jus.br/transparencia/remuneracao-dos-magistrados).
+
 Configuraçoes necessárias:
+
 [MongoDb](https://docs.mongodb.com/guides/server/install/)  Versão 3.6+
 [GoLang](https://golang.org/doc/install)  Versão 1.14+
 [Node](https://nodejs.org/en/download/) Versão 13.12+
