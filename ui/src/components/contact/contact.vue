@@ -25,11 +25,11 @@ export default {
 
 <style scoped>
 .contactContainer {
-  border: 1px solid #6a757a;
+  border: 1px solid #01805A;
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
-  background-color: #6a757a;
+  background-color: #01805A;
   height: 700px;
   margin-bottom: 10px;
 }

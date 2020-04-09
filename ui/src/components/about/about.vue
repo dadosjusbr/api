@@ -5,8 +5,10 @@
       Os agentes públicos do sistema de justiça brasileiro recebem outras
       verbas, além de seus salários, para exercerem seus cargos. Dentre elas
       encontramos auxílio moradia, despesas com saúde, auxílio transporte,
-      gratificações, diárias, entre outros benefícios. O objetivo do DadosJusBr
-      é apresentar de forma detalhada, organizada e unificada os dados de gastos
+      gratificações, diárias, entre outros benefícios. Inspirados em projetos como o
+      <a href="https://serenata.ai/"> Serenata de amor </a> e
+      <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com o objetivo
+      de apresentar de forma detalhada, organizada e unificada os dados de gastos
       com remuneração dos órgãos que constituem o sistema de justiça brasileiro,
       assim facilitando o acesso e promovendo o controle social sobre esses
       gastos do poder judiciário, ministério público, defensoria pública e
@@ -183,7 +185,7 @@ img {
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
-  background-color: #6a757a;
+  background-color: #01805A;
   margin-bottom: 10px;
 }
 
@@ -192,6 +194,7 @@ h1 {
   text-align: center;
   padding-top: 50px;
   font-size: 50px;
+  margin-top: 0%;
 }
 
 h2 {
@@ -250,7 +253,7 @@ a {
     margin-left: 100px;
     margin-right: 100px;
     margin-top: 10px;
-    background-color: #6a757a;
+    background-color: #01805A;
     margin-bottom: 10px;
   }
 }

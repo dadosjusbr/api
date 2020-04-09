@@ -40,6 +40,7 @@ export default {
 }
 
 .teamPhotoCard {
+  color: white;
   text-align: center;
   margin-right: 40px;
   margin-left: 40px;
