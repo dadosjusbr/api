@@ -16,9 +16,11 @@ Pensando nisso, o projeto [dadosjusbr](https://github.com/dadosjusbr) tem como p
 
 Configuraçoes necessárias:
 
-[MongoDb](https://docs.mongodb.com/guides/server/install/)  Versão 3.6+
-[GoLang](https://golang.org/doc/install)  Versão 1.14+
-[Node](https://nodejs.org/en/download/) Versão 13.12+
+[MongoDb](https://docs.mongodb.com/guides/server/install/)  Versão 3.6+  
+
+[GoLang](https://golang.org/doc/install)  Versão 1.14+  
+
+[Node](https://nodejs.org/en/download/) Versão 13.12+  
 
 ### Como rodar a cli:
 Fazer o download do repositório remuneraçoes:
