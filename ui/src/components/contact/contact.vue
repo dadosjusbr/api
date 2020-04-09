@@ -25,17 +25,16 @@ export default {
 
 <style scoped>
 .contactContainer {
-  border: 1px solid #01805A;
   margin-left: 200px;
   margin-right: 200px;
   margin-top: 10px;
-  background-color: #01805A;
+  background-color: white;
   height: 700px;
   margin-bottom: 10px;
 }
 
 h1 {
-  color: white;
+  color: black;
   text-align: center;
   padding-top: 50px;
   font-size: 50px;
@@ -46,7 +45,7 @@ p {
   padding-right: 60px;
   padding-top: 25px;
   text-align: justify;
-  color: white;
+  color: black;
   font-size: 25px;
   margin-top: 50px;
 }

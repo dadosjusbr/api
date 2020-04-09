@@ -3,7 +3,7 @@
     <a :href="this.github" target="_blank">
       <img class="profilePhoto" :src="this.image" />
     </a>
-    <h4>{{ this.name }}</h4>
+    <h4 style="padding-top: 15px">{{ this.name }}</h4>
     <h5>{{ this.role }}</h5>
   </div>
 </template>
@@ -40,12 +40,15 @@ export default {
 }
 
 .teamPhotoCard {
-  color: white;
+  color: white; 
   text-align: center;
   margin-right: 40px;
   margin-left: 40px;
   height: 250px;
   width: 200px;
+  background-color: #7f3c8b;
+  padding-top: 1%;
+  border-radius: 10px;
 }
 
 @media only screen and (max-width: 1276px) {

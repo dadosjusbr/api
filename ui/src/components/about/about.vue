@@ -5,14 +5,15 @@
       Os agentes públicos do sistema de justiça brasileiro recebem outras
       verbas, além de seus salários, para exercerem seus cargos. Dentre elas
       encontramos auxílio moradia, despesas com saúde, auxílio transporte,
-      gratificações, diárias, entre outros benefícios. Inspirados em projetos como o
+      gratificações, diárias, entre outros benefícios. Inspirados em projetos
+      como o
       <a href="https://serenata.ai/"> Serenata de amor </a> e
-      <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com o objetivo
-      de apresentar de forma detalhada, organizada e unificada os dados de gastos
-      com remuneração dos órgãos que constituem o sistema de justiça brasileiro,
-      assim facilitando o acesso e promovendo o controle social sobre esses
-      gastos do poder judiciário, ministério público, defensoria pública e
-      procuradorias.
+      <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com o
+      objetivo de apresentar de forma detalhada, organizada e unificada os dados
+      de gastos com remuneração dos órgãos que constituem o sistema de justiça
+      brasileiro, assim facilitando o acesso e promovendo o controle social
+      sobre esses gastos do poder judiciário, ministério público, defensoria
+      pública e procuradorias.
     </p>
 
     <p>
@@ -38,17 +39,17 @@
       brasileiro.
     </p>
 
-    <p>
+    <p style="margin-bottom: 40px">
       No DadosJusBr podemos entender como cada juiz, promotor e desembargador
       são remunerados. Quais auxílios recebem? Quais os valores destes auxílios?
       Quanto além do salário um funcionário recebeu em determinado mês? Quanto
       um órgão gastou em determinado mês? Todas essas perguntas podem ser
       respondidas através do DadosJusBr.
     </p>
-    s
-    <h3>SE INTERESSOU, QUER AJUDAR?</h3>
 
-    <p>
+    <h2>SE INTERESSOU, QUER AJUDAR?</h2>
+
+    <p style="margin-bottom: 40px">
       O sistema de justiça brasileiro é composto por uma grande quantidade de
       órgãos federais e estaduais distribuídos por todo o território nacional.
       Por isso, precisamos de contribuidores para criar crawlers e parsers para
@@ -132,7 +133,7 @@
     </div>
 
     <div class="partnerContainer">
-      <h2 style="color: black">PARCEIROS</h2>
+      <h2>PARCEIROS</h2>
       <div class="partnerCard">
         <img class="img1" src="../../assets/logo_analytics.png" />
         <img class="img2" src="../../assets/logo_shuttleworth.png" />
@@ -184,31 +185,24 @@ img {
 .aboutContainer {
   margin-left: 200px;
   margin-right: 200px;
-  margin-top: 10px;
-  background-color: #01805A;
+  margin-top: 20px;
+  background-color: white;
   margin-bottom: 10px;
 }
 
 h1 {
-  color: white;
+  color: black;
   text-align: center;
-  padding-top: 50px;
-  font-size: 50px;
+  font-size: 45px;
   margin-top: 0%;
 }
 
 h2 {
+  display: inline-block;
+  background-color: #2ab38b;
   color: white;
   text-align: center;
-  padding-top: 50px;
   font-size: 35px;
-}
-
-h3 {
-  color: white;
-  text-align: center;
-  padding-top: 50px;
-  font-size: 30px;
 }
 
 .img1 {
@@ -222,16 +216,16 @@ h3 {
 }
 
 p {
-  padding-left: 60px;
+  /* padding-left: 60px;
   padding-right: 60px;
-  padding-top: 25px;
+  padding-top: 25px; */
   text-align: justify;
-  color: white;
+  color: black;
   font-size: 20px;
 }
 
 a {
-  color: white;
+  color: black;
   font-weight: 500;
 }
 
@@ -253,7 +247,7 @@ a {
     margin-left: 100px;
     margin-right: 100px;
     margin-top: 10px;
-    background-color: #01805A;
+    background-color: #01805a;
     margin-bottom: 10px;
   }
 }
