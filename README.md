@@ -12,7 +12,7 @@ No entanto, essas publicações são realizadas mensalmente através de um conju
 
 Pensando nisso, o projeto [dadosjusbr](https://github.com/dadosjusbr) tem como principal objetivo prover acesso às informações de remunerações do sistema judiciário de forma consolidada e em formato aberto. Para tal, criamos sistemas computacionais que realizam a conversão, consolidação e validação dos dados de forma contínua. Com o monitoramento contínuo, podemos cobrar a disponiblização ou correção de informações, caso necessário. Por fim, disponibilizamos o [dadosjusbr.online](https://dadosjusbr.online), um portal onde os dados são publicados em um formato amplamente compatível com ferramentas de análise e processamento de dados e estão organizados em uma página por mês de referência.
 
-### Como rodar a aplicação localmente?
+## Como rodar a aplicação localmente?
 
 ### Configuraçoes necessárias:
 
