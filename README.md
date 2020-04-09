@@ -14,7 +14,7 @@ Pensando nisso, o projeto [dadosjusbr](https://github.com/dadosjusbr) tem como p
 
 ### Como rodar a aplicação localmente?
 
-##### Configuraçoes necessárias:
+### Configuraçoes necessárias:
 
 [MongoDb](https://docs.mongodb.com/guides/server/install/)  Versão 3.6+  
 
@@ -22,7 +22,7 @@ Pensando nisso, o projeto [dadosjusbr](https://github.com/dadosjusbr) tem como p
 
 [Node](https://nodejs.org/en/download/) Versão 13.12+  
 
-##### Como rodar a cli:
+### Como rodar a cli:
 Fazer o download do repositório remuneraçoes:
 
 ```console
@@ -36,7 +36,7 @@ $ npm i
 ```
 Renomear o arquivo .env.sample na raiz do projeto para .env e configurar suas variáveis de ambiente
  
-##### Para rodar o servidor:
+### Para rodar o servidor:
 ```console
 $ go run main.go 
 $ npm run serve
