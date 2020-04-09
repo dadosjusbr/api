@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+  <div class="app">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
+    />
     <nav-bar />
     <router-view />
     <page-footer />
@@ -14,11 +17,14 @@ import pageFooter from "@/components/footer/pageFooter.vue";
 export default {
   components: {
     navBar,
-    pageFooter
-  }
+    pageFooter,
+  },
 };
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed");
+.app {
+  font-family: "Roboto Condensed", sans-serif;
+}
 </style>
