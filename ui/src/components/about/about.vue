@@ -216,9 +216,8 @@ h2 {
 }
 
 p {
-  /* padding-left: 60px;
-  padding-right: 60px;
-  padding-top: 25px; */
+  padding-left: 5px;
+  padding-right: 5px;
   text-align: justify;
   color: black;
   font-size: 20px;
@@ -236,7 +235,7 @@ a {
     padding-bottom: 5px;
     padding-left: 5px;
     margin-top: 20px;
-    height: 150px;
+    height: 220px;
     justify-content: center;
     display: flex;
     align-self: center;
@@ -247,7 +246,6 @@ a {
     margin-left: 100px;
     margin-right: 100px;
     margin-top: 10px;
-    background-color: #01805a;
     margin-bottom: 10px;
   }
 }
@@ -259,7 +257,7 @@ a {
     padding-bottom: 5px;
     padding-left: 5px;
     margin-top: 20px;
-    height: 150px;
+    height: 220px;
     justify-content: center;
     display: flex;
     align-self: center;
@@ -280,7 +278,7 @@ a {
     padding-bottom: 5px;
     padding-left: 5px;
     margin-top: 20px;
-    height: 150px;
+    height: 220px;
     justify-content: center;
     display: flex;
     align-self: center;
