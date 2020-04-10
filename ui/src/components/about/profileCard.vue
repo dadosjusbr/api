@@ -14,21 +14,21 @@ export default {
   props: {
     image: {
       type: String,
-      default: ""
+      default: "",
     },
     role: {
       type: String,
-      default: ""
+      default: "",
     },
     name: {
       type: String,
-      default: ""
+      default: "",
     },
     github: {
       type: String,
-      default: ""
-    }
-  }
+      default: "",
+    },
+  },
 };
 </script>
 
@@ -40,7 +40,7 @@ export default {
 }
 
 .teamPhotoCard {
-  color: white; 
+  color: white;
   text-align: center;
   margin-right: 40px;
   margin-left: 40px;
@@ -77,7 +77,7 @@ export default {
     text-align: center;
     margin-right: 5px;
     margin-left: 5px;
-    height: 125px;
+    height: 150px;
     width: 200px;
   }
   .profilePhoto {
