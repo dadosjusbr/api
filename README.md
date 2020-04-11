@@ -12,14 +12,11 @@ Com essas tecnologias como base, criamos sistemas computacionais que realizam a 
 
 Com o monitoramento contínuo, podemos cobrar a disponiblização ou correção de informações, caso necessário. Por fim, disponibilizamos o [DadosJusBr](https://dadosjusbr.org/), um portal onde os dados são publicados em um formato amplamente compatível com ferramentas de análise e processamento de dados e estão organizados em uma página por mês de referência. Mais informações [aqui.](https://dadosjusbr.org/#/sobre)
 
-Esse projeto foi elaborado pelo Analytics UFCG, com o intuito de praticar a cidadania e tornar os dados com maior legibilidade para o cidadão. Você cidadão/empresa pode fazer parte dessa jornada conosco, quer saber como?
+Esse projeto foi elaborado com o intuito de praticar a cidadania e tornar os dados mais acessíveis para o cidadão. Você cidadão/empresa pode fazer parte dessa jornada conosco, quer saber como?
  - Informe se há alguma inconsistência ou erros no site. 
  - Atue como fiscal e cobre dos órgãos sobre a disponibilidade dos dados à população.
  - Sugira novos órgãos para elaboração de robôs, se tiver conhecimento, desenvolva um.
  - Sugerir coisas interessantes que você acha que irão contribuir para o projeto!
-
-Também é possível contribuir financeiramente, possuímos diversos gastos para manter o site online e desenvolver novas funcionalidades e você pode também contribuir para a sustentabilidade financeira do projeto. Se tiver interesse, entre em [contato](mailto:dadosjusbr@gmail.com).
-
 
 ## Como rodar a aplicação localmente?
 
