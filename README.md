@@ -10,7 +10,7 @@ Pensando nisso, o projeto [dadosjusbr](https://github.com/dadosjusbr) tem como p
 
 Com essas tecnologias como base, criamos sistemas computacionais que realizam a coleta, conversão, consolidação e validação dos dados de forma contínua. O DadosJusBr é conectado ao repositório de [coleta](https://github.com/dadosjusbr/coletores), que é responsável por adquirir os dados dos órgãos e padronizá-los. Já o repositório de [storage](https://github.com/dadosjusbr/storage), é responsável pelo armazenamento desses dados coletados.
 
-Com o monitoramento contínuo, podemos cobrar a disponiblização ou correção de informações, caso necessário. Por fim, disponibilizamos o [dadosjusbr](https://dadosjusbr.org/), um portal onde os dados são publicados em um formato amplamente compatível com ferramentas de análise e processamento de dados e estão organizados em uma página por mês de referência. Mais informações [Aqui.](https://dadosjusbr.org/#/sobre)
+Com o monitoramento contínuo, podemos cobrar a disponiblização ou correção de informações, caso necessário. Por fim, disponibilizamos o [DadosJusBr](https://dadosjusbr.org/), um portal onde os dados são publicados em um formato amplamente compatível com ferramentas de análise e processamento de dados e estão organizados em uma página por mês de referência. Mais informações [aqui.](https://dadosjusbr.org/#/sobre)
 
 Esse projeto foi elaborado pelo Analytics UFCG, com o intuito de praticar a cidadania e tornar os dados com maior legibilidade para o cidadão. Você cidadão/empresa pode fazer parte dessa jornada conosco, quer saber como?
  - Informe se há alguma inconsistência ou erros no site. 
