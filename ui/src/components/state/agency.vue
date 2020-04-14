@@ -141,7 +141,7 @@ export default {
               cssClass: "apexcharts-yaxis-label",
             },
             formatter: function(value) {
-              if (value == 5000000) return "Não existem dados para esse mês";
+              if (value == 5000321) return "Não existem dados para esse mês";
               return "R$ " + (value / 1000000).toFixed(1) + "M";
             },
           },
@@ -225,7 +225,7 @@ export default {
       let noDataMarker = []
       wages.forEach(wage => { 
         if(wage === 0){
-          noDataMarker.push(5000000)
+          noDataMarker.push(5000321)
         }else{
           noDataMarker.push(0)
         }
