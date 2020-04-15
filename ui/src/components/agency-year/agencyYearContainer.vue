@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <h1 class="stateName text-center">{{ this.agencyName.toUpperCase() }}</h1>
-    <h2 class="entityName text-center">{{ this.year + " - " + this.month }}</h2>
+    <h1 class="agency Name text-center">{{ this.agencyName.toUpperCase() }}</h1>
+    <h2 class="entityName text-center">{{ this.year }}</h2>
     <bar-graph class="graph" :options="chartOptions" :series="series" />
   </div>
 </template>
@@ -14,64 +14,6 @@ export default {
     return {
       agencyName: this.$route.params.agencyName,
       year: this.$route.params.year,
-      month: this.$route.params.month,
-      series: [
-        {
-          name: "Outros",
-          data: [
-            5378919.910000007,
-            5416046.700000006,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          name: "Indenizações",
-          data: [1517733.75, 1566334.7500000014, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-          name: "Salário",
-          data: [
-            12516638.410000043,
-            12444599.890000043,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          name: "Sem dados",
-          data: [
-            0,
-            0,
-            5000321,
-            5000321,
-            5000321,
-            5000321,
-            5000321,
-            5000321,
-            5000321,
-            5000321,
-            5000321,
-            5000321
-          ]
-        }
-      ],
       chartOptions: {
         events: {
           markerClick: function(
@@ -80,18 +22,18 @@ export default {
             { seriesIndex, dataPointIndex, config }
           ) {
             alert("oiiii  ");
-          }
+          },
         },
 
         colors: ["#c9e4ca", "#87bba2", "#364958", "#000000"],
         chart: {
           stacked: true,
           toolbar: {
-            show: false
+            show: false,
           },
           zoom: {
-            enabled: true
-          }
+            enabled: true,
+          },
         },
         responsive: [
           {
@@ -100,7 +42,7 @@ export default {
               legend: {
                 position: "bottom",
                 offsetX: -10,
-                offsetY: 0
+                offsetY: 0,
               },
               yaxis: {
                 decimalsInFloat: 2,
@@ -113,26 +55,26 @@ export default {
                     fontSize: "12px",
                     fontFamily: "Helvetica, Arial, sans-serif",
                     fontWeight: 600,
-                    cssClass: "apexcharts-yaxis-label"
+                    cssClass: "apexcharts-yaxis-label",
                   },
                   formatter: function(value) {
                     return "R$ " + (value / 1000000).toFixed(1) + "M";
-                  }
-                }
+                  },
+                },
               },
               xaxis: {
                 labels: {
                   rotate: -45,
-                  rotateAlways: true
-                }
-              }
-            }
-          }
+                  rotateAlways: true,
+                },
+              },
+            },
+          },
         ],
         plotOptions: {
           bar: {
-            horizontal: false
-          }
+            horizontal: false,
+          },
         },
         yaxis: {
           decimalsInFloat: 2,
@@ -143,8 +85,8 @@ export default {
               fontSize: "14px",
               fontWeight: "bold",
               fontFamily: undefined,
-              color: "#263238"
-            }
+              color: "#263238",
+            },
           },
           labels: {
             show: true,
@@ -155,13 +97,13 @@ export default {
               fontSize: "16px",
               fontFamily: "Helvetica, Arial, sans-serif",
               fontWeight: 600,
-              cssClass: "apexcharts-yaxis-label"
+              cssClass: "apexcharts-yaxis-label",
             },
             formatter: function(value) {
               if (value == 5000321) return "Não existem dados para esse mês";
               return "R$ " + (value / 1000000).toFixed(1) + "M";
-            }
-          }
+            },
+          },
         },
         xaxis: {
           categories: [
@@ -176,7 +118,7 @@ export default {
             "SET",
             "OUT",
             "NOV",
-            "DEZ"
+            "DEZ",
           ],
           title: {
             text: "Meses",
@@ -185,31 +127,95 @@ export default {
               fontSize: "15px",
               fontWeight: "bold",
               fontFamily: undefined,
-              color: "#263238"
-            }
-          }
+              color: "#263238",
+            },
+          },
         },
         legend: {
           position: "right",
-          offsetY: 120
+          offsetY: 120,
         },
         fill: {
-          opacity: 1
+          opacity: 1,
         },
         dataLabels: {
-          enabled: false
-        }
-      }
+          enabled: false,
+        },
+      },
+      data: {},
+      series: []
     };
   },
+  async mounted() {
+    const { data } = await this.$http.get(
+      "/orgao/totais/PB/" + this.agencyName + "/" + this.year
+    );
+    this.data = data;
+    this.generateSeries()
+  },
+  methods: {
+    generateSeries() {
+      if (this.data.MonthTotals.length != 12) {
+        this.addMonthsWithNoValue();
+      }
+      let others = this.data.MonthTotals.map((month) => month["Others"]);
+      let wages = this.data.MonthTotals.map((month) => month["Wage"]);
+      let perks = this.data.MonthTotals.map((month) => month["Perks"]);
+      let noDataMarker = [];
+      wages.forEach((wage) => {
+        if (wage === 0) {
+          noDataMarker.push(5000321);
+        } else {
+          noDataMarker.push(0);
+        }
+      });
+      this.series = [
+        {
+          name: "Outros",
+          data: others,
+        },
+        {
+          name: "Indenizações",
+          data: perks,
+        },
+        {
+          name: "Salário",
+          data: wages,
+        },
+        {
+          name: "Sem dados",
+          data: noDataMarker,
+        },
+      ];
+    },
+    addMonthsWithNoValue() {
+      var existingMonths = new Array();
+      this.data.MonthTotals.forEach((monthTotal) => {
+        existingMonths.push(monthTotal.Month);
+      });
+      for (let i = 1; i <= 12; i++) {
+        if (!existingMonths.includes(i)) {
+          this.data.MonthTotals.push({
+            Month: i,
+            Others: 0,
+            Perks: 0,
+            Wage: 0,
+          });
+        }
+      }
+      this.data.MonthTotals.sort((a, b) => {
+        return a.Month - b.Month;
+      });
+    },
+  },
   components: {
-    barGraph
-  }
+    barGraph,
+  },
 };
 </script>
 
 <style scoped>
-.stateName {
+.agencyName {
   font-size: 3rem;
   margin-top: 2%;
   margin-bottom: 0%;
