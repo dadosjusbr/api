@@ -1,43 +1,56 @@
 <template>
-  <div class="agencyContainer">
-    <div class="resume">
-      <md-card>
-        <md-card-content> </md-card-content>
-      </md-card>
-    </div>
+  <div>
+    <md-empty-state
+      v-show="noDataAvailable"
+      md-rounded
+      md-icon="highlight_off"
+      md-label="Não existem dados para esse ano :("
+      md-description="Talvez o órgão não tenha disponibilizado os dados em seu site."
+    >
+    </md-empty-state>
+    <div class="agencyContainer" v-show="!noDataAvailable">
+      <div class="resume" v-show="!simplifyComponent">
+        <md-card>
+          <md-card-content> </md-card-content>
+        </md-card>
+      </div>
 
-    <h2 class="agencyName">
-      <router-link
-        :to="{
-          name: 'agency',
-          params: { agencyName: this.agencyName.toLowerCase() },
-        }"
-      >
-        {{ this.agencyName.toUpperCase() }}
-      </router-link>
-    </h2>
-    <div class="buttonContainer">
-      <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
-        <img src="../../assets/previous.png" />
-      </md-button>
-      <md-button class="deactivatedButton" v-else
-        ><img src="../../assets/previousd.png"
-      /></md-button>
-      <a class="year"> {{ this.currentYear }} </a>
-      <md-button v-if="checkNextYear" v-on:click="nextYear()">
-        <img src="../../assets/next.png" />
-      </md-button>
-      <md-button class="deactivatedButton" v-else
-        ><img src="../../assets/nextd.png"
-      /></md-button>
+      <h2 class="agencyName" v-show="!simplifyComponent">
+        <router-link
+          :to="{
+            name: 'agency',
+            params: { agencyName: this.agencyName.toLowerCase() },
+          }"
+        >
+          {{ this.agencyName.toUpperCase() }}
+        </router-link>
+      </h2>
+      <div class="buttonContainer" v-show="!simplifyComponent">
+        <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
+          <img src="../../assets/previous.png" />
+        </md-button>
+        <md-button class="deactivatedButton" v-else
+          ><img src="../../assets/previousd.png"
+        /></md-button>
+        <a class="year"> {{ this.currentYear }} </a>
+        <md-button v-if="checkNextYear" v-on:click="nextYear()">
+          <img src="../../assets/next.png" />
+        </md-button>
+        <md-button class="deactivatedButton" v-else
+          ><img src="../../assets/nextd.png"
+        /></md-button>
+      </div>
+      <bar-graph
+        :class="[simplifyComponent ? 'graphSymple' : '', 'graph']"
+        :options="chartOptions"
+        :series="series"
+      />
     </div>
-    <bar-graph class="graph" :options="chartOptions" :series="series" />
   </div>
 </template>
 
 <script>
 import barGraph from "@/components/state/barGraph.vue";
-/* ignore */
 
 export default {
   name: "agency",
@@ -49,23 +62,22 @@ export default {
       type: String,
       default: "",
     },
+    simplifyComponent: {
+      type: Boolean,
+      default: false,
+    },
+    year: {
+      type: Number,
+      default: new Date().getFullYear(),
+    },
   },
   data() {
     return {
-      currentYear: new Date().getFullYear(),
+      currentYear: this.year,
+      noDataAvailable: false,
       data: {},
       series: [],
       chartOptions: {
-        events: {
-          markerClick: function(
-            event,
-            chartContext,
-            { seriesIndex, dataPointIndex, config }
-          ) {
-            alert("oiiii  ")
-          },
-        },
-
         colors: ["#c9e4ca", "#87bba2", "#364958", "#000000"],
         chart: {
           stacked: true,
@@ -206,11 +218,15 @@ export default {
       var response = await this.$http.get(
         "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
       );
-      while (response.data.MonthTotals == null) {
-        this.currentYear -= 1;
-        response = await this.$http.get(
-          "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
-        );
+      if (this.simplifyComponent == true && response.data.MonthTotals == null) {
+        this.noDataAvailable = true;
+      } else {
+        while (response.data.MonthTotals == null) {
+          this.currentYear -= 1;
+          response = await this.$http.get(
+            "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+          );
+        }
       }
       this.data = response.data;
       this.generateSeries();
@@ -222,12 +238,12 @@ export default {
       let others = this.data.MonthTotals.map((month) => month["Others"]);
       let wages = this.data.MonthTotals.map((month) => month["Wage"]);
       let perks = this.data.MonthTotals.map((month) => month["Perks"]);
-      let noDataMarker = []
-      wages.forEach(wage => { 
-        if(wage === 0){
-          noDataMarker.push(5000321)
-        }else{
-          noDataMarker.push(0)
+      let noDataMarker = [];
+      wages.forEach((wage) => {
+        if (wage === 0) {
+          noDataMarker.push(5000321);
+        } else {
+          noDataMarker.push(0);
         }
       });
       this.series = [
@@ -245,7 +261,7 @@ export default {
         },
         {
           name: "Sem dados",
-          data: noDataMarker
+          data: noDataMarker,
         },
       ];
     },
@@ -369,6 +385,10 @@ a {
 
 .graph {
   float: right;
+}
+
+.graphSymple {
+  width: 100%;
 }
 
 @media only screen and (max-width: 379px) {
