@@ -344,8 +344,14 @@ func main() {
 
 	e.Renderer = renderer
 
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   "ui/dist/",
+		Browse: true,
+		HTML5:  true,
+		Index:  "index.html",
+	}))
+
 	e.Static("/static", "templates/assets")
-	e.Static("/", "ui/dist")
 
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency)
