@@ -1,30 +1,41 @@
 <template>
-  <div class="graphContainer">
-    <div class="buttonContainer">
-      <md-button
-        v-if="this.activateButton.previous"
-        v-on:click="previousMonth()"
+  <div>
+    <div v-show="this.noDataAvailable">
+      <md-empty-state
+        md-rounded
+        md-icon="highlight_off"
+        md-label="Não existem dados para esse ano e mês :("
+        md-description="Talvez o órgão não tenha disponibilizado os dados em seu site."
       >
-        <img src="../../assets/previous.png" />
-      </md-button>
-      <md-button class="deactivatedButton" v-else
-        ><img src="../../assets/previousd.png"
-      /></md-button>
-      <a>
-        {{
-          this.months[this.currentMonthAndYear.month] +
-            ", " +
-            this.currentMonthAndYear.year
-        }}
-      </a>
-      <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
-        <img src="../../assets/next.png" />
-      </md-button>
-      <md-button class="deactivatedButton" v-else
-        ><img src="../../assets/nextd.png"
-      /></md-button>
+      </md-empty-state>
     </div>
-    <graph-bar :options="chartOptions" :series="series"></graph-bar>
+    <div v-show="!this.noDataAvailable" class="graphContainer">
+      <div v-show="!this.simplifyComponent" class="buttonContainer">
+        <md-button
+          v-if="this.activateButton.previous"
+          v-on:click="previousMonth()"
+        >
+          <img src="../../assets/previous.png" />
+        </md-button>
+        <md-button class="deactivatedButton" v-else
+          ><img src="../../assets/previousd.png"
+        /></md-button>
+        <a>
+          {{
+            this.months[this.currentMonthAndYear.month] +
+              ", " +
+              this.currentMonthAndYear.year
+          }}
+        </a>
+        <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
+          <img src="../../assets/next.png" />
+        </md-button>
+        <md-button class="deactivatedButton" v-else
+          ><img src="../../assets/nextd.png"
+        /></md-button>
+      </div>
+      <graph-bar :options="chartOptions" :series="series"></graph-bar>
+    </div>
   </div>
 </template>
 
@@ -34,10 +45,29 @@ import graphBar from "@/components/agency/graphBar.vue";
 export default {
   name: "graphContainer",
   components: {
-    graphBar
+    graphBar,
+  },
+  props: {
+    year: {
+      type: Number,
+      default: new Date().getFullYear(),
+    },
+    month: {
+      type: Number,
+      defaul: -1,
+    },
+    agencyNameSimplyComponent: {
+      type: String,
+      default: "",
+    },
+    simplifyComponent: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: function() {
     return {
+      noDataAvailable: false,
       agencyName: this.$route.params.agencyName,
       activateButton: { previous: true, next: true },
       series: [],
@@ -53,7 +83,7 @@ export default {
         9: "Set",
         10: "Out",
         11: "Nov",
-        12: "Dez"
+        12: "Dez",
       },
       currentMonthAndYear: { year: 2020, month: 1 },
       chartOptions: {
@@ -61,11 +91,11 @@ export default {
         chart: {
           stacked: true,
           toolbar: {
-            show: false
+            show: false,
           },
           zoom: {
-            enabled: true
-          }
+            enabled: true,
+          },
         },
         responsive: [
           {
@@ -74,7 +104,7 @@ export default {
               legend: {
                 position: "bottom",
                 offsetX: -10,
-                offsetY: 0
+                offsetY: 0,
               },
               yaxis: {
                 labels: {
@@ -84,18 +114,18 @@ export default {
                     fontSize: "12px",
                     fontFamily: "Helvetica, Arial, sans-serif",
                     fontWeight: 600,
-                    cssClass: "apexcharts-yaxis-label"
-                  }
-                }
-              }
-            }
-          }
+                    cssClass: "apexcharts-yaxis-label",
+                  },
+                },
+              },
+            },
+          },
         ],
         plotOptions: {
           bar: {
             horizontal: true,
-            barHeight: "70%"
-          }
+            barHeight: "70%",
+          },
         },
         yaxis: {
           decimalsInFloat: 2,
@@ -106,8 +136,8 @@ export default {
               fontSize: "16px",
               fontWeight: "bold",
               fontFamily: undefined,
-              color: "#263238"
-            }
+              color: "#263238",
+            },
           },
           labels: {
             show: true,
@@ -118,9 +148,9 @@ export default {
               fontSize: "14px",
               fontFamily: "Helvetica, Arial, sans-serif",
               fontWeight: 600,
-              cssClass: "apexcharts-yaxis-label"
-            }
-          }
+              cssClass: "apexcharts-yaxis-label",
+            },
+          },
         },
         xaxis: {
           categories: [
@@ -129,7 +159,7 @@ export default {
             "R$ 30~40 mil",
             "R$ 20~30 mil",
             "R$ 10~20 mil",
-            "< R$ 10 mil"
+            "< R$ 10 mil",
           ],
           title: {
             text: "Quantidade de funcionários",
@@ -138,21 +168,21 @@ export default {
               fontSize: "16px",
               fontWeight: "bold",
               fontFamily: undefined,
-              color: "#263238"
-            }
-          }
+              color: "#263238",
+            },
+          },
         },
         legend: {
           position: "right",
-          offsetY: 120
+          offsetY: 120,
         },
         fill: {
-          opacity: 1
+          opacity: 1,
         },
         dataLabels: {
-          enabled: false
-        }
-      }
+          enabled: false,
+        },
+      },
     };
   },
   methods: {
@@ -160,7 +190,7 @@ export default {
       var { month, year } = this.getNextDate();
       await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .catch(err => {
+        .catch((err) => {
           this.activateButton.next = false;
         });
     },
@@ -168,11 +198,10 @@ export default {
       var { month, year } = this.getPreviousDate();
       await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .catch(err => {
+        .catch((err) => {
           this.activateButton.previous = false;
         });
     },
-
     getNextDate() {
       let month = this.currentMonthAndYear.month;
       let year = this.currentMonthAndYear.year;
@@ -201,7 +230,7 @@ export default {
       this.activateButton.previous = true;
       await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => this.generateSeries(response.data))
+        .then((response) => this.generateSeries(response.data))
         .then(this.checkNextYear())
         .then(this.$emit("change", { year, month }));
     },
@@ -211,9 +240,12 @@ export default {
       this.currentMonthAndYear = { month, year };
       await this.$http
         .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .then(response => this.generateSeries(response.data))
+        .then((response) => this.generateSeries(response.data))
         .then(this.checkPreviousYear())
         .then(this.$emit("change", { year, month }));
+    },
+    async changeNoDataValue() {
+      this.noDataAvailable = true;
     },
     generateSeries(data) {
       this.series = [
@@ -225,8 +257,8 @@ export default {
             data.Members["40000"],
             data.Members["30000"],
             data.Members["20000"],
-            data.Members["10000"]
-          ]
+            data.Members["10000"],
+          ],
         },
         {
           name: "Servidores",
@@ -236,8 +268,8 @@ export default {
             data.Servers["40000"],
             data.Servers["30000"],
             data.Servers["20000"],
-            data.Servers["10000"]
-          ]
+            data.Servers["10000"],
+          ],
         },
         {
           name: "Inativos",
@@ -247,23 +279,40 @@ export default {
             data.Inactives["40000"],
             data.Inactives["30000"],
             data.Inactives["20000"],
-            data.Inactives["10000"]
-          ]
-        }
+            data.Inactives["10000"],
+          ],
+        },
       ];
-    }
+    },
   },
   async mounted() {
-    const { data } = await this.$http.get(
-      "/orgao/salario/" +
-        this.agencyName +
-        "/" +
-        this.currentMonthAndYear.year +
-        "/" +
-        this.currentMonthAndYear.month
-    );
-    this.generateSeries(data);
-  }
+    var response;
+    if (this.simplifyComponent == true) {
+      response = await this.$http
+        .get(
+          "/orgao/salario/" +
+            this.agencyNameSimplyComponent +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
+        .catch((err) => {});
+    } else {
+      response = await this.$http.get(
+        "/orgao/salario/" +
+          this.agencyName +
+          "/" +
+          this.currentMonthAndYear.year +
+          "/" +
+          this.currentMonthAndYear.month
+      );
+    }
+    if (response != undefined) this.generateSeries(response.data);
+    else {
+      this.changeNoDataValue();
+    }
+  },
 };
 </script>
 
