@@ -37,13 +37,17 @@ export default {
 
   methods: {
     async fetchData() {
-      const response = await this.$http.get(
-        "/orgao/resumo/" + this.agencyName + "/" + this.year + "/" + this.month
-      ).catch((err) => {});
+      const response = await this.$http
+        .get(
+          "/orgao/resumo/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
+        .catch((err) => {});
       if (response == undefined) {
-        //eslint-ignore
-        console.log("oii");
-
         this.noSummaryData = true;
         return;
       }
