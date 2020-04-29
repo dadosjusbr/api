@@ -10,7 +10,7 @@
       </md-empty-state>
     </div>
     <div v-show="!this.noDataAvailable" class="graphContainer">
-      <div v-show="!this.simplifyComponent" class="buttonContainer">
+      <div class="buttonContainer">
         <md-button
           v-if="this.activateButton.previous"
           v-on:click="previousMonth()"
@@ -21,11 +21,7 @@
           ><img src="../../assets/previousd.png"
         /></md-button>
         <a>
-          {{
-            this.months[this.currentMonthAndYear.month] +
-              ", " +
-              this.currentMonthAndYear.year
-          }}
+          {{ this.months[this.month] + ", " + this.year }}
         </a>
         <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
           <img src="../../assets/next.png" />
@@ -47,29 +43,16 @@ export default {
   components: {
     graphBar,
   },
-  props: {
-    year: {
-      type: Number,
-      default: new Date().getFullYear(),
-    },
-    month: {
-      type: Number,
-      defaul: -1,
-    },
-    agencyNameSimplyComponent: {
-      type: String,
-      default: "",
-    },
-    simplifyComponent: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data: function() {
     return {
       noDataAvailable: false,
       agencyName: this.$route.params.agencyName,
-      activateButton: { previous: true, next: true },
+      year: parseInt(this.$route.params.year, 10),
+      month: parseInt(this.$route.params.month, 10),
+      activateButton: {
+        previous: this.checkPreviousYear(),
+        next: this.checkNextYear(),
+      },
       series: [],
       months: {
         1: "Jan",
@@ -85,7 +68,6 @@ export default {
         11: "Nov",
         12: "Dez",
       },
-      currentMonthAndYear: { year: 2020, month: 1 },
       chartOptions: {
         colors: ["#c9e4ca", "#87bba2", "#364958"],
         chart: {
@@ -187,25 +169,33 @@ export default {
   },
   methods: {
     async checkNextYear() {
-      var { month, year } = this.getNextDate();
-      await this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .catch((err) => {
-          this.activateButton.next = false;
-        });
+      let activateButtonNext = true;
+      let { month, year } = this.getNextDate();
+      if (year != undefined) {
+        await this.$http
+          .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+          .catch((err) => {
+            activateButtonNext = false;
+          });
+        this.activateButton.next = activateButtonNext;
+      }
     },
     async checkPreviousYear() {
+      let activateButtonPrevious = true;
       var { month, year } = this.getPreviousDate();
-      await this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
-        .catch((err) => {
-          this.activateButton.previous = false;
-        });
+      if (year != undefined) {
+        await this.$http
+          .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+          .catch((err) => {
+            activateButtonPrevious = false;
+          });
+        this.activateButton.previous = activateButtonPrevious;
+      }
     },
     getNextDate() {
-      let month = this.currentMonthAndYear.month;
-      let year = this.currentMonthAndYear.year;
-      if (this.currentMonthAndYear.month === 12) {
+      let month = this.month;
+      let year = this.year;
+      if (month === 12) {
         month = 1;
         year = year + 1;
       } else {
@@ -214,35 +204,63 @@ export default {
       return { month, year };
     },
     getPreviousDate() {
-      let month = this.currentMonthAndYear.month;
-      let year = this.currentMonthAndYear.year;
-      if (this.currentMonthAndYear.month === 1) {
+      let month = this.month;
+      let year = this.year;
+      if (month === 1) {
         month = 12;
         year = year - 1;
       } else {
-        month = this.currentMonthAndYear.month - 1;
+        month = month - 1;
       }
       return { month, year };
     },
     async nextMonth() {
       var { month, year } = this.getNextDate();
-      this.currentMonthAndYear = { month, year };
+      this.month = month;
+      this.year = year;
       this.activateButton.previous = true;
       await this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .get(
+          "/orgao/salario/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
         .then((response) => this.generateSeries(response.data))
         .then(this.checkNextYear())
-        .then(this.$emit("change", { year, month }));
+        .then(this.$emit("change", { year, month }))
+        .then(
+          this.$router.push({
+            name: "agency",
+            params: { agencyName: this.agencyName, month: month, year: year },
+          })
+        );
     },
     async previousMonth() {
       var { month, year } = this.getPreviousDate();
+      this.month = month;
+      this.year = year;
       this.activateButton.next = true;
-      this.currentMonthAndYear = { month, year };
       await this.$http
-        .get("/orgao/salario/" + this.agencyName + "/" + year + "/" + month)
+        .get(
+          "/orgao/salario/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
         .then((response) => this.generateSeries(response.data))
         .then(this.checkPreviousYear())
-        .then(this.$emit("change", { year, month }));
+        .then(this.$emit("change", { year, month }))
+        .then(
+          this.$router.push({
+            name: "agency",
+            params: { agencyName: this.agencyName, month: month, year: year },
+          })
+        );
     },
     async changeNoDataValue() {
       this.noDataAvailable = true;
@@ -286,28 +304,11 @@ export default {
     },
   },
   async mounted() {
-    var response;
-    if (this.simplifyComponent == true) {
-      response = await this.$http
-        .get(
-          "/orgao/salario/" +
-            this.agencyNameSimplyComponent +
-            "/" +
-            this.year +
-            "/" +
-            this.month
-        )
-        .catch((err) => {});
-    } else {
-      response = await this.$http.get(
-        "/orgao/salario/" +
-          this.agencyName +
-          "/" +
-          this.currentMonthAndYear.year +
-          "/" +
-          this.currentMonthAndYear.month
-      );
-    }
+    const response = await this.$http
+      .get(
+        "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + this.month
+      )
+      .catch((err) => {});
     if (response != undefined) this.generateSeries(response.data);
     else {
       this.changeNoDataValue();

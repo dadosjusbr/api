@@ -19,7 +19,7 @@
         <router-link
           :to="{
             name: 'agency',
-            params: { agencyName: this.agencyName.toLowerCase() },
+            params: { agencyName: this.agencyName.toLowerCase(), year: 2020, month: 1 },
           }"
         >
           {{ this.agencyName.toUpperCase() }}

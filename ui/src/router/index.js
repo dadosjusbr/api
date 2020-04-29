@@ -5,7 +5,6 @@ import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
 import about from "@/components/about/about.vue";
 import contact from "@/components/contact/contact.vue";
 import agencyYearContainer from "@/components/agency-year-month/agencyYearContainer.vue";
-import agencyYearMonthContainer from "@/components/agency-year-month/agencyYearMonthContainer.vue"
 
 Vue.use(VueRouter);
 
@@ -16,7 +15,7 @@ const routes = [
     component: Home,
   },
   {
-    path: "/orgao/:agencyName",
+    path: "/orgao/:agencyName/:year/:month",
     name: "agency",
     component: agencyPageContainer,
   },
@@ -24,11 +23,6 @@ const routes = [
     path: "/orgao/:agencyName/:year",
     name: "agencyYearContainer",
     component: agencyYearContainer,
-  },
-  {
-    path: "/orgao/:agencyName/:year/:month",
-    name: "agencyYearMonthContainer",
-    component: agencyYearMonthContainer,
   },
   {
     path: "/sobre",

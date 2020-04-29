@@ -9,7 +9,10 @@
     <div>
       <graph-container @change="date" />
     </div>
-      <div class="cr">Dados Capturados em {{Crawling_Timestamp | formatDate}}, horário de Brasília.</div>
+    <div class="cr">
+      Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
+      Brasília.
+    </div>
   </div>
 </template>
 
@@ -23,32 +26,26 @@ export default {
   name: "agencyPageContainer",
   components: {
     agencySummary,
-    graphContainer
+    graphContainer,
   },
   data() {
     return {
       agencyName: this.$route.params.agencyName,
+      year: this.$route.params.year,
+      month: this.$route.params.month,
       agencySummary: null,
       Crawling_Timestamp: null,
-      dateForSummary: { year: 2020, month: 1 }
     };
   },
   methods: {
     date(date) {
-      this.dateForSummary = date;
+      this.year = date.year;
+      this.month = date.month;
       this.fetchData();
     },
     async fetchData() {
-      let month, year;
-      if (this.dateForSummary == undefined) {
-        month = 1;
-        year = 2020;
-      } else {
-        month = this.dateForSummary.month;
-        year = this.dateForSummary.year;
-      }
       const { data } = await this.$http.get(
-        "/orgao/resumo/" + this.agencyName + "/" + year + "/" + month
+        "/orgao/resumo/" + this.agencyName + "/" + this.year + "/" + this.month
       );
       this.agencySummary = {
         Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
@@ -57,13 +54,12 @@ export default {
           "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
         Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2)),
       };
-      this.Crawling_Timestamp = data.CrawlingTime
-      
-    }
+      this.Crawling_Timestamp = data.CrawlingTime;
+    },
   },
   mounted() {
     this.fetchData();
-  }
+  },
 };
 </script>
 
@@ -94,15 +90,14 @@ export default {
   }
 
   .cr {
-  text-align: center;
-  font-size: 0.85em;
+    text-align: center;
+    font-size: 0.85em;
   }
 
   .agencyContainer {
     margin-left: 1%;
     margin-right: 1%;
   }
-
 }
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
@@ -114,7 +109,6 @@ export default {
   .agencyContainer {
     margin-left: 3%;
     margin-right: 3%;
-}
-
+  }
 }
 </style>
