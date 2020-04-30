@@ -32,7 +32,7 @@
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-    <div class="executorLog">
+    <div v-show="this.executorLog != null" class="executorLog">
       <h4>O Executor não conseguiu dados para esses mês e ano pois:</h4>
       <h4>{{ this.executorLog }}</h4>
     </div>
