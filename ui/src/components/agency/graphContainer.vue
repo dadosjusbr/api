@@ -32,6 +32,10 @@
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
+    <div class="executorLog">
+      <h4>O Executor não conseguiu dados para esses mês e ano pois:</h4>
+      <h4>{{ this.executorLog }}</h4>
+    </div>
   </div>
 </template>
 
@@ -49,6 +53,7 @@ export default {
       agencyName: this.$route.params.agencyName,
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
+      executorLog: null,
       activateButton: {
         previous: this.checkPreviousYear(),
         next: this.checkNextYear(),
@@ -265,6 +270,10 @@ export default {
     async changeNoDataValue() {
       this.noDataAvailable = true;
     },
+    makeExecutorLog(data) {
+      //todo
+      this.executorLog = "Descrever motivos para não ter dados";
+    },
     generateSeries(data) {
       this.series = [
         {
@@ -309,6 +318,11 @@ export default {
         "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + this.month
       )
       .catch((err) => {});
+
+    if (response != undefined && response.status == 206) {
+      this.makeExecutorLog(response.data);
+      response = undefined
+    }
     if (response != undefined) this.generateSeries(response.data);
     else {
       this.changeNoDataValue();
@@ -318,6 +332,10 @@ export default {
 </script>
 
 <style scoped>
+
+.executorLog{
+  text-align: center;
+}
 .buttonContainer {
   width: 105%;
   height: 10%;
