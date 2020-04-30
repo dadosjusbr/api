@@ -4,12 +4,12 @@
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
     <div>
-      <agency-summary :agencySummary="agencySummary" />
+      <agency-summary v-show="this.agencySummary != null" :agencySummary="agencySummary" />
     </div>
     <div>
       <graph-container @change="date" />
     </div>
-    <div class="cr">
+    <div v-show="this.Crawling_Timestamp != null" class="cr">
       Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
       Brasília.
     </div>
