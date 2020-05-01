@@ -267,7 +267,10 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		}
 	}
 	if agencyMonthlyInfo.ProcInfo != nil {
-		return c.JSON(http.StatusPartialContent, agencyMonthlyInfo.ProcInfo)
+		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
+			ProcInfo:          agencyMonthlyInfo.ProcInfo,
+			CrawlingTimestamp: agencyMonthlyInfo.CrawlingTimestamp,
+		})
 	}
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
 		Members:   members,

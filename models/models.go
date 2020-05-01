@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/dadosjusbr/storage"
+)
 
 // State - Struct cotains information of a state ans its agencies
 type State struct {
@@ -56,4 +60,10 @@ type DataForChartAtAgencyScreen struct {
 	Servers   map[int]int
 	Inactives map[int]int
 	MaxSalary float64
+}
+
+// ProcInfoResult - contains information of the result of the process if sothing went wrong during parser or crawling process
+type ProcInfoResult struct {
+	ProcInfo          *storage.ProcInfo
+	CrawlingTimestamp time.Time
 }
