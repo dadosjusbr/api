@@ -62,7 +62,7 @@ type DataForChartAtAgencyScreen struct {
 	MaxSalary float64
 }
 
-// ProcInfoResult - contains information of the result of the process if sothing went wrong during parser or crawling process
+// ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
 type ProcInfoResult struct {
 	ProcInfo          *storage.ProcInfo
 	CrawlingTimestamp time.Time
