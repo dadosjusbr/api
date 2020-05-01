@@ -266,7 +266,12 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 			inactive[salaryRange]++
 		}
 	}
-
+	if agencyMonthlyInfo.ProcInfo != nil {
+		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
+			ProcInfo:          agencyMonthlyInfo.ProcInfo,
+			CrawlingTimestamp: agencyMonthlyInfo.CrawlingTimestamp,
+		})
+	}
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
 		Members:   members,
 		Servers:   servers,
