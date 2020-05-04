@@ -244,7 +244,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		for _, omittedField := range conf.OmittedFields {
 			for i, field := range newEnv {
 				if strings.Contains(field, omittedField) {
-					newEnv[i] = field + "= ##omitida##"
+					newEnv[i] = omittedField + "= ##omitida##"
 					break
 				}
 			}
