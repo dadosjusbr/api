@@ -5,11 +5,10 @@
         md-rounded
         md-icon="highlight_off"
         md-label="Talvez o órgão ainda não tenha disponibilizado os dados ou o dadosjusbr não tentou realizar a coleta."
-        md-description="
-Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
+        md-description="Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       >
-        <a
-          style="padding-bottom: 15px"
+        <a 
+          style="padding-bottom: 15px; font-size: 16px;  font-weight: normal;"
           href="https://github.com/dadosjusbr/coletores/issues/new"
         >
           Abra uma issue aqui</a
@@ -23,10 +22,10 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
         md-icon="highlight_off"
         md-label="Tivemos um erro ao coletar os dados. Veja o erro abaixo."
         md-description="
-Acha que tem algo errado? Por favor entre em contato conosco ab rindo uma issue."
+Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       >
         <a
-          style="padding-bottom: 15px"
+          style="padding-bottom: 15px; font-size: 16px;  font-weight: normal;"
           href="https://github.com/dadosjusbr/coletores/issues/new"
         >
           Abra uma issue aqui</a
@@ -57,10 +56,10 @@ Acha que tem algo errado? Por favor entre em contato conosco ab rindo uma issue.
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-    <div v-show="this.executorLog.cmd != null" class="executorLog">
+    <div style="font-size: 16px" v-show="this.executorLog.cmd != null" class="executorLog">
       <h4>O Executor não conseguiu dados para esses mês e ano pois:</h4>
       <p><b>Erro no comando: </b>{{ this.executorLog.cmd }}</p>
-      <p><b>Erro: </b>{{ this.executorLog.err }}</p>
+      <p><b> Saída de erro: </b>{{ this.executorLog.err }}</p>
     </div>
   </div>
 </template>

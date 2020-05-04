@@ -12,7 +12,10 @@
     <div>
       <graph-container @change="date" />
     </div>
-    <div v-show="this.Crawling_Timestamp != null" class="cr">
+    <div
+      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
+      class="cr"
+    >
       Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
       Brasília.
     </div>
