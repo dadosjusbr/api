@@ -4,7 +4,10 @@
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
     <div>
-      <agency-summary v-show="this.agencySummary != null" :agencySummary="agencySummary" />
+      <agency-summary
+        v-show="this.agencySummary != null"
+        :agencySummary="agencySummary"
+      />
     </div>
     <div>
       <graph-container @change="date" />
@@ -47,13 +50,17 @@ export default {
       const { data } = await this.$http.get(
         "/orgao/resumo/" + this.agencyName + "/" + this.year + "/" + this.month
       );
-      this.agencySummary = {
-        Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
-        Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
-        Total_Indenizações:
-          "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
-        Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2)),
-      };
+      if (data.TotalEmployees != 0) {
+        this.agencySummary = {
+          Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
+          Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
+          Total_Indenizações:
+            "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
+          Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2)),
+        };
+      } else {
+        this.agencySummary = null;
+      }
       this.Crawling_Timestamp = data.CrawlingTime;
     },
   },

@@ -1,14 +1,39 @@
 <template>
   <div>
-    <div v-show="this.noDataAvailable">
+    <div v-show="this.noDataAvailable && this.executorLog.cmd == null">
       <md-empty-state
         md-rounded
         md-icon="highlight_off"
-        md-label="Não existem dados para esse ano e mês :("
-        md-description="Talvez o órgão não tenha disponibilizado os dados em seu site."
+        md-label="Talvez o órgão ainda não tenha disponibilizado os dados ou o dadosjusbr não tentou realizar a coleta."
+        md-description="
+Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       >
+        <a
+          style="padding-bottom: 15px"
+          href="https://github.com/dadosjusbr/coletores/issues/new"
+        >
+          Abra uma issue aqui</a
+        >
       </md-empty-state>
     </div>
+
+    <div v-show="this.executorLog.cmd != null">
+      <md-empty-state
+        md-rounded
+        md-icon="highlight_off"
+        md-label="Tivemos um erro ao coletar os dados. Veja o erro abaixo."
+        md-description="
+Acha que tem algo errado? Por favor entre em contato conosco ab rindo uma issue."
+      >
+        <a
+          style="padding-bottom: 15px"
+          href="https://github.com/dadosjusbr/coletores/issues/new"
+        >
+          Abra uma issue aqui</a
+        >
+      </md-empty-state>
+    </div>
+
     <div v-show="!this.noDataAvailable" class="graphContainer">
       <div class="buttonContainer">
         <md-button
@@ -32,9 +57,10 @@
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-    <div v-show="this.executorLog != null" class="executorLog">
+    <div v-show="this.executorLog.cmd != null" class="executorLog">
       <h4>O Executor não conseguiu dados para esses mês e ano pois:</h4>
-      <h4>{{ this.executorLog }}</h4>
+      <p><b>Erro no comando: </b>{{ this.executorLog.cmd }}</p>
+      <p><b>Erro: </b>{{ this.executorLog.err }}</p>
     </div>
   </div>
 </template>
@@ -53,7 +79,7 @@ export default {
       agencyName: this.$route.params.agencyName,
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
-      executorLog: null,
+      executorLog: { cmd: null, err: null, env: null },
       activateButton: {
         previous: this.checkPreviousYear(),
         next: this.checkNextYear(),
@@ -270,9 +296,10 @@ export default {
     async changeNoDataValue() {
       this.noDataAvailable = true;
     },
-    makeExecutorLog(data) {
-      //todo
-      this.executorLog = "Descrever motivos para não ter dados";
+    makeExecutorLog(procInfo) {
+      this.executorLog.cmd = procInfo.cmd;
+      this.executorLog.err = procInfo.stdin;
+      this.executorLog.env = procInfo.env;
     },
     generateSeries(data) {
       this.series = [
@@ -313,15 +340,15 @@ export default {
     },
   },
   async mounted() {
-    const response = await this.$http
+    var response = await this.$http
       .get(
         "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + this.month
       )
       .catch((err) => {});
 
     if (response != undefined && response.status == 206) {
-      this.makeExecutorLog(response.data);
-      response = undefined
+      this.makeExecutorLog(response.data.ProcInfo);
+      response = undefined;
     }
     if (response != undefined) this.generateSeries(response.data);
     else {
@@ -332,8 +359,7 @@ export default {
 </script>
 
 <style scoped>
-
-.executorLog{
+.executorLog {
   text-align: center;
 }
 .buttonContainer {
