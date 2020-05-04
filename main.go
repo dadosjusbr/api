@@ -9,6 +9,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/db"
@@ -31,6 +32,9 @@ type config struct {
 	MongoDBName string `envconfig:"MONGODB_NAME"`
 	MongoMICol  string `envconfig:"MONGODB_MICOL" required:"true"`
 	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
+
+	// Omited fields
+	OmittedFields []string `envconfig:"OMITTED_FIELDS"`
 }
 
 var monthsLabelMap = map[int]string{
@@ -234,6 +238,24 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
+
+	if agencyMonthlyInfo.ProcInfo != nil {
+		var newEnv = agencyMonthlyInfo.ProcInfo.Env
+		for _, omittedField := range conf.OmittedFields {
+			for i, field := range newEnv {
+				if strings.Contains(field, omittedField) {
+					newEnv[i] = field + "= ##omitida##"
+					break
+				}
+			}
+		}
+		agencyMonthlyInfo.ProcInfo.Env = newEnv
+		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
+			ProcInfo:          agencyMonthlyInfo.ProcInfo,
+			CrawlingTimestamp: agencyMonthlyInfo.CrawlingTimestamp,
+		})
+	}
+
 	members := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
 	servers := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
 	inactive := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
@@ -266,12 +288,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 			inactive[salaryRange]++
 		}
 	}
-	if agencyMonthlyInfo.ProcInfo != nil {
-		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
-			ProcInfo:          agencyMonthlyInfo.ProcInfo,
-			CrawlingTimestamp: agencyMonthlyInfo.CrawlingTimestamp,
-		})
-	}
+
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
 		Members:   members,
 		Servers:   servers,
@@ -305,9 +322,11 @@ func getSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+var conf config
+
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
-	var conf config
+
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
