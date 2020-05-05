@@ -249,7 +249,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 				}
 			}
 		}
-		fmt.Println(newEnv)
 		agencyMonthlyInfo.ProcInfo.Env = newEnv
 		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
 			ProcInfo:          agencyMonthlyInfo.ProcInfo,
