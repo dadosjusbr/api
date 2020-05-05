@@ -240,7 +240,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 
 	if agencyMonthlyInfo.ProcInfo != nil {
-		fmt.Println("OLÀ")
 		var newEnv = agencyMonthlyInfo.ProcInfo.Env
 		for _, omittedField := range conf.EnvOmittedFields {
 			for i, field := range newEnv {
