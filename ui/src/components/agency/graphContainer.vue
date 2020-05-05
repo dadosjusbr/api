@@ -60,10 +60,9 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       v-show="this.executorLog.cmd != null"
       class="errorLog"
     >
-      <h4>O Executor não conseguiu dados para esses mês e ano pois:</h4>
       <p><b>Erro no comando: </b>{{ this.executorLog.cmd }}</p>
       <p><b> Saída de erro: </b>{{ this.executorLog.err }}</p>
-      <b> Env: </b>
+      <b> Variáveis de ambiente (env): </b>
 
       <ul style="list-style: none;">
         <li>{{ this.executorLog.env[0] }}</li>
