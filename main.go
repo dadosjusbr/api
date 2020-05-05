@@ -34,7 +34,7 @@ type config struct {
 	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
 
 	// Omited fields
-	OmittedFields []string `envconfig:"OMITTED_FIELDS"`
+	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
 }
 
 var monthsLabelMap = map[int]string{
@@ -240,8 +240,9 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 
 	if agencyMonthlyInfo.ProcInfo != nil {
+		fmt.Println("OLÀ")
 		var newEnv = agencyMonthlyInfo.ProcInfo.Env
-		for _, omittedField := range conf.OmittedFields {
+		for _, omittedField := range conf.EnvOmittedFields {
 			for i, field := range newEnv {
 				if strings.Contains(field, omittedField) {
 					newEnv[i] = omittedField + "= ##omitida##"
@@ -249,6 +250,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 				}
 			}
 		}
+		fmt.Println(newEnv)
 		agencyMonthlyInfo.ProcInfo.Env = newEnv
 		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
 			ProcInfo:          agencyMonthlyInfo.ProcInfo,
