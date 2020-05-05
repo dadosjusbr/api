@@ -16,7 +16,7 @@
       </md-empty-state>
     </div>
 
-    <div v-show="this.executorLog.cmd != null">
+    <div v-show="this.executorLog.cmd != ''">
       <md-empty-state
         md-rounded
         md-icon="highlight_off"
@@ -57,34 +57,15 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
     <div
-      v-show="this.executorLog.cmd != null"
+      v-show="this.executorLog.cmd != ''"
       class="errorLog"
     >
       <p><b>Erro no comando: </b>{{ this.executorLog.cmd }}</p>
       <p><b> Saída de erro: </b>{{ this.executorLog.err }}</p>
+      <p v-show="this.executorLog.stdout != ''" ><b> Saída padrão: </b>{{ this.executorLog.stdout }}</p>
       <b> Variáveis de ambiente (env): </b>
-
       <ul style="list-style: none;">
-        <li>{{ this.executorLog.env[0] }}</li>
-        <li>{{ this.executorLog.env[1] }}</li>
-        <li>{{ this.executorLog.env[2] }}</li>
-        <li>{{ this.executorLog.env[3] }}</li>
-        <li>{{ this.executorLog.env[4] }}</li>
-        <li>{{ this.executorLog.env[5] }}</li>
-        <li>{{ this.executorLog.env[6] }}</li>
-        <li>{{ this.executorLog.env[7] }}</li>
-        <li>{{ this.executorLog.env[8] }}</li>
-        <li>{{ this.executorLog.env[9] }}</li>
-        <li>{{ this.executorLog.env[10] }}</li>
-        <li>{{ this.executorLog.env[11] }}</li>
-        <li>{{ this.executorLog.env[12] }}</li>
-        <li>{{ this.executorLog.env[13] }}</li>
-        <li>{{ this.executorLog.env[14] }}</li>
-        <li>{{ this.executorLog.env[15] }}</li>
-        <li>{{ this.executorLog.env[16] }}</li>
-        <li>{{ this.executorLog.env[17] }}</li>
-        <li>{{ this.executorLog.env[18] }}</li>
-        <li>{{ this.executorLog.env[19] }}</li>
+        <li v-for="env in this.executorLog.env">{{ env }}</li>
       </ul>
     </div>
   </div>
@@ -104,7 +85,7 @@ export default {
       agencyName: this.$route.params.agencyName,
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
-      executorLog: { cmd: "", err: "", env: [] },
+      executorLog: { cmd: "", err: "", env: [], stdout: "" },
       activateButton: {
         previous: this.checkPreviousYear(),
         next: this.checkNextYear(),
@@ -323,8 +304,9 @@ export default {
     },
     makeExecutorLog(procInfo) {
       this.executorLog.cmd = procInfo.cmd;
-      this.executorLog.err = procInfo.stdin;
+      this.executorLog.err = procInfo.stderr;
       this.executorLog.env = procInfo.env;
+      this.executorLog.stdout = procInfo.stdout
     },
     generateSeries(data) {
       this.series = [
