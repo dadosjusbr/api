@@ -7,7 +7,7 @@
         md-label="Talvez o órgão ainda não tenha disponibilizado os dados ou o dadosjusbr não tentou realizar a coleta."
         md-description="Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       >
-        <a 
+        <a
           style="padding-bottom: 15px; font-size: 16px;  font-weight: normal;"
           href="https://github.com/dadosjusbr/coletores/issues/new"
         >
@@ -56,10 +56,37 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-    <div style="font-size: 16px" v-show="this.executorLog.cmd != null" class="executorLog">
+    <div
+      v-show="this.executorLog.cmd != null"
+      class="errorLog"
+    >
       <h4>O Executor não conseguiu dados para esses mês e ano pois:</h4>
       <p><b>Erro no comando: </b>{{ this.executorLog.cmd }}</p>
       <p><b> Saída de erro: </b>{{ this.executorLog.err }}</p>
+      <b> Env: </b>
+
+      <ul style="list-style: none;">
+        <li>{{ this.executorLog.env[0] }}</li>
+        <li>{{ this.executorLog.env[1] }}</li>
+        <li>{{ this.executorLog.env[2] }}</li>
+        <li>{{ this.executorLog.env[3] }}</li>
+        <li>{{ this.executorLog.env[4] }}</li>
+        <li>{{ this.executorLog.env[5] }}</li>
+        <li>{{ this.executorLog.env[6] }}</li>
+        <li>{{ this.executorLog.env[7] }}</li>
+        <li>{{ this.executorLog.env[8] }}</li>
+        <li>{{ this.executorLog.env[9] }}</li>
+        <li>{{ this.executorLog.env[10] }}</li>
+        <li>{{ this.executorLog.env[11] }}</li>
+        <li>{{ this.executorLog.env[12] }}</li>
+        <li>{{ this.executorLog.env[13] }}</li>
+        <li>{{ this.executorLog.env[14] }}</li>
+        <li>{{ this.executorLog.env[15] }}</li>
+        <li>{{ this.executorLog.env[16] }}</li>
+        <li>{{ this.executorLog.env[17] }}</li>
+        <li>{{ this.executorLog.env[18] }}</li>
+        <li>{{ this.executorLog.env[19] }}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -78,7 +105,7 @@ export default {
       agencyName: this.$route.params.agencyName,
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
-      executorLog: { cmd: null, err: null, env: null },
+      executorLog: { cmd: "", err: "", env: [] },
       activateButton: {
         previous: this.checkPreviousYear(),
         next: this.checkNextYear(),
@@ -380,5 +407,11 @@ a {
 
 button {
   margin-top: -0.4%;
+}
+
+.errorLog {
+  text-align: center;
+  border: 2px solid #2ab38b;
+  margin-bottom: 5px;
 }
 </style>
