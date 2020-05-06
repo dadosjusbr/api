@@ -4,12 +4,18 @@
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
     <div>
-      <agency-summary v-show="this.agencySummary != null" :agencySummary="agencySummary" />
+      <agency-summary
+        v-show="this.agencySummary != null"
+        :agencySummary="agencySummary"
+      />
     </div>
     <div>
       <graph-container @change="date" />
     </div>
-    <div v-show="this.Crawling_Timestamp != null" class="cr">
+    <div
+      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
+      class="cr"
+    >
       Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
       Brasília.
     </div>
@@ -44,17 +50,28 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      const { data } = await this.$http.get(
-        "/orgao/resumo/" + this.agencyName + "/" + this.year + "/" + this.month
-      );
-      this.agencySummary = {
-        Total_Empregados: formatter.format(Math.trunc(data.TotalEmployees)),
-        Total_Salários: "R$ " + formatter.format(data.TotalWage.toFixed(2)),
-        Total_Indenizações:
-          "R$ " + formatter.format(data.TotalPerks.toFixed(2)),
-        Salário_Máximo: "R$ " + formatter.format(data.MaxWage.toFixed(2)),
-      };
-      this.Crawling_Timestamp = data.CrawlingTime;
+      const response = await this.$http
+        .get(
+          "/orgao/resumo/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
+        .catch((err) => {});
+      if (response != undefined && response.data.TotalEmployees != 0) {
+        this.agencySummary = {
+          Total_Empregados: formatter.format(Math.trunc(response.data.TotalEmployees)),
+          Total_Salários: "R$ " + formatter.format(response.data.TotalWage.toFixed(2)),
+          Total_Indenizações:
+            "R$ " + formatter.format(response.data.TotalPerks.toFixed(2)),
+          Salário_Máximo: "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
+        };
+        this.Crawling_Timestamp = response.data.CrawlingTime;
+      } else {
+        this.agencySummary = null;
+      }
     },
   },
   mounted() {

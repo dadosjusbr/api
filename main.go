@@ -240,7 +240,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 
 	if agencyMonthlyInfo.ProcInfo != nil {
-		fmt.Println("OLÀ")
 		var newEnv = agencyMonthlyInfo.ProcInfo.Env
 		for _, omittedField := range conf.EnvOmittedFields {
 			for i, field := range newEnv {
@@ -250,7 +249,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 				}
 			}
 		}
-		fmt.Println(newEnv)
 		agencyMonthlyInfo.ProcInfo.Env = newEnv
 		return c.JSON(http.StatusPartialContent, models.ProcInfoResult{
 			ProcInfo:          agencyMonthlyInfo.ProcInfo,
