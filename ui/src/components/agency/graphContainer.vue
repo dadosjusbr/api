@@ -408,7 +408,6 @@ button {
   padding-right: 5px;
   padding-bottom: 5px;
   text-align: center;
-  border: 2px solid #2ab38b;
   margin-bottom: 5px;
 }
 
