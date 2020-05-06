@@ -56,17 +56,28 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-    <div
-      v-show="this.executorLog.cmd != ''"
-      class="errorLog"
-    >
-      <p><b>Erro no comando: </b>{{ this.executorLog.cmd }}</p>
-      <p><b> Saída de erro: </b>{{ this.executorLog.err }}</p>
-      <p v-show="this.executorLog.stdout != ''" ><b> Saída padrão: </b>{{ this.executorLog.stdout }}</p>
+
+    <div v-show="this.executorLog.cmd != ''" class="errorLog">
+      <b>Erro no comando: </b>
+      <br />
+      <textarea wrap="soft" class="textArea">
+ {{ this.executorLog.cmd }} </textarea
+      >
+      <br />
+      <b> Saída de erro: </b>
+      <br />
+      <textarea class="textArea">  {{ this.executorLog.err }}</textarea>
+      <br />
+      <b v-show="this.executorLog.stdout != ''"> Saída padrão: </b>
+
+      <textarea class="textArea" v-show="this.executorLog.stdout != ''">
+        {{ this.executorLog.stdout }}
+      </textarea>
       <b> Variáveis de ambiente (env): </b>
-      <ul style="list-style: none;">
-        <li v-for="env in this.executorLog.env">{{ env }}</li>
-      </ul>
+      <br />
+      <textarea rows="20" class="textArea">
+  {{ this.executorLog.env }}</textarea
+      >
     </div>
   </div>
 </template>
@@ -305,8 +316,12 @@ export default {
     makeExecutorLog(procInfo) {
       this.executorLog.cmd = procInfo.cmd;
       this.executorLog.err = procInfo.stderr;
-      this.executorLog.env = procInfo.env;
-      this.executorLog.stdout = procInfo.stdout
+      this.executorLog.stdout = procInfo.stdout;
+      var envString = "";
+      procInfo.env.forEach((env) => {
+        envString = envString + env + "\n";
+      });
+      this.executorLog.env = envString.trim();
     },
     generateSeries(data) {
       this.series = [
@@ -366,9 +381,6 @@ export default {
 </script>
 
 <style scoped>
-.executorLog {
-  text-align: center;
-}
 .buttonContainer {
   width: 105%;
   height: 10%;
@@ -391,8 +403,17 @@ button {
 }
 
 .errorLog {
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
   text-align: center;
   border: 2px solid #2ab38b;
   margin-bottom: 5px;
+}
+
+.textArea {
+  border: 1px solid #2ab38b;
+  width: 80%;
 }
 </style>
