@@ -21,7 +21,6 @@
     </div>
 
     <div class="socialMidiaShare">
-      {{ this.url }}
       <h5><b>Compartilhe essa informação: </b></h5>
       <facebook
         style="margin-right: 5px"
