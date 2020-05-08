@@ -10,6 +10,7 @@
         <a
           style="padding-bottom: 15px; font-size: 16px;  font-weight: normal;"
           href="https://github.com/dadosjusbr/coletores/issues/new"
+          target="_blank"
         >
           Abra uma issue aqui</a
         >
@@ -21,19 +22,11 @@
         md-rounded
         md-icon="highlight_off"
         md-label="Tivemos um erro ao coletar os dados. Veja o erro abaixo."
-        md-description="
-Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       >
-        <a
-          style="padding-bottom: 15px; font-size: 16px;  font-weight: normal;"
-          href="https://github.com/dadosjusbr/coletores/issues/new"
-        >
-          Abra uma issue aqui</a
-        >
       </md-empty-state>
     </div>
 
-    <div v-show="!this.noDataAvailable" class="graphContainer">
+    <div v-show="this.noDataAvailable != true" class="graphContainer">
       <div class="buttonContainer">
         <md-button
           v-if="this.activateButton.previous"
@@ -56,7 +49,6 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-
     <div v-show="this.executorLog.cmd != ''" class="errorLog">
       <b>Erro no comando: </b>
       <br />
@@ -79,6 +71,22 @@ Acha que tem algo errado? Por favor entre em contato conosco abrindo uma issue."
   {{ this.executorLog.env }}</textarea
       >
     </div>
+    <div
+      style="text-align: center; margin-bottom: 10px"
+      v-show="this.executorLog.cmd != ''"
+    >
+      <h5>
+        Acha que tem algo errado? Por favor entre em contato conosco abrindo uma
+        issue.
+      </h5>
+      <a
+        style="padding-bottom: 15px; font-size: 16px;  font-weight: normal;"
+        href="https://github.com/dadosjusbr/coletores/issues/new"
+        target="_blank"
+      >
+        Abra uma issue aqui</a
+      >
+    </div>
   </div>
 </template>
 
@@ -92,7 +100,7 @@ export default {
   },
   data: function() {
     return {
-      noDataAvailable: false,
+      noDataAvailable: true,
       agencyName: this.$route.params.agencyName,
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
@@ -310,9 +318,6 @@ export default {
           })
         );
     },
-    async changeNoDataValue() {
-      this.noDataAvailable = true;
-    },
     makeExecutorLog(procInfo) {
       this.executorLog.cmd = procInfo.cmd;
       this.executorLog.err = procInfo.stderr;
@@ -324,6 +329,7 @@ export default {
       this.executorLog.env = envString.trim();
     },
     generateSeries(data) {
+      this.noDataAvailable = false;
       this.series = [
         {
           name: "Membros",
@@ -373,9 +379,6 @@ export default {
       response = undefined;
     }
     if (response != undefined) this.generateSeries(response.data);
-    else {
-      this.changeNoDataValue();
-    }
   },
 };
 </script>
