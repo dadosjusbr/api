@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="this.noDataAvailable && this.executorLog.cmd == null">
+    <div v-show="this.executorLog.cmd == '' && this.noDataAvailable == true">
       <md-empty-state
         md-rounded
         md-icon="highlight_off"
