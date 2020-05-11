@@ -20,7 +20,7 @@
       Brasília.
     </div>
 
-    <div class="socialMidiaShare">
+    <div v-show="this.agencySummary != null" class="socialMidiaShare">
       <h5><b>Compartilhe essa informação: </b></h5>
       <facebook
         style="margin-right: 5px"

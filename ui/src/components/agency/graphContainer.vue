@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="this.noDataAvailable && this.executorLog.cmd == null">
+    <div v-show="this.executorLog.cmd == '' && this.noDataAvailable">
       <md-empty-state
         md-rounded
         md-icon="highlight_off"
@@ -26,7 +26,7 @@
       </md-empty-state>
     </div>
 
-    <div v-show="this.noDataAvailable != true" class="graphContainer">
+    <div v-show="this.noDataAvailable != true && this.series.length != 0" class="graphContainer">
       <div class="buttonContainer">
         <md-button
           v-if="this.activateButton.previous"
@@ -100,7 +100,7 @@ export default {
   },
   data: function() {
     return {
-      noDataAvailable: true,
+      noDataAvailable: null,
       agencyName: this.$route.params.agencyName,
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
@@ -372,7 +372,9 @@ export default {
       .get(
         "/orgao/salario/" + this.agencyName + "/" + this.year + "/" + this.month
       )
-      .catch((err) => {});
+      .catch((err) => {
+        this.noDataAvailable = true;
+      });
 
     if (response != undefined && response.status == 206) {
       this.makeExecutorLog(response.data.ProcInfo);
