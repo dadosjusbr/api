@@ -294,6 +294,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		Servers:   servers,
 		Inactives: inactive,
 		MaxSalary: maxSalary,
+		FileURL:   agencyMonthlyInfo.Package,
 	})
 }
 

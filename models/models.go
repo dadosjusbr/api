@@ -60,6 +60,7 @@ type DataForChartAtAgencyScreen struct {
 	Servers   map[int]int
 	Inactives map[int]int
 	MaxSalary float64
+	FileURL   *storage.Backup
 }
 
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
