@@ -1,27 +1,17 @@
 <template>
   <div>
-    <div class="logo">
-      <router-link to="/">
-        <img src="../../assets/logo.png" class="active" />
-      </router-link>
-    </div>
-
     <div class="navMenus">
       <md-toolbar class="md-primary">
         <div class="logoContainer">
-          <img src="../../assets/white_logo.png" />
-       </div>
-       <div class="links">
-        <router-link to="/">
-          <a class="i"> Início </a>
-        </router-link>
-        <router-link to="/sobre">
-          <a> Sobre </a>
-        </router-link>
-        <router-link to="/contato">
-          <a> Contato </a>
-        </router-link>
-       </div>
+          <router-link to="/">
+            <img src="../../assets/white_logo.png" />
+          </router-link>
+        </div>
+        <div class="links">
+          <router-link to="/sobre">
+            <a> Sobre </a>
+          </router-link>
+        </div>
       </md-toolbar>
     </div>
   </div>
@@ -29,148 +19,78 @@
 
 <script>
 export default {
-  name: "navBar"
+  name: "navBar",
 };
 </script>
 
-<style lang="css" scoped>
-.logo img {
-  width: 80%;
-  height: 80%;
-  border: 0;
-  margin-top: 8%;
-}
-
-.logo {
-  background-color: white;
-  height: 130px;
-  width: 225px;
-  margin: 0 auto;
-  
-}
-
-.logo img:hover {
-  background-color: whitesmoke;
+<style scoped>
+.links {
+  margin: 10px 10px 10px 70%;
 }
 
 a {
   font-size: 15px;
   color: white;
-  margin: 10px;
-  font-family: "Montserrat", sans-serif;
 }
 
-.navMenus a:hover {
+a:hover {
   font-weight: 1000;
   color: lightblue;
 }
 
 .md-toolbar {
-    text-align: center;
-    width: 100%;
-    background-color: #2ab38b;
-    padding: 0 5%;
-    z-index: 5;
-    height: 3em;
-    min-height: 0px;
+  background-color: #2ab38b;
+  height: 3em;
+  min-height: 0px;
+  padding: 0 5%;
 }
 
 .logoContainer {
   width: 13%;
-  margin: 0 auto;
   margin-left: 8%;
 }
 
-.logoContainer img {
-  width: 80%;
-}
-
-.links {
-  margin-top: 0%;
-  margin-right: 3%;
-}
-
-@media only screen and (max-width: 379px) {
-  .logo {
-    background-color: white;
-    width: 90%;
-    margin: 0 auto;
-    margin-bottom: 0%;
-    height: 0%;
-  }
-
-  .logo img {
-    width: 60%;
-    height: 60%;
-    border: 0;
-    margin-top: 1%;
-    margin-left: 15%;
-  }
-
-  .logoContainer {
-    display: none;
-    width: 0%;
-    margin: 0 0;
-    margin-left: 0%;
-  }
-
-  .links {
-    margin-top: 0%;
-    margin-right: 0%;
-    margin-left: 5%;
-  }
-
-  .links a {
-    font-size: 14px;
-  }
-}
-
-
-@media only screen and (min-width: 380px) and (max-width: 600px) {
-  .logo {
-    background-color: white;
-    width: 90%;
-    margin: 0 auto;
-    margin-bottom: 0%;
-    height: 0%;
-  }
-
-  .logo img {
-    width: 60%;
-    height: 60%;
-    border: 0;
-    margin-top: 1%;
-    margin-left: 15%;
-  }
-
-  .logoContainer {
-    display: none;
-    width: 0%;
-    margin: 0 0;
-    margin-left: 0%;
-  }
-
-  .links {
-    margin-top: 0%;
-    margin-right: 0%;
-    margin-left: 13%;
-  }
-}
-
-@media only screen and (min-width: 601px) and  (max-width: 770px) {
+@media only screen and (max-width: 800px) {
   .logoContainer {
     width: 20%;
+    margin-left: 8%;
+  }
+
+  .links {
+    margin: 10px 10px 10px 60%;
   }
 }
 
-@media only screen and (min-width: 771px) and (max-width: 1025px) {
+@media only screen and (max-width: 700px) {
   .logoContainer {
-    width: 15%;
-    margin: 0 auto;
-    margin-left: 7%;
+    width: 25%;
+    margin-left: 8%;
+  }
+
+  .links {
+    margin: 10px 10px 10px 50%;
   }
 }
 
+@media only screen and (max-width: 450px) {
+  .logoContainer {
+    width: 30%;
+    margin-left: 8%;
+  }
 
+  .links {
+    margin: 10px 10px 10px 40%;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .logoContainer {
+    width: 30%;
+    margin-left: 8%;
+  }
+
+  .links {
+    margin: 10px 10px 10px 40%;
+  }
+}
 </style>
-
