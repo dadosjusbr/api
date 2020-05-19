@@ -290,11 +290,11 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 
 	// TODO: Essa verificação é só por enquanto que ta recebendo nil. Mas quando popular o BD talvez não seja necessaria.
-	var FileHashAux string
-	var FileURLAux string
+	var packageURL string
+	var packageHash string
 	if agencyMonthlyInfo.Package != nil {
-		FileURLAux = agencyMonthlyInfo.Package.URL
-		FileHashAux = agencyMonthlyInfo.Package.Hash
+		packageURL = agencyMonthlyInfo.Package.URL
+		packageHash = agencyMonthlyInfo.Package.Hash
 	}
 
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
@@ -302,8 +302,8 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		Servers:   servers,
 		Inactives: inactive,
 		MaxSalary: maxSalary,
-		FileURL:   FileURLAux,
-		FileHash:  FileHashAux,
+		FileURL:   packageURL,
+		FileHash:  packageHash,
 	})
 }
 
