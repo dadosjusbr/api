@@ -52,11 +52,22 @@
       </div>
       <graph-bar :options="chartOptions" :series="series"></graph-bar>
     </div>
-    <div style="text-align: center;" v-show="this.noDataAvailable != true && this.series.length != 0">
+    <div
+      style="text-align: center;"
+      v-show="this.noDataAvailable != true && this.series.length != 0"
+    >
       <h5><b>Faça download do .csv e arquivo: </b></h5>
-      <md-button style="margin: 0px 0px 0px 0px" :href="this.fileUrl" target="_blank" lass="md-icon-button md-raised">
+      <md-button
+        style="margin: 0px 0px 0px 0px"
+        :href="this.fileUrl"
+        target="_blank"
+        lass="md-icon-button md-raised"
+      >
         <md-icon>cloud_download</md-icon>
       </md-button>
+      <h5 v-show="this.fileHash != ''">
+        <b> Hash do arquivo:</b> {{ this.fileHash }}
+      </h5>
     </div>
     <div v-show="this.executorLog.cmd != ''" class="errorLog">
       <b>Erro no comando: </b>
@@ -115,6 +126,7 @@ export default {
       month: parseInt(this.$route.params.month, 10),
       executorLog: { cmd: "", err: "", env: [], stdout: "" },
       fileUrl: "",
+      fileHash: "",
       activateButton: {
         previous: this.checkPreviousYear(),
         next: this.checkNextYear(),
@@ -339,9 +351,8 @@ export default {
       this.executorLog.env = envString.trim();
     },
     generateSeries(data) {
-      // TODO: Colocar aqui o fileURL 
-      this.fileUrl = "https://dadosjusbr.org/";
-      this.noDataAvailable = false;
+      this.fileUrl = data.FileURL;
+      this.noDataAvailable = data.FileHash;
       this.series = [
         {
           name: "Membros",
@@ -398,7 +409,7 @@ export default {
 </script>
 
 <style scoped>
-h5{
+h5 {
   margin-bottom: 0px;
 }
 .buttonContainer {
