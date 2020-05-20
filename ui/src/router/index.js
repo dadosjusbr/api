@@ -3,7 +3,6 @@ import VueRouter from "vue-router";
 import Home from "@/Home.vue";
 import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
 import about from "@/components/about/about.vue";
-import contact from "@/components/contact/contact.vue";
 import agencyYearContainer from "@/components/agency-year-month/agencyYearContainer.vue";
 
 Vue.use(VueRouter);
@@ -28,11 +27,6 @@ const routes = [
     path: "/sobre",
     name: "sobre",
     component: about,
-  },
-  {
-    path: "/contato",
-    name: "contato",
-    component: contact,
   },
 ];
 
