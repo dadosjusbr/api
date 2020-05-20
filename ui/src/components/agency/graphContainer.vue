@@ -351,8 +351,8 @@ export default {
       this.executorLog.env = envString.trim();
     },
     generateSeries(data) {
-      this.fileUrl = data.FileURL;
-      this.noDataAvailable = data.FileHash;
+      this.fileUrl = data.PackageURL;
+      this.noDataAvailable = data.PackageHash;
       this.series = [
         {
           name: "Membros",
