@@ -12,13 +12,6 @@
     <div>
       <graph-container @change="date" />
     </div>
-    <div
-      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
-      class="cr"
-    >
-      Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
-      Brasília.
-    </div>
 
     <div v-show="this.agencySummary != null" class="socialMidiaShare">
       <h5><b>Compartilhe essa informação: </b></h5>
@@ -46,6 +39,13 @@
         :subject="this.socialMidiaMsg"
         scale="2"
       ></email>
+    </div>
+    <div
+      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
+      class="cr"
+    >
+      Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
+      Brasília.
     </div>
   </div>
 </template>
@@ -138,7 +138,7 @@ export default {
 
 .socialMidiaShare {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 5px;
   margin-bottom: 5px;
 }
 
