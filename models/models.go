@@ -56,12 +56,12 @@ type MonthTotals struct {
 
 // DataForChartAtAgencyScreen - contains all necessary data to load chart
 type DataForChartAtAgencyScreen struct {
-	Members   map[int]int
-	Servers   map[int]int
-	Inactives map[int]int
-	MaxSalary float64
-	FileURL   string
-	FileHash  string
+	Members     map[int]int
+	Servers     map[int]int
+	Inactives   map[int]int
+	MaxSalary   float64
+	PackageURL  string
+	PackageHash string
 }
 
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process

@@ -298,12 +298,12 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
-		Members:   members,
-		Servers:   servers,
-		Inactives: inactive,
-		MaxSalary: maxSalary,
-		FileURL:   packageURL,
-		FileHash:  packageHash,
+		Members:     members,
+		Servers:     servers,
+		Inactives:   inactive,
+		MaxSalary:   maxSalary,
+		PackageURL:  packageURL,
+		PackageHash: packageHash,
 	})
 }
 
