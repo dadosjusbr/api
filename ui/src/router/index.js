@@ -28,11 +28,6 @@ const routes = [
     name: "sobre",
     component: about,
   },
-  {
-    path: "/contato",
-    name: "contato",
-    component: contact,
-  },
 ];
 
 const router = new VueRouter({
