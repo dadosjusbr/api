@@ -1,95 +1,82 @@
 <template>
-  <div>
-    <div class="navMenus">
-      <md-toolbar class="md-primary">
-        <div class="logoContainer">
-          <img src="../../assets/white_logo.png" />
-       </div>
-      </md-toolbar>
-    </div>
+  <div style="display: table">
+    <md-toolbar class="md-primary">
+      <div class="logoContainer">
+        <img src="../../assets/white_logo.png" />
+      </div>
+      <div class="contatcInfo">
+        <h6>CONTATO</h6>
+        <p style="margin-right: 15%">
+          Alguma dica? Tem algum feedback geral? Se você tiver uma ideia que
+          você gostaria de ver no DadosJusBr, envie-nos um e-mail
+          (dadosjusbr@gmail.com) ou visite nosso
+          <a style="color: white" href="https://github.com/dadosjusbr">github</a
+          >.
+        </p>
+      </div>
+    </md-toolbar>
   </div>
 </template>
 
 <script>
 export default {
-  name: "pageFooter"
+  name: "pageFooter",
 };
 </script>
 
 <style lang="css" scoped>
-.logo img {
-  width: 80%;
-  height: 80%;
-  border: 0;
-  margin-top: 8%;
-}
-
-.logo {
-  background-color: white;
-  height: 185px;
-  width: 330px;
-  margin: 0 auto;
-  
-}
-
-.logo img:hover {
-  background-color: whitesmoke;
-}
-
-a {
-  font-size: 15px;
-  color: white;
-  margin: 10px;
-  font-family: "Montserrat", sans-serif;
-}
-
-.navMenus a:hover {
-  font-weight: 1000;
-  color: lightblue;
-}
-
 .md-toolbar {
-    text-align: center;
-    width: 100%;
-    background-color: #2ab38b;
-    padding: 0 5%;
-    z-index: 5;
-    height: 3em;
-    min-height: 0px;
+  display: table-row;
+  width: 100%;
+  background-color: #3e5363;
+  height: 15em;
 }
-
 .logoContainer {
-  flex: right;
-  width: 13%;
-  margin: 0 auto;
-  margin-left: 8%;
+  display: table-cell;
+  width: 30%;
+  text-align: center;
+  vertical-align: middle;
 }
-
-.logoContainer img {
-  width: 90%;
-  margin-left: 550%;
+img {
+  width: 40%;
+  height: 40%;
 }
-
-.links {
-  margin-top: 0%;
-  margin-right: 3%;
+.contatcInfo {
+  display: table-cell;
+  text-align: left;
+  color: white;
+  font-size: 15px;
+  vertical-align: middle;
 }
-
-@media only screen and  (max-width: 379px) {
-    .logoContainer img {
-    width: 220%;
-    max-width: 220%;
-    margin-left: 460%;
+@media only screen and (max-width: 500px) {
+  .logoContainer {
+    order: 2;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40%;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .contatcInfo {
+    order: 1;
+    padding-left: 10%;
+    padding-top: 20%;
+    text-align: left;
+    color: white;
+    font-size: 15px;
+  }
+  img {
+    margin-top: 15%;
+    vertical-align: middle;
+    width: 40%;
+    height: 40%;
+  }
+  .md-toolbar {
+    flex-direction: column;
+    display: flex;
+    width: 100%;
+    height: 23em;
   }
 }
-
-@media only screen and (min-width: 380px) and  (max-width: 600px) {
-    .logoContainer img {
-    width: 180%;
-    max-width: 220%;
-    margin-left: 490%;
-  }
-}
-
-
 </style>
