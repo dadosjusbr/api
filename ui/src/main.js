@@ -10,8 +10,9 @@ import "vue-material/dist/vue-material.css";
 import "vue-material/dist/vue-material.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from 'moment'
+import VueHead from 'vue-head'
 
-
+Vue.use(VueHead);
 Vue.config.productionTip = false;
 Vue.use(VueMaterial);
 Vue.use(VueGtag, {

@@ -15,7 +15,7 @@ import entity from "@/components/state/entity.vue";
 export default {
   name: "statePageContainer",
   components: {
-    entity
+    entity,
   },
   data() {
     return {
@@ -24,7 +24,7 @@ export default {
       stateName: "PARAÍBA",
       stateData: {},
       jAgencies: [],
-      mAgencies: []
+      mAgencies: [],
     };
   },
   methods: {
@@ -37,7 +37,7 @@ export default {
     setjAgencies(stateData) {
       let jAgencies = [];
       if (stateData !== {}) {
-        stateData.Agency.forEach(agency => {
+        stateData.Agency.forEach((agency) => {
           if (agency.AgencyCategory == "J") {
             jAgencies.push(agency.Name);
           }
@@ -48,18 +48,37 @@ export default {
     setmAgencies(stateData) {
       let mAgencies = [];
       if (stateData !== {}) {
-        stateData.Agency.forEach(agency => {
+        stateData.Agency.forEach((agency) => {
           if (agency.AgencyCategory == "M") {
             mAgencies.push(agency.Name);
           }
         });
       }
       this.mAgencies = mAgencies;
-    }
+    },
   },
   mounted() {
     this.fetchData();
-  }
+  },
+  head: {
+    title: function() {
+      return {
+        inner: "DadosJusBr",
+        complement: this.stateName,
+      };
+    },
+    meta: function() {
+      return [
+        {
+          name: "description",
+          content:
+            "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do estado" +
+            this.stateName,
+          id: "desc",
+        },
+      ];
+    },
+  },
 };
 </script>
 
@@ -83,13 +102,12 @@ export default {
 }
 
 @media only screen and (max-width: 379px) {
-
   .stateName {
-      font-size: 2.2rem;
-      float: left;
-      margin-top: 4%;
-      margin-left: 13%;
-      margin-bottom: 0%;
+    font-size: 2.2rem;
+    float: left;
+    margin-top: 4%;
+    margin-left: 13%;
+    margin-bottom: 0%;
   }
 
   .image {
@@ -102,18 +120,16 @@ export default {
     margin-left: 10%;
     margin-top: 1%;
     height: 4em;
-  } 
-
+  }
 }
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
-
   .stateName {
-      font-size: 2.5rem;
-      float: left;
-      margin-top: 4%;
-      margin-left: 12%;
-      margin-bottom: 0%;
+    font-size: 2.5rem;
+    float: left;
+    margin-top: 4%;
+    margin-left: 12%;
+    margin-bottom: 0%;
   }
 
   .image {
@@ -121,7 +137,6 @@ export default {
     margin-left: 6%;
     margin-top: 6%;
   }
-
 }
 
 @media only screen and (min-width: 601px) and (max-width: 770px) {
@@ -138,14 +153,12 @@ export default {
   }
 }
 
-@media only screen and  (min-width: 771px) and (max-width: 1025px)  {
+@media only screen and (min-width: 771px) and (max-width: 1025px) {
   .image {
     width: 6%;
     height: 80x;
     margin-left: 2%;
     margin-top: 3%;
   }
-
 }
-
 </style>

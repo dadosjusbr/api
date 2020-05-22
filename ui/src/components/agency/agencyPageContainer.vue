@@ -128,6 +128,39 @@ export default {
   mounted() {
     this.fetchData();
   },
+  head: {
+    title: function() {
+      return {
+        inner: "DadosJusBr",
+        complement:
+          this.agencyName.toUpperCase() + " " + this.month + "/" + this.year,
+      };
+    },
+    meta: function() {
+      return [
+        {
+          name: "description",
+          content:
+            "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do orgão" +
+            this.agencyName.toUpperCase(),
+          id: "desc",
+        },
+        // Twitter
+        { name: "twitter:title", content: "DadosJusBr" },
+        {
+          name: "twitter:image",
+          content: "https://dadosjusbr.org/img/white_logo.16edf55b.png",
+        },
+        { name: "twitter:card", content: "summary" },
+        { name: "twitter:site", content: "@dadosjusbr" },
+        {
+          name: "twitter:description",
+          content:
+            "Descubra como é a distribuição das remunerações dos funcionários do sistema judiciário ",
+        },
+      ];
+    },
+  },
 };
 </script>
 
