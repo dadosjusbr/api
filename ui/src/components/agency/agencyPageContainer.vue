@@ -128,6 +128,25 @@ export default {
   mounted() {
     this.fetchData();
   },
+  head: {
+    title: function() {
+      return {
+        inner: "DadosJusBr",
+        complement: this.agencyName.toUpperCase(),
+      };
+    },
+    meta: function() {
+      return [
+        {
+          name: "description",
+          content:
+            "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do orgão" +
+            this.agencyName.toUpperCase(),
+          id: "desc",
+        },
+      ];
+    },
+  },
 };
 </script>
 

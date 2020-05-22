@@ -150,6 +150,24 @@ import profileCard from "@/components/about/profileCard.vue";
 export default {
   name: "about",
   components: { profileCard },
+  head: {
+    title: function() {
+      return {
+        inner: "DadosJusBr",
+        complement: "Sobre",
+      };
+    },
+    meta: function() {
+      return [
+        {
+          name: "description",
+          content:
+            "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do orgão. No DadosJusBr podemos entender como cada juiz, promotor e desembargador são remunerados. Quais auxílios recebem? Quais os valores destes auxílios? Quanto além do salário um funcionário recebeu em determinado mês? Quanto um órgão gastou em determinado mês? Todas essas perguntas podem ser respondidas através do DadosJusBr.",
+          id: "desc",
+        },
+      ];
+    },
+  },
 };
 </script>
 
