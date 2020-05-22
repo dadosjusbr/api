@@ -132,7 +132,8 @@ export default {
     title: function() {
       return {
         inner: "DadosJusBr",
-        complement: this.agencyName.toUpperCase(),
+        complement:
+          this.agencyName.toUpperCase() + " " + this.month + "/" + this.year,
       };
     },
     meta: function() {
