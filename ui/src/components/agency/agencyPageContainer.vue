@@ -144,7 +144,6 @@ export default {
             this.agencyName.toUpperCase(),
           id: "desc",
         },
-
         // Twitter
         { name: "twitter:title", content: "DadosJusBr" },
         {
