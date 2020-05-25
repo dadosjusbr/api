@@ -159,7 +159,7 @@ export default {
             " em " +
             this.year +
             "/" +
-            this.month,
+            this.year,
         },
         {
           name: "twitter:image",
