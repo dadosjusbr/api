@@ -146,17 +146,29 @@ export default {
           id: "desc",
         },
         // Twitter
-        { name: "twitter:title", content: "DadosJusBr" },
-        {
-          name: "twitter:image",
-          content: "https://dadosjusbr.org/img/white_logo.16edf55b.png",
-        },
-        { name: "twitter:card", content: "summary" },
+        { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:site", content: "@dadosjusbr" },
+        { name: "twitter:creator", content: "@dadosjusbr" },
+        { name: "twitter:url", content: "https://metatags.io/" },
+        { name: "twitter:title", content: "DadosJusBr" },
         {
           name: "twitter:description",
           content:
-            "Descubra como é a distribuição das remunerações dos funcionários do sistema judiciário ",
+            "Descubra como foram as remunerações dos funcionários do órgão" +
+            this.agencyName +
+            " em " +
+            this.month +
+            "/" +
+            this.year,
+        },
+        {
+          name: "twitter:image",
+          content:
+            "https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png",
+        },
+        {
+          name: "twitter:image:alt",
+          content: "logo do dadojus",
         },
       ];
     },
