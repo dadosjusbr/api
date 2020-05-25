@@ -157,7 +157,7 @@ export default {
             "Descubra como foram as remunerações dos funcionários do órgão" +
             this.agencyName +
             " em " +
-            this.year +
+            this.month +
             "/" +
             this.year,
         },
