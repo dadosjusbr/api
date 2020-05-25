@@ -3,6 +3,13 @@
     <div class="agencyNameContainer">
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
+    <div
+      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
+      class="cr"
+    >
+      Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
+      Brasília.
+    </div>
     <div>
       <agency-summary
         v-show="this.agencySummary != null"
@@ -12,48 +19,14 @@
     <div>
       <graph-container @change="date" />
     </div>
-
-    <div v-show="this.agencySummary != null" class="socialMidiaShare">
-      <h5><b>Compartilhe essa informação: </b></h5>
-      <facebook
-        style="margin-right: 5px"
-        :url="this.url"
-        scale="2"
-        :title="this.socialMidiaMsg"
-      ></facebook>
-      <whats-app
-        style="margin-right: 5px"
-        :url="this.url"
-        :title="this.socialMidiaMsg"
-        scale="2"
-      ></whats-app>
-      <twitter
-        style="margin-right: 5px"
-        :url="this.url"
-        :title="this.socialMidiaMsg"
-        scale="2"
-      ></twitter>
-      <email
-        style="margin-right: 5px"
-        :url="this.url"
-        :subject="this.socialMidiaMsg"
-        scale="2"
-      ></email>
-    </div>
-    <div
-      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
-      class="cr"
-    >
-      Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
-      Brasília.
-    </div>
+    <social-media-share v-show="this.agencySummary != null" />
   </div>
 </template>
 
 <script>
-import { Facebook, Twitter, WhatsApp, Email } from "vue-socialmedia-share";
 import agencySummary from "@/components/agency/agencySummary.vue";
 import graphContainer from "@/components/agency/graphContainer.vue";
+import socialMediaShare from "@/components/agency/socialMediaShare.vue";
 
 const formatter = new Intl.NumberFormat("de-DE");
 
@@ -62,27 +35,10 @@ export default {
   components: {
     agencySummary,
     graphContainer,
-    Facebook,
-    Twitter,
-    WhatsApp,
-    Email,
+    socialMediaShare,
   },
   data() {
     return {
-      socialMidiaMsg:
-        "Descubra como é a distribuição das remunerações dos funcionários do " +
-        this.$route.params.agencyName.toUpperCase() +
-        " no ano e mês " +
-        this.$route.params.year +
-        "/" +
-        this.$route.params.month,
-      url:
-        "https://dadosjusbr.org/orgao/" +
-        this.$route.params.agencyName +
-        "/" +
-        this.$route.params.year +
-        "/" +
-        this.$route.params.month,
       agencyName: this.$route.params.agencyName,
       year: this.$route.params.year,
       month: this.$route.params.month,
@@ -167,12 +123,6 @@ export default {
 <style scoped>
 .agencyName {
   font-weight: bold;
-}
-
-.socialMidiaShare {
-  text-align: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
 }
 
 .agencyContainer {
