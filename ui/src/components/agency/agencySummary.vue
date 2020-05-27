@@ -34,6 +34,7 @@ export default {
   width: 100%;
   align-self: center;
   align-content: center;
+  margin-top: 3%;
 }
 
 
