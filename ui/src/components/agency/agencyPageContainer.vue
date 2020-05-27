@@ -3,42 +3,25 @@
     <div class="agencyNameContainer">
       <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
-    <div>
-      <agency-summary
-        v-show="this.agencySummary != null"
-        :agencySummary="agencySummary"
-      />
-    </div>
-    <div>
-      <graph-container @change="date" />
-    </div>
-
-    <div v-show="this.agencySummary != null" class="socialMidiaShare">
-      <h5><b>Compartilhe essa informação: </b></h5>
-      <facebook
-        style="margin-right: 5px"
-        :url="this.url"
-        scale="2"
-        :title="this.socialMidiaMsg"
-      ></facebook>
-      <whats-app
-        style="margin-right: 5px"
-        :url="this.url"
-        :title="this.socialMidiaMsg"
-        scale="2"
-      ></whats-app>
-      <twitter
-        style="margin-right: 5px"
-        :url="this.url"
-        :title="this.socialMidiaMsg"
-        scale="2"
-      ></twitter>
-      <email
-        style="margin-right: 5px"
-        :url="this.url"
-        :subject="this.socialMidiaMsg"
-        scale="2"
-      ></email>
+    <div v-show="this.chartData.length != 0" class="buttonContainer">
+      <md-button
+        v-if="this.activateButton.previous"
+        v-on:click="previousMonth()"
+      >
+        <img src="../../assets/previous.png" />
+      </md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/previousd.png"
+      /></md-button>
+      <a>
+        {{ this.months[this.month] + ", " + this.year }}
+      </a>
+      <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
+        <img src="../../assets/next.png" />
+      </md-button>
+      <md-button class="deactivatedButton" v-else
+        ><img src="../../assets/nextd.png"
+      /></md-button>
     </div>
     <div
       v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
@@ -47,13 +30,49 @@
       Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
       Brasília.
     </div>
+    <div>
+      <agency-summary
+        v-show="this.agencySummary != null"
+        :agencySummary="agencySummary"
+      />
+    </div>
+    <div v-show="this.chartData.length != 0">
+      <graph-container :series="chartData" />
+    </div>
+    <error-collecting-data-page
+      v-show="this.executorLog.cmd != ''"
+      :executorLog="this.executorLog"
+    />
+    <no-data-available-page
+      v-show="this.executorLog.cmd == '' && this.noDataAvailable"
+    />
+    <div
+      style="text-align: center;"
+      v-show="this.noDataAvailable != true && this.chartData.length != 0"
+    >
+      <h5><b>Faça download do .csv e arquivo: </b></h5>
+      <md-button
+        style="margin: 0px 0px 0px 0px"
+        :href="this.fileUrl"
+        target="_blank"
+        lass="md-icon-button md-raised"
+      >
+        <md-icon>cloud_download</md-icon>
+      </md-button>
+      <h5 v-show="this.fileHash != ''">
+        <b> Hash do arquivo:</b> {{ this.fileHash }}
+      </h5>
+    </div>
+    <social-media-share v-show="this.agencySummary != null" />
   </div>
 </template>
 
 <script>
-import { Facebook, Twitter, WhatsApp, Email } from "vue-socialmedia-share";
 import agencySummary from "@/components/agency/agencySummary.vue";
 import graphContainer from "@/components/agency/graphContainer.vue";
+import socialMediaShare from "@/components/agency/socialMediaShare.vue";
+import errorCollectingDataPage from "@/components/agency/errorCollectingDataPage.vue";
+import noDataAvailablePage from "@/components/agency/noDataAvailablePage.vue";
 
 const formatter = new Intl.NumberFormat("de-DE");
 
@@ -62,41 +81,230 @@ export default {
   components: {
     agencySummary,
     graphContainer,
-    Facebook,
-    Twitter,
-    WhatsApp,
-    Email,
+    socialMediaShare,
+    errorCollectingDataPage,
+    noDataAvailablePage,
   },
   data() {
     return {
-      socialMidiaMsg:
-        "Descubra como é a distribuição das remunerações dos funcionários do " +
-        this.$route.params.agencyName.toUpperCase() +
-        " no ano e mês " +
-        this.$route.params.year +
-        "/" +
-        this.$route.params.month,
-      url:
-        "https://dadosjusbr.org/orgao/" +
-        this.$route.params.agencyName +
-        "/" +
-        this.$route.params.year +
-        "/" +
-        this.$route.params.month,
+      year: parseInt(this.$route.params.year, 10),
+      month: parseInt(this.$route.params.month, 10),
+      activateButton: {
+        previous: this.checkPreviousYear(),
+        next: this.checkNextYear(),
+      },
+      months: {
+        1: "Jan",
+        2: "Fev",
+        3: "Mar",
+        4: "Abr",
+        5: "Mai",
+        6: "Jun",
+        7: "Jul",
+        8: "Ago",
+        9: "Set",
+        10: "Out",
+        11: "Nov",
+        12: "Dez",
+      },
+      fileUrl: "",
+      fileHash: "",
+      executorLog: { cmd: "", err: "", env: [], stdout: "" },
+      noDataAvailable: false,
       agencyName: this.$route.params.agencyName,
-      year: this.$route.params.year,
-      month: this.$route.params.month,
       agencySummary: null,
+      chartData: [],
       Crawling_Timestamp: null,
     };
   },
   methods: {
-    date(date) {
-      this.year = date.year;
-      this.month = date.month;
-      this.fetchData();
+    getNextDate() {
+      let month = this.month;
+      let year = this.year;
+      if (month === 12) {
+        month = 1;
+        year = year + 1;
+      } else {
+        month = month + 1;
+      }
+      return { month, year };
     },
-    async fetchData() {
+    getPreviousDate() {
+      let month = this.month;
+      let year = this.year;
+      if (month === 1) {
+        month = 12;
+        year = year - 1;
+      } else {
+        month = month - 1;
+      }
+      return { month, year };
+    },
+
+    async checkNextYear() {
+      let activateButtonNext = true;
+      let { month, year } = this.getNextDate();
+      if (year != undefined) {
+        await this.$http
+          .get(
+            "/orgao/salario/" +
+              this.$route.params.agencyName +
+              "/" +
+              year +
+              "/" +
+              month
+          )
+          .catch((err) => {
+            activateButtonNext = false;
+          });
+        this.activateButton.next = activateButtonNext;
+      }
+    },
+    async checkPreviousYear() {
+      let activateButtonPrevious = true;
+      var { month, year } = this.getPreviousDate();
+      if (year != undefined) {
+        await this.$http
+          .get(
+            "/orgao/salario/" +
+              this.$route.params.agencyName +
+              "/" +
+              year +
+              "/" +
+              month
+          )
+          .catch((err) => {
+            activateButtonPrevious = false;
+          });
+        this.activateButton.previous = activateButtonPrevious;
+      }
+    },
+    async nextMonth() {
+      var { month, year } = this.getNextDate();
+      this.month = month;
+      this.year = year;
+      this.activateButton.previous = true;
+      await this.$http
+        .get(
+          "/orgao/salario/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
+        .then(
+          (response) => (this.chartData = this.generateSeries(response.data))
+        )
+        .then(this.fetchSummaryData())
+        .then(this.checkNextYear())
+        .then(
+          this.$router.push({
+            name: "agency",
+            params: { agencyName: this.agencyName, month: month, year: year },
+          })
+        );
+    },
+    async previousMonth() {
+      var { month, year } = this.getPreviousDate();
+      this.month = month;
+      this.year = year;
+      this.activateButton.next = true;
+      await this.$http
+        .get(
+          "/orgao/salario/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
+        .then(
+          (response) => (this.chartData = this.generateSeries(response.data))
+        )
+        .then(this.fetchSummaryData())
+        .then(this.checkPreviousYear())
+        .then(
+          this.$router.push({
+            name: "agency",
+            params: { agencyName: this.agencyName, month: month, year: year },
+          })
+        );
+    },
+    generateSeries(data) {
+      return [
+        {
+          name: "Membros",
+          data: [
+            data.Members["-1"],
+            data.Members["50000"],
+            data.Members["40000"],
+            data.Members["30000"],
+            data.Members["20000"],
+            data.Members["10000"],
+          ],
+        },
+        {
+          name: "Servidores",
+          data: [
+            data.Servers["-1"],
+            data.Servers["50000"],
+            data.Servers["40000"],
+            data.Servers["30000"],
+            data.Servers["20000"],
+            data.Servers["10000"],
+          ],
+        },
+        {
+          name: "Inativos",
+          data: [
+            data.Inactives["-1"],
+            data.Inactives["50000"],
+            data.Inactives["40000"],
+            data.Inactives["30000"],
+            data.Inactives["20000"],
+            data.Inactives["10000"],
+          ],
+        },
+      ];
+    },
+    makeExecutorLog(procInfo) {
+      this.executorLog.cmd = procInfo.cmd;
+      this.executorLog.err = procInfo.stderr;
+      this.executorLog.stdout = procInfo.stdout;
+      var envString = "";
+      procInfo.env.forEach((env) => {
+        envString = envString + env + "\n";
+      });
+      this.executorLog.env = envString.trim();
+    },
+    async fetchChartData() {
+      this.checkPreviousYear();
+      this.checkNextYear();
+      var response = await this.$http
+        .get(
+          "/orgao/salario/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month
+        )
+        .catch((err) => {
+          this.noDataAvailable = true;
+        });
+
+      if (response != undefined && response.status == 206) {
+        this.makeExecutorLog(response.data.ProcInfo);
+        response = undefined;
+      }
+      if (response != undefined) {
+        this.chartData = this.generateSeries(response.data);
+        this.fileUrl = response.data.PackageURL;
+        this.fileHash = response.data.PackageHash;
+      }
+    },
+    async fetchSummaryData() {
       const response = await this.$http
         .get(
           "/orgao/resumo/" +
@@ -126,7 +334,8 @@ export default {
     },
   },
   mounted() {
-    this.fetchData();
+    this.fetchSummaryData();
+    this.fetchChartData();
   },
   head: {
     title: function() {
@@ -181,10 +390,16 @@ export default {
   font-weight: bold;
 }
 
-.socialMidiaShare {
+.buttonContainer {
+  width: 105%;
+  height: 10%;
+  margin-top: 10%;
+  margin-left: -3%;
   text-align: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
+}
+
+button {
+  margin-top: -0.4%;
 }
 
 .agencyContainer {
@@ -193,7 +408,7 @@ export default {
 }
 
 .agencyNameContainer {
-  padding-top: 2.4%;
+  margin-top: 10%;
   text-align: center;
 }
 
