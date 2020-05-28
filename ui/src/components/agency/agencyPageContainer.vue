@@ -27,8 +27,7 @@
       v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
       class="cr"
     >
-      Dados Capturados em {{ Crawling_Timestamp | formatDate }}, horário de
-      Brasília.
+      Dados Capturados em {{ Crawling_Timestamp }}.
     </div>
     <div>
       <agency-summary
@@ -327,7 +326,13 @@ export default {
           Salário_Máximo:
             "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
         };
-        this.Crawling_Timestamp = response.data.CrawlingTime;
+        const date = new Date(response.data.CrawlingTime);
+        this.Crawling_Timestamp =
+          date.getUTCDay() +
+          " de " +
+          this.months[date.getUTCMonth()] +
+          " de " +
+          date.getFullYear();
       } else {
         this.agencySummary = null;
       }
@@ -358,7 +363,16 @@ export default {
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:site", content: "@dadosjusbr" },
         { name: "twitter:creator", content: "@dadosjusbr" },
-        { name: "twitter:url", content: "https://dadosjusbr.org/orgao/"+ this.agencyName +"/"+ this.year +"/"+ this.month },
+        {
+          name: "twitter:url",
+          content:
+            "https://dadosjusbr.org/orgao/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month,
+        },
         { name: "twitter:title", content: "DadosJusBr" },
         {
           name: "twitter:description",
@@ -372,8 +386,7 @@ export default {
         },
         {
           name: "twitter:image",
-          content:
-            "https://dadosjusbr.org/logo.png",
+          content: "https://dadosjusbr.org/logo.png",
         },
         {
           name: "twitter:image:alt",
