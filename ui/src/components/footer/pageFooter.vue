@@ -69,8 +69,8 @@ img {
   img {
     margin-top: 15%;
     vertical-align: middle;
-    width: 40%;
-    height: 25%;
+    width: 60%;
+    height: 10%;
   }
   .md-toolbar {
     flex-direction: column;
