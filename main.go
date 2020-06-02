@@ -322,7 +322,6 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 
-	fmt.Println()
 	agencySummary := models.AgencySummary{
 		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
 		TotalWage:      agencyMonthlyInfo.Summary.General.Wage.Total,
