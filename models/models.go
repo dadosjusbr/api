@@ -38,6 +38,7 @@ type AgencySummary struct {
 	TotalPerks     float64
 	MaxWage        float64
 	CrawlingTime   time.Time
+	AgencyName     string
 }
 
 // AgencyTotalsYear - Represents the totals of an year

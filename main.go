@@ -166,7 +166,7 @@ func newClient(c config) (*storage.Client, error) {
 		return nil, fmt.Errorf("error creating DB client: %q", err)
 	}
 	db.Collection(c.MongoMICol)
-	client, err := storage.NewClient(db, &storage.BackupClient{})
+	client, err := storage.NewClient(db, &storage.CloudClient{})
 	if err != nil {
 		return nil, fmt.Errorf("error creating storage.client: %q", err)
 	}
@@ -180,7 +180,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
 
-	_, agenciesMonthlyInfo, err := client.GetDataForFirstScreen(stateName, year)
+	_, agenciesMonthlyInfo, err := client.GetOPE(stateName, year)
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, stateName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou estado=%s inválidos", year, stateName))
@@ -205,12 +205,12 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
-	agencies, _, err := client.GetDataForFirstScreen(stateName, yearOfConsult)
+	agencies, _, err := client.GetOPE(stateName, yearOfConsult)
 	if err != nil {
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
 	}
-	agencies, _, err = client.GetDataForFirstScreen(stateName, yearOfConsult)
+	agencies, _, err = client.GetOPE(stateName, yearOfConsult)
 	if err != nil {
 		log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
@@ -233,7 +233,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
+	agencyMonthlyInfo, err := client.GetOMA(month, year, agencyName)
 	if err != nil {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
@@ -317,18 +317,19 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, err := client.GetDataForSecondScreen(month, year, agencyName)
+	agencyMonthlyInfo, err := client.GetOMA(month, year, agencyName)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 
-	fmt.Println()
 	agencySummary := models.AgencySummary{
 		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
 		TotalWage:      agencyMonthlyInfo.Summary.General.Wage.Total,
 		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
 		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max,
-		CrawlingTime:   agencyMonthlyInfo.CrawlingTimestamp}
+		CrawlingTime:   agencyMonthlyInfo.CrawlingTimestamp,
+		AgencyName:     agencyMonthlyInfo.AgencyName,
+	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
