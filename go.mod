@@ -30,11 +30,11 @@ require (
 	github.com/stretchr/testify v1.6.0 // indirect
 	github.com/tidwall/pretty v1.0.1 // indirect
 	github.com/valyala/fasttemplate v1.1.0 // indirect
-	go.mongodb.org/mongo-driver v1.3.3
-	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 // indirect
-	golang.org/x/net v0.0.0-20200528225125-3c3fba18258b // indirect
+	go.mongodb.org/mongo-driver v1.3.4
+	golang.org/x/crypto v0.0.0-20200602180216-279210d13fed // indirect
+	golang.org/x/net v0.0.0-20200602114024-627f9648deb9 // indirect
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
-	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
+	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200601152816-913338de1bd2 // indirect

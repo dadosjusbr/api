@@ -38,8 +38,10 @@ export default {
   vertical-align: middle;
 }
 img {
-  width: 60%;
-  height: 10%;
+  max-width: 200px;
+  max-height: 150px;
+  width: auto;
+  height: auto;
 }
 .contatcInfo {
   display: table-cell;
@@ -69,8 +71,10 @@ img {
   img {
     margin-top: 15%;
     vertical-align: middle;
-    width: 40%;
-    height: 25%;
+    max-width: 200px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
   }
   .md-toolbar {
     flex-direction: column;
