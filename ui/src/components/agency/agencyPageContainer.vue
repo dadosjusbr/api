@@ -316,15 +316,18 @@ export default {
         .catch((err) => {});
       if (response != undefined && response.data.TotalEmployees != 0) {
         this.agencySummary = {
-          Total_Empregados: formatter.format(
+          TotalEmployees: formatter.format(
             Math.trunc(response.data.TotalEmployees)
           ),
-          Total_Salários:
+          TotalWage:
             "R$ " + formatter.format(response.data.TotalWage.toFixed(2)),
-          Total_Indenizações:
+          TotalPerks:
             "R$ " + formatter.format(response.data.TotalPerks.toFixed(2)),
-          Salário_Máximo:
+          MaxWage:
             "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
+          TotalMembers: response.data.TotalMembers,
+          TotalServants: response.data.TotalServants,
+          TotalInactives: response.data.TotalInactives,
         };
         const date = new Date(response.data.CrawlingTime);
         this.Crawling_Timestamp =

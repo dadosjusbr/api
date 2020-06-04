@@ -39,6 +39,9 @@ type AgencySummary struct {
 	MaxWage        float64
 	CrawlingTime   time.Time
 	AgencyName     string
+	TotalMembers   int
+	TotalServants  int
+	TotalInactives int
 }
 
 // AgencyTotalsYear - Represents the totals of an year

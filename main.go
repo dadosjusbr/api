@@ -328,6 +328,9 @@ func getSummaryOfAgency(c echo.Context) error {
 		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
 		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max,
 		CrawlingTime:   agencyMonthlyInfo.CrawlingTimestamp,
+		TotalMembers:   agencyMonthlyInfo.Summary.MemberActive.Count,
+		TotalServants:  agencyMonthlyInfo.Summary.ServantActive.Count,
+		TotalInactives: agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
 		AgencyName:     agencyMonthlyInfo.AgencyName,
 	}
 	return c.JSON(http.StatusOK, agencySummary)
