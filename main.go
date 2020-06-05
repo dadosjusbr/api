@@ -323,15 +323,16 @@ func getSummaryOfAgency(c echo.Context) error {
 	}
 
 	agencySummary := models.AgencySummary{
-		TotalEmployees: agencyMonthlyInfo.Summary.General.Count,
-		TotalWage:      agencyMonthlyInfo.Summary.General.Wage.Total,
-		TotalPerks:     agencyMonthlyInfo.Summary.General.Perks.Total,
-		MaxWage:        agencyMonthlyInfo.Summary.General.Wage.Max,
-		CrawlingTime:   agencyMonthlyInfo.CrawlingTimestamp,
-		TotalMembers:   agencyMonthlyInfo.Summary.MemberActive.Count,
-		TotalServants:  agencyMonthlyInfo.Summary.ServantActive.Count,
-		TotalInactives: agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
-		AgencyName:     agencyMonthlyInfo.AgencyName,
+		TotalWage:         agencyMonthlyInfo.Summary.General.Wage.Total,
+		MaxWage:           agencyMonthlyInfo.Summary.General.Wage.Max,
+		MaxPerk:           agencyMonthlyInfo.Summary.General.Perks.Max,
+		TotalPerks:        agencyMonthlyInfo.Summary.General.Perks.Total,
+		TotalEmployees:    agencyMonthlyInfo.Summary.General.Count,
+		TotalRemuneration: agencyMonthlyInfo.Summary.General.Wage.Total + agencyMonthlyInfo.Summary.General.Perks.Total + agencyMonthlyInfo.Summary.General.Others.Total,
+		TotalMembers:      agencyMonthlyInfo.Summary.MemberActive.Count,
+		TotalServants:     agencyMonthlyInfo.Summary.ServantActive.Count,
+		TotalInactives:    agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
+		CrawlingTime:      agencyMonthlyInfo.CrawlingTimestamp,
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }

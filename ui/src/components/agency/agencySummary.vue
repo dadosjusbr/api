@@ -2,16 +2,16 @@
   <div class="summary">
     <div class="wageInfoContainer">
       <div class="wageTotal">
-        <p>Total remuneração: R$ XX.XX.XXX,XX</p>
+        <p>Total remuneração: {{this.agencySummary.TotalRemuneration}}</p>
       </div>
       <div class="othersTotals">
         <div class="othersTotalsInfo">
-          <p>Salário máximo:{{ this.agencySummary.MaxWage }}</p>
+          <p>Salário máximo: {{ this.agencySummary.MaxWage }}</p>
           <br />
           <p>Soma total salário: {{ this.agencySummary.TotalWage }}</p>
         </div>
         <div class="othersTotalsInfo">
-          <p>Benefício máximo: R$ XX.XXX,XX</p>
+          <p>Benefício máximo: {{this.agencySummary.MaxPerk}}</p>
           <br />
           <p>
             Soma total benefícios: {{ this.agencySummary.TotalPerks }}

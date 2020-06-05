@@ -33,15 +33,17 @@ type Employee struct {
 
 // AgencySummary - Summary of an agency
 type AgencySummary struct {
-	TotalEmployees int
-	TotalWage      float64
-	TotalPerks     float64
-	MaxWage        float64
-	CrawlingTime   time.Time
-	AgencyName     string
-	TotalMembers   int
-	TotalServants  int
-	TotalInactives int
+	TotalEmployees    int
+	TotalWage         float64
+	TotalPerks        float64
+	MaxWage           float64
+	CrawlingTime      time.Time
+	AgencyName        string
+	TotalMembers      int
+	TotalServants     int
+	TotalInactives    int
+	MaxPerk           float64
+	TotalRemuneration float64
 }
 
 // AgencyTotalsYear - Represents the totals of an year

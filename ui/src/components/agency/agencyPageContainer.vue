@@ -323,11 +323,14 @@ export default {
             "R$ " + formatter.format(response.data.TotalWage.toFixed(2)),
           TotalPerks:
             "R$ " + formatter.format(response.data.TotalPerks.toFixed(2)),
-          MaxWage:
-            "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
+          MaxWage: "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
           TotalMembers: response.data.TotalMembers,
           TotalServants: response.data.TotalServants,
           TotalInactives: response.data.TotalInactives,
+          MaxPerk: "R$ " + formatter.format(response.data.MaxPerk.toFixed(2)),
+          TotalRemuneration:
+            "R$ " +
+            formatter.format(response.data.TotalRemuneration.toFixed(2)),
         };
         const date = new Date(response.data.CrawlingTime);
         this.Crawling_Timestamp =
