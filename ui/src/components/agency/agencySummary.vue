@@ -2,7 +2,7 @@
   <div class="summary">
     <div class="wageInfoContainer">
       <div class="wageTotal">
-        <p>Total remuneração: {{this.agencySummary.TotalRemuneration}}</p>
+        <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
       </div>
       <div class="othersTotals">
         <div class="othersTotalsInfo">
@@ -11,11 +11,9 @@
           <p>Soma total salário: {{ this.agencySummary.TotalWage }}</p>
         </div>
         <div class="othersTotalsInfo">
-          <p>Benefício máximo: {{this.agencySummary.MaxPerk}}</p>
+          <p>Benefício máximo: {{ this.agencySummary.MaxPerk }}</p>
           <br />
-          <p>
-            Soma total benefícios: {{ this.agencySummary.TotalPerks }}
-          </p>
+          <p>Soma total benefícios: {{ this.agencySummary.TotalPerks }}</p>
         </div>
       </div>
     </div>
@@ -45,7 +43,6 @@
 </template>
 
 <script>
-
 export default {
   name: "agencySummary",
   components: {
@@ -74,7 +71,7 @@ export default {
   line-height: 54.44px;
   text-align: center;
   order: 1;
-  background-color: #DCDBDC;
+  background-color: #dcdbdc;
 }
 .othersTotals {
   width: 100%;
@@ -90,7 +87,7 @@ export default {
   height: 70%;
   width: 50%;
   margin-left: 2%;
-  border-left: solid 1.5px #DCDBDC;
+  border-left: solid 1.5px #dcdbdc;
   padding-left: 3%;
 }
 
@@ -106,7 +103,7 @@ export default {
   order: 1;
   height: 33%;
   width: 100%;
-  background-color:  #DCDBDC;
+  background-color: #dcdbdc;
   line-height: 54.44px;
   text-align: center;
 }
