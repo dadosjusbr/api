@@ -42,17 +42,9 @@
       </div>
     </div>
   </div>
-
-  <!-- <info-card
-      v-for="(value, name, id) in agencySummary"
-      :key="id"
-      :info="{ value, name }"
-    /> -->
-  <!-- </div> -->
 </template>
 
 <script>
-import infoCard from "@/components/agency/infoCard.vue";
 
 export default {
   name: "agencySummary",
