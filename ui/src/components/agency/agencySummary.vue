@@ -45,9 +45,6 @@
 <script>
 export default {
   name: "agencySummary",
-  components: {
-    infoCard,
-  },
   props: {
     agencySummary: {
       type: Object,
