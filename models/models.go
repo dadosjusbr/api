@@ -17,6 +17,7 @@ type State struct {
 // AgencyBasic - Basic information of a agency (name e category)
 type AgencyBasic struct {
 	Name           string
+	FullName       string
 	AgencyCategory string
 }
 

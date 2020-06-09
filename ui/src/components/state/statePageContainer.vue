@@ -39,7 +39,7 @@ export default {
       if (stateData !== {}) {
         stateData.Agency.forEach((agency) => {
           if (agency.AgencyCategory == "J") {
-            jAgencies.push(agency.Name);
+            jAgencies.push(agency);
           }
         });
       }
@@ -50,7 +50,7 @@ export default {
       if (stateData !== {}) {
         stateData.Agency.forEach((agency) => {
           if (agency.AgencyCategory == "M") {
-            mAgencies.push(agency.Name);
+            mAgencies.push(agency);
           }
         });
       }
