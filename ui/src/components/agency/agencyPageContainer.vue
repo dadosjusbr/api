@@ -1,7 +1,7 @@
 <template>
   <div class="agencyContainer">
     <div class="agencyNameContainer">
-      <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
+      <h2 class="agencyName">{{ agencyName.toUpperCase() + " - " + this.agencyFullName }}</h2>
     </div>
     <div v-show="this.chartData.length != 0" class="buttonContainer">
       <md-button
@@ -111,6 +111,7 @@ export default {
       executorLog: { cmd: "", err: "", env: [], stdout: "" },
       noDataAvailable: false,
       agencyName: this.$route.params.agencyName,
+      agencyFullName: "",
       agencySummary: null,
       chartData: [],
       Crawling_Timestamp: null,
@@ -315,6 +316,7 @@ export default {
         )
         .catch((err) => {});
       if (response != undefined && response.data.TotalEmployees != 0) {
+        this.agencyFullName = response.data.FullName
         this.agencySummary = {
           TotalEmployees: formatter.format(
             Math.trunc(response.data.TotalEmployees)

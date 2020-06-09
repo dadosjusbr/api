@@ -34,6 +34,7 @@ type Employee struct {
 
 // AgencySummary - Summary of an agency
 type AgencySummary struct {
+	FullName          string
 	TotalEmployees    int
 	TotalWage         float64
 	TotalPerks        float64
