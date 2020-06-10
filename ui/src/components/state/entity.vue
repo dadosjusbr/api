@@ -1,7 +1,7 @@
 <template>
   <div class="entity">
     <h1 class="entityName">{{ this.entityName.toUpperCase() }}</h1>
-    <agency v-for="(name, i) in agencies" :agencyName="name" :key="i" :year="new Date().getFullYear()" />
+    <agency v-for="(agency, i) in agencies" :agency="agency" :key="i" :year="new Date().getFullYear()" />
   </div>
 </template>
 

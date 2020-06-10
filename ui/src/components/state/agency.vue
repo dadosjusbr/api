@@ -19,10 +19,10 @@
         <router-link
           :to="{
             name: 'agency',
-            params: { agencyName: this.agencyName.toLowerCase(), year: 2020, month: 1 },
+            params: { agencyName: this.agency.Name.toLowerCase(), year: 2020, month: 1 },
           }"
         >
-          {{ this.agencyName.toUpperCase() }}
+          {{ this.agency.Name.toUpperCase() + " - " + this.agency.FullName  }}
         </router-link>
       </h2>
       <div class="buttonContainer" v-show="!simplifyComponent">
@@ -58,9 +58,9 @@ export default {
     barGraph,
   },
   props: {
-    agencyName: {
-      type: String,
-      default: "",
+    agency: {
+      type: Object,
+      default: null,
     },
     simplifyComponent: {
       type: Boolean,
@@ -216,7 +216,7 @@ export default {
   methods: {
     async fetchData() {
       var response = await this.$http.get(
-        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+        "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
       );
       if (this.simplifyComponent == true && response.data.MonthTotals == null) {
         this.noDataAvailable = true;
@@ -224,7 +224,7 @@ export default {
         while (response.data.MonthTotals == null) {
           this.currentYear -= 1;
           response = await this.$http.get(
-            "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+            "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
           );
         }
       }
@@ -287,7 +287,7 @@ export default {
     async nextYear() {
       this.currentYear = this.currentYear + 1;
       let resp = await this.$http.get(
-        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+        "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
@@ -300,7 +300,7 @@ export default {
     async previousYear() {
       this.currentYear = this.currentYear - 1;
       let resp = await this.$http.get(
-        "/orgao/totais/PB/" + this.agencyName + "/" + this.currentYear
+        "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
@@ -329,7 +329,7 @@ a {
 }
 
 .agencyName {
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-left: 15%;
   font-weight: bold;
 }
@@ -407,7 +407,7 @@ a {
   }
 
   .agencyName {
-    font-size: 1.1em;
+    font-size: 0.9em;
     margin-top: 2%;
     margin-left: 2%;
     margin-bottom: 0%;
