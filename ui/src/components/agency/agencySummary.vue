@@ -39,9 +39,9 @@ em decorrência do contrato de trabalho.
           <md-icon
             data-toggle="tooltip"
             data-placement="left" 
-            title="-Membros: 
--Ativos:
--Inativos:"
+            title="- Membro: é o integrante da carreira 'principal' do órgão do sistema de justiça. Por exemplo, juízes, desembargadores, ministros, defensores, procuradores públicos, promotores de justiça, procuradores de justiça, etc
+- Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os analistas, técnicos, oficiais de justiça, etc. 
+- Inativo: é todo o membro ou servidor aposentado."
             >info</md-icon
           >
         </div>
