@@ -6,7 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/andybalholm/cascadia v1.2.0 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/dadosjusbr/storage v0.0.0-20200610181522-822e74379ab9
+	github.com/dadosjusbr/storage v0.0.0-20200610184129-9f957c447914
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
 	github.com/dghubble/oauth1 v0.6.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
