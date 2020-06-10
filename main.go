@@ -217,8 +217,7 @@ func getBasicInfoOfState(c echo.Context) error {
 	}
 	var agenciesBasic []models.AgencyBasic
 	for k := range agencies {
-		agency, _ := client.Db.GetAgency(agencies[k].ID)
-		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agency.Name, AgencyCategory: agencies[k].Entity})
+		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agencies[k].Name, AgencyCategory: agencies[k].Entity})
 	}
 	state := models.State{Name: stateName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
 	return c.JSON(http.StatusOK, state)
