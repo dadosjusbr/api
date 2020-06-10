@@ -1,5 +1,5 @@
 <template>
-  <div style="display: table">
+  <div style="display: table; width: 100%">
     <md-toolbar class="md-primary">
       <div class="logoContainer">
         <img src="../../assets/white_logo.png" />
