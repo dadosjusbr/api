@@ -16,6 +16,8 @@ github.com/dadosjusbr/storage v0.0.0-20200529193653-5ae26099fa81 h1:ah+KBw+rc7DC
 github.com/dadosjusbr/storage v0.0.0-20200529193653-5ae26099fa81/go.mod h1:rUeCybvAr+8z2lzyrDphh/36QUJc/WUJBmcBY3qiTM8=
 github.com/dadosjusbr/storage v0.0.0-20200605115805-cbdf04905204 h1:jRQmZbX+AI1481xNaHVDvCrI3CbNagOOWGK5Ldu5uZA=
 github.com/dadosjusbr/storage v0.0.0-20200605115805-cbdf04905204/go.mod h1:rUeCybvAr+8z2lzyrDphh/36QUJc/WUJBmcBY3qiTM8=
+github.com/dadosjusbr/storage v0.0.0-20200610181522-822e74379ab9 h1:RCZBEJTkwXapYFXdD5hHRJR50PyNp/hDMwYkzzn/0RY=
+github.com/dadosjusbr/storage v0.0.0-20200610181522-822e74379ab9/go.mod h1:rUeCybvAr+8z2lzyrDphh/36QUJc/WUJBmcBY3qiTM8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -237,6 +239,8 @@ golang.org/x/sys v0.0.0-20200523222454-059865788121 h1:rITEj+UZHYC927n8GT97eC3zr
 golang.org/x/sys v0.0.0-20200523222454-059865788121/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 h1:OjiUf46hAmXblsZdnoSXsEUSKU8r1UEzcL5RVZ4gO9Y=
 golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200610111108-226ff32320da h1:bGb80FudwxpeucJUjPYJXuJ8Hk91vNtfvrymzwiei38=
+golang.org/x/sys v0.0.0-20200610111108-226ff32320da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2 h1:tW2bmiBqwgJj/UpqtC8EpXEZVYOwU0yG4iWbprSVAcs=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
