@@ -233,7 +233,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, err := client.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, _, err := client.GetOMA(month, year, agencyName)
 	if err != nil {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
@@ -317,12 +317,12 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, agencyFullName, err := client.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, agency, err := client.GetOMA(month, year, agencyName)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 	agencySummary := models.AgencySummary{
-		FullName:          agencyFullName,
+		FullName:          agency.Name,
 		TotalWage:         agencyMonthlyInfo.Summary.General.Wage.Total,
 		MaxWage:           agencyMonthlyInfo.Summary.General.Wage.Max,
 		MaxPerk:           agencyMonthlyInfo.Summary.General.Perks.Max,
