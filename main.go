@@ -317,13 +317,12 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, err := client.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, agencyFullName, err := client.GetOMA(month, year, agencyName)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
-	agency, _ := client.Db.GetAgency(agencyName)
 	agencySummary := models.AgencySummary{
-		FullName:          agency.Name,
+		FullName:          agencyFullName,
 		TotalWage:         agencyMonthlyInfo.Summary.General.Wage.Total,
 		MaxWage:           agencyMonthlyInfo.Summary.General.Wage.Max,
 		MaxPerk:           agencyMonthlyInfo.Summary.General.Perks.Max,
