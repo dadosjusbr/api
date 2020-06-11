@@ -396,14 +396,12 @@ func main() {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
-			AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 		}))
 		log.Println("Using production CORS")
 	} else {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"*"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
-			AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 		}))
 	}
 
