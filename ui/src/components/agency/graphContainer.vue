@@ -1,6 +1,9 @@
 <template>
   <div class="graphContainer">
-    <graph-bar :options="chartOptions" :series="series"></graph-bar>
+    <div class="graphHeader">Remuneração por quantidade de empregados</div>
+    <div style="graph">
+      <graph-bar :options="chartOptions" :series="series"></graph-bar>
+    </div>
   </div>
 </template>
 
@@ -21,6 +24,9 @@ export default {
   data: function() {
     return {
       chartOptions: {
+        legend:{
+          show: false
+        },
         colors: ["#c9e4ca", "#87bba2", "#364958"],
         chart: {
           stacked: true,
@@ -35,11 +41,6 @@ export default {
           {
             breakpoint: 480,
             options: {
-              legend: {
-                position: "bottom",
-                offsetX: -10,
-                offsetY: 0,
-              },
               yaxis: {
                 labels: {
                   maxWidth: 120,
@@ -63,16 +64,6 @@ export default {
         },
         yaxis: {
           decimalsInFloat: 2,
-          title: {
-            text: "Remuneração",
-            offsetX: 6,
-            style: {
-              fontSize: "16px",
-              fontWeight: "bold",
-              fontFamily: undefined,
-              color: "#263238",
-            },
-          },
           labels: {
             show: true,
             minWidth: 0,
@@ -106,10 +97,6 @@ export default {
             },
           },
         },
-        legend: {
-          position: "right",
-          offsetY: 120,
-        },
         fill: {
           opacity: 1,
         },
@@ -127,6 +114,22 @@ export default {
   text-align: center;
   overflow: hidde;
   margin-bottom: 10px;
+  background-color: white;
+  height: 526px;
+  text-align: center;
 }
 
+.graphHeader {
+  width: 100%;
+  height: 59px;
+  box-shadow: 20px 20px 300px 0 rgba(0, 0, 0, 0.05);
+  background-color: rgba(155, 155, 155, 0.3);
+  line-height: 59px;
+}
+
+.graph{
+  padding-left: 14%;
+  height: 100%;
+  padding-top: 23px;
+}
 </style>

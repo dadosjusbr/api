@@ -151,7 +151,7 @@ export default {
   justify-content: center;
   width: 100%;
   margin-top: 3%;
-  margin-bottom: 5%;
+  margin-bottom: 40px;
 }
 
 .whiteSpace {
@@ -177,6 +177,4 @@ export default {
   align-items: center;
 }
 
-.tooltip {
-}
 </style>
