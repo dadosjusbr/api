@@ -125,6 +125,7 @@ export default {
   box-shadow: 20px 20px 300px 0 rgba(0, 0, 0, 0.05);
   background-color: rgba(155, 155, 155, 0.3);
   line-height: 59px;
+  font-size: 17px;
 }
 
 .graph{
