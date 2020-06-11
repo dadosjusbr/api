@@ -337,6 +337,30 @@ func getSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+func downloadData(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
+	}
+	agName := c.Param("orgao")
+	agMI, err := client.GetOMA(month, year, agName)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agName))
+	}
+	format := c.QueryParam("format")
+	if format == "json" {
+		return c.JSONPretty(http.StatusOK, agMI, " ")
+	} else if format == "zip" {
+		c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
+		return c.JSON(http.StatusOK, fmt.Sprintf("Download realizado!"))
+	}
+	return c.JSON(http.StatusBadRequest, fmt.Sprintf("Impossível fazer o Download!"))
+}
+
 var conf config
 
 func main() {
@@ -372,12 +396,14 @@ func main() {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+			AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 		}))
 		log.Println("Using production CORS")
 	} else {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"*"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+			AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 		}))
 	}
 
@@ -400,6 +426,8 @@ func main() {
 	e.GET("/uiapi/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	e.GET("/uiapi/v1/orgao/:estado", getBasicInfoOfState)
+	// dadosjusbr.org/api/v1/orgao/mppb/2020/03?format=json
+	e.GET("/api/v1/orgao/:orgao/:ano/:mes", downloadData)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
