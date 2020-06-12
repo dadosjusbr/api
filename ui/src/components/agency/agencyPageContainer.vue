@@ -2,7 +2,8 @@
   <div class="agencyContainer">
     <div class="agencyNameContainer">
       <h2 class="agencyName">
-        {{ agencyName.toUpperCase() + " - " + this.agencyFullName }}
+        {{ this.agencyFullName }}
+        <h2>{{ "(" + this.agencyName.toUpperCase() + ")" }}</h2>
       </h2>
     </div>
     <div v-show="this.chartData.length != 0" class="buttonContainer">
