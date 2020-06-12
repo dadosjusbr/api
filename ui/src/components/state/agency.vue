@@ -19,10 +19,14 @@
         <router-link
           :to="{
             name: 'agency',
-            params: { agencyName: this.agency.Name.toLowerCase(), year: 2020, month: 1 },
+            params: {
+              agencyName: this.agency.Name.toLowerCase(),
+              year: 2020,
+              month: 1,
+            },
           }"
         >
-          {{ this.agency.Name.toUpperCase() + " - " + this.agency.FullName  }}
+          {{ this.agency.Name.toUpperCase() + " - " + this.agency.FullName }}
         </router-link>
       </h2>
       <div class="buttonContainer" v-show="!simplifyComponent">
@@ -399,7 +403,7 @@ a {
     padding: 0px;
     position: relative;
     margin-left: 40%;
-    margin-top: -7%;
+    margin-top: 10px;
   }
 
   .md-card {
@@ -416,13 +420,14 @@ a {
 
 @media only screen and (min-width: 380px) and (max-width: 600px) {
   .buttonContainer {
+    background-color: tomato;
     float: left;
     width: 45%;
     height: 0em;
     padding: 0px;
     position: relative;
     margin-left: 40%;
-    margin-top: -9%;
+    margin-top: 10px;
   }
 
   .md-card {
@@ -442,7 +447,7 @@ a {
     /* padding: 1px; */
     position: relative;
     margin-left: 34%;
-    margin-top: -6%;
+    margin-top: 7px;
   }
 
   .md-card {
@@ -469,6 +474,7 @@ a {
     position: relative;
     margin-left: 34%;
     margin-top: -4%;
+    margin-top: 10px;
   }
 }
 </style>
