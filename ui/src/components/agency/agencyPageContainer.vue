@@ -424,8 +424,8 @@ button {
 }
 
 .agencyContainer {
-  margin-left: 14%;
-  margin-right: 14%;
+  margin-left: 11%;
+  margin-right: 11%;
 }
 
 .agencyNameContainer {
