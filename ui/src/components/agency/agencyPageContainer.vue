@@ -1,7 +1,9 @@
 <template>
   <div class="agencyContainer">
     <div class="agencyNameContainer">
-      <h2 class="agencyName">{{ agencyName.toUpperCase() + " - " + this.agencyFullName }}</h2>
+      <h2 class="agencyName">
+        {{ agencyName.toUpperCase() + " - " + this.agencyFullName }}
+      </h2>
     </div>
     <div v-show="this.chartData.length != 0" class="buttonContainer">
       <md-button
@@ -316,7 +318,7 @@ export default {
         )
         .catch((err) => {});
       if (response != undefined && response.data.TotalEmployees != 0) {
-        this.agencyFullName = response.data.FullName
+        this.agencyFullName = response.data.FullName;
         this.agencySummary = {
           TotalEmployees: formatter.format(
             Math.trunc(response.data.TotalEmployees)
@@ -436,6 +438,12 @@ button {
 .cr {
   text-align: center;
   font-size: 1.1em;
+}
+@media only screen and (max-width: 650px) {
+  .agencyContainer {
+    margin-left: 3%;
+    margin-right: 3%;
+  }
 }
 
 @media only screen and (max-width: 379px) {
