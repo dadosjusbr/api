@@ -129,7 +129,7 @@ export default {
 }
 
 .graph{
-  padding-left: 14%;
+  padding-left: 16%;
   height: 100%;
   padding-top: 23px;
 }

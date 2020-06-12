@@ -2,7 +2,7 @@
   <div class="summary">
     <div class="wageInfoContainer">
       <div class="wageTotal">
-        <div style="width: 95%">
+        <div style="width: 93%">
           <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
         </div>
         <div style="width: 5%;">
@@ -38,7 +38,7 @@ em decorrência do contrato de trabalho.
         <div style="width: 5%;">
           <md-icon
             data-toggle="tooltip"
-            data-placement="left" 
+            data-placement="left"
             title="- Membro: é o integrante da carreira 'principal' do órgão do sistema de justiça. Por exemplo, juízes, desembargadores, ministros, defensores, procuradores públicos, promotores de justiça, procuradores de justiça, etc
 - Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os analistas, técnicos, oficiais de justiça, etc. 
 - Inativo: é todo o membro ou servidor aposentado."
@@ -177,4 +177,74 @@ export default {
   align-items: center;
 }
 
+@media only screen and (max-width: 650px) {
+  .summary {
+    height: 470px;
+    display: table;
+    justify-content: center;
+    width: 100%;
+    margin-top: 3%;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wageInfoContainer {
+    height: 277px;
+    display: table-cell;
+    width: 100%;
+    flex-direction: column;
+    /* margin-bottom: 16px; */
+  }
+  .wageTotal {
+    height: 59px;
+    width: 100%;
+    line-height: 54.44px;
+    text-align: center;
+    order: 1;
+    background-color: #dcdbdc;
+  }
+  .employeeInfoContainer {
+    height: 50%;
+    display: table-cell;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .othersTotals {
+    margin: 0 auto;
+    flex-direction: column;
+    height: 250px;
+  }
+  .othersTotalsInfo {
+    padding-top: 2px;
+    width: 250px;
+    height: 80px;
+    margin-bottom: 15px;
+  }
+  .whiteSpace {
+    width: 100%;
+    height: 16px;
+    background-color: #F4F4F4;
+    order: 2;
+  }
+  br {
+    display: block;
+    content: ""; 
+    margin-top: 1px;
+  }
+
+  .toltalEmployees{
+    height: 59px;
+  }
+  .employeeInfoContainer{
+    height: 180px;
+    order: 3;
+  }
+
+  .employeesClassification{
+    height: 119px;
+    padding-top: 16px;
+  }
+}
 </style>
