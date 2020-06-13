@@ -349,16 +349,17 @@ func downloadData(c echo.Context) error {
 	agName := c.Param("orgao")
 	agMI, err := client.GetOMA(month, year, agName)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agName))
+		c.Logger().Printf("Error fetching data for API (%s?%s):%q", c.Path(), c.QueryString(), err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
-	format := c.QueryParam("format")
-	if format == "json" {
-		return c.JSONPretty(http.StatusOK, agMI, " ")
-	} else if format == "zip" {
-		c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
-		return c.JSON(http.StatusOK, fmt.Sprintf("Download realizado!"))
+	switch format := c.QueryParam("format"); format {
+	case "zip":
+		return c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
+	case "":
+		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, definir um formato!"))
+	default:
+		return c.JSONPretty(http.StatusOK, agMI.Employee, " ")
 	}
-	return c.JSON(http.StatusBadRequest, fmt.Sprintf("Impossível fazer o Download!"))
 }
 
 var conf config
