@@ -355,10 +355,10 @@ func downloadData(c echo.Context) error {
 	switch format := c.QueryParam("format"); format {
 	case "zip":
 		return c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
-	case "":
-		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, definir um formato!"))
-	default:
+	case "json":
 		return c.JSONPretty(http.StatusOK, agMI.Employee, " ")
+	default:
+		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, escolher o formato entre json e zip!"))
 	}
 }
 
