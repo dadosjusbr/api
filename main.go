@@ -337,6 +337,31 @@ func getSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+func downloadData(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
+	}
+	agName := c.Param("orgao")
+	agMI, err := client.GetOMA(month, year, agName)
+	if err != nil {
+		c.Logger().Printf("Error fetching data for API (%s?%s):%q", c.Path(), c.QueryString(), err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	switch format := c.QueryParam("format"); format {
+	case "zip":
+		return c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
+	case "json":
+		return c.JSONPretty(http.StatusOK, agMI.Employee, " ")
+	default:
+		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, escolher o formato entre json e zip!"))
+	}
+}
+
 var conf config
 
 func main() {
@@ -400,6 +425,8 @@ func main() {
 	e.GET("/uiapi/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	e.GET("/uiapi/v1/orgao/:estado", getBasicInfoOfState)
+	// dadosjusbr.org/api/v1/orgao/mppb/2020/03?format=json
+	e.GET("/api/v1/orgao/:orgao/:ano/:mes", downloadData)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
