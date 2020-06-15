@@ -337,7 +337,7 @@ func getSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
-func downloadData(c echo.Context) error {
+func apiOMA(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
@@ -347,7 +347,7 @@ func downloadData(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	agName := c.Param("orgao")
-	agMI, err := client.GetOMA(month, year, agName)
+	agMI, _, err := client.GetOMA(month, year, agName)
 	if err != nil {
 		c.Logger().Printf("Error fetching data for API (%s?%s):%q", c.Path(), c.QueryString(), err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
@@ -355,7 +355,7 @@ func downloadData(c echo.Context) error {
 	switch format := c.QueryParam("format"); format {
 	case "zip":
 		return c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
-	case "json":
+	case "json", "":
 		return c.JSONPretty(http.StatusOK, agMI.Employee, " ")
 	default:
 		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, escolher o formato entre json e zip!"))
@@ -388,45 +388,52 @@ func main() {
 
 	e := echo.New()
 
-	renderer := &TemplateRenderer{
+	// Overall configuration
+	e.Renderer = &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("templates/*.html")),
 	}
-
-	// Enable access from all dadosjusbr domains.
-	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
-		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
-			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
-		}))
-		log.Println("Using production CORS")
-	} else {
-		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"*"},
-			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
-		}))
-	}
-
-	e.Renderer = renderer
-
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:   "ui/dist/",
 		Browse: true,
 		HTML5:  true,
 		Index:  "index.html",
 	}))
-
 	e.Static("/static", "templates/assets")
 
+	// Internal API configuration
+	uiAPIGroup := e.Group("/uiapi")
+	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
+		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+		log.Println("Using production CORS")
+	} else {
+		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"*"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+	}
 	// Return a summary of an agency. This information will be used in the head of the agency page.
-	e.GET("/uiapi/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency)
+	uiAPIGroup.GET("/v1/orgao/resumo/:orgao/:ano/:mes", getSummaryOfAgency)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
-	e.GET("/uiapi/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
+	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
-	e.GET("/uiapi/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
+	uiAPIGroup.GET("/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
-	e.GET("/uiapi/v1/orgao/:estado", getBasicInfoOfState)
-	// dadosjusbr.org/api/v1/orgao/mppb/2020/03?format=json
-	e.GET("/api/v1/orgao/:orgao/:ano/:mes", downloadData)
+	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
+
+	// Public API configuration
+	apiGroup = e.Group("/api")
+	apiGroup.Use(
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"*"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+		}))
+	)
+	// Return OMA (órgão/mês/ano) information
+	apiGroup.GET("/v1/orgao/:orgao/:ano/:mes", apiOMA)
+
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
