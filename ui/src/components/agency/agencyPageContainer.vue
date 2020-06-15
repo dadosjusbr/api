@@ -1,10 +1,9 @@
+/* eslint-disable vue/valid-v-bind */ /* eslint-disable vue/valid-v-on */ /*
+eslint-disable no-console */
 <template>
   <div class="agencyContainer">
     <div class="agencyNameContainer">
-      <h2 class="agencyName">
-        {{ this.agencyFullName }}
-        <h2>{{ "(" + this.agencyName.toUpperCase() + ")" }}</h2>
-      </h2>
+      <h1 class="agencyName">{{ agencyName.toUpperCase() }}</h1>
     </div>
     <div v-show="this.chartData.length != 0" class="buttonContainer">
       <md-button
@@ -52,14 +51,22 @@
       style="text-align: center;"
       v-show="this.noDataAvailable != true && this.chartData.length != 0"
     >
-      <h5><b>Faça download do .csv e arquivo: </b></h5>
+      <h5><b>Faça o download dos dados, escolha o formato:</b></h5>
       <md-button
+        v-on:click.native="downloadData('json')"
         style="margin: 0px 0px 0px 0px"
-        :href="this.fileUrl"
         target="_blank"
         lass="md-icon-button md-raised"
       >
-        <md-icon>cloud_download</md-icon>
+        <img src="../../assets/json.png" />
+      </md-button>
+      <md-button
+        v-on:click.native="downloadData('zip')"
+        style="margin: 0px 0px 0px 0px"
+        target="_blank"
+        lass="md-icon-button md-raised"
+      >
+        <img src="../../assets/zip.png" />
       </md-button>
       <h5 v-show="this.fileHash != ''">
         <b> Hash do arquivo:</b> {{ this.fileHash }}
@@ -75,6 +82,7 @@ import graphContainer from "@/components/agency/graphContainer.vue";
 import socialMediaShare from "@/components/agency/socialMediaShare.vue";
 import errorCollectingDataPage from "@/components/agency/errorCollectingDataPage.vue";
 import noDataAvailablePage from "@/components/agency/noDataAvailablePage.vue";
+import * as fs from "fs";
 
 const formatter = new Intl.NumberFormat("de-DE");
 
@@ -85,15 +93,16 @@ export default {
     graphContainer,
     socialMediaShare,
     errorCollectingDataPage,
-    noDataAvailablePage,
+    noDataAvailablePage
   },
   data() {
     return {
       year: parseInt(this.$route.params.year, 10),
       month: parseInt(this.$route.params.month, 10),
+      format: "",
       activateButton: {
         previous: this.checkPreviousYear(),
-        next: this.checkNextYear(),
+        next: this.checkNextYear()
       },
       months: {
         1: "Jan",
@@ -107,17 +116,16 @@ export default {
         9: "Set",
         10: "Out",
         11: "Nov",
-        12: "Dez",
+        12: "Dez"
       },
       fileUrl: "",
       fileHash: "",
       executorLog: { cmd: "", err: "", env: [], stdout: "" },
       noDataAvailable: false,
       agencyName: this.$route.params.agencyName,
-      agencyFullName: "",
       agencySummary: null,
       chartData: [],
-      Crawling_Timestamp: null,
+      Crawling_Timestamp: null
     };
   },
   methods: {
@@ -157,7 +165,7 @@ export default {
               "/" +
               month
           )
-          .catch((err) => {
+          .catch(err => {
             activateButtonNext = false;
           });
         this.activateButton.next = activateButtonNext;
@@ -176,7 +184,7 @@ export default {
               "/" +
               month
           )
-          .catch((err) => {
+          .catch(err => {
             activateButtonPrevious = false;
           });
         this.activateButton.previous = activateButtonPrevious;
@@ -196,15 +204,13 @@ export default {
             "/" +
             this.month
         )
-        .then(
-          (response) => (this.chartData = this.generateSeries(response.data))
-        )
+        .then(response => (this.chartData = this.generateSeries(response.data)))
         .then(this.fetchSummaryData())
         .then(this.checkNextYear())
         .then(
           this.$router.push({
             name: "agency",
-            params: { agencyName: this.agencyName, month: month, year: year },
+            params: { agencyName: this.agencyName, month: month, year: year }
           })
         );
     },
@@ -222,15 +228,13 @@ export default {
             "/" +
             this.month
         )
-        .then(
-          (response) => (this.chartData = this.generateSeries(response.data))
-        )
+        .then(response => (this.chartData = this.generateSeries(response.data)))
         .then(this.fetchSummaryData())
         .then(this.checkPreviousYear())
         .then(
           this.$router.push({
             name: "agency",
-            params: { agencyName: this.agencyName, month: month, year: year },
+            params: { agencyName: this.agencyName, month: month, year: year }
           })
         );
     },
@@ -244,8 +248,8 @@ export default {
             data.Members["40000"],
             data.Members["30000"],
             data.Members["20000"],
-            data.Members["10000"],
-          ],
+            data.Members["10000"]
+          ]
         },
         {
           name: "Servidores",
@@ -255,8 +259,8 @@ export default {
             data.Servers["40000"],
             data.Servers["30000"],
             data.Servers["20000"],
-            data.Servers["10000"],
-          ],
+            data.Servers["10000"]
+          ]
         },
         {
           name: "Inativos",
@@ -266,9 +270,9 @@ export default {
             data.Inactives["40000"],
             data.Inactives["30000"],
             data.Inactives["20000"],
-            data.Inactives["10000"],
-          ],
-        },
+            data.Inactives["10000"]
+          ]
+        }
       ];
     },
     makeExecutorLog(procInfo) {
@@ -276,7 +280,7 @@ export default {
       this.executorLog.err = procInfo.stderr;
       this.executorLog.stdout = procInfo.stdout;
       var envString = "";
-      procInfo.env.forEach((env) => {
+      procInfo.env.forEach(env => {
         envString = envString + env + "\n";
       });
       this.executorLog.env = envString.trim();
@@ -293,7 +297,7 @@ export default {
             "/" +
             this.month
         )
-        .catch((err) => {
+        .catch(err => {
           this.noDataAvailable = true;
         });
 
@@ -317,9 +321,8 @@ export default {
             "/" +
             this.month
         )
-        .catch((err) => {});
+        .catch(err => {});
       if (response != undefined && response.data.TotalEmployees != 0) {
-        this.agencyFullName = response.data.FullName;
         this.agencySummary = {
           TotalEmployees: formatter.format(
             Math.trunc(response.data.TotalEmployees)
@@ -334,8 +337,7 @@ export default {
           TotalInactives: response.data.TotalInactives,
           MaxPerk: "R$ " + formatter.format(response.data.MaxPerk.toFixed(2)),
           TotalRemuneration:
-            "R$ " +
-            formatter.format(response.data.TotalRemuneration.toFixed(2)),
+            "R$ " + formatter.format(response.data.TotalRemuneration.toFixed(2))
         };
         const date = new Date(response.data.CrawlingTime);
         this.Crawling_Timestamp =
@@ -348,6 +350,35 @@ export default {
         this.agencySummary = null;
       }
     },
+    async downloadData(format) {
+      var response = await this.$http
+        .get(
+          "/orgao/" +
+            this.agencyName +
+            "/" +
+            this.year +
+            "/" +
+            this.month +
+            "?format=" +
+            format
+        )
+        .catch(err => {
+          this.noDataAvailable = true;
+        });
+
+      if (response != undefined && response.status == 200 && format == "json") {
+        var expName = this.agencyName + "-" + this.month + "-" + this.year;
+        var dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(response.data));
+        var downloadAnchorNode = document.createElement("a");
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", expName + ".json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
+    }
   },
   mounted() {
     this.fetchSummaryData();
@@ -358,7 +389,7 @@ export default {
       return {
         inner: "DadosJusBr",
         complement:
-          this.agencyName.toUpperCase() + " " + this.month + "/" + this.year,
+          this.agencyName.toUpperCase() + " " + this.month + "/" + this.year
       };
     },
     meta: function() {
@@ -368,7 +399,7 @@ export default {
           content:
             "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do orgão" +
             this.agencyName.toUpperCase(),
-          id: "desc",
+          id: "desc"
         },
         // Twitter
         { name: "twitter:card", content: "summary_large_image" },
@@ -382,7 +413,7 @@ export default {
             "/" +
             this.year +
             "/" +
-            this.month,
+            this.month
         },
         { name: "twitter:title", content: "DadosJusBr" },
         {
@@ -393,19 +424,19 @@ export default {
             " em " +
             this.month +
             "/" +
-            this.year,
+            this.year
         },
         {
           name: "twitter:image",
-          content: "https://dadosjusbr.org/logo.png",
+          content: "https://dadosjusbr.org/logo.png"
         },
         {
           name: "twitter:image:alt",
-          content: "logo do dadojus",
-        },
+          content: "logo do dadojus"
+        }
       ];
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -427,8 +458,8 @@ button {
 }
 
 .agencyContainer {
-  margin-left: 11%;
-  margin-right: 11%;
+  margin-left: 14%;
+  margin-right: 14%;
 }
 
 .agencyNameContainer {
@@ -439,12 +470,6 @@ button {
 .cr {
   text-align: center;
   font-size: 1.1em;
-}
-@media only screen and (max-width: 650px) {
-  .agencyContainer {
-    margin-left: 3%;
-    margin-right: 3%;
-  }
 }
 
 @media only screen and (max-width: 379px) {
