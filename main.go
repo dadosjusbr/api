@@ -424,16 +424,12 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
 
 	// Public API configuration
-	apiGroup = e.Group("/api")
-	apiGroup.Use(
-		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"*"},
-			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
-		}))
-	)
+	apiGroup := e.Group("/api", middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+	}))
 	// Return OMA (órgão/mês/ano) information
 	apiGroup.GET("/v1/orgao/:orgao/:ano/:mes", apiOMA)
-
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
