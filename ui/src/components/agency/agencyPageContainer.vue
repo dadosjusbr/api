@@ -414,7 +414,7 @@ export default {
 .buttonContainer {
   width: 105%;
   height: 10%;
-  margin-top: 10%;
+  margin-top: 62px;
   margin-left: -3%;
   text-align: center;
 }
@@ -429,7 +429,7 @@ button {
 }
 
 .agencyNameContainer {
-  margin-top: 10%;
+  margin-top: 62px;
   text-align: center;
 }
 
