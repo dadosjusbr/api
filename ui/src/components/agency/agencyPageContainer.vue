@@ -51,7 +51,7 @@
     <div class="downloadAndShare">
       <div
         v-show="this.noDataAvailable != true && this.chartData.length != 0"
-        style="order: 1; width: 150px; height: 48px; background-color: red;"
+        style="order: 1; width: 150px; height: 48px;"
       >
         <button class="buttonDownload" :href="this.fileUrl" target="_blank">
           Baixar
