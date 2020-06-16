@@ -48,24 +48,21 @@
     <no-data-available-page
       v-show="this.executorLog.cmd == '' && this.noDataAvailable"
     />
-    <div
-      style="text-align: center;"
-      v-show="this.noDataAvailable != true && this.chartData.length != 0"
-    >
-      <h5><b>Faça download dos dados: </b></h5>
-      <md-button
-        style="margin: 0px 0px 0px 0px"
-        :href="this.fileUrl"
-        target="_blank"
-        lass="md-icon-button md-raised"
+    <div class="downloadAndShare">
+      <div
+        v-show="this.noDataAvailable != true && this.chartData.length != 0"
+        style="order: 1; width: 150px; height: 48px;"
       >
-        <img src="../../assets/zip.png" />
-      </md-button>
-      <h5 v-show="this.fileHash != ''">
-        <b> Hash do arquivo:</b> {{ this.fileHash }}
-      </h5>
+        <button class="buttonDownload" :href="this.fileUrl" target="_blank">
+          Baixar
+        </button>
+        <!--
+        <h5 v-show="this.fileHash != ''">
+          <b> Hash do arquivo:</b> {{ this.fileHash }}
+        </h5> -->
+      </div>
+      <social-media-share v-show="this.agencySummary != null" />
     </div>
-    <social-media-share v-show="this.agencySummary != null" />
   </div>
 </template>
 
@@ -85,7 +82,7 @@ export default {
     graphContainer,
     socialMediaShare,
     errorCollectingDataPage,
-    noDataAvailablePage
+    noDataAvailablePage,
   },
   data() {
     return {
@@ -93,7 +90,7 @@ export default {
       month: parseInt(this.$route.params.month, 10),
       activateButton: {
         previous: this.checkPreviousYear(),
-        next: this.checkNextYear()
+        next: this.checkNextYear(),
       },
       months: {
         1: "Jan",
@@ -107,7 +104,7 @@ export default {
         9: "Set",
         10: "Out",
         11: "Nov",
-        12: "Dez"
+        12: "Dez",
       },
       fileUrl: "",
       fileHash: "",
@@ -117,7 +114,7 @@ export default {
       agencyFullName: "",
       agencySummary: null,
       chartData: [],
-      Crawling_Timestamp: null
+      Crawling_Timestamp: null,
     };
   },
   methods: {
@@ -157,7 +154,7 @@ export default {
               "/" +
               month
           )
-          .catch(err => {
+          .catch((err) => {
             activateButtonNext = false;
           });
         this.activateButton.next = activateButtonNext;
@@ -176,7 +173,7 @@ export default {
               "/" +
               month
           )
-          .catch(err => {
+          .catch((err) => {
             activateButtonPrevious = false;
           });
         this.activateButton.previous = activateButtonPrevious;
@@ -196,13 +193,15 @@ export default {
             "/" +
             this.month
         )
-        .then(response => (this.chartData = this.generateSeries(response.data)))
+        .then(
+          (response) => (this.chartData = this.generateSeries(response.data))
+        )
         .then(this.fetchSummaryData())
         .then(this.checkNextYear())
         .then(
           this.$router.push({
             name: "agency",
-            params: { agencyName: this.agencyName, month: month, year: year }
+            params: { agencyName: this.agencyName, month: month, year: year },
           })
         );
       this.$router.go();
@@ -221,13 +220,15 @@ export default {
             "/" +
             this.month
         )
-        .then(response => (this.chartData = this.generateSeries(response.data)))
+        .then(
+          (response) => (this.chartData = this.generateSeries(response.data))
+        )
         .then(this.fetchSummaryData())
         .then(this.checkPreviousYear())
         .then(
           this.$router.push({
             name: "agency",
-            params: { agencyName: this.agencyName, month: month, year: year }
+            params: { agencyName: this.agencyName, month: month, year: year },
           })
         );
       this.$router.go();
@@ -242,8 +243,8 @@ export default {
             data.Members["40000"],
             data.Members["30000"],
             data.Members["20000"],
-            data.Members["10000"]
-          ]
+            data.Members["10000"],
+          ],
         },
         {
           name: "Servidores",
@@ -253,8 +254,8 @@ export default {
             data.Servers["40000"],
             data.Servers["30000"],
             data.Servers["20000"],
-            data.Servers["10000"]
-          ]
+            data.Servers["10000"],
+          ],
         },
         {
           name: "Inativos",
@@ -264,9 +265,9 @@ export default {
             data.Inactives["40000"],
             data.Inactives["30000"],
             data.Inactives["20000"],
-            data.Inactives["10000"]
-          ]
-        }
+            data.Inactives["10000"],
+          ],
+        },
       ];
     },
     makeExecutorLog(procInfo) {
@@ -274,7 +275,7 @@ export default {
       this.executorLog.err = procInfo.stderr;
       this.executorLog.stdout = procInfo.stdout;
       var envString = "";
-      procInfo.env.forEach(env => {
+      procInfo.env.forEach((env) => {
         envString = envString + env + "\n";
       });
       this.executorLog.env = envString.trim();
@@ -291,7 +292,7 @@ export default {
             "/" +
             this.month
         )
-        .catch(err => {
+        .catch((err) => {
           this.noDataAvailable = true;
         });
 
@@ -315,7 +316,7 @@ export default {
             "/" +
             this.month
         )
-        .catch(err => {});
+        .catch((err) => {});
       if (response != undefined && response.data.TotalEmployees != 0) {
         this.agencyFullName = response.data.FullName;
         this.agencySummary = {
@@ -332,7 +333,8 @@ export default {
           TotalInactives: response.data.TotalInactives,
           MaxPerk: "R$ " + formatter.format(response.data.MaxPerk.toFixed(2)),
           TotalRemuneration:
-            "R$ " + formatter.format(response.data.TotalRemuneration.toFixed(2))
+            "R$ " +
+            formatter.format(response.data.TotalRemuneration.toFixed(2)),
         };
         const date = new Date(response.data.CrawlingTime);
         this.Crawling_Timestamp =
@@ -344,7 +346,7 @@ export default {
       } else {
         this.agencySummary = null;
       }
-    }
+    },
   },
   mounted() {
     this.fetchSummaryData();
@@ -355,7 +357,7 @@ export default {
       return {
         inner: "DadosJusBr",
         complement:
-          this.agencyName.toUpperCase() + " " + this.month + "/" + this.year
+          this.agencyName.toUpperCase() + " " + this.month + "/" + this.year,
       };
     },
     meta: function() {
@@ -365,7 +367,7 @@ export default {
           content:
             "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do orgão" +
             this.agencyName.toUpperCase(),
-          id: "desc"
+          id: "desc",
         },
         // Twitter
         { name: "twitter:card", content: "summary_large_image" },
@@ -379,7 +381,7 @@ export default {
             "/" +
             this.year +
             "/" +
-            this.month
+            this.month,
         },
         { name: "twitter:title", content: "DadosJusBr" },
         {
@@ -390,19 +392,19 @@ export default {
             " em " +
             this.month +
             "/" +
-            this.year
+            this.year,
         },
         {
           name: "twitter:image",
-          content: "https://dadosjusbr.org/logo.png"
+          content: "https://dadosjusbr.org/logo.png",
         },
         {
           name: "twitter:image:alt",
-          content: "logo do dadojus"
-        }
+          content: "logo do dadojus",
+        },
       ];
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -410,11 +412,17 @@ export default {
 .agencyName {
   font-weight: bold;
 }
+.downloadAndShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
 
 .buttonContainer {
   width: 105%;
   height: 10%;
-  margin-top: 10%;
+  margin-top: 62px;
   margin-left: -3%;
   text-align: center;
 }
@@ -429,10 +437,17 @@ button {
 }
 
 .agencyNameContainer {
-  margin-top: 10%;
+  margin-top: 62px;
   text-align: center;
 }
 
+.buttonDownload {
+  width: 150px;
+  height: 48px;
+  background-color: #545454;
+  border: solid #545454;
+  color: white;
+}
 .cr {
   text-align: center;
   font-size: 1.1em;

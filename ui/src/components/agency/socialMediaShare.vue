@@ -1,30 +1,39 @@
 <template>
-  <div class="socialMidiaShare">
-    <h5><b>Compartilhe essa informação: </b></h5>
-    <facebook
-      style="margin-right: 5px"
-      :url="this.url"
-      scale="2"
-      :title="this.socialMidiaMsg"
-    ></facebook>
-    <whats-app
-      style="margin-right: 5px"
-      :url="this.url"
-      :title="this.socialMidiaMsg"
-      scale="2"
-    ></whats-app>
-    <twitter
-      style="margin-right: 5px"
-      :url="this.url"
-      :title="this.socialMidiaMsg"
-      scale="2"
-    ></twitter>
-    <email
-      style="margin-right: 5px"
-      :url="this.url"
-      :subject="this.socialMidiaMsg"
-      scale="2"
-    ></email>
+  <div>
+    <div class="buttonDiv">
+      <button class="button" v-on:click="showMenu()">
+        Compartilhar
+      </button>
+    </div>
+    <div class="shareMenu" v-show="this.displayMenu">
+      <button class="closeButton" v-on:click="hideMenu()">X</button>
+      <h3 style="margin-top: 50px;">Compartilhar</h3>
+      <facebook
+        v-on:click="hideMenu()"
+        style="margin-right: 5px"
+        :url="this.url"
+        scale="3"
+        :title="this.socialMidiaMsg"
+      ></facebook>
+      <whats-app
+        style="margin-right: 5px"
+        :url="this.url"
+        :title="this.socialMidiaMsg"
+        scale="3"
+      ></whats-app>
+      <twitter
+        style="margin-right: 5px"
+        :url="this.url"
+        :title="this.socialMidiaMsg"
+        scale="3"
+      ></twitter>
+      <email
+        style="margin-right: 5px"
+        :url="this.url"
+        :subject="this.socialMidiaMsg"
+        scale="3"
+      ></email>
+    </div>
   </div>
 </template>
 
@@ -34,6 +43,7 @@ export default {
   name: "socialMediaShare",
   data() {
     return {
+      displayMenu: false,
       socialMidiaMsg:
         "Descubra como é a distribuição das remunerações dos funcionários do " +
         this.$route.params.agencyName.toUpperCase() +
@@ -50,6 +60,14 @@ export default {
         this.$route.params.month,
     };
   },
+  methods: {
+    showMenu() {
+      this.displayMenu = true;
+    },
+    hideMenu() {
+      this.displayMenu = false;
+    },
+  },
   components: {
     Facebook,
     Twitter,
@@ -60,9 +78,40 @@ export default {
 </script>
 
 <style>
-.socialMidiaShare {
+.buttonDiv {
   text-align: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-right: 10px;
+  width: 150px;
+  height: 48px;
+  order: 2;
+}
+
+.button {
+  width: 150px;
+  height: 48px;
+  background-color: #545454;
+  border: solid #545454;
+  color: white;
+}
+
+.closeButton {
+  float: right;
+  width: 30px;
+  height: 30px;
+  background-color: #545454;
+  border: solid #545454;
+  color: white;
+}
+
+.shareMenu {
+  width: 285px;
+  height: 218px;
+  background-color: #e0dfe0;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -142.5px;
+  margin-top: -109px;
 }
 </style>
