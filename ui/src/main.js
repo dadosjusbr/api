@@ -11,7 +11,10 @@ import "vue-material/dist/vue-material.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from 'moment'
 import VueHead from 'vue-head'
+import BootstrapVue from 'bootstrap-vue'
 
+
+Vue.use(BootstrapVue)
 Vue.use(VueHead);
 Vue.config.productionTip = false;
 Vue.use(VueMaterial);

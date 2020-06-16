@@ -6,14 +6,7 @@
           <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
         </div>
         <div style="width: 5%;">
-          <md-icon
-            data-toggle="tooltip"
-            title="- Salário: valor recebido de acordo com a prestação de serviços,
-em decorrência do contrato de trabalho.
-- Remuneração: é a soma do salário mais outras vantagens (indenizações e benefícios).
-- Benefício: valores eventuais, por exemplo, auxílios alimentação, saúde, escolar..."
-            >info</md-icon
-          >
+          <md-icon id="tooltip-target-1">info</md-icon>
         </div>
       </div>
       <div class="othersTotals">
@@ -36,14 +29,7 @@ em decorrência do contrato de trabalho.
           <p>Total empregados: {{ this.agencySummary.TotalEmployees }}</p>
         </div>
         <div style="width: 5%;">
-          <md-icon
-            data-toggle="tooltip"
-            data-placement="left"
-            title="- Membro: é o integrante da carreira 'principal' do órgão do sistema de justiça. Por exemplo, juízes, desembargadores, ministros, defensores, procuradores públicos, promotores de justiça, procuradores de justiça, etc
-- Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os analistas, técnicos, oficiais de justiça, etc. 
-- Inativo: é todo o membro ou servidor aposentado."
-            >info</md-icon
-          >
+          <md-icon id="tooltip-target-2">info</md-icon>
         </div>
       </div>
       <div class="employeesClassification">
@@ -63,6 +49,20 @@ em decorrência do contrato de trabalho.
         </div>
       </div>
     </div>
+    <b-tooltip target="tooltip-target-1" triggers="click hover">
+      - Salário: valor recebido de acordo com a prestação de serviços, em
+      decorrência do contrato de trabalho. - Remuneração: é a soma do salário
+      mais outras vantagens (indenizações e benefícios). - Benefício: valores
+      eventuais, por exemplo, auxílios alimentação, saúde, escolar...
+    </b-tooltip>
+    <b-tooltip target="tooltip-target-2" triggers="click hover">
+      - Membro: é o integrante da carreira 'principal' do órgão do sistema de
+      justiça. Por exemplo, juízes, desembargadores, ministros, defensores,
+      procuradores públicos, promotores de justiça, procuradores de justiça, etc
+      - Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os
+      analistas, técnicos, oficiais de justiça, etc. - Inativo: é todo o membro
+      ou servidor aposentado.
+    </b-tooltip>
   </div>
 </template>
 
@@ -225,24 +225,24 @@ export default {
   .whiteSpace {
     width: 100%;
     height: 16px;
-    background-color: #F4F4F4;
+    background-color: #f4f4f4;
     order: 2;
   }
   br {
     display: block;
-    content: ""; 
+    content: "";
     margin-top: 1px;
   }
 
-  .toltalEmployees{
+  .toltalEmployees {
     height: 59px;
   }
-  .employeeInfoContainer{
+  .employeeInfoContainer {
     height: 180px;
     order: 3;
   }
 
-  .employeesClassification{
+  .employeesClassification {
     height: 119px;
     padding-top: 16px;
   }
