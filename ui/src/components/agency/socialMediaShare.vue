@@ -1,7 +1,9 @@
 <template>
   <div class="socialMidiaShare">
-    <h5><b>Compartilhe essa informação: </b></h5>
-    <facebook
+    <button class="button" :href="this.fileUrl" target="_blank">
+      Compartilhar
+    </button>
+    <!-- <facebook
       style="margin-right: 5px"
       :url="this.url"
       scale="2"
@@ -24,7 +26,7 @@
       :url="this.url"
       :subject="this.socialMidiaMsg"
       scale="2"
-    ></email>
+    ></email> -->
   </div>
 </template>
 
@@ -62,7 +64,17 @@ export default {
 <style>
 .socialMidiaShare {
   text-align: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-left: 10px;
+  width: 150px;
+  height: 48px;
+  background-color: red;
+  order: 2;
+}
+.button {
+  width: 150px;
+  height: 48px;
+  background-color: #545454;
+  border: solid #545454;
+  color: white;
 }
 </style>
