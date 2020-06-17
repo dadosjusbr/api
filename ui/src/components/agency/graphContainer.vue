@@ -24,8 +24,8 @@ export default {
   data: function() {
     return {
       chartOptions: {
-        legend:{
-          show: false
+        legend: {
+          show: false,
         },
         colors: ["#c9e4ca", "#87bba2", "#364958"],
         chart: {
@@ -39,8 +39,11 @@ export default {
         },
         responsive: [
           {
-            breakpoint: 480,
+            breakpoint: 500,
             options: {
+              chart: {
+                width: "95%",
+              },
               yaxis: {
                 labels: {
                   maxWidth: 120,
@@ -128,9 +131,21 @@ export default {
   font-size: 17px;
 }
 
-.graph{
+.graph {
   padding-left: 16%;
   height: 100%;
   padding-top: 23px;
+}
+
+@media only screen and (max-width: 500px) {
+  .graph {
+    padding-left: 8%;
+    height: 100%;
+    padding-top: 23px;
+  }
+
+  .graphContainer {
+    height: 555px;
+  }
 }
 </style>
