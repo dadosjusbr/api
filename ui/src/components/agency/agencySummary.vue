@@ -2,10 +2,10 @@
   <div class="summary">
     <div class="wageInfoContainer">
       <div class="wageTotal">
-        <div style="width: 93%">
+        <div style="width: 92%">
           <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
         </div>
-        <div style="width: 5%;">
+        <div style="width: 60px;">
           <md-icon id="tooltip-target-1">info</md-icon>
         </div>
       </div>
@@ -28,7 +28,7 @@
         <div style="width: 90%">
           <p>Total empregados: {{ this.agencySummary.TotalEmployees }}</p>
         </div>
-        <div style="width: 5%;">
+        <div style="width: 60px;">
           <md-icon id="tooltip-target-2">info</md-icon>
         </div>
       </div>
@@ -49,19 +49,25 @@
         </div>
       </div>
     </div>
-    <b-tooltip target="tooltip-target-1" triggers="click hover">
+    <b-tooltip target="tooltip-target-1" triggers="hover">
       - Salário: valor recebido de acordo com a prestação de serviços, em
-      decorrência do contrato de trabalho. - Remuneração: é a soma do salário
-      mais outras vantagens (indenizações e benefícios). - Benefício: valores
-      eventuais, por exemplo, auxílios alimentação, saúde, escolar...
+      decorrência do contrato de trabalho.
+      <br />
+      - Remuneração: é a soma do salário mais outras vantagens (indenizações e
+      benefícios).
+      <br />
+      - Benefício: valores eventuais, por exemplo, auxílios alimentação, saúde,
+      escolar...
     </b-tooltip>
-    <b-tooltip target="tooltip-target-2" triggers="click hover">
+    <b-tooltip target="tooltip-target-2" triggers="hover">
       - Membro: é o integrante da carreira 'principal' do órgão do sistema de
       justiça. Por exemplo, juízes, desembargadores, ministros, defensores,
       procuradores públicos, promotores de justiça, procuradores de justiça, etc
+      <br />
       - Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os
-      analistas, técnicos, oficiais de justiça, etc. - Inativo: é todo o membro
-      ou servidor aposentado.
+      analistas, técnicos, oficiais de justiça, etc.
+      <br />
+      - Inativo: é todo o membro ou servidor aposentado.
     </b-tooltip>
   </div>
 </template>
