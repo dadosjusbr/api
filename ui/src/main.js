@@ -9,34 +9,40 @@ import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/vue-material.css";
 import "vue-material/dist/vue-material.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import moment from 'moment'
-import VueHead from 'vue-head'
-import BootstrapVue from 'bootstrap-vue'
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+import moment from "moment";
+import VueHead from "vue-head";
+import BootstrapVue from "bootstrap-vue";
 
-
-Vue.use(BootstrapVue)
+Vue.use(BootstrapVue);
 Vue.use(VueHead);
 Vue.config.productionTip = false;
 Vue.use(VueMaterial);
 Vue.use(VueGtag, {
-  config: { id: "UA-143064237-1" }
+  config: { id: "UA-143064237-1" },
 });
 
-Vue.filter( 'formatDate', function(value) {
-  moment.locale('pt-BR')
+Vue.filter("formatDate", function(value) {
+  moment.locale("pt-BR");
   if (value) {
-    return moment(String(value)).format('DD ') + 'de ' + 
-        moment(String(value)).format('MMMM ') + 'às ' +  moment(String(value)).format('hh:mm')
+    return (
+      moment(String(value)).format("DD ") +
+      "de " +
+      moment(String(value)).format("MMMM ") +
+      "às " +
+      moment(String(value)).format("hh:mm")
+    );
   }
 });
 
 const base = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL
+  baseURL: process.env.VUE_APP_API_BASE_URL,
 });
 Vue.prototype.$http = base;
 
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");
