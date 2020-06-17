@@ -34,6 +34,7 @@
         scale="3"
       ></email>
     </div>
+    <div class="overlay"></div>
   </div>
 </template>
 
@@ -92,6 +93,7 @@ export default {
   background-color: #545454;
   border: solid #545454;
   color: white;
+  font-size: 17px;
 }
 
 .closeButton {
@@ -108,10 +110,17 @@ export default {
   height: 218px;
   background-color: #e0dfe0;
   text-align: center;
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 50%;
   margin-left: -142.5px;
   margin-top: -109px;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  background-color: tomato;
 }
 </style>

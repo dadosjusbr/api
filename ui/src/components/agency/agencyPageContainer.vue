@@ -53,9 +53,11 @@
         v-show="this.noDataAvailable != true && this.chartData.length != 0"
         style="order: 1; width: 150px; height: 48px;"
       >
-        <button class="buttonDownload" :href="this.fileUrl" target="_blank">
-          Baixar
-        </button>
+        <a :href="this.fileUrl">
+          <button class="buttonDownload">
+            Baixar
+          </button>
+        </a>
         <!--
         <h5 v-show="this.fileHash != ''">
           <b> Hash do arquivo:</b> {{ this.fileHash }}
@@ -447,6 +449,7 @@ button {
   background-color: #545454;
   border: solid #545454;
   color: white;
+  font-size: 17px;
 }
 .cr {
   text-align: center;
