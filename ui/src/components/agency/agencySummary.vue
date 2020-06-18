@@ -34,17 +34,29 @@
       </div>
       <div class="employeesClassification">
         <div class="employeeClass">
-          <div style="background-color: #c9e4ca;" class="square"></div>
+          <div
+            style="background-color: #c9e4ca;"
+            class="square"
+            v-on:click="membersClick()"
+          ></div>
           <p>Membros: {{ this.agencySummary.TotalMembers }}</p>
         </div>
         <div class="employeeClass">
-          <div style="background-color: #87bba2;" class="square"></div>
+          <div
+            style="background-color: #87bba2;"
+            class="square"
+            v-on:click="serventsClick()"
+          ></div>
           <p>Servidores: {{ this.agencySummary.TotalServants }}</p>
         </div>
         <div
           class="employeeClass                                                                                                                                                           "
         >
-          <div style="background-color: #364958;" class="square"></div>
+          <div
+            style="background-color: #364958;"
+            class="square"
+            v-on:click="inactivesClick()"
+          ></div>
           <p>Inativos: {{ this.agencySummary.TotalInactives }}</p>
         </div>
       </div>
@@ -80,6 +92,11 @@ export default {
       type: Object,
       default: null,
     },
+  },
+  methods: {
+    membersClick() {},
+    serventsClick() {},
+    inactivesClick() {},
   },
 };
 </script>

@@ -39,7 +39,7 @@
       />
     </div>
     <div v-show="this.chartData.length != 0">
-      <graph-container :series="chartData" />
+      <graph-container :series="chartDataToPlot" :colors="this.colors" />
     </div>
     <error-collecting-data-page
       v-show="this.executorLog.cmd != ''"
@@ -116,7 +116,9 @@ export default {
       agencyFullName: "",
       agencySummary: null,
       chartData: [],
+      chartDataToPlot: [],
       Crawling_Timestamp: null,
+      colors: ["#c9e4ca", "#87bba2", "#364958"],
     };
   },
   methods: {
@@ -142,7 +144,37 @@ export default {
       }
       return { month, year };
     },
-
+    disableMembers() {
+      this.chartDataToPlot.forEach((value, i) => {
+        console.log(this.chartDataToPlot);
+        if (value.name == "Membros") {
+          this.chartDataToPlot.splice(i, 1);
+          console.log(this.chartDataToPlot);
+          this.colors.splice(0, 1);
+          return;
+        }
+      });
+    },
+    enableMembers() {
+      this.chartDataToPlot.splice(0, 0, this.chartData[0]);
+      this.colors.splice(0, 0, "#c9e4ca");
+    },
+    disableServers() {
+      this.chartDataToPlot.splice(1, 1);
+      this.colors.splice(1, 1);
+    },
+    enableServers() {
+      this.chartDataToPlot.splice(1, 0, this.chartData[1]);
+      this.colors.splice(1, 0, "#87bba2");
+    },
+    disableInactives() {
+      this.chartDataToPlot.splice(2, 1);
+      this.colors.splice(2, 1);
+    },
+    enableInactives() {
+      this.chartDataToPlot.splice(2, 0, this.chartData[2]);
+      this.colors.splice(2, 0, "#364958");
+    },
     async checkNextYear() {
       let activateButtonNext = true;
       let { month, year } = this.getNextDate();
@@ -195,9 +227,10 @@ export default {
             "/" +
             this.month
         )
-        .then(
-          (response) => (this.chartData = this.generateSeries(response.data))
-        )
+        .then((response) => {
+          this.chartData = this.generateSeries(response.data);
+          this.chartDataToPlot = this.generateSeries(response.data);
+        })
         .then(this.fetchSummaryData())
         .then(this.checkNextYear())
         .then(
@@ -222,9 +255,10 @@ export default {
             "/" +
             this.month
         )
-        .then(
-          (response) => (this.chartData = this.generateSeries(response.data))
-        )
+        .then((response) => {
+          this.chartData = this.generateSeries(response.data);
+          this.chartDataToPlot = this.generateSeries(response.data);
+        })
         .then(this.fetchSummaryData())
         .then(this.checkPreviousYear())
         .then(
@@ -304,6 +338,7 @@ export default {
       }
       if (response != undefined) {
         this.chartData = this.generateSeries(response.data);
+        this.chartDataToPlot = this.generateSeries(response.data);
         this.fileUrl = response.data.PackageURL;
         this.fileHash = response.data.PackageHash;
       }
