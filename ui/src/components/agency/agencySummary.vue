@@ -34,17 +34,29 @@
       </div>
       <div class="employeesClassification">
         <div class="employeeClass">
-          <div style="background-color: #c9e4ca;" class="square"></div>
+          <div
+            style="background-color: #c9e4ca;"
+            :class="[!members ? 'squareOpac' : '', 'square']"
+            v-on:click="membersClick()"
+          ></div>
           <p>Membros: {{ this.agencySummary.TotalMembers }}</p>
         </div>
         <div class="employeeClass">
-          <div style="background-color: #87bba2;" class="square"></div>
+          <div
+            style="background-color: #87bba2;"
+            :class="[!servants ? 'squareOpac' : '', 'square']"
+            v-on:click="serventsClick()"
+          ></div>
           <p>Servidores: {{ this.agencySummary.TotalServants }}</p>
         </div>
         <div
           class="employeeClass                                                                                                                                                           "
         >
-          <div style="background-color: #364958;" class="square"></div>
+          <div
+            style="background-color: #364958;"
+            :class="[!inactives ? 'squareOpac' : '', 'square']"
+            v-on:click="inactivesClick()"
+          ></div>
           <p>Inativos: {{ this.agencySummary.TotalInactives }}</p>
         </div>
       </div>
@@ -79,6 +91,30 @@ export default {
     agencySummary: {
       type: Object,
       default: null,
+    },
+  },
+  data() {
+    return {
+      members: true,
+      servants: true,
+      inactives: true,
+    };
+  },
+  methods: {
+    membersClick() {
+      if (this.members) this.$emit("disable-members");
+      else this.$emit("enable-members");
+      this.members = !this.members;
+    },
+    serventsClick() {
+      if (this.servants) this.$emit("disable-servants");
+      else this.$emit("enable-servants");
+      this.servants = !this.servants;
+    },
+    inactivesClick() {
+      if (this.inactives) this.$emit("disable-inactives");
+      else this.$emit("enable-inactives");
+      this.inactives = !this.inactives;
     },
   },
 };
@@ -168,9 +204,17 @@ export default {
 }
 
 .square {
+  cursor: pointer;
   height: 55px;
   width: 55px;
   margin-bottom: 15px;
+}
+.squareOpac {
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  margin-bottom: 15px;
+  opacity: 0.2;
 }
 
 .employeeClass {
