@@ -93,10 +93,29 @@ export default {
       default: null,
     },
   },
+  data() {
+    return {
+      members: true,
+      servants: true,
+      inactives: true,
+    };
+  },
   methods: {
-    membersClick() {},
-    serventsClick() {},
-    inactivesClick() {},
+    membersClick() {
+      if (this.members) this.$emit("disable-members");
+      else this.$emit("enable-members");
+      this.members = !this.members;
+    },
+    serventsClick() {
+      if (this.servants) this.$emit("disable-servants");
+      else this.$emit("enable-servants");
+      this.servants = !this.servants;
+    },
+    inactivesClick() {
+      if (this.inactives) this.$emit("disable-inactives");
+      else this.$emit("enable-inactives");
+      this.inactives = !this.inactives;
+    },
   },
 };
 </script>

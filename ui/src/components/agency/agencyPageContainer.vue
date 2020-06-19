@@ -36,10 +36,16 @@
       <agency-summary
         v-show="this.agencySummary != null"
         :agencySummary="agencySummary"
+        @disable-members="disableMembers"
+        @enable-members="enableMembers"
+        @disable-servants="disableServants"
+        @enable-servants="enableServants"
+        @disable-inactives="disableInactives"
+        @enable-inactives="enableInactives"
       />
     </div>
     <div v-show="this.chartData.length != 0">
-      <graph-container :series="chartDataToPlot" :colors="this.colors" />
+      <graph-container :series="chartDataToPlot" />
     </div>
     <error-collecting-data-page
       v-show="this.executorLog.cmd != ''"
@@ -118,7 +124,6 @@ export default {
       chartData: [],
       chartDataToPlot: [],
       Crawling_Timestamp: null,
-      colors: ["#c9e4ca", "#87bba2", "#364958"],
     };
   },
   methods: {
@@ -145,35 +150,28 @@ export default {
       return { month, year };
     },
     disableMembers() {
-      this.chartDataToPlot.forEach((value, i) => {
-        console.log(this.chartDataToPlot);
-        if (value.name == "Membros") {
-          this.chartDataToPlot.splice(i, 1);
-          console.log(this.chartDataToPlot);
-          this.colors.splice(0, 1);
-          return;
-        }
-      });
+      this.chartDataToPlot.splice(0, 1);
+      this.chartDataToPlot.splice(0, 0, { data: [], name: "" });
     },
     enableMembers() {
+      this.chartDataToPlot.splice(0, 1);
       this.chartDataToPlot.splice(0, 0, this.chartData[0]);
-      this.colors.splice(0, 0, "#c9e4ca");
     },
-    disableServers() {
+    disableServants() {
       this.chartDataToPlot.splice(1, 1);
-      this.colors.splice(1, 1);
+      this.chartDataToPlot.splice(1, 0, { data: [], name: "" });
     },
-    enableServers() {
+    enableServants() {
+      this.chartDataToPlot.splice(1, 1);
       this.chartDataToPlot.splice(1, 0, this.chartData[1]);
-      this.colors.splice(1, 0, "#87bba2");
     },
     disableInactives() {
       this.chartDataToPlot.splice(2, 1);
-      this.colors.splice(2, 1);
+      this.chartDataToPlot.splice(2, 0, { data: [], name: "" });
     },
     enableInactives() {
+      this.chartDataToPlot.splice(2, 1);
       this.chartDataToPlot.splice(2, 0, this.chartData[2]);
-      this.colors.splice(2, 0, "#364958");
     },
     async checkNextYear() {
       let activateButtonNext = true;

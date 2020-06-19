@@ -20,10 +20,6 @@ export default {
       type: Array,
       default: [],
     },
-    colors: {
-      type: Array,
-      default: [],
-    },
   },
   data: function() {
     return {
@@ -31,7 +27,7 @@ export default {
         legend: {
           show: false,
         },
-        colors: this.colors,
+        colors: ["#c9e4ca", "#87bba2", "#364958"],
         chart: {
           stacked: true,
           toolbar: {
