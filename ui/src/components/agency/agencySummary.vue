@@ -36,7 +36,7 @@
         <div class="employeeClass">
           <div
             style="background-color: #c9e4ca;"
-            class="square"
+            :class="[!members ? 'squareOpac' : '', 'square']"
             v-on:click="membersClick()"
           ></div>
           <p>Membros: {{ this.agencySummary.TotalMembers }}</p>
@@ -44,7 +44,7 @@
         <div class="employeeClass">
           <div
             style="background-color: #87bba2;"
-            class="square"
+            :class="[!servants ? 'squareOpac' : '', 'square']"
             v-on:click="serventsClick()"
           ></div>
           <p>Servidores: {{ this.agencySummary.TotalServants }}</p>
@@ -54,7 +54,7 @@
         >
           <div
             style="background-color: #364958;"
-            class="square"
+            :class="[!inactives ? 'squareOpac' : '', 'square']"
             v-on:click="inactivesClick()"
           ></div>
           <p>Inativos: {{ this.agencySummary.TotalInactives }}</p>
@@ -204,9 +204,17 @@ export default {
 }
 
 .square {
+  cursor: pointer;
   height: 55px;
   width: 55px;
   margin-bottom: 15px;
+}
+.squareOpac {
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  margin-bottom: 15px;
+  opacity: 0.2;
 }
 
 .employeeClass {
