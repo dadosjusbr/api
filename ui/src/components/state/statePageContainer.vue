@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height: 500px">
     <div class="header">
       <h1 class="stateName text-left">{{ this.stateName }}</h1>
       <img class="image rounded float-left" :src="this.flagUrl" />
