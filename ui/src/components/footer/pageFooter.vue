@@ -1,5 +1,5 @@
 <template>
-  <div style="display: table; width: 100%">
+  <div class="footerContainer">
     <md-toolbar class="md-primary">
       <div class="logoContainer">
         <img src="../../assets/white_logo.png" />
@@ -25,6 +25,12 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.footerContainer {
+  display: table;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
 .md-toolbar {
   display: table-row;
   width: 100%;
