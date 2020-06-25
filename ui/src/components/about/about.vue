@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="display: flex; flex-direction: row; height: 700px;">
+    <div class="infoContainer">
       <div class="about">
         <h3 style="font-weight: 600;">SOBRE O DADOSJUSBR</h3>
         <p>
@@ -66,100 +66,101 @@
       </div>
     </div>
 
-    <div class="teamPhotosContainer">
+    <div style="background-color: #7f3d8b;  padding-top: 67px;">
       <h3
-        style="margin: 67px 0px 30px 67px; font-weight: 600; color: #ffffff; width: 100%; height: 50px;"
+        style="margin: 0px 0px 30px 67px; font-weight: 600; color: #ffffff; height: 50px;"
       >
         EQUIPE
       </h3>
+      <div class="teamPhotosContainer">
+        <profile-card
+          :name="'Daniel Fireman'"
+          :role="'Professor'"
+          :image="
+            'https://avatars2.githubusercontent.com/u/8951363?s=400&u=acdedbbd00a15d2f913e3e1bde6b14f2c7451f90&v=4'
+          "
+          :github="'https://github.com/danielfireman'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'Joeberth Souza'"
+          :role="'Desenvolvedor'"
+          :image="'https://avatars3.githubusercontent.com/u/33490097?s=460&v=4'"
+          :github="'https://github.com/joeberth'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'Lorena Pereira'"
+          :role="'Desenvolvedora'"
+          :image="
+            'https://avatars1.githubusercontent.com/u/9660774?s=460&u=ac2f817f4ca07be4b34d9534759409a2f52be269&v=4'
+          "
+          :github="'https://github.com/Lorenaps'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'David Eduardo'"
+          :role="'Desenvolvedor'"
+          :image="
+            'https://avatars3.githubusercontent.com/u/25506334?s=460&u=46b571dfa3e0ed7c134f21a787954c2230ab9e68&v=4'
+          "
+          :github="'https://github.com/davidedup'"
+        >
+        </profile-card>
 
-      <profile-card
-        :name="'Daniel Fireman'"
-        :role="'Professor'"
-        :image="
-          'https://avatars2.githubusercontent.com/u/8951363?s=400&u=acdedbbd00a15d2f913e3e1bde6b14f2c7451f90&v=4'
-        "
-        :github="'https://github.com/danielfireman'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'Joeberth Souza'"
-        :role="'Desenvolvedor'"
-        :image="'https://avatars3.githubusercontent.com/u/33490097?s=460&v=4'"
-        :github="'https://github.com/joeberth'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'Lorena Pereira'"
-        :role="'Desenvolvedora'"
-        :image="
-          'https://avatars1.githubusercontent.com/u/9660774?s=460&u=ac2f817f4ca07be4b34d9534759409a2f52be269&v=4'
-        "
-        :github="'https://github.com/Lorenaps'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'David Eduardo'"
-        :role="'Desenvolvedor'"
-        :image="
-          'https://avatars3.githubusercontent.com/u/25506334?s=460&u=46b571dfa3e0ed7c134f21a787954c2230ab9e68&v=4'
-        "
-        :github="'https://github.com/davidedup'"
-      >
-      </profile-card>
-
-      <profile-card
-        :name="'João Brunet'"
-        :role="'Professor'"
-        :image="'https://avatars0.githubusercontent.com/u/5099338?s=460&v=4'"
-        :github="'https://github.com/joaoarthurbm'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'Marcos Barros'"
-        :role="'Desenvolvedor'"
-        :image="'https://avatars3.githubusercontent.com/u/34271729?s=460&v=4'"
-        :github="'https://github.com/marcosbmf'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'Nazareno Andrade'"
-        :role="'Professor'"
-        :image="
-          'https://avatars0.githubusercontent.com/u/1053850?s=460&u=e1cbfe4f7cba06cf5908f8967c2db24e142ff7c7&v=4  '
-        "
-        :github="'https://github.com/nazareno'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'Vinicius Agostini'"
-        :role="'Desenvolvedor'"
-        :image="
-          'https://avatars1.githubusercontent.com/u/12215291?s=460&u=313fcc28f44cb90215a50a7d512abf2b61768155&v=4'
-        "
-        :github="'https://github.com/viniagostini'"
-      >
-      </profile-card>
-      <profile-card
-        :name="'Mariana Souto'"
-        :role="'Designer'"
-        :image="
-          'https://avatars3.githubusercontent.com/u/15800324?s=400&u=11b49d52de39d773024ad1894cdbf33c1637532a&v=4'
-        "
-        :github="'https://github.com/soutoam'"
-      >
-      </profile-card>
+        <profile-card
+          :name="'João Brunet'"
+          :role="'Professor'"
+          :image="'https://avatars0.githubusercontent.com/u/5099338?s=460&v=4'"
+          :github="'https://github.com/joaoarthurbm'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'Marcos Barros'"
+          :role="'Desenvolvedor'"
+          :image="'https://avatars3.githubusercontent.com/u/34271729?s=460&v=4'"
+          :github="'https://github.com/marcosbmf'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'Nazareno Andrade'"
+          :role="'Professor'"
+          :image="
+            'https://avatars0.githubusercontent.com/u/1053850?s=460&u=e1cbfe4f7cba06cf5908f8967c2db24e142ff7c7&v=4  '
+          "
+          :github="'https://github.com/nazareno'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'Vinicius Agostini'"
+          :role="'Desenvolvedor'"
+          :image="
+            'https://avatars1.githubusercontent.com/u/12215291?s=460&u=313fcc28f44cb90215a50a7d512abf2b61768155&v=4'
+          "
+          :github="'https://github.com/viniagostini'"
+        >
+        </profile-card>
+        <profile-card
+          :name="'Mariana Souto'"
+          :role="'Designer'"
+          :image="
+            'https://avatars3.githubusercontent.com/u/15800324?s=400&u=11b49d52de39d773024ad1894cdbf33c1637532a&v=4'
+          "
+          :github="'https://github.com/soutoam'"
+        >
+        </profile-card>
+      </div>
     </div>
 
-    <div style="background-color: #2fbb96; height: 360px; padding-top: 67px">
+    <div
+      style="background-color: #2fbb96; padding-top: 60px; padding-bottom: 30px"
+    >
       <h3
-        style="margin: 0px 0px 0px 67px; font-weight: 600; color: #ffffff; width: 80%; height: 50px;"
+        style="margin: 0px 0px 0px 67px; font-weight: 600; color: #ffffff; height: 50px;"
       >
         PARCEIROS
       </h3>
-      <div
-        style=" display: flex; justify-content: space-evenly; padding: 10px 100px 0px 100px;"
-      >
+      <div class="partnersLogosContainer">
         <img src="../../assets/logo_analytics.svg" />
         <img src="../../assets/logo_shuttleworth.svg" />
         <img src="../../assets/logo_ufcg.svg" />
@@ -197,9 +198,19 @@ export default {
 </script>
 
 <style scoped>
+.partnersLogosContainer {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 10px 100px 0px 100px;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: row;
+}
+
 .about {
   width: 60%;
-  height: 700px;
   background-color: #ffffff;
   padding: 80px 70px 70px 70px;
   font-size: 15px;
@@ -208,7 +219,6 @@ export default {
 
 .contribute {
   width: 40%;
-  height: 700px;
   background-color: #3e5363;
   color: #ffffff;
   padding: 240px 70px 70px 70px;
@@ -225,7 +235,6 @@ export default {
 .teamPhotosContainer {
   display: flex;
   flex-wrap: wrap;
-  background-color: #7f3d8b;
   justify-content: space-evenly;
 }
 
@@ -235,96 +244,33 @@ a {
   font-size: 15px;
 }
 
-@media only screen and (max-width: 1276px) {
+@media only screen and (max-width: 630px) {
+  .infoContainer {
+    flex-direction: column;
+  }
+  .about {
+    width: 100%;
+    min-height: 700px;
+    padding: 20px 10px 10px 10px;
+  }
+  .contribute {
+    width: 100%;
+    padding: 20px 10px 10px 10px;
+    text-align: justify;
+    font-size: 15px;
+  }
   .teamPhotosContainer {
-    height: 600px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    min-height: 600px;
+    justify-content: space-evenly;
   }
-
-  .aboutContainer {
-    margin-left: 100px;
-    margin-right: 100px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+  .partnersLogosContainer {
+    flex-direction: column;
+    padding: 10px 0px 0px 0px;
   }
-}
-
-@media only screen and (max-width: 1150px) {
-  .teamPhotosContainer {
-    padding-top: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-    margin-top: 20px;
-    height: 220px;
-    justify-content: center;
-    display: flex;
-    align-self: center;
-    align-content: center;
-  }
-
-  .aboutContainer {
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-top: 10px;
-  }
-}
-
-@media only screen and (max-width: 950px) {
-  .teamPhotosContainer {
-    padding-top: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-    margin-top: 20px;
-    height: 220px;
-    justify-content: center;
-    display: flex;
-    align-self: center;
-    align-content: center;
-  }
-
-  .aboutContainer {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-}
-
-@media only screen and (max-width: 650px) {
-  p {
-    font-size: 15px;
-  }
-}
-
-@media only screen and (max-width: 550px) {
-  .aboutContainer {
-    margin-left: 2px;
-    margin-right: 2px;
-  }
-  p {
-    font-size: 15px;
-  }
-}
-
-@media only screen and (max-width: 450px) {
-  .aboutContainer {
-    margin-left: 2px;
-    margin-right: 2px;
-  }
-  p {
-    font-size: 15px;
-  }
-}
-
-@media only screen and (max-width: 320px) {
-  .aboutContainer {
-    margin-left: 2px;
-    margin-right: 2px;
-  }
-  p {
-    font-size: 15px;
+  img {
+    margin-bottom: 45px;
   }
 }
 </style>
