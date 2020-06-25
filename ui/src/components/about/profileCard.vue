@@ -35,20 +35,15 @@ export default {
 <style scoped>
 .profilePhoto {
   border-radius: 50%;
-  width: 125px;
-  height: 125px;
+  width: 135px;
+  height: 135px;
 }
 
 .teamPhotoCard {
   color: white;
   text-align: center;
-  margin-right: 40px;
-  margin-left: 40px;
   height: 250px;
-  width: 200px;
-  background-color: #7f3c8b;
-  padding-top: 1%;
-  border-radius: 10px;
+  width: 250px;
 }
 
 @media only screen and (max-width: 1276px) {
