@@ -35,7 +35,7 @@
       <div class="employeesClassification">
         <div class="employeeClass">
           <div
-            style="background-color: #c9e4ca;"
+            style="background-color: #c9a0d0;"
             :class="[!members ? 'squareOpac' : '', 'square']"
             v-on:click="membersClick()"
           ></div>
@@ -43,7 +43,7 @@
         </div>
         <div class="employeeClass">
           <div
-            style="background-color: #87bba2;"
+            style="background-color: #7d5f82;"
             :class="[!servants ? 'squareOpac' : '', 'square']"
             v-on:click="serventsClick()"
           ></div>
@@ -53,7 +53,7 @@
           class="employeeClass                                                                                                                                                           "
         >
           <div
-            style="background-color: #364958;"
+            style="background-color: #513658;"
             :class="[!inactives ? 'squareOpac' : '', 'square']"
             v-on:click="inactivesClick()"
           ></div>
