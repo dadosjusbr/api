@@ -21,8 +21,8 @@
             name: 'agency',
             params: {
               agencyName: this.agency.Name.toLowerCase(),
-              year: 2020,
-              month: 4,
+              year: this.yearWithData,
+              month: this.monthWithData,
             },
           }"
         >
@@ -77,6 +77,8 @@ export default {
   },
   data() {
     return {
+      monthWithData: 0,
+      yearWithData: 0,
       currentYear: this.year,
       noDataAvailable: false,
       data: {},
@@ -317,6 +319,9 @@ export default {
   },
   async mounted() {
     this.fetchData();
+    let resp = await this.$http.get("/orgao/data/" + this.agency.Name);
+    this.monthWithData = resp.data.Month;
+    this.yearWithData = resp.data.Year;
   },
 };
 </script>

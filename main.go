@@ -223,6 +223,26 @@ func getBasicInfoOfState(c echo.Context) error {
 	return c.JSON(http.StatusOK, state)
 }
 
+func getMostRecentYearAndMonth(c echo.Context) error {
+	year := time.Now().Year()
+	month := int(time.Now().Month())
+	agencyName := c.Param("orgao")
+	found := false
+	for !found {
+		_, _, err := client.GetOMA(month, year, agencyName)
+		if err != nil {
+			month = month - 1
+			if month == 0 {
+				year = year - 1
+				month = 12
+			}
+		} else {
+			break
+		}
+	}
+	return c.JSON(http.StatusOK, models.MonthAndYear{Month: month, Year: year})
+}
+
 func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))
 	if err != nil {
@@ -422,6 +442,8 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
+	// Retunr most Recent year and Month with data for a agency
+	uiAPIGroup.GET("/v1/orgao/data/:orgao", getMostRecentYearAndMonth)
 
 	// Public API configuration
 	apiGroup := e.Group("/api", middleware.CORSWithConfig(middleware.CORSConfig{

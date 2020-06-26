@@ -77,3 +77,9 @@ type ProcInfoResult struct {
 	ProcInfo          *storage.ProcInfo
 	CrawlingTimestamp time.Time
 }
+
+// MonthAndYear - Most recent year and month with data available
+type MonthAndYear struct {
+	Month int
+	Year  int
+}
