@@ -27,7 +27,7 @@ export default {
         legend: {
           show: false,
         },
-        colors: ["#c9e4ca", "#87bba2", "#364958"],
+        colors: ["#c9a0d0", "#7d5f82", "#513658"],
         chart: {
           stacked: true,
           toolbar: {
@@ -113,6 +113,11 @@ export default {
 </script>
 
 <style scoped>
+.graphTooltip {
+  height: 65px;
+  width: 144px;
+  background-color: white;
+}
 .graphContainer {
   text-align: center;
   overflow: hidde;

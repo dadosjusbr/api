@@ -21,8 +21,8 @@
             name: 'agency',
             params: {
               agencyName: this.agency.Name.toLowerCase(),
-              year: 2020,
-              month: 1,
+              year: this.yearWithData,
+              month: this.monthWithData,
             },
           }"
         >
@@ -77,6 +77,8 @@ export default {
   },
   data() {
     return {
+      monthWithData: 0,
+      yearWithData: 0,
       currentYear: this.year,
       noDataAvailable: false,
       data: {},
@@ -233,6 +235,8 @@ export default {
         }
       }
       this.data = response.data;
+      this.yearWithData = this.currentYear;
+      this.monthWithData = response.data.MonthTotals.length;
       this.generateSeries();
     },
     generateSeries() {
