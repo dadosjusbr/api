@@ -328,7 +328,7 @@ func getSummaryOfAgency(c echo.Context) error {
 		TotalPerks:        agencyMonthlyInfo.Summary.General.Perks.Total + agencyMonthlyInfo.Summary.General.Others.Total,
 		MaxPerk:           agencyMonthlyInfo.Summary.General.Perks.Max,
 		TotalRemuneration: agencyMonthlyInfo.Summary.General.Wage.Total + agencyMonthlyInfo.Summary.General.Perks.Total + agencyMonthlyInfo.Summary.General.Others.Total,
-		TotalEmployees:    agencyMonthlyInfo.Summary.General.Count,
+		TotalEmployees:    agencyMonthlyInfo.Summary.MemberActive.Count + agencyMonthlyInfo.Summary.ServantActive.Count + agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
 		TotalMembers:      agencyMonthlyInfo.Summary.MemberActive.Count,
 		TotalServants:     agencyMonthlyInfo.Summary.ServantActive.Count,
 		TotalInactives:    agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
