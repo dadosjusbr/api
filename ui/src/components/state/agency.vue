@@ -235,6 +235,8 @@ export default {
         }
       }
       this.data = response.data;
+      this.yearWithData = this.currentYear;
+      this.monthWithData = response.data.MonthTotals.length;
       this.generateSeries();
     },
     generateSeries() {
@@ -319,9 +321,6 @@ export default {
   },
   async mounted() {
     this.fetchData();
-    let resp = await this.$http.get("/orgao/data/" + this.agency.Name);
-    this.monthWithData = resp.data.Month;
-    this.yearWithData = resp.data.Year;
   },
 };
 </script>
