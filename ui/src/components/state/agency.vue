@@ -8,14 +8,9 @@
       md-description="Talvez o órgão não tenha disponibilizado os dados em seu site."
     >
     </md-empty-state>
-    <div class="agencyContainer" v-show="!noDataAvailable">
-      <div class="resume" v-show="!simplifyComponent">
-        <md-card>
-          <md-card-content> </md-card-content>
-        </md-card>
-      </div>
 
-      <h2 class="agencyName" v-show="!simplifyComponent">
+    <div class="agencyContainer" v-show="!noDataAvailable">
+      <h2 class="agencyName">
         <router-link
           :to="{
             name: 'agency',
@@ -29,6 +24,7 @@
           {{ this.agency.Name.toUpperCase() + " - " + this.agency.FullName }}
         </router-link>
       </h2>
+
       <div class="buttonContainer" v-show="!simplifyComponent">
         <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
           <img src="../../assets/previous.png" />
@@ -44,12 +40,106 @@
           ><img src="../../assets/nextd.png"
         /></md-button>
       </div>
-      <bar-graph
-        :class="[simplifyComponent ? 'graphSymple' : '', 'graph']"
-        :options="chartOptions"
-        :series="series"
-      />
+      <div class="agencyContent">
+        <div style="width: 90%; align-self: center;">
+          <div class="remunationMenu">
+            <div class="menuHeader">
+              <div style="width: 90%">
+                <p>
+                  Total Remunerações {{ this.currentYear }}: R$
+                  {{ this.totalRemuneration }}M
+                </p>
+              </div>
+              <div style="width: 5%">
+                <md-icon id="tooltip-target-1">info</md-icon>
+              </div>
+            </div>
+            <div class="employeesClassification" style="padding-top: 15px">
+              <div class="employeeClass">
+                <div
+                  style="background-color: #c9e4ca;"
+                  :class="[
+                    !this.dataFilter.salario ? 'squareOpac' : '',
+                    'square',
+                  ]"
+                ></div>
+                <p>Salario: 15M</p>
+              </div>
+              <div class="employeeClass">
+                <div
+                  style="background-color: #87bba2;"
+                  :class="[
+                    !this.dataFilter.indenizacao ? 'squareOpac' : '',
+                    'square',
+                  ]"
+                ></div>
+                <p>Indenizações: 45M</p>
+              </div>
+              <div class="employeeClass">
+                <div
+                  style="background-color: #364958;"
+                  :class="[
+                    !this.dataFilter.outros ? 'squareOpac' : '',
+                    'square',
+                  ]"
+                ></div>
+                <p>Outros: 45m</p>
+              </div>
+              <div class="employeeClass">
+                <div
+                  style="background-color: #000000;"
+                  :class="[
+                    !this.dataFilter.semDados ? 'squareOpac' : '',
+                    'square',
+                  ]"
+                ></div>
+                <p>Sem Dados</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="graphContainer">
+          <div
+            style="height: 59px;background-color: rgba(155, 155, 155, 0.4); line-height: 57px;"
+          >
+            <p>Soma do valor de remunerações por mês</p>
+          </div>
+          <bar-graph
+            :class="[simplifyComponent ? 'graphSymple' : '', 'graph']"
+            :options="chartOptions"
+            :series="series"
+          />
+        </div>
+        <div style="width: 90%; align-self: center; text-align: right;">
+          <button v-on:click="routerToOMA()" class="moreInfoButton">
+            Mais informação
+            <router-link
+              :to="{
+                name: 'agency',
+                params: {
+                  agencyName: this.agency.Name.toLowerCase(),
+                  year: this.yearWithData,
+                  month: this.monthWithData,
+                },
+              }"
+            >
+            </router-link>
+          </button>
+        </div>
+      </div>
     </div>
+    <b-tooltip target="tooltip-target-1" triggers="hover">
+      - Salário: valor recebido de acordo com a prestação de serviços, em
+      decorrência do contrato de trabalho.
+      <br />
+      - Outros: Qualquer remuneração recebida por um funcionário que não seja
+      proveniente de salário ou indenizações. Exemplos de outros são: diárias,
+      gratificações, remuneração por função de confiança, benefícios pessoais ou
+      eventuais...
+      <br />
+      - Indenizações: valores eventuais, por exemplo, auxílios alimentação,
+      saúde, escolar...
+    </b-tooltip>
   </div>
 </template>
 
@@ -77,6 +167,13 @@ export default {
   },
   data() {
     return {
+      totalRemuneration: 0,
+      dataFilter: {
+        salario: true,
+        indenizacao: true,
+        outros: true,
+        semDados: true,
+      },
       monthWithData: 0,
       yearWithData: 0,
       currentYear: this.year,
@@ -220,6 +317,16 @@ export default {
     },
   },
   methods: {
+    routerToOMA() {
+      this.$router.push({
+        name: "agency",
+        params: {
+          agencyName: this.agency.Name.toLowerCase(),
+          year: this.yearWithData,
+          month: this.monthWithData,
+        },
+      });
+    },
     async fetchData() {
       var response = await this.$http.get(
         "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
@@ -237,7 +344,16 @@ export default {
       this.data = response.data;
       this.yearWithData = this.currentYear;
       this.monthWithData = response.data.MonthTotals.length;
+      this.sumRemuneration();
       this.generateSeries();
+    },
+    sumRemuneration() {
+      let total = 50;
+      this.data.MonthTotals.forEach((month) => {
+        total = total + month.Wage + month.Others + month.Perks;
+      });
+
+      this.totalRemuneration = (total / 1000000).toFixed(1) ;
     },
     generateSeries() {
       if (this.data.MonthTotals.length != 12) {
@@ -303,6 +419,7 @@ export default {
       } else {
         this.data = resp.data;
         this.generateSeries();
+        this.sumRemuneration();
       }
     },
     async previousYear() {
@@ -316,6 +433,7 @@ export default {
       } else {
         this.data = resp.data;
         this.generateSeries();
+        this.sumRemuneration();
       }
     },
   },
@@ -326,44 +444,72 @@ export default {
 </script>
 
 <style scoped>
-a {
-  color: black;
+.menuHeader {
+  width: 100%;
+  height: 59px;
+  background-color: rgba(155, 155, 155, 0.4);
+  line-height: 57px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
 }
 
-.year {
-  color: black;
-  font-size: 1em;
-  font-weight: bold;
+.agencyContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.remunationMenu {
+  height: 150px;
+  width: 400px;
+  background-color: white;
+  margin-bottom: 50px;
+}
+
+.graphContainer {
+  background-color: white;
+  min-width: 90%;
+  align-self: center;
+}
+
+a {
+  color: #4a4a4a;
 }
 
 .agencyName {
-  font-size: 1.2em;
-  margin-left: 15%;
-  font-weight: bold;
-}
-.button {
-  background-color: #182825;
-  border: none;
-  color: white;
-  text-decoration: none;
   font-size: 20px;
-  position: relative;
-  top: 10px;
-  width: 50px;
+  font-weight: 900;
+  align-self: center;
+  font-size: 20px;
 }
 .buttonContainer {
-  float: left;
-  width: 17%;
-  height: 30em;
-  padding: 1px;
-  position: relative;
+  width: 100%;
+  height: 10%;
+  margin-top: 62px;
+  text-align: center;
 }
+
+.button {
+  margin-top: 50px;
+}
+
+.moreInfoButton {
+  margin: 15px 0 15px 0px;
+  width: 150px;
+  height: 48px;
+  background-color: #7f3d8b;
+  border: solid #7f3d8b;
+  color: white;
+  font-size: 17px;
+}
+
 .agencyContainer {
-  overflow: auto;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  min-height: 900px;
+  padding-top: 50px;
+  margin-bottom: 30px;
   margin-right: 5px;
   margin-left: 5px;
+  background-color: rgba(155, 155, 155, 0.2);
 }
 
 .deactivatedButton {
@@ -378,10 +524,6 @@ a {
   background-color: #2ab38b;
   height: 32em;
   border-style: solid;
-  float: left;
-}
-
-.agencyYear {
   float: left;
 }
 
