@@ -72,7 +72,7 @@
                   ]"
                   v-on:click="filterPerks()"
                 ></div>
-                <p>Indenizações:  {{ this.totals.perksTotal }}M</p>
+                <p>Indenizações: {{ this.totals.perksTotal }}M</p>
               </div>
               <div class="employeeClass">
                 <div
@@ -83,7 +83,7 @@
                   ]"
                   v-on:click="filterOthers()"
                 ></div>
-                <p>Outros:  {{ this.totals.othersTotal }}M</p>
+                <p>Outros: {{ this.totals.othersTotal }}M</p>
               </div>
               <div class="employeeClass">
                 <div
