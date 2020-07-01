@@ -120,7 +120,7 @@ export default {
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="css">
 .wageInfoContainer {
   height: 100%;
   display: table-cell;
