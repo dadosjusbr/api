@@ -41,7 +41,7 @@
         /></md-button>
       </div>
       <div class="agencyContent">
-        <div style="width: 90%; align-self: center;">
+        <div class="auxDiv">
           <div class="remunerationMenu">
             <div class="menuHeader">
               <div style="width: 90%">
@@ -72,7 +72,7 @@
                   ]"
                   v-on:click="filterPerks()"
                 ></div>
-                <p>Indenizações: {{ this.totals.perksTotal }}M</p>
+                <p class="perks">Indenizações: {{ this.totals.perksTotal }}M</p>
               </div>
               <div class="employeeClass">
                 <div
@@ -105,7 +105,7 @@
           >
             <p>Soma do valor de remunerações por mês</p>
           </div>
-          <div style="margin-left: 20%;">
+          <div class="auxDivGraph">
             <bar-graph :options="chartOptions" :series="chartDataToPlot" />
           </div>
         </div>
@@ -198,12 +198,15 @@ export default {
         },
         responsive: [
           {
-            breakpoint: 601,
+            breakpoint: 500,
             options: {
               legend: {
                 position: "bottom",
                 offsetX: -10,
                 offsetY: 0,
+              },
+              chart: {
+                width: "100%",
               },
               yaxis: {
                 decimalsInFloat: 2,
@@ -536,6 +539,15 @@ export default {
   margin-top: 10px;
 }
 
+.auxDiv {
+  width: 90%;
+  align-self: center;
+}
+
+.auxDivGraph {
+  margin-left: 20%;
+}
+
 .agencyContent {
   display: flex;
   flex-direction: column;
@@ -572,6 +584,7 @@ a {
   height: 27px;
   text-align: center;
 }
+
 .md-button {
   margin-top: -3px;
 }
@@ -593,5 +606,30 @@ a {
   margin-right: 5px;
   margin-left: 5px;
   background-color: rgba(155, 155, 155, 0.2);
+}
+
+@media only screen and (max-width: 650px) {
+  .agencyContainer {
+    margin: 10px 0px 10px 0px;
+  }
+  .remunerationMenu {
+    width: 100%;
+  }
+  .graphContainer {
+    width: 98%;
+  }
+  .employeeClass {
+    width: 25%;
+  }
+  .auxDiv {
+    width: 98%;
+  }
+  .auxDivGraph {
+    margin-left: 0;
+    padding: 0px 10px 0px 10px;
+  }
+  .perks {
+    font-size: 11px;
+  }
 }
 </style>
