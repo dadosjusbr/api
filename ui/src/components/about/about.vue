@@ -58,6 +58,7 @@
           nacional. Por isso, precisamos de contribuidores para criar crawlers e
           parsers para alimentar nossa base de dados. Saiba mais
           <a
+            style="color: white;"
             href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
           >
             <b> aqui </b></a
@@ -201,7 +202,7 @@ export default {
 .partnersLogosContainer {
   display: flex;
   justify-content: space-evenly;
-  padding: 10px 100px 0px 100px;
+  padding: 10px 100px 50px 100px;
 }
 
 .infoContainer {
