@@ -352,7 +352,7 @@ export default {
             this.month
         )
         .catch((err) => {});
-      if (response != undefined && response.data.TotalEmployees != 0) {
+      if (response != undefined) {
         this.agencyFullName = response.data.FullName;
         this.agencySummary = {
           TotalEmployees: formatter.format(
