@@ -352,7 +352,6 @@ export default {
             this.month
         )
         .catch((err) => {});
-      console.log(response.data.FullName);
       if (response != undefined) {
         this.agencyFullName = response.data.FullName;
         this.agencySummary = {
