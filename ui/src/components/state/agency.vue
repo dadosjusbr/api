@@ -46,7 +46,7 @@
             <div class="menuHeader">
               <div style="width: 90%">
                 <p>
-                  Total Remunerações {{ this.currentYear }}: R$
+                  Total de Remunerações em {{ this.currentYear }}: R$
                   {{ this.totals.totalRemuneration }}M
                 </p>
               </div>
@@ -103,7 +103,7 @@
           <div
             style="height: 59px;background-color: rgba(155, 155, 155, 0.4); line-height: 57px;"
           >
-            <p>Soma do valor de remunerações por mês</p>
+            <p>Total de Remunerações por Mês</p>
           </div>
           <div class="auxDivGraph">
             <bar-graph :options="chartOptions" :series="chartDataToPlot" />
@@ -111,7 +111,7 @@
         </div>
         <div style="width: 90%; align-self: center; text-align: right;">
           <button v-on:click="routerToOMA()" class="moreInfoButton">
-            Mais informação
+            Mais informações
             <router-link
               :to="{
                 name: 'agency',
@@ -243,7 +243,7 @@ export default {
         yaxis: {
           decimalsInFloat: 2,
           title: {
-            text: "Total remunerções",
+            text: "Total de Remunerações",
             offsetY: 10,
             style: {
               fontSize: "14px",
@@ -499,6 +499,8 @@ export default {
         this.currentYear = this.currentYear - 1;
       } else {
         this.data = resp.data;
+        this.yearWithData = this.currentYear;
+        this.monthWithData = resp.data.MonthTotals.length;
         this.generateSeries();
         this.sumRemuneration();
       }
@@ -513,6 +515,8 @@ export default {
         this.currentYear = this.currentYear + 1;
       } else {
         this.data = resp.data;
+        this.yearWithData = this.currentYear;
+        this.monthWithData = resp.data.MonthTotals.length;
         this.generateSeries();
         this.sumRemuneration();
       }
