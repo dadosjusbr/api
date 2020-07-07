@@ -381,17 +381,21 @@ export default {
       this.generateSeries();
     },
     sumTotals() {
+      let maxMonth = 0;
       let remunerationTotal = 0;
       let totalWage = 0;
       let perksTotal = 0;
       let othersTotal = 0;
       this.data.MonthTotals.forEach((month) => {
-        remunerationTotal =
-          remunerationTotal + month.Wage + month.Others + month.Perks;
+        let monthSum = month.Wage + month.Others + month.Perks;
+        if (maxMonth < monthSum)
+          maxMonth = month.Wage + month.Others + month.Perks;
+        remunerationTotal = remunerationTotal + monthSum;
         totalWage = totalWage + month.Wage;
         perksTotal = perksTotal + month.Perks;
         othersTotal = othersTotal + month.Others;
       });
+      this.maxMonth = maxMonth;
       this.totals.totalRemuneration = (remunerationTotal / 1000000).toFixed(1);
       this.totals.totalWage = (totalWage / 1000000).toFixed(0);
       this.totals.totalBenefits = (
@@ -410,7 +414,7 @@ export default {
       let noDataMarker = [];
       wages.forEach((wage) => {
         if (wage === 0) {
-          noDataMarker.push(29000321);
+          noDataMarker.push(this.maxMonth);
         } else {
           noDataMarker.push(0);
         }
