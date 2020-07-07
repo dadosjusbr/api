@@ -155,6 +155,7 @@ export default {
   },
   data() {
     return {
+      maxMonth: 0,
       totals: {
         totalRemuneration: 0,
         totalWage: 0,
@@ -403,8 +404,6 @@ export default {
         this.addMonthsWithNoValue();
       }
       let others = this.data.MonthTotals.map((month) => month["Others"]);
-      let wages = this.data.MonthTotals.map((month) => month["Wage"]);
-      let perks = this.data.MonthTotals.map((month) => month["Perks"]);
       let benefits = this.data.MonthTotals.map(
         (month) => month["Perks"] + month["Others"]
       );
