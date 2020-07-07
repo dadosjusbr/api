@@ -615,6 +615,7 @@ a {
 @media only screen and (max-width: 650px) {
   .agencyContainer {
     margin: 10px 0px 10px 0px;
+    padding: 10px 15px 0px 15px;
   }
   .remunerationMenu {
     width: 100%;
