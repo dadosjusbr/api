@@ -403,7 +403,7 @@ export default {
       if (this.data.MonthTotals.length != 12) {
         this.addMonthsWithNoValue();
       }
-      let others = this.data.MonthTotals.map((month) => month["Others"]);
+      let wages = this.data.MonthTotals.map((month) => month["Wage"]);
       let benefits = this.data.MonthTotals.map(
         (month) => month["Perks"] + month["Others"]
       );
@@ -453,8 +453,7 @@ export default {
         if (!existingMonths.includes(i)) {
           this.data.MonthTotals.push({
             Month: i,
-            Others: 0,
-            Perks: 0,
+            benefits: 0,
             Wage: 0,
           });
         }
@@ -606,9 +605,6 @@ a {
   .auxDivGraph {
     margin-left: 0;
     padding: 0px 10px 0px 10px;
-  }
-  .perks {
-    font-size: 11px;
   }
 }
 </style>
