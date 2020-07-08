@@ -558,7 +558,7 @@ a {
 }
 
 .buttonContainer {
-  margin-top: 15px;
+  margin-top: 62px;
   width: 100%;
   height: 27px;
   text-align: center;
