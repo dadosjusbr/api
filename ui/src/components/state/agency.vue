@@ -61,29 +61,18 @@
                   :class="[!this.dataFilter.wage ? 'squareOpac' : '', 'square']"
                   v-on:click="filterWage()"
                 ></div>
-                <p>Salario: {{ this.totals.wageTotal }}M</p>
-              </div>
-              <div class="employeeClass">
-                <div
-                  style="background-color: #87bba2;"
-                  :class="[
-                    !this.dataFilter.perks ? 'squareOpac' : '',
-                    'square',
-                  ]"
-                  v-on:click="filterPerks()"
-                ></div>
-                <p class="perks">Indenizações: {{ this.totals.perksTotal }}M</p>
+                <p>Salario: {{ this.totals.totalWage }}M</p>
               </div>
               <div class="employeeClass">
                 <div
                   style="background-color: #c9e4ca;"
                   :class="[
-                    !this.dataFilter.others ? 'squareOpac' : '',
+                    !this.dataFilter.benefits ? 'squareOpac' : '',
                     'square',
                   ]"
-                  v-on:click="filterOthers()"
+                  v-on:click="filterBenefits()"
                 ></div>
-                <p>Outros: {{ this.totals.othersTotal }}M</p>
+                <p>Outros: {{ this.totals.totalBenefits }}M</p>
               </div>
               <div class="employeeClass">
                 <div
@@ -166,16 +155,15 @@ export default {
   },
   data() {
     return {
+      maxMonth: 0,
       totals: {
         totalRemuneration: 0,
         totalWage: 0,
-        totalPerks: 0,
-        totalOthers: 0,
+        totalBenefits: 0,
       },
       dataFilter: {
         wage: true,
-        perks: true,
-        others: true,
+        benefits: true,
         noData: true,
       },
       monthWithData: 0,
@@ -186,7 +174,7 @@ export default {
       series: [],
       chartDataToPlot: [],
       chartOptions: {
-        colors: ["#c9e4ca", "#87bba2", "#364958", "#000000"],
+        colors: ["#c9e4ca", "#364958", "#000000"],
         chart: {
           stacked: true,
           toolbar: {
@@ -333,41 +321,32 @@ export default {
   methods: {
     filterWage() {
       if (this.dataFilter.wage) {
-        this.chartDataToPlot.splice(2, 1);
-        this.chartDataToPlot.splice(2, 0, { data: [], name: "" });
-      } else {
-        this.chartDataToPlot.splice(2, 1);
-        this.chartDataToPlot.splice(2, 0, this.series[2]);
-      }
-      this.dataFilter.wage = !this.dataFilter.wage;
-    },
-    filterPerks() {
-      if (this.dataFilter.perks) {
         this.chartDataToPlot.splice(1, 1);
         this.chartDataToPlot.splice(1, 0, { data: [], name: "" });
       } else {
         this.chartDataToPlot.splice(1, 1);
         this.chartDataToPlot.splice(1, 0, this.series[1]);
       }
-      this.dataFilter.perks = !this.dataFilter.perks;
+      this.dataFilter.wage = !this.dataFilter.wage;
     },
-    filterOthers() {
-      if (this.dataFilter.others) {
+    filterBenefits() {
+      if (this.dataFilter.benefits) {
         this.chartDataToPlot.splice(0, 1);
         this.chartDataToPlot.splice(0, 0, { data: [], name: "" });
       } else {
         this.chartDataToPlot.splice(0, 1);
         this.chartDataToPlot.splice(0, 0, this.series[0]);
       }
-      this.dataFilter.others = !this.dataFilter.others;
+      this.dataFilter.benefits = !this.dataFilter.benefits;
     },
+
     filterNoData() {
       if (this.dataFilter.noData) {
-        this.chartDataToPlot.splice(3, 1);
-        this.chartDataToPlot.splice(3, 0, { data: [], name: "" });
+        this.chartDataToPlot.splice(2, 1);
+        this.chartDataToPlot.splice(2, 0, { data: [], name: "" });
       } else {
-        this.chartDataToPlot.splice(3, 1);
-        this.chartDataToPlot.splice(3, 0, this.series[3]);
+        this.chartDataToPlot.splice(2, 1);
+        this.chartDataToPlot.splice(2, 0, this.series[2]);
       }
       this.dataFilter.noData = !this.dataFilter.noData;
     },
@@ -402,45 +381,48 @@ export default {
       this.generateSeries();
     },
     sumTotals() {
+      let maxMonth = 0;
       let remunerationTotal = 0;
-      let wageTotal = 0;
+      let totalWage = 0;
       let perksTotal = 0;
       let othersTotal = 0;
       this.data.MonthTotals.forEach((month) => {
-        remunerationTotal =
-          remunerationTotal + month.Wage + month.Others + month.Perks;
-        wageTotal = wageTotal + month.Wage;
+        let monthSum = month.Wage + month.Others + month.Perks;
+        if (maxMonth < monthSum)
+          maxMonth = month.Wage + month.Others + month.Perks;
+        remunerationTotal = remunerationTotal + monthSum;
+        totalWage = totalWage + month.Wage;
         perksTotal = perksTotal + month.Perks;
         othersTotal = othersTotal + month.Others;
       });
+      this.maxMonth = maxMonth;
       this.totals.totalRemuneration = (remunerationTotal / 1000000).toFixed(1);
-      this.totals.wageTotal = (wageTotal / 1000000).toFixed(0);
-      this.totals.perksTotal = (perksTotal / 1000000).toFixed(0);
-      this.totals.othersTotal = (othersTotal / 1000000).toFixed(0);
+      this.totals.totalWage = (totalWage / 1000000).toFixed(0);
+      this.totals.totalBenefits = (
+        (perksTotal + othersTotal) /
+        1000000
+      ).toFixed(0);
     },
     generateSeries() {
       if (this.data.MonthTotals.length != 12) {
         this.addMonthsWithNoValue();
       }
-      let others = this.data.MonthTotals.map((month) => month["Others"]);
       let wages = this.data.MonthTotals.map((month) => month["Wage"]);
-      let perks = this.data.MonthTotals.map((month) => month["Perks"]);
+      let benefits = this.data.MonthTotals.map(
+        (month) => month["Perks"] + month["Others"]
+      );
       let noDataMarker = [];
       wages.forEach((wage) => {
         if (wage === 0) {
-          noDataMarker.push(29000321);
+          noDataMarker.push(this.maxMonth);
         } else {
           noDataMarker.push(0);
         }
       });
       this.series = [
         {
-          name: "Outros",
-          data: others,
-        },
-        {
-          name: "Indenizações",
-          data: perks,
+          name: "Benefícios",
+          data: benefits,
         },
         {
           name: "Salário",
@@ -453,12 +435,8 @@ export default {
       ];
       this.chartDataToPlot = [
         {
-          name: "Outros",
-          data: others,
-        },
-        {
-          name: "Indenizações",
-          data: perks,
+          name: "Benefícios",
+          data: benefits,
         },
         {
           name: "Salário",
@@ -479,8 +457,7 @@ export default {
         if (!existingMonths.includes(i)) {
           this.data.MonthTotals.push({
             Month: i,
-            Others: 0,
-            Perks: 0,
+            benefits: 0,
             Wage: 0,
           });
         }
@@ -615,6 +592,7 @@ a {
 @media only screen and (max-width: 650px) {
   .agencyContainer {
     margin: 10px 0px 10px 0px;
+    padding: 10px 15px 0px 15px;
   }
   .remunerationMenu {
     width: 100%;
@@ -631,9 +609,6 @@ a {
   .auxDivGraph {
     margin-left: 0;
     padding: 0px 10px 0px 10px;
-  }
-  .perks {
-    font-size: 11px;
   }
 }
 </style>
