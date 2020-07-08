@@ -21,7 +21,8 @@
             },
           }"
         >
-          {{ this.agency.Name.toUpperCase() + " - " + this.agency.FullName }}
+          {{ this.agency.FullName }}
+          <h2>{{ "(" + this.agency.Name.toUpperCase() + ")" }}</h2>
         </router-link>
       </h2>
 
@@ -72,7 +73,7 @@
                   ]"
                   v-on:click="filterBenefits()"
                 ></div>
-                <p>Outros: {{ this.totals.totalBenefits }}M</p>
+                <p>Benefícios: {{ this.totals.totalBenefits }}M</p>
               </div>
               <div class="employeeClass">
                 <div
@@ -120,13 +121,10 @@
       - Salário: valor recebido de acordo com a prestação de serviços, em
       decorrência do contrato de trabalho.
       <br />
-      - Outros: Qualquer remuneração recebida por um funcionário que não seja
-      proveniente de salário ou indenizações. Exemplos de outros são: diárias,
+      - Benefícios: Qualquer remuneração recebida por um funcionário que não
+      seja proveniente de salário. Exemplos de benefícios são: diárias,
       gratificações, remuneração por função de confiança, benefícios pessoais ou
-      eventuais...
-      <br />
-      - Indenizações: valores eventuais, por exemplo, auxílios alimentação,
-      saúde, escolar...
+      eventuais, auxílios alimentação, saúde, escolar...
     </b-tooltip>
   </div>
 </template>
