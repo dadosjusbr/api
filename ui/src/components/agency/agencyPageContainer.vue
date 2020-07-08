@@ -463,7 +463,7 @@ export default {
 }
 
 button {
-  margin-top: -0.4%;
+  margin-top: -0.2%;
 }
 
 .agencyContainer {
