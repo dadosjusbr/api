@@ -121,6 +121,7 @@
             :github="'https://github.com/joaoarthurbm'"
           >
           </profile-card>
+          <div class="auxFiller2"></div>
         </div>
         <div class="teamPhotosContainer">
           <profile-card
@@ -232,6 +233,10 @@ export default {
   height: 250px;
   width: 250px;
 }
+.auxFiller2 {
+  height: 0px;
+  width: 0px;
+}
 
 .contribute {
   width: 40%;
@@ -261,6 +266,10 @@ a {
 }
 
 @media only screen and (max-width: 630px) {
+  .auxFiller2 {
+    height: 250px;
+    width: 250px;
+  }
   .infoContainer {
     flex-direction: column;
   }
@@ -271,7 +280,7 @@ a {
   }
   .contribute {
     width: 100%;
-    padding: 20px 10px 10px 10px;
+    padding: 30px 10px 0px 10px;
     text-align: justify;
     font-size: 15px;
   }
@@ -295,6 +304,13 @@ a {
   .cardsContainer {
     display: flex;
     flex-direction: column-reverse;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .auxFiller2 {
+    height: 200px;
+    width: 150px;
   }
 }
 </style>
