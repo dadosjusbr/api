@@ -51,8 +51,8 @@
                   {{ this.totals.totalRemuneration }}M
                 </p>
               </div>
-              <div style="width: 5%">
-                <md-icon id="tooltip-target-1">info</md-icon>
+              <div style="width: 5%" :id="this.agency.Name">
+                <md-icon >info</md-icon>
               </div>
             </div>
             <div class="employeesClassification" style="padding-top: 15px">
@@ -117,7 +117,7 @@
         </div>
       </div>
     </div>
-    <b-tooltip target="tooltip-target-1" triggers="hover">
+    <b-tooltip :target="this.agency.Name" triggers="hover">
       - Salário: valor recebido de acordo com a prestação de serviços, em
       decorrência do contrato de trabalho.
       <br />
