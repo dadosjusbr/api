@@ -374,7 +374,7 @@ export default {
       }
       this.data = response.data;
       this.yearWithData = this.currentYear;
-      this.monthWithData = response.data.MonthTotals.length;
+      this.monthWithData = response.data.MonthTotals[response.data.MonthTotals.length - 1].Month;
       this.sumTotals();
       this.generateSeries();
     },
