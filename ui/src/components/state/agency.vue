@@ -46,13 +46,13 @@
           <div class="remunerationMenu">
             <div class="menuHeader">
               <div style="width: 90%">
-                <p>
+                <p class="remunerationTotal"> 
                   Total de Remunerações em {{ this.currentYear }}: R$
                   {{ this.totals.totalRemuneration }}M
                 </p>
               </div>
-              <div style="width: 5%">
-                <md-icon id="tooltip-target-1">info</md-icon>
+              <div style="width: 5%" :id="this.agency.Name">
+                <md-icon >info</md-icon>
               </div>
             </div>
             <div class="employeesClassification" style="padding-top: 15px">
@@ -117,7 +117,7 @@
         </div>
       </div>
     </div>
-    <b-tooltip target="tooltip-target-1" triggers="hover">
+    <b-tooltip :target="this.agency.Name" triggers="hover">
       - Salário: valor recebido de acordo com a prestação de serviços, em
       decorrência do contrato de trabalho.
       <br />
@@ -374,7 +374,7 @@ export default {
       }
       this.data = response.data;
       this.yearWithData = this.currentYear;
-      this.monthWithData = response.data.MonthTotals.length;
+      this.monthWithData = response.data.MonthTotals[response.data.MonthTotals.length - 1].Month;
       this.sumTotals();
       this.generateSeries();
     },
@@ -607,6 +607,14 @@ a {
   .auxDivGraph {
     margin-left: 0;
     padding: 0px 10px 0px 10px;
+  }
+}
+@media only screen and (max-width: 380px) {
+  .employeeClass{
+    width: 30%;
+  }
+  .remunerationTotal{
+    font-size: 14px;
   }
 }
 </style>
