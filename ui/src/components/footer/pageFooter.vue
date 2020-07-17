@@ -56,8 +56,11 @@ img {
   font-size: 15px;
   vertical-align: middle;
 }
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 780px) {
   .contatcInfo {
+    padding-left: 10%;
+  }
+  .logoContainer{
     padding-left: 10%;
   }
 }
