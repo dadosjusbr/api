@@ -46,7 +46,7 @@
           <div class="remunerationMenu">
             <div class="menuHeader">
               <div style="width: 90%">
-                <p>
+                <p class="remunerationTotal"> 
                   Total de Remunerações em {{ this.currentYear }}: R$
                   {{ this.totals.totalRemuneration }}M
                 </p>
@@ -607,6 +607,14 @@ a {
   .auxDivGraph {
     margin-left: 0;
     padding: 0px 10px 0px 10px;
+  }
+}
+@media only screen and (max-width: 380px) {
+  .employeeClass{
+    width: 30%;
+  }
+  .remunerationTotal{
+    font-size: 14px;
   }
 }
 </style>
