@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dadosjusbr/remuneracao-magistrados/db"
 	"github.com/dadosjusbr/remuneracao-magistrados/models"
 	"github.com/dadosjusbr/storage"
 	"github.com/joho/godotenv"
@@ -37,124 +34,7 @@ type config struct {
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
 }
 
-var monthsLabelMap = map[int]string{
-	1:  "Janeiro",
-	2:  "Fevereiro",
-	3:  "Março",
-	4:  "Abril",
-	5:  "Maio",
-	6:  "Junho",
-	7:  "Julho",
-	8:  "Agosto",
-	9:  "Setembro",
-	10: "Outubro",
-	11: "Novembro",
-	12: "Dezembro",
-}
-
 var client *storage.Client
-
-// TemplateRenderer is a custom html/template renderer for Echo framework
-type TemplateRenderer struct {
-	templates *template.Template
-}
-
-// Render renders a template document
-func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
-}
-
-//SidebarElement contains the necessary info to render the sidebar
-type SidebarElement struct {
-	Label string
-	URL   string
-}
-
-func getSidebarElements(dbClient *db.Client) ([]SidebarElement, error) {
-	processedMonths, err := dbClient.GetProcessedMonths()
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving all processed months from db --> %v", err)
-	}
-
-	var sidebarElements []SidebarElement
-
-	for _, pm := range processedMonths {
-		label := fmt.Sprintf("%s %d", monthsLabelMap[pm.Month], pm.Year)
-		URL := fmt.Sprintf("/%d/%d", pm.Year, pm.Month)
-		sidebarElements = append(sidebarElements, SidebarElement{Label: label, URL: URL})
-	}
-
-	return sidebarElements, nil
-}
-
-func handleMonthRequest(dbClient *db.Client) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		month, err := strconv.Atoi(c.Param("month"))
-		if err != nil {
-			fmt.Println(fmt.Errorf("invalid month on the url: (%s) --> %v", c.Param("month"), err))
-			return c.String(http.StatusBadRequest, "invalid month")
-		}
-		year, err := strconv.Atoi(c.Param("year"))
-		if err != nil {
-			fmt.Println(fmt.Errorf("invalid year on the url: (%s) --> %v", c.Param("year"), err))
-			return c.String(http.StatusBadRequest, "invalid year")
-		}
-
-		monthResults, err := dbClient.GetMonthResults(month, year)
-		if err != nil {
-			if err == db.ErrDocNotFound {
-				//TODO: render a 404 page
-				fmt.Println("Document not found")
-				return c.String(http.StatusNotFound, "not found")
-			}
-			fmt.Println(fmt.Errorf("unexpected error fetching month data from DB --> %v", err))
-			return c.String(http.StatusInternalServerError, "unexpected error")
-		}
-
-		monthLabel := fmt.Sprintf("%s %d", monthsLabelMap[month], year)
-
-		sidebarElements, err := getSidebarElements(dbClient)
-		if err != nil {
-			fmt.Println(err)
-			return c.String(http.StatusInternalServerError, "unexpected error")
-		}
-
-		viewModel := struct {
-			Month           int
-			Year            int
-			MonthLabel      string
-			SpreadsheetsURL string
-			DatapackageURL  string
-			SidebarElements []SidebarElement
-			Statistics      []db.Statistic
-		}{
-			monthResults.Month,
-			monthResults.Year,
-			monthLabel,
-			monthResults.SpreadsheetsURL,
-			monthResults.DatapackageURL,
-			sidebarElements,
-			monthResults.Statistics,
-		}
-		return c.Render(http.StatusOK, "monthTemplate.html", viewModel)
-	}
-}
-
-func handleMainPageRequest(dbClient *db.Client) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		sidebarElements, err := getSidebarElements(dbClient)
-		if err != nil {
-			log.Printf("Error getting sidebar elements: %q", err)
-			return c.String(http.StatusInternalServerError, "unexpected error")
-		}
-		viewModel := struct {
-			SidebarElements []SidebarElement
-		}{
-			sidebarElements,
-		}
-		return c.Render(http.StatusOK, "homePageTemplate.html", viewModel)
-	}
-}
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -372,12 +252,6 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	dbClient, err := db.NewClient(conf.DBUrl, conf.DBName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer dbClient.CloseConnection()
-
 	// Criando o client do storage
 	client, err = newClient(conf)
 	if err != nil {
@@ -388,10 +262,6 @@ func main() {
 
 	e := echo.New()
 
-	// Overall configuration
-	e.Renderer = &TemplateRenderer{
-		templates: template.Must(template.ParseGlob("templates/*.html")),
-	}
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:   "ui/dist/",
 		Browse: true,
