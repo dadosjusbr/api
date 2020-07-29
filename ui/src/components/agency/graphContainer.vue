@@ -27,7 +27,7 @@ export default {
         legend: {
           show: false,
         },
-        colors: ["#c9a0d0", "#7d5f82", "#513658"],
+        colors: ["#c9a0d0", "#513658"],
         chart: {
           stacked: true,
           toolbar: {

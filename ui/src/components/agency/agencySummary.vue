@@ -43,21 +43,11 @@
         </div>
         <div class="employeeClass">
           <div
-            style="background-color: #7d5f82;"
+            style="background-color: #513658;"
             :class="[!servants ? 'squareOpac' : '', 'square']"
             v-on:click="serventsClick()"
           ></div>
           <p>Servidores: {{ this.agencySummary.TotalServants }}</p>
-        </div>
-        <div
-          class="employeeClass                                                                                                                                                           "
-        >
-          <div
-            style="background-color: #513658;"
-            :class="[!inactives ? 'squareOpac' : '', 'square']"
-            v-on:click="inactivesClick()"
-          ></div>
-          <p>Inativos: {{ this.agencySummary.TotalInactives }}</p>
         </div>
       </div>
     </div>
@@ -78,8 +68,6 @@
       <br />
       - Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os
       analistas, técnicos, oficiais de justiça, etc.
-      <br />
-      - Inativo: é todo o membro ou servidor aposentado.
     </b-tooltip>
   </div>
 </template>
@@ -97,7 +85,6 @@ export default {
     return {
       members: true,
       servants: true,
-      inactives: true,
     };
   },
   methods: {
@@ -110,11 +97,6 @@ export default {
       if (this.servants) this.$emit("disable-servants");
       else this.$emit("enable-servants");
       this.servants = !this.servants;
-    },
-    inactivesClick() {
-      if (this.inactives) this.$emit("disable-inactives");
-      else this.$emit("enable-inactives");
-      this.inactives = !this.inactives;
     },
   },
 };

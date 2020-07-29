@@ -40,8 +40,6 @@
         @enable-members="enableMembers"
         @disable-servants="disableServants"
         @enable-servants="enableServants"
-        @disable-inactives="disableInactives"
-        @enable-inactives="enableInactives"
       />
     </div>
     <div v-show="this.chartData.length != 0">
@@ -165,14 +163,6 @@ export default {
       this.chartDataToPlot.splice(1, 1);
       this.chartDataToPlot.splice(1, 0, this.chartData[1]);
     },
-    disableInactives() {
-      this.chartDataToPlot.splice(2, 1);
-      this.chartDataToPlot.splice(2, 0, { data: [], name: "" });
-    },
-    enableInactives() {
-      this.chartDataToPlot.splice(2, 1);
-      this.chartDataToPlot.splice(2, 0, this.chartData[2]);
-    },
     async checkNextYear() {
       let activateButtonNext = true;
       let { month, year } = this.getNextDate();
@@ -291,17 +281,6 @@ export default {
             data.Servers["10000"],
           ],
         },
-        {
-          name: "Inativos",
-          data: [
-            data.Inactives["-1"],
-            data.Inactives["50000"],
-            data.Inactives["40000"],
-            data.Inactives["30000"],
-            data.Inactives["20000"],
-            data.Inactives["10000"],
-          ],
-        },
       ];
     },
     makeExecutorLog(procInfo) {
@@ -356,7 +335,7 @@ export default {
         this.agencyFullName = response.data.FullName;
         this.agencySummary = {
           TotalEmployees: formatter.format(
-            Math.trunc(response.data.TotalEmployees)
+            Math.trunc(response.data.TotalMembers + response.data.TotalServants)
           ),
           TotalWage:
             "R$ " + formatter.format(response.data.TotalWage.toFixed(2)),
@@ -365,7 +344,6 @@ export default {
           MaxWage: "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
           TotalMembers: response.data.TotalMembers,
           TotalServants: response.data.TotalServants,
-          TotalInactives: response.data.TotalInactives,
           MaxPerk: "R$ " + formatter.format(response.data.MaxPerk.toFixed(2)),
           TotalRemuneration:
             "R$ " +
