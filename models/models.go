@@ -66,7 +66,6 @@ type MonthTotals struct {
 type DataForChartAtAgencyScreen struct {
 	Members     map[int]int
 	Servers     map[int]int
-	Inactives   map[int]int
 	MaxSalary   float64
 	PackageURL  string
 	PackageHash string
