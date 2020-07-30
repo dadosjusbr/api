@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"sort"
@@ -70,9 +71,9 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
 		if agencyMonthlyInfo.Summary.General.Wage.Total != 0 && agencyMonthlyInfo.Summary.General.Perks.Total != 0 && agencyMonthlyInfo.Summary.General.Others.Total != 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
-				Wage:   agencyMonthlyInfo.Summary.General.Wage.Total,
-				Perks:  agencyMonthlyInfo.Summary.General.Perks.Total,
-				Others: agencyMonthlyInfo.Summary.General.Others.Total,
+				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
+				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total + agencyMonthlyInfo.Summary.ServantActive.Perks.Total,
+				Others: agencyMonthlyInfo.Summary.MemberActive.Others.Total + agencyMonthlyInfo.Summary.ServantActive.Others.Total,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 		}
@@ -140,7 +141,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 
 	members := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
 	servers := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
-	inactive := map[int]int{10000: 0, 20000: 0, 30000: 0, 40000: 0, 50000: 0, -1: 0}
 	maxSalary := 0.0
 
 	for _, employeeAux := range agencyMonthlyInfo.Employee {
@@ -166,8 +166,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 			members[salaryRange]++
 		} else if employeeAux.Type == "servidor" && employeeAux.Active == true {
 			servers[salaryRange]++
-		} else if employeeAux.Active == false {
-			inactive[salaryRange]++
 		}
 	}
 
@@ -182,7 +180,6 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
 		Members:     members,
 		Servers:     servers,
-		Inactives:   inactive,
 		MaxSalary:   maxSalary,
 		PackageURL:  packageURL,
 		PackageHash: packageHash,
@@ -204,17 +201,25 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 	agencySummary := models.AgencySummary{
-		FullName:          agency.Name,
-		TotalWage:         agencyMonthlyInfo.Summary.General.Wage.Total,
-		MaxWage:           agencyMonthlyInfo.Summary.General.Wage.Max,
-		TotalPerks:        agencyMonthlyInfo.Summary.General.Perks.Total + agencyMonthlyInfo.Summary.General.Others.Total,
-		MaxPerk:           agencyMonthlyInfo.Summary.General.Perks.Max,
-		TotalRemuneration: agencyMonthlyInfo.Summary.General.Wage.Total + agencyMonthlyInfo.Summary.General.Perks.Total + agencyMonthlyInfo.Summary.General.Others.Total,
-		TotalEmployees:    agencyMonthlyInfo.Summary.MemberActive.Count + agencyMonthlyInfo.Summary.ServantActive.Count + agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
-		TotalMembers:      agencyMonthlyInfo.Summary.MemberActive.Count,
-		TotalServants:     agencyMonthlyInfo.Summary.ServantActive.Count,
-		TotalInactives:    agencyMonthlyInfo.Summary.MemberInactive.Count + agencyMonthlyInfo.Summary.ServantInactive.Count,
-		CrawlingTime:      agencyMonthlyInfo.CrawlingTimestamp,
+		FullName:  agency.Name,
+		TotalWage: agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
+		MaxWage:   math.Max(agencyMonthlyInfo.Summary.MemberActive.Wage.Max, agencyMonthlyInfo.Summary.ServantActive.Wage.Max),
+		TotalPerks: agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
+			agencyMonthlyInfo.Summary.MemberActive.Others.Total +
+			agencyMonthlyInfo.Summary.ServantActive.Perks.Total +
+			agencyMonthlyInfo.Summary.ServantActive.Others.Total,
+		MaxPerk: math.Max(agencyMonthlyInfo.Summary.MemberActive.Perks.Max, agencyMonthlyInfo.Summary.ServantActive.Perks.Max),
+		TotalRemuneration: agencyMonthlyInfo.Summary.MemberActive.Wage.Total +
+			agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
+			agencyMonthlyInfo.Summary.MemberActive.Others.Total +
+			agencyMonthlyInfo.Summary.MemberActive.Wage.Total +
+			agencyMonthlyInfo.Summary.ServantActive.Perks.Total +
+			agencyMonthlyInfo.Summary.ServantActive.Others.Total +
+			agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
+		TotalEmployees: agencyMonthlyInfo.Summary.MemberActive.Count + agencyMonthlyInfo.Summary.ServantActive.Count,
+		TotalMembers:   agencyMonthlyInfo.Summary.MemberActive.Count,
+		TotalServants:  agencyMonthlyInfo.Summary.ServantActive.Count,
+		CrawlingTime:   agencyMonthlyInfo.CrawlingTimestamp,
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
