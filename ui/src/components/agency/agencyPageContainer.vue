@@ -27,14 +27,18 @@
       /></md-button>
     </div>
     <div
-      v-show="this.Crawling_Timestamp != null && this.agencySummary != null"
+      v-show="
+        this.Crawling_Timestamp != null &&
+          this.agencySummary != null &&
+          this.executorLog.cmd == ''
+      "
       class="cr"
     >
       Dados Capturados em {{ Crawling_Timestamp }}.
     </div>
     <div>
       <agency-summary
-        v-show="this.agencySummary != null"
+        v-show="this.agencySummary != null && this.executorLog.cmd == ''"
         :agencySummary="agencySummary"
         @disable-members="disableMembers"
         @enable-members="enableMembers"
