@@ -1,19 +1,25 @@
 <template>
   <div class="graphContainer">
     <div class="graphHeader">Remuneração por quantidade de empregados</div>
-    <div style="graph">
-      <graph-bar :options="chartOptions" :series="series"></graph-bar>
+    <div class="graph">
+      <apexcharts
+        width="80%"
+        height="450"
+        type="bar"
+        :options="chartOptions"
+        :series="series"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import graphBar from "@/components/agency/graphBar.vue";
+import VueApexCharts from "vue-apexcharts";
 
 export default {
   name: "graphContainer",
   components: {
-    graphBar,
+    apexcharts: VueApexCharts,
   },
   props: {
     series: {
