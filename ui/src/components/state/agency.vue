@@ -46,13 +46,13 @@
           <div class="remunerationMenu">
             <div class="menuHeader">
               <div style="width: 90%">
-                <p class="remunerationTotal"> 
+                <p class="remunerationTotal">
                   Total de Remunerações em {{ this.currentYear }}: R$
                   {{ this.totals.totalRemuneration }}M
                 </p>
               </div>
               <div style="width: 5%" :id="this.agency.Name">
-                <md-icon >info</md-icon>
+                <md-icon>info</md-icon>
               </div>
             </div>
             <div class="employeesClassification" style="padding-top: 15px">
@@ -337,7 +337,6 @@ export default {
       }
       this.dataFilter.benefits = !this.dataFilter.benefits;
     },
-
     filterNoData() {
       if (this.dataFilter.noData) {
         this.chartDataToPlot.splice(2, 1);
@@ -374,7 +373,8 @@ export default {
       }
       this.data = response.data;
       this.yearWithData = this.currentYear;
-      this.monthWithData = response.data.MonthTotals[response.data.MonthTotals.length - 1].Month;
+      this.monthWithData =
+        response.data.MonthTotals[response.data.MonthTotals.length - 1].Month;
       this.sumTotals();
       this.generateSeries();
     },
@@ -592,29 +592,37 @@ a {
     margin: 10px 0px 10px 0px;
     padding: 10px 15px 0px 15px;
   }
+
   .remunerationMenu {
     width: 100%;
   }
+
   .graphContainer {
     width: 98%;
   }
+
   .employeeClass {
     width: 25%;
   }
+
   .auxDiv {
     width: 98%;
   }
+
   .auxDivGraph {
     margin-left: 0;
     padding: 0px 10px 0px 10px;
   }
+
 }
 @media only screen and (max-width: 380px) {
-  .employeeClass{
+  .employeeClass {
     width: 30%;
   }
-  .remunerationTotal{
+
+  .remunerationTotal {
     font-size: 14px;
   }
+  
 }
 </style>

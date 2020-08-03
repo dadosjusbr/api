@@ -31,24 +31,28 @@ export default {
   position: absolute;
   bottom: 0;
 }
+
 .md-toolbar {
   display: table-row;
   width: 100%;
   background-color: #3e5363;
   height: 15em;
 }
+
 .logoContainer {
   display: table-cell;
   width: 30%;
   text-align: center;
   vertical-align: middle;
 }
+
 img {
   max-width: 200px;
   max-height: 150px;
   width: auto;
   height: auto;
 }
+
 .contatcInfo {
   display: table-cell;
   text-align: left;
@@ -56,13 +60,16 @@ img {
   font-size: 15px;
   vertical-align: middle;
 }
+
 @media only screen and (max-width: 780px) {
   .contatcInfo {
     padding-left: 10%;
   }
-  .logoContainer{
+
+  .logoContainer {
     padding-left: 10%;
   }
+
 }
 @media only screen and (max-width: 600px) {
   .logoContainer {
@@ -74,6 +81,7 @@ img {
     text-align: center;
     vertical-align: middle;
   }
+
   .contatcInfo {
     order: 1;
     padding-left: 10%;
@@ -82,6 +90,7 @@ img {
     color: white;
     font-size: 15px;
   }
+
   img {
     margin-top: 15%;
     vertical-align: middle;
@@ -90,11 +99,13 @@ img {
     width: auto;
     height: auto;
   }
+
   .md-toolbar {
     flex-direction: column;
     display: flex;
     width: 100%;
     height: 23em;
   }
+  
 }
 </style>

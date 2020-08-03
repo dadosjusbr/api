@@ -118,6 +118,7 @@ export default {
   width: 144px;
   background-color: white;
 }
+
 .graphContainer {
   text-align: center;
   overflow: hidde;
