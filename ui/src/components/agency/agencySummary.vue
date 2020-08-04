@@ -109,6 +109,7 @@ export default {
   width: 66%;
   flex-direction: column;
 }
+
 .wageTotal {
   display: flex;
   flex-direction: row;
@@ -120,6 +121,7 @@ export default {
   order: 1;
   background-color: #dcdbdc;
 }
+
 .othersTotals {
   width: 100%;
   height: 77%;
@@ -226,8 +228,8 @@ export default {
     display: table-cell;
     width: 100%;
     flex-direction: column;
-    /* margin-bottom: 16px; */
   }
+
   .wageTotal {
     height: 59px;
     width: 100%;
@@ -236,6 +238,7 @@ export default {
     order: 1;
     background-color: #dcdbdc;
   }
+
   .employeeInfoContainer {
     height: 50%;
     display: table-cell;
@@ -248,18 +251,21 @@ export default {
     flex-direction: column;
     height: 250px;
   }
+
   .othersTotalsInfo {
     padding-top: 2px;
     width: 250px;
     height: 80px;
     margin-bottom: 15px;
   }
+
   .whiteSpace {
     width: 100%;
     height: 16px;
     background-color: #f4f4f4;
     order: 2;
   }
+
   br {
     display: block;
     content: "";
@@ -269,6 +275,7 @@ export default {
   .toltalEmployees {
     height: 59px;
   }
+  
   .employeeInfoContainer {
     height: 180px;
     order: 3;

@@ -2,57 +2,36 @@
   <div style="min-height: 500px; text-align: center;">
     <b-dropdown split size="lg" text="Paraíba" class="dropDownButton">
     </b-dropdown>
-    <entity :entityName="'Ministério Público'" :agencies="mAgencies" />
-    <entity :entityName="'Judiciário'" :agencies="jAgencies" />
+    <agency
+      v-for="(agency, i) in agencies"
+      :agency="agency"
+      :key="i"
+      :year="new Date().getFullYear()"
+    />
   </div>
 </template>
 
 <script>
-import entity from "@/components/state/entity.vue";
+import agency from "@/components/state/agency.vue";
 
 export default {
   name: "statePageContainer",
   components: {
-    entity,
+    agency,
   },
   data() {
     return {
       flagUrl:
         "https://1.bp.blogspot.com/-422XO8VbnkM/WFwr1v6yeoI/AAAAAAACRBM/0wtdW0JfArwQQMucxHxRrLSoHTsy7_6OwCEw/s1600/paraibano%2B2%2Bbandeira.png",
       stateName: "PARAÍBA",
-      stateData: {},
-      jAgencies: [],
-      mAgencies: [],
+      agencies: [],
     };
   },
   methods: {
     async fetchData() {
       const { data } = await this.$http.get("/orgao/PB");
       this.stateData = data;
-      this.setjAgencies(data);
-      this.setmAgencies(data);
-    },
-    setjAgencies(stateData) {
-      let jAgencies = [];
-      if (stateData !== {}) {
-        stateData.Agency.forEach((agency) => {
-          if (agency.AgencyCategory == "J") {
-            jAgencies.push(agency);
-          }
-        });
-      }
-      this.jAgencies = jAgencies;
-    },
-    setmAgencies(stateData) {
-      let mAgencies = [];
-      if (stateData !== {}) {
-        stateData.Agency.forEach((agency) => {
-          if (agency.AgencyCategory == "M") {
-            mAgencies.push(agency);
-          }
-        });
-      }
-      this.mAgencies = mAgencies;
+      this.agencies = this.stateData.Agency;
     },
   },
   mounted() {

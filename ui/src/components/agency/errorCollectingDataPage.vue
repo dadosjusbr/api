@@ -62,7 +62,7 @@ export default {
 };
 </script>
 
-<style >
+<style>
 .errorLog {
   padding-left: 5px;
   padding-top: 5px;
@@ -71,13 +71,16 @@ export default {
   text-align: center;
   margin-bottom: 5px;
 }
+
 .textArea {
   border: 1px solid #2ab38b;
   width: 80%;
 }
+
 h5 {
   margin-bottom: 0px;
 }
+
 a {
   color: black;
   font-size: 1.4em;

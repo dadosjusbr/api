@@ -66,10 +66,6 @@
             Baixar
           </button>
         </a>
-        <!--
-        <h5 v-show="this.fileHash != ''">
-          <b> Hash do arquivo:</b> {{ this.fileHash }}
-        </h5> -->
       </div>
       <social-media-share v-show="this.agencySummary != null" />
     </div>
@@ -429,6 +425,7 @@ export default {
 .agencyName {
   font-weight: bold;
 }
+
 .downloadAndShare {
   display: flex;
   flex-direction: row;
@@ -466,10 +463,12 @@ button {
   color: white;
   font-size: 17px;
 }
+
 .cr {
   text-align: center;
   font-size: 1.1em;
 }
+
 @media only screen and (max-width: 650px) {
   .agencyContainer {
     margin-left: 3%;
