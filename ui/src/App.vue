@@ -27,7 +27,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed");
 .app {
-  font-family: "Roboto Condensed", sans-serif;
+  font-family: "Roboto Condensed";
   background-color: #f4f4f4;
 }
 

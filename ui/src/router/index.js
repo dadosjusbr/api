@@ -4,6 +4,7 @@ import Home from "@/Home.vue";
 import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
 import about from "@/components/about/about.vue";
 import agencyYearContainer from "@/components/agency-year-month/agencyYearContainer.vue";
+import homePage from "@/components/home-page/homePage.vue";
 
 Vue.use(VueRouter);
 
@@ -12,6 +13,11 @@ const routes = [
     path: "/",
     name: "home",
     component: Home,
+  },
+  {
+    path: "/home",
+    name: "homepage",
+    component: homePage,
   },
   {
     path: "/orgao/:agencyName/:year/:month",

@@ -3,8 +3,11 @@
     <a :href="this.github" target="_blank">
       <img class="profilePhoto" :src="this.image" />
     </a>
-    <h4 style="padding-top: 15px">{{ this.name }}</h4>
-    <h5>{{ this.role }}</h5>
+    <br />
+    <br />
+    <b>{{ this.name }}</b>
+    <br />
+    {{ this.role }}
   </div>
 </template>
 
@@ -35,8 +38,8 @@ export default {
 <style scoped>
 .profilePhoto {
   border-radius: 50%;
-  width: 135px;
-  height: 135px;
+  width: 190px;
+  height: 190px;
 }
 
 .teamPhotoCard {
@@ -44,6 +47,7 @@ export default {
   text-align: center;
   height: 250px;
   width: 250px;
+  font-size: 22px;
 }
 
 @media only screen and (max-width: 500px) {
@@ -58,9 +62,5 @@ export default {
     width: 70px;
     height: 70px;
   }
-}
-
-h4 {
-  font-weight: 600;
 }
 </style>
