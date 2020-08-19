@@ -96,17 +96,6 @@
         >
       </div>
     </div>
-    <div class="parceiros">
-      <b> PARCEIROS </b>
-      <div
-        style="display: flex; flex-direction: row; justify-content: space-between;"
-      >
-        <img src="../../assets/logo_analytics.svg" />
-        <img src="../../assets/logo_shuttleworth.svg" />
-        <img src="../../assets/logo_ufcg.svg" />
-        <img src="../../assets/logo_mppb.svg" />
-      </div>
-    </div>
     <div class="equipe">
       <b> EQUIPE </b>
       <div>
@@ -199,6 +188,17 @@
         </div>
       </div>
     </div>
+    <div class="parceiros">
+      <b> PARCEIROS </b>
+      <div
+        style="display: flex; flex-direction: row; justify-content: space-between;"
+      >
+        <img src="../../assets/logo_analytics.svg" />
+        <img src="../../assets/logo_shuttleworth.svg" />
+        <img src="../../assets/logo_ufcg.svg" />
+        <img src="../../assets/logo_mppb.svg" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -234,7 +234,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 120px ;
+  margin-top: 120px;
 }
 
 .equipe {
