@@ -1,9 +1,11 @@
 <template>
   <div class="navBar">
     <div class="auxBar">
-      <img src="../../assets/icon_dadosjusbr_colored.svg" />
       <router-link to="/">
-        <b style="color: white; font-size: 18px;"> Ver Gráficos </b>
+        <img src="../../assets/icon_dadosjusbr_colored.svg" />
+      </router-link>
+      <router-link to="/dados">
+        <b style="color: white; font-size: 18px;"> Dados </b>
       </router-link>
     </div>
   </div>
