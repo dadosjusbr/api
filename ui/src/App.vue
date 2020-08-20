@@ -6,7 +6,6 @@
     />
     <nav-bar />
     <router-view />
-
     <page-footer />
   </div>
 </template>

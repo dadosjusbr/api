@@ -1,10 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "@/Home.vue";
 import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
 import about from "@/components/about/about.vue";
 import agencyYearContainer from "@/components/agency-year-month/agencyYearContainer.vue";
 import homePage from "@/components/home-page/homePage.vue";
+import statePageContainer from "@/components/state/statePageContainer.vue";
 
 Vue.use(VueRouter);
 
@@ -12,12 +12,12 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: Home,
+    component: homePage,
   },
   {
-    path: "/home",
-    name: "homepage",
-    component: homePage,
+    path: "/dados",
+    name: "statePage",
+    component: statePageContainer,
   },
   {
     path: "/orgao/:agencyName/:year/:month",
