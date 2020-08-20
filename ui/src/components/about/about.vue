@@ -176,7 +176,6 @@
       <div class="partnersLogosContainer">
         <img src="../../assets/logo_analytics.svg" />
         <img src="../../assets/logo_shuttleworth.svg" />
-        <img src="../../assets/logo_ufcg.svg" />
         <img src="../../assets/logo_mppb.svg" />
       </div>
     </div>

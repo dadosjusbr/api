@@ -15,7 +15,7 @@
               benefícios.
             </div>
           </div>
-          <img src="../../assets/icones1.jpeg" />
+          <img src="../../assets/Esquema_1.svg" />
         </div>
 
         <div class="infoCard">
@@ -29,7 +29,7 @@
             promovendo o controle social sobre esses gastos do poder judiciário,
             ministério público, defensoria pública e procuradorias.
           </div>
-          <img src="../../assets/icones2.jpeg" />
+          <img src="../../assets/Esquema_2.svg" />
         </div>
 
         <div class="infoCard" style="height: 450px">
@@ -58,7 +58,7 @@
             financeiro sobre essa enorme quantidade de dados de gastos públicos
             é uma tarefa difícil para uma pessoa.
           </div>
-          <img src="../../assets/icones3.jpeg" />
+          <img src="../../assets/Esquema_3.svg" />
         </div>
 
         <div class="infoCard">
@@ -75,6 +75,7 @@
             mês? Todas essas perguntas podem ser respondidas através do
             DadosJusBr.
           </div>
+          <img src="../../assets/Esquema_4.svg" />
         </div>
       </div>
     </div>
@@ -195,7 +196,7 @@
       >
         <img src="../../assets/logo_analytics.svg" />
         <img src="../../assets/logo_shuttleworth.svg" />
-        <img src="../../assets/logo_ufcg.svg" />
+        <img src="../../assets/logo_APBMP.svg" />
         <img src="../../assets/logo_mppb.svg" />
       </div>
     </div>
