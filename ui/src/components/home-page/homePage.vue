@@ -284,7 +284,7 @@ img {
 .sobre {
   background-color: #7f3d8b;
   padding-top: 145px;
-  padding-bottom: 145px;
+  height: 1800px;
 }
 
 a {

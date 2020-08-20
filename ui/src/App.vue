@@ -1,13 +1,12 @@
 <template>
   <div class="app">
-    <div class="contentContainer">
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
-      />
-      <nav-bar />
-      <router-view />
-    </div>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
+    />
+    <nav-bar />
+    <router-view />
+
     <page-footer />
   </div>
 </template>
@@ -29,10 +28,6 @@ export default {
 .app {
   font-family: "Roboto Condensed";
   background-color: #f4f4f4;
-}
-
-.contentContainer {
-  padding-bottom: 235px;
 }
 
 @media only screen and (max-width: 600px) {
