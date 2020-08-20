@@ -1,7 +1,7 @@
 <template>
   <div class="navBar">
     <div class="auxBar">
-      <img src="../../assets/icon_dadosjusbr.svg" />
+      <img src="../../assets/icon_dadosjusbr_colored.svg" />
       <router-link to="/">
         <b style="color: white; font-size: 18px;"> Ver Gráficos </b>
       </router-link>
