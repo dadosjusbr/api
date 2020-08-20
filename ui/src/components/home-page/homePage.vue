@@ -7,7 +7,7 @@
             <b> SOBRE O DADOSJUS </b>
             <br />
             <br />
-            <div style="width: 750px">
+            <div style="width: 700px">
               Os agentes públicos do sistema de justiça brasileiro recebem
               outras verbas, além de seus salários, para exercerem seus cargos.
               Dentre elas encontramos auxílio moradia, despesas com saúde,
@@ -15,11 +15,14 @@
               benefícios.
             </div>
           </div>
-          <img src="../../assets/Esquema_1.svg" />
+          <img
+            src="../../assets/Esquema_1.svg"
+            style="height: 242px; width: 376px;"
+          />
         </div>
 
-        <div class="infoCard">
-          <div style="width: 750px">
+        <div class="infoCard" style="padding-right: 10%">
+          <div style="width: 700px">
             Inspirados em projetos como o
             <a href="https://serenata.ai/"> Serenata de amor </a> e
             <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com
@@ -29,11 +32,14 @@
             promovendo o controle social sobre esses gastos do poder judiciário,
             ministério público, defensoria pública e procuradorias.
           </div>
-          <img src="../../assets/Esquema_2.svg" />
+          <img
+            src="../../assets/Esquema_2.svg"
+            style="width: 112px; height: 151px;"
+          />
         </div>
 
-        <div class="infoCard" style="height: 450px">
-          <div style="width:750px ">
+        <div class="infoCard" style="height: 450px; padding-right: 10%">
+          <div style="width:700px ">
             A
             <a
               href="http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
@@ -58,11 +64,14 @@
             financeiro sobre essa enorme quantidade de dados de gastos públicos
             é uma tarefa difícil para uma pessoa.
           </div>
-          <img src="../../assets/Esquema_3.svg" />
+          <img
+            src="../../assets/Esquema_3.svg"
+            style="height: 106px; width: 105px;"
+          />
         </div>
 
         <div class="infoCard">
-          <div style="width: 750px">
+          <div style="width: 700px">
             O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
             promovendo um acesso mais democrático e fácil aos dados de
             remuneração do sistema de justiça brasileiro.
@@ -75,12 +84,15 @@
             mês? Todas essas perguntas podem ser respondidas através do
             DadosJusBr.
           </div>
-          <img src="../../assets/Esquema_4.svg" />
+          <img
+            src="../../assets/Esquema_4.svg"
+            style="heigh: 142px; width: 452px"
+          />
         </div>
       </div>
     </div>
     <div class="contribua">
-      <div style="width:750px;">
+      <div style="width:700px;">
         <b>SE INTERESSOU, QUER AJUDAR?</b>
         <br />
         <br />
@@ -191,13 +203,15 @@
     </div>
     <div class="parceiros">
       <b> PARCEIROS </b>
+      <br/>
+      <br/>
       <div
         style="display: flex; flex-direction: row; justify-content: space-between;"
       >
-        <img src="../../assets/logo_analytics.svg" />
-        <img src="../../assets/logo_shuttleworth.svg" />
-        <img src="../../assets/logo_APBMP.svg" />
-        <img src="../../assets/logo_mppb.svg" />
+        <img src="../../assets/logo_analytics.svg" style="height:210px; width: 210px"/>
+        <img src="../../assets/logo_shuttleworth.svg" style="height:240px; width: 240px" />
+        <img src="../../assets/logo_APBMP.svg" style="height:240px; width: 240px" />
+        <img src="../../assets/logo_mppb.svg" style="height:210px; width: 210px" />
       </div>
     </div>
   </div>
@@ -307,6 +321,8 @@ a {
   width: 90%;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   height: 250px;
   margin-bottom: 100px;
 }
