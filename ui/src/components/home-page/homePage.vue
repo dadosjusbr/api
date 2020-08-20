@@ -88,13 +88,13 @@
         Por isso, precisamos de contribuidores para criar crawlers e parsers
         para alimentar nossa base de dados.
       </div>
-      <div class="contribuaBotao">
-        <a
-          href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
-        >
-          <b> SAIBA MAIS AQUI </b></a
-        >
-      </div>
+      <a href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
+        ><div class="contribuaBotao">
+          <b>
+            SAIBA MAIS AQUI
+          </b>
+        </div>
+      </a>
     </div>
     <div class="equipe">
       <b> EQUIPE </b>
@@ -262,11 +262,17 @@ img {
   height: 83px;
   border: solid 2px #ffffff;
   background-color: rgba(62, 83, 99, 0);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: 70px;
   margin-top: 20px;
+}
+
+.contribuaBotao:hover {
+  background-color: #ffffff;
+  color: #3e5363;
 }
 
 .contribua {
