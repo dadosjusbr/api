@@ -212,7 +212,7 @@ export default {
     title: function() {
       return {
         inner: "DadosJusBr",
-        complement: "Sobre",
+        complement: "Home",
       };
     },
     meta: function() {
