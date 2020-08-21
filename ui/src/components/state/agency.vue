@@ -28,17 +28,17 @@
 
       <div class="buttonContainer" v-show="!simplifyComponent">
         <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
-          <img src="../../assets/previous.png" />
+          <img src="../../assets/previous.svg" />
         </md-button>
         <md-button class="deactivatedButton" v-else
           ><img src="../../assets/previousd.png"
         /></md-button>
         <a class="year"> {{ this.currentYear }} </a>
         <md-button v-if="checkNextYear" v-on:click="nextYear()">
-          <img src="../../assets/next.png" />
+          <img src="../../assets/next.svg" />
         </md-button>
         <md-button class="deactivatedButton" v-else
-          ><img src="../../assets/nextd.png"
+          ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
         /></md-button>
       </div>
       <div class="agencyContent">

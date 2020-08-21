@@ -26,7 +26,7 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed");
 .app {
   font-family: "Roboto Condensed";
-  background-color: #f4f4f4;
+  background-color: #ffffff;
 }
 
 @media only screen and (max-width: 600px) {
