@@ -1,9 +1,7 @@
 <template>
   <div>
     <div class="buttonDiv">
-      <button class="button" v-on:click="showMenu()">
-        Compartilhar
-      </button>
+      <img src="../../assets/button_compartilhar.svg" v-on:click="showMenu()" />
     </div>
     <div class="shareMenu" v-show="this.displayMenu">
       <button class="closeButton" v-on:click="hideMenu()">X</button>
@@ -81,10 +79,8 @@ export default {
 <style>
 .buttonDiv {
   text-align: center;
-  margin-right: 10px;
-  width: 150px;
-  height: 48px;
   order: 2;
+  margin-right: 20px;
 }
 
 .button {

@@ -2,19 +2,35 @@
   <div class="summary">
     <div class="wageInfoContainer">
       <div class="wageTotal">
+        <img
+          style="height: 36px; width:36px"
+          src="../../assets/icon-remuneracao.svg"
+        />
         <div style="width: 92%">
           <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
         </div>
         <div style="width: 60px;">
-          <md-icon id="tooltip-target-1">info</md-icon>
+          <img
+            id="tooltip-target-1"
+            style="height: 30px; width:30px"
+            src="../../assets/icon-info.svg"
+          />
         </div>
       </div>
       <div class="othersTotals">
+        <img
+          style="height: 36px; width:36px"
+          src="../../assets/icon-salario.svg"
+        />
         <div class="othersTotalsInfo">
           <p>Maior Salário: {{ this.agencySummary.MaxWage }}</p>
           <br />
           <p>Total Salários: {{ this.agencySummary.TotalWage }}</p>
         </div>
+        <img
+          style="height: 36px; width:36px"
+          src="../../assets/icon-beneficio.svg"
+        />
         <div class="othersTotalsInfo">
           <p>Maior Benefício: {{ this.agencySummary.MaxPerk }}</p>
           <br />
@@ -25,11 +41,19 @@
     <div class="whiteSpace"></div>
     <div class="employeeInfoContainer">
       <div class="toltalEmployees">
+        <img
+          style="height: 36px; width:36px"
+          src="../../assets/icon-empregados.svg"
+        />
         <div style="width: 90%">
           <p>Total empregados: {{ this.agencySummary.TotalEmployees }}</p>
         </div>
         <div style="width: 60px;">
-          <md-icon id="tooltip-target-2">info</md-icon>
+          <img
+            id="tooltip-target-2"
+            style="height: 30px; width:30px"
+            src="../../assets/icon-info.svg"
+          />
         </div>
       </div>
       <div class="employeesClassification">
@@ -38,7 +62,8 @@
             style="background-color: #c9a0d0;"
             :class="[!members ? 'squareOpac' : '', 'square']"
             v-on:click="membersClick()"
-          ></div>
+          >
+           <img style="height: 100%; width: 100%" src="../../assets/icon_membros.svg"/></div>
           <p>Membros: {{ this.agencySummary.TotalMembers }}</p>
         </div>
         <div class="employeeClass">
@@ -46,7 +71,9 @@
             style="background-color: #513658;"
             :class="[!servants ? 'squareOpac' : '', 'square']"
             v-on:click="serventsClick()"
-          ></div>
+          >
+            <img style="height: 100%; width: 100%" src="../../assets/icon_servidores.svg"/>
+          </div>
           <p>Servidores: {{ this.agencySummary.TotalServants }}</p>
         </div>
       </div>
@@ -108,44 +135,49 @@ export default {
   display: table-cell;
   width: 66%;
   flex-direction: column;
+  background-color: #3e5363;
+  color: white;
 }
 
 .wageTotal {
   display: flex;
   flex-direction: row;
-  font-size: 17px;
-  height: 33%;
+  font-size: 25px;
+  height: 82px;
   width: 100%;
-  line-height: 54.44px;
+  line-height: 80px;
   text-align: center;
   order: 1;
-  background-color: #dcdbdc;
+  border-bottom: 1px solid white;
 }
 
 .othersTotals {
   width: 100%;
-  height: 77%;
+  height: 145px;
+  padding: 0px 50px 0px 50px;
   order: 3;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: white;
+  font-size: 16px;
 }
 
 .othersTotalsInfo {
+  padding-top: 10px;
   height: 70%;
   width: 50%;
   margin-left: 2%;
-  border-left: solid 1.5px #dcdbdc;
   padding-left: 3%;
 }
 
 .employeeInfoContainer {
-  height: 100%;
+  height: 227px;
   display: table-cell;
   width: 33%;
   flex-direction: column;
+  background-color: #3e5363;
+  color: white;
 }
 
 .toltalEmployees {
@@ -153,11 +185,12 @@ export default {
   flex-direction: row;
   font-size: 17px;
   order: 1;
-  height: 33%;
+  height: 82px;
   width: 100%;
-  background-color: #dcdbdc;
-  line-height: 54.44px;
+  line-height: 80px;
   text-align: center;
+  font-size: 25px;
+  border-bottom: 1px solid white;
 }
 
 .employeesClassification {
@@ -168,7 +201,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
 }
 
 .summary {
@@ -202,7 +234,7 @@ export default {
 }
 
 .employeeClass {
-  font-size: 13px;
+  font-size: 16px;
   width: 33.33%;
   height: 100%;
   display: flex;
@@ -275,7 +307,7 @@ export default {
   .toltalEmployees {
     height: 59px;
   }
-  
+
   .employeeInfoContainer {
     height: 180px;
     order: 3;

@@ -1,29 +1,28 @@
 <template>
   <div class="agencyContainer">
-    <div class="agencyNameContainer">
-      <h2 class="agencyName">
-        {{ this.agencyFullName }}
-        <h2>{{ "(" + this.agencyName.toUpperCase() + ")" }}</h2>
-      </h2>
-    </div>
     <div v-show="this.chartData.length != 0" class="buttonContainer">
+      <b class="agencyName">
+        {{ this.agencyFullName + " (" + this.agencyName.toUpperCase() + ")" }}
+      </b>
+      <br />
+
       <md-button
         v-if="this.activateButton.previous"
         v-on:click="previousMonth()"
       >
-        <img src="../../assets/previous.png" />
+        <img style="height: 30px; width:20px" src="../../assets/previous.svg" />
       </md-button>
       <md-button class="deactivatedButton" v-else
-        ><img src="../../assets/previousd.png"
+        ><img style="height: 30px; width:30px" src="../../assets/previousd.png"
       /></md-button>
       <a>
         {{ this.months[this.month] + ", " + this.year }}
       </a>
       <md-button v-if="this.activateButton.next" v-on:click="nextMonth()">
-        <img src="../../assets/next.png" />
+        <img style="height: 30px; width:30px" src="../../assets/next.svg" />
       </md-button>
       <md-button class="deactivatedButton" v-else
-        ><img src="../../assets/nextd.png"
+        ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
       /></md-button>
     </div>
     <div
@@ -56,18 +55,14 @@
     <no-data-available-page
       v-show="this.executorLog.cmd == '' && this.noDataAvailable"
     />
-    <div class="downloadAndShare">
-      <div
-        v-show="this.noDataAvailable != true && this.chartData.length != 0"
-        style="order: 1; width: 150px; height: 48px;"
-      >
+    <div class="buttonContainer2">
+      <img src="../../assets/button-explorar-anos.svg" />
+      <div class="downloadAndShare">
+        <social-media-share v-show="this.agencySummary != null" />
         <a :href="this.fileUrl">
-          <button class="buttonDownload">
-            Baixar
-          </button>
+          <img src="../../assets/button-baixar.svg" />
         </a>
       </div>
-      <social-media-share v-show="this.agencySummary != null" />
     </div>
   </div>
 </template>
@@ -422,37 +417,47 @@ export default {
 </script>
 
 <style scoped>
+.buttonContainer2 {
+  height: 82px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 200px;
+}
+.agencyContainer {
+  margin-left: 11%;
+  margin-right: 11%;
+  background-color: #ffffff;
+  padding-top: 120px;
+}
+
 .agencyName {
-  font-weight: bold;
+  color: #3e5363;
+  font-size: 22px;
+}
+
+.cr {
+  text-align: center;
+  font-size: 16px;
+  color: #3e5363;
+}
+
+.buttonContainer {
+  width: 105%;
+  height: 10%;
+  margin-left: -3%;
+  text-align: center;
+  color: #3e5363;
+  font-size: 20px;
 }
 
 .downloadAndShare {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  margin-bottom: 10px;
-}
-
-.buttonContainer {
-  width: 105%;
-  height: 10%;
-  margin-top: 62px;
-  margin-left: -3%;
-  text-align: center;
 }
 
 button {
   margin-top: -0.2%;
-}
-
-.agencyContainer {
-  margin-left: 11%;
-  margin-right: 11%;
-}
-
-.agencyNameContainer {
-  margin-top: 62px;
-  text-align: center;
 }
 
 .buttonDownload {
@@ -462,11 +467,6 @@ button {
   border: solid #545454;
   color: white;
   font-size: 17px;
-}
-
-.cr {
-  text-align: center;
-  font-size: 1.1em;
 }
 
 @media only screen and (max-width: 650px) {

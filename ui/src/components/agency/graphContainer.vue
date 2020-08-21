@@ -130,23 +130,24 @@ export default {
   overflow: hidde;
   margin-bottom: 10px;
   background-color: white;
-  height: 526px;
+  height: 580px;
   text-align: center;
 }
 
 .graphHeader {
   width: 100%;
-  height: 59px;
+  height: 104px;
   box-shadow: 20px 20px 300px 0 rgba(0, 0, 0, 0.05);
-  background-color: rgba(155, 155, 155, 0.3);
-  line-height: 59px;
-  font-size: 17px;
+  background-color: #3e5363;
+  line-height: 105px;
+  font-size: 22px;
+  color: #ffffff;
 }
 
 .graph {
   padding-left: 16%;
   height: 100%;
-  padding-top: 23px;
+  padding-top: 15px;
 }
 
 @media only screen and (max-width: 500px) {
