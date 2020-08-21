@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import agencyPageContainer from "@/components/agency/agencyPageContainer.vue";
-import about from "@/components/about/about.vue";
+import equipe from "@/components/about/equipe.vue";
 import agencyYearContainer from "@/components/agency-year-month/agencyYearContainer.vue";
 import homePage from "@/components/home-page/homePage.vue";
 import statePageContainer from "@/components/state/statePageContainer.vue";
@@ -20,6 +20,11 @@ const routes = [
     component: statePageContainer,
   },
   {
+    path: "/equipe",
+    name: "equipe",
+    component: equipe,
+  },
+  {
     path: "/orgao/:agencyName/:year/:month",
     name: "agency",
     component: agencyPageContainer,
@@ -28,11 +33,6 @@ const routes = [
     path: "/orgao/:agencyName/:year",
     name: "agencyYearContainer",
     component: agencyYearContainer,
-  },
-  {
-    path: "/sobre",
-    name: "sobre",
-    component: about,
   },
 ];
 

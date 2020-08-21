@@ -26,7 +26,7 @@ export default {
 .footerContainer {
   height: 280px;
   padding: 0px 100px 0px 100px;
-  background-color: #7f3d8b;
+  background-color: #3e5363;
   color: white;
   font-size: 20px;
 }
