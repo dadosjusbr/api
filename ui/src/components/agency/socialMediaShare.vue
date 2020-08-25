@@ -1,7 +1,11 @@
 <template>
   <div>
     <div class="buttonDiv">
-      <img src="../../assets/button_compartilhar.svg" v-on:click="showMenu()" />
+      <img
+        style="height: 83px; width:295px"
+        src="../../assets/button_compartilhar.svg"
+        v-on:click="showMenu()"
+      />
     </div>
     <div class="shareMenu" v-show="this.displayMenu">
       <button class="closeButton" v-on:click="hideMenu()">X</button>
