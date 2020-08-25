@@ -10,32 +10,36 @@
     </md-empty-state>
 
     <div class="agencyContainer" v-show="!noDataAvailable">
-      <h2 class="agencyName">
-        <router-link
-          :to="{
-            name: 'agency',
-            params: {
-              agencyName: this.agency.Name.toLowerCase(),
-              year: this.yearWithData,
-              month: this.monthWithData,
-            },
-          }"
-        >
-          {{ this.agency.FullName }}
-          <h2>{{ "(" + this.agency.Name.toUpperCase() + ")" }}</h2>
-        </router-link>
-      </h2>
+      <router-link
+        :to="{
+          name: 'agency',
+          params: {
+            agencyName: this.agency.Name.toLowerCase(),
+            year: this.yearWithData,
+            month: this.monthWithData,
+          },
+        }"
+      >
+        <b class="agencyName">
+          {{
+            this.agency.FullName + " (" + this.agency.Name.toUpperCase() + ")"
+          }}
+        </b>
+      </router-link>
 
       <div class="buttonContainer" v-show="!simplifyComponent">
         <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
-          <img src="../../assets/previous.svg" />
+          <img
+            style="height: 30px; width:30px"
+            src="../../assets/previous.svg"
+          />
         </md-button>
         <md-button class="deactivatedButton" v-else
           ><img src="../../assets/previousd.png"
         /></md-button>
         <a class="year"> {{ this.currentYear }} </a>
         <md-button v-if="checkNextYear" v-on:click="nextYear()">
-          <img src="../../assets/next.svg" />
+          <img style="height: 30px; width:30px" src="../../assets/next.svg" />
         </md-button>
         <md-button class="deactivatedButton" v-else
           ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
@@ -52,16 +56,24 @@
                 </p>
               </div>
               <div style="width: 5%" :id="this.agency.Name">
-                <md-icon>info</md-icon>
+                <img src="../../assets/icon-info.svg" />
               </div>
             </div>
-            <div class="employeesClassification" style="padding-top: 15px">
+            <div
+              class="employeesClassification"
+              style="padding-top: 15px; color: #ffffff;"
+            >
               <div class="employeeClass">
                 <div
                   style="background-color: #364958;"
                   :class="[!this.dataFilter.wage ? 'squareOpac' : '', 'square']"
                   v-on:click="filterWage()"
-                ></div>
+                >
+                  <img
+                    style="width: 100%; height: 100%;"
+                    src="../../assets/icon-salario-oma.svg"
+                  />
+                </div>
                 <p>Salario: {{ this.totals.totalWage }}M</p>
               </div>
               <div class="employeeClass">
@@ -72,7 +84,12 @@
                     'square',
                   ]"
                   v-on:click="filterBenefits()"
-                ></div>
+                >
+                  <img
+                    style="width: 100%; height: 100%;"
+                    src="../../assets/icon-beneficio-oma.svg"
+                  />
+                </div>
                 <p>Benefícios: {{ this.totals.totalBenefits }}M</p>
               </div>
               <div class="employeeClass">
@@ -90,30 +107,29 @@
           </div>
         </div>
         <div class="graphContainer">
-          <div
-            style="height: 59px;background-color: rgba(155, 155, 155, 0.4); line-height: 57px;"
-          >
-            <p>Total de Remunerações por Mês</p>
+          <div class="graphHeader">
+            <p>Total de Remunerações por Mês em {{ this.year }}</p>
           </div>
           <div class="auxDivGraph">
             <bar-graph :options="chartOptions" :series="chartDataToPlot" />
           </div>
         </div>
         <div style="width: 90%; align-self: center; text-align: right;">
-          <button v-on:click="routerToOMA()" class="moreInfoButton">
-            Mais informações
-            <router-link
-              :to="{
-                name: 'agency',
-                params: {
-                  agencyName: this.agency.Name.toLowerCase(),
-                  year: this.yearWithData,
-                  month: this.monthWithData,
-                },
-              }"
-            >
-            </router-link>
-          </button>
+          <router-link
+            :to="{
+              name: 'agency',
+              params: {
+                agencyName: this.agency.Name.toLowerCase(),
+                year: this.yearWithData,
+                month: this.monthWithData,
+              },
+            }"
+          >
+            <img
+              style="width: 295px; height: 83px;"
+              src="../../assets/button_explorar_meses.svg"
+            />
+          </router-link>
         </div>
       </div>
     </div>
@@ -504,14 +520,31 @@ export default {
 </script>
 
 <style scoped>
+.agencyName {
+  color: #3e5363;
+  font-size: 22px;
+}
+
 .menuHeader {
   width: 100%;
-  height: 59px;
-  background-color: rgba(155, 155, 155, 0.4);
-  line-height: 57px;
+  height: 80px;
+  background-color: #3e5363;
+  line-height: 80px;
   text-align: center;
   display: flex;
   flex-direction: row;
+  border-bottom: 1px solid #ffffff;
+  font-size: 22px;
+  color: #ffffff;
+}
+
+.graphHeader {
+  height: 80px;
+  background-color: #3e5363;
+  color: white;
+  line-height: 80px;
+  font-size: 22px;
+  border-bottom: 1px solid #ffffff;
 }
 
 .year {
@@ -533,9 +566,9 @@ export default {
 }
 
 .remunerationMenu {
-  height: 150px;
-  width: 400px;
-  background-color: white;
+  height: 227px;
+  width: 505px;
+  background-color: #3e5363;
   margin-bottom: 50px;
   margin-top: 50px;
 }
@@ -546,19 +579,12 @@ export default {
   align-self: center;
 }
 
-.agencyName {
-  font-size: 20px;
-  font-weight: 900;
-  align-self: center;
-  font-size: 20px;
-}
-
 a {
   color: #4a4a4a;
 }
 
 .buttonContainer {
-  margin-top: 62px;
+  margin-top: 10px;
   width: 100%;
   height: 27px;
   text-align: center;
@@ -581,10 +607,11 @@ a {
 .agencyContainer {
   min-height: 900px;
   padding-top: 50px;
+  padding-bottom: 50px;
   margin-bottom: 30px;
-  margin-right: 5px;
-  margin-left: 5px;
-  background-color: rgba(155, 155, 155, 0.2);
+  margin-right: 15px;
+  margin-left: 15px;
+  background-color: #ffffff;
 }
 
 @media only screen and (max-width: 650px) {
@@ -613,7 +640,6 @@ a {
     margin-left: 0;
     padding: 0px 10px 0px 10px;
   }
-
 }
 @media only screen and (max-width: 380px) {
   .employeeClass {
@@ -623,6 +649,5 @@ a {
   .remunerationTotal {
     font-size: 14px;
   }
-  
 }
 </style>
