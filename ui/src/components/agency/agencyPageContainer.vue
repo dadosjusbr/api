@@ -50,6 +50,7 @@
     </div>
     <graph-container
       :series="chartDataToPlot"
+      :date="{ month: this.months[this.month], year: this.year }"
       v-show="this.chartData.length != 0"
     />
     <error-collecting-data-page

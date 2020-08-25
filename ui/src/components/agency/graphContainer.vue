@@ -1,6 +1,9 @@
 <template>
   <div class="graphContainer">
-    <div class="graphHeader">Remuneração por quantidade de empregados</div>
+    <div class="graphHeader">
+      Remuneração por quantidade de empregados em {{ this.date.month }} de
+      {{ this.date.year }}
+    </div>
     <div class="graph">
       <apexcharts
         width="80%"
@@ -25,6 +28,10 @@ export default {
     series: {
       type: Array,
       default: [],
+    },
+    date: {
+      type: Object,
+      default: null,
     },
   },
   data: function() {
