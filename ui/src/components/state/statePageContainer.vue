@@ -1,5 +1,7 @@
 <template>
-  <div style="min-height: 500px; text-align: center;">
+  <div
+    style="min-height: 500px; text-align: center; background-color: #3e5363; padding-bottom: 50px;"
+  >
     <b-dropdown split size="lg" text="Paraíba" class="dropDownButton">
     </b-dropdown>
     <agency
@@ -61,10 +63,10 @@ export default {
 
 <style scoped>
 .dropDownButton {
-  width: 284px;
-  height: 59px;
-  background-color: #545454;
+  width: 400px;
+  height: 83px;
   margin-top: 50px;
   margin-bottom: 50px;
+  border: 1px solid #ffffff;
 }
 </style>
