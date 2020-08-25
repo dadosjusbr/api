@@ -1,10 +1,13 @@
 <template>
   <div class="graphContainer">
-    <div class="graphHeader">Remuneração por quantidade de empregados</div>
+    <div class="graphHeader">
+      Remuneração por quantidade de empregados em {{ this.date.month }} de
+      {{ this.date.year }}
+    </div>
     <div class="graph">
       <apexcharts
         width="80%"
-        height="450"
+        height="500"
         type="bar"
         :options="chartOptions"
         :series="series"
@@ -25,6 +28,10 @@ export default {
     series: {
       type: Array,
       default: [],
+    },
+    date: {
+      type: Object,
+      default: null,
     },
   },
   data: function() {
@@ -127,10 +134,9 @@ export default {
 
 .graphContainer {
   text-align: center;
-  overflow: hidde;
   margin-bottom: 10px;
   background-color: white;
-  height: 580px;
+  height: 665px;
   text-align: center;
 }
 
@@ -146,8 +152,8 @@ export default {
 
 .graph {
   padding-left: 16%;
-  height: 100%;
   padding-top: 15px;
+  height: 500px;
 }
 
 @media only screen and (max-width: 500px) {
