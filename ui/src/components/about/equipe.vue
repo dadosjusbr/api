@@ -105,25 +105,11 @@
       <b> PARCEIROS </b>
       <br />
       <br />
-      <div
-        style="display: flex; flex-direction: row; justify-content: space-between;"
-      >
-        <img
-          src="../../assets/logo_analytics.svg"
-          style="height:245px; width: 295px"
-        />
-        <img
-          src="../../assets/logo_shuttleworth.svg"
-          style="height:245px; width: 295px"
-        />
-        <img
-          src="../../assets/logo_APBMP.svg"
-          style="height:245px; width: 295px"
-        />
-        <img
-          src="../../assets/logo_mppb.svg"
-          style="height:245px; width: 295px"
-        />
+      <div class="parceirosLogo">
+        <img src="../../assets/logo_analytics.svg" class="logo" />
+        <img src="../../assets/logo_shuttleworth.svg" class="logo" />
+        <img src="../../assets/logo_APBMP.svg" class="logo" />
+        <img src="../../assets/logo_mppb.svg" class="logo" />
       </div>
     </div>
   </div>
@@ -169,6 +155,12 @@ export default {
   padding: 150px 100px 150px 100px;
   color: #3e5363;
   font-size: 22px;
+}
+
+.parceirosLogo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .contribuaBotao {
@@ -218,18 +210,28 @@ a {
   justify-items: center;
   align-items: center;
 }
+.logo {
+  height: 245px;
+  width: 295px;
+}
 
 @media only screen and (max-width: 500px) {
   .equipe {
     padding: 100px 20px 100px 20px;
   }
   .contribua {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 60px 20px 60px 20px;
     flex-direction: column;
     align-items: space-around;
-    height: 570px;
     justify-content: center;
+  }
+  .contribuaBotao {
+    width: 100%;
+    margin: 0px 0px 0px 0px;
+  }
+  a {
+    width: 100%;
+    height: 83px;
   }
   .contribuaText {
     height: 370px;
@@ -244,6 +246,20 @@ a {
     grid-template-rows: 300px 300px 300px 300px 300px;
     justify-items: center;
     align-items: center;
+  }
+  .parceirosLogo {
+    flex-wrap: wrap;
+  }
+  .logo {
+    height: 135px;
+    width: 162px;
+  }
+  .parceiros {
+    padding: 75px 20px 75px 20px;
+  }
+  br {
+    height: 15px;
+    display: block !important;
   }
 }
 </style>
