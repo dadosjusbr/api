@@ -44,7 +44,7 @@
         <b> COMO NOS FAZEMOS ISSO? </b>
         <br />
         <br />
-        <div style="infoCardAux">
+        <div class="infoCardAux">
           Os agentes públicos do sistema de justiça brasileiro recebem outras
           verbas, além de seus salários, para exercerem seus cargos. Dentre elas
           encontramos auxílio moradia, despesas com saúde, auxílio transporte,
@@ -58,7 +58,7 @@
     </div>
 
     <div class="infoCard" style="padding-right: 10%;">
-      <div style="infoCardAux">
+      <div class="infoCardAux">
         Inspirados em projetos como o
         <a href="https://serenata.ai/"> Serenata de amor </a> e
         <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com o
@@ -75,7 +75,7 @@
     </div>
 
     <div class="infoCard">
-      <div style="infoCardAux">
+      <div class="infoCardAux">
         O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
         promovendo um acesso mais democrático e fácil aos dados de remuneração
         do sistema de justiça brasileiro.
