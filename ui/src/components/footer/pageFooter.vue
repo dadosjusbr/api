@@ -1,8 +1,8 @@
 <template>
   <div class="footerContainer">
     <div class="footerAux">
-      <img src="../../assets/icon_dadosjusbr.svg" alt="" />
-      <div style="width: 70%">
+      <img class="logo" src="../../assets/icon_dadosjusbr.svg" alt="" />
+      <div class="footerTexto">
         Alguma dica? Tem algum feedback geral? Se você tiver uma ideia que você
         gostaria de ver no DadosJusBr, envie-nos um e-mail
         (dadosjusbr@gmail.com) ou visite nosso
@@ -36,5 +36,26 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   padding: 100px 70px 0px 70px;
+}
+
+.footerTexto {
+  width: 70%;
+}
+
+@media only screen and (max-width: 500px) {
+  .footerContainer {
+    height: 290px;
+    padding: 60px 20px 60px 0px;
+  }
+  .logo {
+    display: none;
+  }
+  .footerTexto {
+    width: 100%;
+  }
+  .footerAux {
+    padding: 60px 0px 0px 0px;
+    width: 100%;
+  }
 }
 </style>
