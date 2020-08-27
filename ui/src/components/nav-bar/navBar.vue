@@ -9,7 +9,7 @@
       </router-link>
       <div>
         <router-link to="/dados">
-          <b style="color: white; font-size: 18px; margin-right: 90px;">
+          <b class="dados">
             Dados
           </b>
         </router-link>
@@ -43,6 +43,11 @@ export default {
 </script>
 
 <style scoped>
+.dados {
+  color: white;
+  font-size: 18px;
+  margin-right: 90px;
+}
 .navBarHome {
   background-color: #3e5363;
   height: 185px;
@@ -56,6 +61,7 @@ export default {
   height: 185px;
   padding: 50px 100px 0px 100px;
 }
+
 .auxBarHome {
   display: flex;
   justify-content: space-between;
@@ -64,6 +70,7 @@ export default {
   padding-bottom: 35px;
   align-items: center;
 }
+
 .auxBarEquipe {
   display: flex;
   justify-content: space-between;
@@ -71,5 +78,16 @@ export default {
   padding-right: 100px;
   padding-bottom: 35px;
   align-items: center;
+}
+@media only screen and (max-width: 500px) {
+  .navBarHome {
+    padding: 40px 20px 40px 20px;
+  }
+  .auxBarEquipe {
+    padding: 40px 20px 40px 20px;
+  }
+  .dados {
+    margin-right: 60px;
+  }
 }
 </style>
