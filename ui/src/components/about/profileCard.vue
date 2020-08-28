@@ -43,7 +43,7 @@ export default {
 }
 
 .teamPhotoCard {
-  color: white;
+  color: #3e5363;
   text-align: center;
   height: 250px;
   width: 250px;
@@ -52,15 +52,14 @@ export default {
 
 @media only screen and (max-width: 500px) {
   .teamPhotoCard {
-    color: white;
     text-align: center;
-    height: 200px;
-    width: 150px;
+    height: 350px;
+    width: 90%;
   }
   .profilePhoto {
     border-radius: 50%;
-    width: 70px;
-    height: 70px;
+    width: 150px;
+    height: 150px;
   }
 }
 </style>
