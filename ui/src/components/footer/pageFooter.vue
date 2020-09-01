@@ -1,7 +1,7 @@
 <template>
   <div class="footerContainer">
     <div class="footerAux">
-      <img class="logo" src="../../assets/icon_dadosjusbr.svg" alt="" />
+      <img class="logo" src="../../assets/icon_dadosjusbr_white.svg" alt="" />
       <div class="footerTexto">
         Alguma dica? Tem algum feedback geral? Se você tiver uma ideia que você
         gostaria de ver no DadosJusBr, envie-nos um e-mail
@@ -22,7 +22,7 @@ export default {
 };
 </script>
 
-<style lang="css" scoped>
+<style scoped>
 .footerContainer {
   height: 280px;
   padding: 0px 100px 0px 100px;
@@ -30,6 +30,7 @@ export default {
   color: white;
   font-size: 20px;
 }
+
 .footerAux {
   border-top: 1px solid white;
   display: flex;
@@ -44,8 +45,8 @@ export default {
 
 @media only screen and (max-width: 500px) {
   .footerContainer {
-    height: 290px;
-    padding: 60px 20px 60px 0px;
+    height: 280px;
+    padding: 0px 20px 0px 20px;
   }
   .logo {
     display: none;

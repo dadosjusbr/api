@@ -55,11 +55,25 @@ export default {
     text-align: center;
     height: 350px;
     width: 90%;
+    font-size: 19px;
   }
   .profilePhoto {
     border-radius: 50%;
     width: 150px;
     height: 150px;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .teamPhotoCard {
+    text-align: center;
+    height: 250px;
+    width: 95%;
+    font-size: 17px;
+  }
+  .profilePhoto {
+    border-radius: 50%;
+    width: 140px;
+    height: 140px;
   }
 }
 </style>

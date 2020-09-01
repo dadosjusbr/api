@@ -48,6 +48,7 @@ export default {
   font-size: 18px;
   margin-right: 90px;
 }
+
 .navBarHome {
   background-color: #3e5363;
   height: 185px;
@@ -64,6 +65,7 @@ export default {
 
 .auxBarHome {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   border-bottom: 1px solid white;
   padding-right: 100px;
@@ -73,21 +75,34 @@ export default {
 
 .auxBarEquipe {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   border-bottom: 1px solid #3e5363;
   padding-right: 100px;
   padding-bottom: 35px;
   align-items: center;
 }
+
 @media only screen and (max-width: 500px) {
   .navBarHome {
-    padding: 40px 20px 40px 20px;
+    padding: 20px 20px 40px 20px;
+  }
+  .navBarEquipe {
+    padding: 20px 20px 40px 20px;
   }
   .auxBarEquipe {
     padding: 40px 20px 40px 20px;
   }
+  .auxBarHome {
+    padding: 40px 20px 40px 20px;
+  }
   .dados {
-    margin-right: 60px;
+    margin-right: 20px;
+  }
+}
+@media only screen and (max-width: 330px) {
+  .dados {
+    margin-right: 20px;
   }
 }
 </style>
