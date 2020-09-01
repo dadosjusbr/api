@@ -92,7 +92,9 @@
         Por isso, precisamos de contribuidores para criar crawlers e parsers
         para alimentar nossa base de dados.
       </div>
-      <a href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
+      <a
+        style="text-decoration: none;"
+        href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
         ><div class="contribuaBotao">
           <b>
             SAIBA MAIS AQUI
@@ -210,6 +212,7 @@ a {
   justify-items: center;
   align-items: center;
 }
+
 .logo {
   height: 245px;
   width: 295px;
@@ -217,7 +220,7 @@ a {
 
 @media only screen and (max-width: 500px) {
   .equipe {
-    padding: 100px 20px 100px 20px;
+    padding: 100px 20px 70px 20px;
   }
   .contribua {
     padding: 60px 20px 60px 20px;
@@ -228,6 +231,7 @@ a {
   .contribuaBotao {
     width: 100%;
     margin: 0px 0px 0px 0px;
+    text-decoration: none;
   }
   a {
     width: 100%;
@@ -260,6 +264,17 @@ a {
   br {
     height: 15px;
     display: block !important;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .logo {
+    height: 120px;
+    width: 140px;
+  }
+  .contribuaText {
+    height: auto;
+    width: 100%;
+    margin-bottom: 30px;
   }
 }
 </style>
