@@ -90,4 +90,15 @@ export default {
     margin-right: 60px;
   }
 }
+@media only screen and (max-width: 330px) {
+  .navBarHome {
+    padding: 40px 20px 40px 20px;
+  }
+  .auxBarEquipe {
+    padding: 40px 20px 40px 20px;
+  }
+  .dados {
+    margin-right: 20px;
+  }
+}
 </style>
