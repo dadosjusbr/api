@@ -82,13 +82,13 @@ export default {
   padding-bottom: 35px;
   align-items: center;
 }
+
 @media only screen and (max-width: 500px) {
   .navBarHome {
-    padding: 40px 20px 40px 20px;
+    padding: 20px 20px 40px 20px;
   }
   .navBarEquipe {
-    padding: 40px 20px 40px 20px;
-    background-color: coral;
+    padding: 20px 20px 40px 20px;
   }
   .auxBarEquipe {
     padding: 40px 20px 40px 20px;

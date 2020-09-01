@@ -266,7 +266,7 @@ a {
     display: block !important;
   }
 }
-@media only screen and (max-width: 320px) {
+@media only screen and (max-width: 365px) {
   .logo {
     height: 120px;
     width: 140px;
