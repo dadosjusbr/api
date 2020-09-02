@@ -9,12 +9,15 @@
       </router-link>
       <div>
         <router-link to="/dados">
-          <b class="dados">
+          <b v-bind:style="textDecorationDados" class="dados">
             Dados
           </b>
         </router-link>
         <router-link to="/equipe">
-          <b v-on:click="toEquipe()" style="color: white; font-size: 18px;">
+          <b
+            v-bind:style="textDecorationEquipe"
+            style="color: white; font-size: 18px;"
+          >
             Equipe
           </b>
         </router-link>
@@ -32,6 +35,12 @@ export default {
       colorNavBar: {
         backgroundColor: "#3e5363",
       },
+      textDecorationDados: {
+        textDecoration: "none",
+      },
+      textDecorationEquipe: {
+        textDecoration: "none",
+      },
     };
   },
   methods: {
@@ -44,13 +53,18 @@ export default {
   },
   watch: {
     $route(to, from) {
-      // alert(to, from);
       if (this.$route.path == "/equipe") {
         this.colorNavBar.backgroundColor = "#2fbb96";
+        this.textDecorationEquipe.textDecoration = "underline";
+        this.textDecorationDados.textDecoration = "none";
       } else if (this.$route.path == "/") {
         this.colorNavBar.backgroundColor = "#3e5363";
+        this.textDecorationEquipe.textDecoration = "none";
+        this.textDecorationDados.textDecoration = "none";
       } else if (this.$route.path == "/dados") {
         this.colorNavBar.backgroundColor = "#3e5363";
+        this.textDecorationDados.textDecoration = "underline";
+        this.textDecorationEquipe.textDecoration = "none";
       } else {
         this.colorNavBar.backgroundColor = "white";
       }
