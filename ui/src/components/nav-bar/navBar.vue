@@ -1,6 +1,6 @@
 <template>
-  <div :class="[equipe ? 'navBarEquipe' : '', 'navBarHome']">
-    <div :class="[equipe ? 'auxBarEquipe' : '', 'auxBarHome']">
+  <div v-bind:style="colorNavBar" class="navBar">
+    <div class="auxBar">
       <router-link to="/">
         <img
           v-on:click="toHome()"
@@ -29,6 +29,9 @@ export default {
   data() {
     return {
       equipe: false,
+      colorNavBar: {
+        backgroundColor: "#3e5363",
+      },
     };
   },
   methods: {
@@ -37,6 +40,20 @@ export default {
     },
     toHome() {
       this.equipe = false;
+    },
+  },
+  watch: {
+    $route(to, from) {
+      // alert(to, from);
+      if (this.$route.path == "/equipe") {
+        this.colorNavBar.backgroundColor = "#2fbb96";
+      } else if (this.$route.path == "/") {
+        this.colorNavBar.backgroundColor = "#3e5363";
+      } else if (this.$route.path == "/dados") {
+        this.colorNavBar.backgroundColor = "#3e5363";
+      } else {
+        this.colorNavBar.backgroundColor = "white";
+      }
     },
   },
 };
@@ -49,35 +66,18 @@ export default {
   margin-right: 90px;
 }
 
-.navBarHome {
+.navBar {
   background-color: #3e5363;
   height: 185px;
   padding: 50px 100px 0px 100px;
   color: #ffffff;
 }
 
-.navBarEquipe {
-  background-color: #2fbb96;
-  color: #3e5363;
-  height: 185px;
-  padding: 50px 100px 0px 100px;
-}
-
-.auxBarHome {
+.auxBar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   border-bottom: 1px solid white;
-  padding-right: 100px;
-  padding-bottom: 35px;
-  align-items: center;
-}
-
-.auxBarEquipe {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid #3e5363;
   padding-right: 100px;
   padding-bottom: 35px;
   align-items: center;
