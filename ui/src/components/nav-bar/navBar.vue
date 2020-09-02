@@ -1,6 +1,6 @@
 <template>
   <div v-bind:style="colorNavBar" class="navBar">
-    <div class="auxBar">
+    <div v-bind:style="auxBarColor" class="auxBar">
       <router-link to="/">
         <img
           v-on:click="toHome()"
@@ -34,12 +34,18 @@ export default {
       equipe: false,
       colorNavBar: {
         backgroundColor: "#3e5363",
+        color: "white",
       },
       textDecorationDados: {
         textDecoration: "none",
+        color: "white",
       },
       textDecorationEquipe: {
         textDecoration: "none",
+        color: "white",
+      },
+      auxBarColor: {
+        borderBottom: "1px solid white",
       },
     };
   },
@@ -57,14 +63,22 @@ export default {
         this.colorNavBar.backgroundColor = "#2fbb96";
         this.textDecorationEquipe.textDecoration = "underline";
         this.textDecorationDados.textDecoration = "none";
+        this.colorNavBar.color = "#3E5363";
+        this.textDecorationEquipe.color = "#3e5363";
+        this.textDecorationDados.color = "#3e5363";
+        this.auxBarColor.borderBottom = "1px solid #3e5363";
       } else if (this.$route.path == "/") {
         this.colorNavBar.backgroundColor = "#3e5363";
         this.textDecorationEquipe.textDecoration = "none";
         this.textDecorationDados.textDecoration = "none";
+        this.auxBarColor.borderBottom = "1px solid white";
       } else if (this.$route.path == "/dados") {
         this.colorNavBar.backgroundColor = "#3e5363";
         this.textDecorationDados.textDecoration = "underline";
         this.textDecorationEquipe.textDecoration = "none";
+        this.textDecorationEquipe.color = "white";
+        this.textDecorationDados.color = "white";
+        this.auxBarColor.borderBottom = "1px solid white";
       } else {
         this.colorNavBar.backgroundColor = "white";
       }
@@ -84,7 +98,6 @@ export default {
   background-color: #3e5363;
   height: 185px;
   padding: 50px 100px 0px 100px;
-  color: #ffffff;
 }
 
 .auxBar {
