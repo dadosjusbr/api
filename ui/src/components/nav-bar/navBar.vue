@@ -1,6 +1,6 @@
 <template>
-  <div :class="[equipe ? 'navBarEquipe' : '', 'navBarHome']">
-    <div :class="[equipe ? 'auxBarEquipe' : '', 'auxBarHome']">
+  <div v-bind:style="colorNavBar" class="navBar">
+    <div v-bind:style="auxBarColor" class="auxBar">
       <router-link to="/">
         <img
           v-on:click="toHome()"
@@ -9,12 +9,15 @@
       </router-link>
       <div>
         <router-link to="/dados">
-          <b class="dados">
+          <b v-bind:style="textDecorationDados" class="dados">
             Dados
           </b>
         </router-link>
         <router-link to="/equipe">
-          <b v-on:click="toEquipe()" style="color: white; font-size: 18px;">
+          <b
+            v-bind:style="textDecorationEquipe"
+            style="color: white; font-size: 18px;"
+          >
             Equipe
           </b>
         </router-link>
@@ -29,6 +32,21 @@ export default {
   data() {
     return {
       equipe: false,
+      colorNavBar: {
+        backgroundColor: "#3e5363",
+        color: "white",
+      },
+      textDecorationDados: {
+        textDecoration: "none",
+        color: "white",
+      },
+      textDecorationEquipe: {
+        textDecoration: "none",
+        color: "white",
+      },
+      auxBarColor: {
+        borderBottom: "1px solid white",
+      },
     };
   },
   methods: {
@@ -37,6 +55,33 @@ export default {
     },
     toHome() {
       this.equipe = false;
+    },
+  },
+  watch: {
+    $route(to, from) {
+      if (this.$route.path == "/equipe") {
+        this.colorNavBar.backgroundColor = "#2fbb96";
+        this.textDecorationEquipe.textDecoration = "underline";
+        this.textDecorationDados.textDecoration = "none";
+        this.colorNavBar.color = "#3E5363";
+        this.textDecorationEquipe.color = "#3e5363";
+        this.textDecorationDados.color = "#3e5363";
+        this.auxBarColor.borderBottom = "1px solid #3e5363";
+      } else if (this.$route.path == "/") {
+        this.colorNavBar.backgroundColor = "#3e5363";
+        this.textDecorationEquipe.textDecoration = "none";
+        this.textDecorationDados.textDecoration = "none";
+        this.auxBarColor.borderBottom = "1px solid white";
+      } else if (this.$route.path == "/dados") {
+        this.colorNavBar.backgroundColor = "#3e5363";
+        this.textDecorationDados.textDecoration = "underline";
+        this.textDecorationEquipe.textDecoration = "none";
+        this.textDecorationEquipe.color = "white";
+        this.textDecorationDados.color = "white";
+        this.auxBarColor.borderBottom = "1px solid white";
+      } else {
+        this.colorNavBar.backgroundColor = "white";
+      }
     },
   },
 };
@@ -49,35 +94,17 @@ export default {
   margin-right: 90px;
 }
 
-.navBarHome {
+.navBar {
   background-color: #3e5363;
   height: 185px;
   padding: 50px 100px 0px 100px;
-  color: #ffffff;
 }
 
-.navBarEquipe {
-  background-color: #2fbb96;
-  color: #3e5363;
-  height: 185px;
-  padding: 50px 100px 0px 100px;
-}
-
-.auxBarHome {
+.auxBar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   border-bottom: 1px solid white;
-  padding-right: 100px;
-  padding-bottom: 35px;
-  align-items: center;
-}
-
-.auxBarEquipe {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid #3e5363;
   padding-right: 100px;
   padding-bottom: 35px;
   align-items: center;

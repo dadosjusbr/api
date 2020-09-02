@@ -1,5 +1,5 @@
 <template>
-  <div class="footerContainer">
+  <div v-bind:style="colorFooter" class="footerContainer">
     <div class="footerAux">
       <img class="logo" src="../../assets/icon_dadosjusbr_white.svg" alt="" />
       <div class="footerTexto">
@@ -19,6 +19,26 @@
 <script>
 export default {
   name: "pageFooter",
+  data() {
+    return {
+      colorFooter: {
+        backgroundColor: "#3e5363",
+      },
+    };
+  },
+  watch: {
+    $route(to, from) {
+      if (this.$route.path == "/equipe") {
+        this.colorFooter.backgroundColor = "#2fbb96";
+      } else if (this.$route.path == "/") {
+        this.colorFooter.backgroundColor = "#3e5363";
+      } else if (this.$route.path == "/dados") {
+        this.colorFooter.backgroundColor = "#3e5363";
+      } else {
+         this.colorFooter.backgroundColor = "white";
+      }
+    },
+  },
 };
 </script>
 
