@@ -31,7 +31,6 @@ export default {
   name: "navBar",
   data() {
     return {
-      equipe: false,
       colorNavBar: {
         backgroundColor: "#3e5363",
         color: "white",
@@ -47,6 +46,7 @@ export default {
       auxBarColor: {
         borderBottom: "1px solid white",
       },
+      imgPath: "../../assets/icon_dadosjusbr_colored.svg",
     };
   },
   methods: {
@@ -67,11 +67,13 @@ export default {
         this.textDecorationEquipe.color = "#3e5363";
         this.textDecorationDados.color = "#3e5363";
         this.auxBarColor.borderBottom = "1px solid #3e5363";
+        this.imgPath = "../../assets/icon_dadosjusbr_equipe.svg";
       } else if (this.$route.path == "/") {
         this.colorNavBar.backgroundColor = "#3e5363";
         this.textDecorationEquipe.textDecoration = "none";
         this.textDecorationDados.textDecoration = "none";
         this.auxBarColor.borderBottom = "1px solid white";
+        this.imgPath = "../../assets/icon_dadosjusbr_colored.svg";
       } else if (this.$route.path == "/dados") {
         this.colorNavBar.backgroundColor = "#3e5363";
         this.textDecorationDados.textDecoration = "underline";
@@ -79,8 +81,10 @@ export default {
         this.textDecorationEquipe.color = "white";
         this.textDecorationDados.color = "white";
         this.auxBarColor.borderBottom = "1px solid white";
+        this.imgPath = "../../assets/icon_dadosjusbr_colored.svg";
       } else {
-        this.colorNavBar.backgroundColor = "white";
+        this.colorNavBar.backgroundColor = "#3e5363";
+        this.imgPath = "../../assets/icon_dadosjusbr_colored.svg";
       }
     },
   },
@@ -111,16 +115,10 @@ export default {
 }
 
 @media only screen and (max-width: 500px) {
-  .navBarHome {
+  .navBar {
     padding: 20px 20px 40px 20px;
   }
-  .navBarEquipe {
-    padding: 20px 20px 40px 20px;
-  }
-  .auxBarEquipe {
-    padding: 40px 20px 40px 20px;
-  }
-  .auxBarHome {
+  .auxBar {
     padding: 40px 20px 40px 20px;
   }
   .dados {
