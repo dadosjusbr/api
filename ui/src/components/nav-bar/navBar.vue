@@ -73,6 +73,8 @@ export default {
         this.textDecorationEquipe.textDecoration = "none";
         this.textDecorationDados.textDecoration = "none";
         this.auxBarColor.borderBottom = "1px solid white";
+        this.textDecorationEquipe.color = "white";
+        this.textDecorationDados.color = "white";
         this.imgPath = "../../assets/icon_dadosjusbr_colored.svg";
       } else if (this.$route.path == "/dados") {
         this.colorNavBar.backgroundColor = "#3e5363";
@@ -120,6 +122,7 @@ export default {
   }
   .auxBar {
     padding: 40px 20px 40px 20px;
+    height: 160px;
   }
   .dados {
     margin-right: 20px;
