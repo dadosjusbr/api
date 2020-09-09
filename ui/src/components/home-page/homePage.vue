@@ -168,12 +168,12 @@ a {
 @media only screen and (max-width: 500px) {
   .sobre {
     padding: 60px 20px 60px 20px;
-    height: 3800px;
+    height: 4100px;
   }
   .infoCard {
     padding: 0px 0px 0px 0px;
     flex-direction: column;
-    height: 750px;
+    height: 850px;
   }
   .infoCardAux {
     width: 100%;
