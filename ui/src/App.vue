@@ -4,9 +4,11 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
     />
-    <nav-bar />
-    <router-view />
-    <page-footer />
+    <b-container fluid>
+      <nav-bar />
+      <router-view />
+      <page-footer />
+    </b-container>
   </div>
 </template>
 
