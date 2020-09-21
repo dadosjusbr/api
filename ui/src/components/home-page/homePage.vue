@@ -1,4 +1,5 @@
 <template>
+  
   <div class="sobre">
     <div class="infoCard infoCard1">
       <div class="infoCardAux">

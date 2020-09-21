@@ -1,29 +1,31 @@
 <template>
-  <div v-bind:style="colorNavBar" class="navBar">
-    <div v-bind:style="auxBarColor" class="auxBar">
+  <b-row v-bind:style="colorNavBar" class="navBar d-flex align-items-center ">
+    <b-col cols="7" v-bind:style="auxBarColor" class="auxBar p-xl-5 ml-0 ml-xl-5"  >
       <router-link to="/">
         <img
           v-on:click="toHome()"
           src="../../assets/icon_dadosjusbr_colored.svg"
         />
       </router-link>
-      <div>
-        <router-link to="/dados">
-          <b v-bind:style="textDecorationDados" class="dados">
-            Dados
-          </b>
-        </router-link>
-        <router-link to="/equipe">
-          <b
-            v-bind:style="textDecorationEquipe"
-            style="color: white; font-size: 18px;"
-          >
-            Equipe
-          </b>
-        </router-link>
-      </div>
-    </div>
-  </div>
+    </b-col>
+    <b-col cols="2" class="ml-n2 ml-xl-5" >
+      <router-link to="/dados">
+        <b v-bind:style="textDecorationDados" class="textNav">
+          Dados
+        </b>
+      </router-link>
+    </b-col>
+    <b-col cols="2" class="ml-1 ">
+      <router-link to="/equipe">
+        <b
+          v-bind:style="textDecorationEquipe"
+          class="textNav"
+        >
+          Equipe
+        </b>
+      </router-link>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -44,7 +46,7 @@ export default {
         color: "white",
       },
       auxBarColor: {
-        borderBottom: "1px solid white",
+       
       },
       imgPath: "../../assets/icon_dadosjusbr_colored.svg",
     };
@@ -94,43 +96,13 @@ export default {
 </script>
 
 <style scoped>
-.dados {
-  color: white;
-  font-size: 18px;
-  margin-right: 90px;
-}
 
+.textNav {
+  color: white;
+  font-size: 1.2rem;
+}
 .navBar {
   background-color: #3e5363;
-  height: 185px;
-  padding: 50px 100px 0px 100px;
 }
 
-.auxBar {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid white;
-  padding-right: 100px;
-  padding-bottom: 35px;
-  align-items: center;
-}
-
-@media only screen and (max-width: 500px) {
-  .navBar {
-    padding: 20px 20px 40px 20px;
-  }
-  .auxBar {
-    padding: 40px 20px 40px 20px;
-    height: 160px;
-  }
-  .dados {
-    margin-right: 20px;
-  }
-}
-@media only screen and (max-width: 330px) {
-  .dados {
-    margin-right: 20px;
-  }
-}
 </style>
