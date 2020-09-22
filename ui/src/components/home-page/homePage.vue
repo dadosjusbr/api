@@ -1,8 +1,7 @@
 <template>
-  
-  <div class="sobre">
-    <div class="infoCard infoCard1">
-      <div class="infoCardAux">
+  <div class="sobre" fluid>
+    <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
+      <b-col class="infoCardAux ml-4 mt-5" xl="5" >
         <b>VOCÊ JÁ TENTOU ACESSAR DADOS EM SITES DE ÓRGÃO PÚBLICOS? </b>
         <br />
         <br />
@@ -29,12 +28,14 @@
         Devido a essas características realizar um controle social e financeiro
         sobre essa enorme quantidade de dados de gastos públicos é uma tarefa
         difícil para uma pessoa.
-      </div>
-      <img
-        src="../../assets/Esquema_3.svg"
-        style="height: 106px; width: 105px;"
-      />
-    </div>
+      </b-col>
+      <b-col class="d-flex justify-content-xl-end justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 " xl="6" >
+        <img 
+          src="../../assets/Esquema_3.svg"
+          style="height: 106px; width: 105px;"
+        />
+      </b-col>
+    </b-row>
 
     <div class="sloganContainer">
       <b>O DADOSJUSBR EXISTE PARA DENUNCIAR E LIBERTAR ESSES DADOS.</b>
@@ -122,19 +123,13 @@ export default {
 
 <style scoped>
 .sloganContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   color: #ffffff;
   font-size: 22px;
-  height: 250px;
   background-color: #b361c6;
 }
 
 .sobre {
   background-color: #3e5363;
-  padding-top: 145px;
-  height: 2200px;
 }
 
 a {
@@ -144,45 +139,8 @@ a {
 
 .infoCard {
   color: #ffffff;
-  height: 151px;
-  padding-left: 100px;
-  padding-right: 40px;
   font-size: 22px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 250px;
-  margin-bottom: 100px;
   background-color: #3e5363;
 }
 
-.infoCard1 {
-  height: 500px;
-  padding-right: 10%;
-}
-
-.infoCardAux {
-  width: 700px;
-}
-
-@media only screen and (max-width: 500px) {
-  .sobre {
-    padding: 60px 20px 60px 20px;
-    height: 4100px;
-  }
-  .infoCard {
-    padding: 0px 0px 0px 0px;
-    flex-direction: column;
-    height: 850px;
-  }
-  .infoCardAux {
-    width: 100%;
-  }
-  .sloganContainer {
-    margin-right: -20px;
-    margin-inline-start: -20px;
-    text-align: center;
-  }
-}
 </style>

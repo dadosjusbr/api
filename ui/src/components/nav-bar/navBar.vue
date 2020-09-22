@@ -1,6 +1,6 @@
 <template>
   <b-row v-bind:style="colorNavBar" class="navBar d-flex align-items-center ">
-    <b-col cols="7" v-bind:style="auxBarColor" class="auxBar p-xl-5 ml-0 ml-xl-5"  >
+    <b-col cols="7" v-bind:style="auxBarColor" class="p-xl-5 mt-xl-0 mt-4  ml-1 ml-xl-5"  >
       <router-link to="/">
         <img
           v-on:click="toHome()"
