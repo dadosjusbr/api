@@ -1,7 +1,7 @@
 <template>
   <div class="sobre" fluid>
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
-      <b-col class="infoCardAux ml-4 mt-5" xl="5" >
+      <b-col class="infoCardAux ml-4 mt-5" xl="5">
         <b>VOCÊ JÁ TENTOU ACESSAR DADOS EM SITES DE ÓRGÃO PÚBLICOS? </b>
         <br />
         <br />
@@ -29,8 +29,11 @@
         sobre essa enorme quantidade de dados de gastos públicos é uma tarefa
         difícil para uma pessoa.
       </b-col>
-      <b-col class="d-flex justify-content-xl-end justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 " xl="6" >
-        <img 
+      <b-col
+        class="d-flex justify-content-xl-end justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 "
+        xl="6"
+      >
+        <img
           src="../../assets/Esquema_3.svg"
           style="height: 106px; width: 105px;"
         />
