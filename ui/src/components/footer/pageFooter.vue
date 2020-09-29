@@ -1,19 +1,30 @@
 <template>
-  <div v-bind:style="colorFooter" class="footerContainer">
-    <div class="footerAux">
-      <img class="logo" src="../../assets/icon_dadosjusbr_white.svg" alt="" />
-      <div class="footerTexto">
+  <b-container fluid v-bind:style="colorFooter" class="footerContainer p-0 ">
+    <b-row class="mt-3">
+      <b-col cols="1"></b-col>
+      <b-col style="border-top: 1px solid white;"></b-col>
+      <b-col cols="1"></b-col>
+    </b-row>
+    <b-row class="p-xl-5">
+      <b-col cols="1" class="d-flex"></b-col>
+      <b-col cols="3" class="d-none d-xl-block"
+       >
+      <img src="../../assets/icon_dadosjusbr_white.svg" alt="" />
+      </b-col>
+      <b-col xl="7" cols="10" class="mt-5 align-content-center" >
         Alguma dica? Tem algum feedback geral? Se você tiver uma ideia que você
         gostaria de ver no DadosJusBr, envie-nos um e-mail
         (dadosjusbr@gmail.com) ou visite nosso
         <a
-          style="color: white; font-size: 20px;"
+          style="color: white; font-size: 1.2em;"
           href="https://github.com/dadosjusbr"
-          >github</a
-        >.
-      </div>
-    </div>
-  </div>
+        >
+          github
+        </a>
+      </b-col>
+      <b-col cols="1"></b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -44,39 +55,9 @@ export default {
 
 <style scoped>
 .footerContainer {
-  height: 280px;
-  padding: 0px 100px 0px 100px;
   background-color: #3e5363;
   color: white;
-  font-size: 20px;
+  font-size: 1.3em;
 }
 
-.footerAux {
-  border-top: 1px solid white;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 100px 70px 0px 70px;
-}
-
-.footerTexto {
-  width: 70%;
-}
-
-@media only screen and (max-width: 500px) {
-  .footerContainer {
-    height: 280px;
-    padding: 0px 20px 0px 20px;
-  }
-  .logo {
-    display: none;
-  }
-  .footerTexto {
-    width: 100%;
-  }
-  .footerAux {
-    padding: 60px 0px 0px 0px;
-    width: 100%;
-  }
-}
 </style>

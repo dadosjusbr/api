@@ -1,7 +1,7 @@
 <template>
-  <div class="sobre" fluid>
+  <b-container class="sobre " fluid>
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
-      <b-col class="infoCardAux ml-4 mt-5" xl="5">
+      <b-col class="ml-4 mt-5" xl="7">
         <b>VOCÊ JÁ TENTOU ACESSAR DADOS EM SITES DE ÓRGÃO PÚBLICOS? </b>
         <br />
         <br />
@@ -31,7 +31,7 @@
       </b-col>
       <b-col
         class="d-flex justify-content-xl-end justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 "
-        xl="6"
+        xl="4"
       >
         <img
           src="../../assets/Esquema_3.svg"
@@ -40,30 +40,32 @@
       </b-col>
     </b-row>
 
-    <div class="sloganContainer">
+    <b-row class="sloganContainer d-flex align-items-center justify-content-center  mt-5 mb-xl-0 mb-4 "
+        xl="6">
       <b>O DADOSJUSBR EXISTE PARA DENUNCIAR E LIBERTAR ESSES DADOS.</b>
-    </div>
+    </b-row>
 
-    <div class="infoCard" style="margin-top: 145px;">
-      <div>
+    <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
+        <b-col class="ml-4 mt-5" xl="7">
         <b> COMO NOS FAZEMOS ISSO? </b>
         <br />
-        <br />
-        <div class="infoCardAux">
-          Os agentes públicos do sistema de justiça brasileiro recebem outras
-          verbas, além de seus salários, para exercerem seus cargos. Dentre elas
-          encontramos auxílio moradia, despesas com saúde, auxílio transporte,
-          gratificações, diárias, entre outros benefícios.
-        </div>
-      </div>
+        <br />    
+        Os agentes públicos do sistema de justiça brasileiro recebem outras
+        verbas, além de seus salários, para exercerem seus cargos. Dentre elas
+        encontramos auxílio moradia, despesas com saúde, auxílio transporte,
+        gratificações, diárias, entre outros benefícios.
+        </b-col>
+        <b-col class="d-flex  justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 "
+        xl="4">
       <img
         src="../../assets/Esquema_1.svg"
         style="height: 242px; width: 376px;"
       />
-    </div>
+      </b-col>
+    </b-row>
 
-    <div class="infoCard" style="padding-right: 10%;">
-      <div class="infoCardAux">
+    <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center" >
+      <b-col class="ml-4 mt-5" xl="7">
         Inspirados em projetos como o
         <a href="https://serenata.ai/"> Serenata de amor </a> e
         <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com o
@@ -72,15 +74,18 @@
         justiça brasileiro, assim facilitando o acesso e promovendo o controle
         social sobre esses gastos do poder judiciário, ministério público,
         defensoria pública e procuradorias.
-      </div>
+      </b-col>
+      <b-col class="d-flex justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 "
+        xl="4">
       <img
         src="../../assets/Esquema_2.svg"
         style="width: 112px; height: 151px;"
       />
-    </div>
-
-    <div class="infoCard">
-      <div class="infoCardAux">
+      </b-col>
+    </b-row>
+    
+    <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
+      <b-col  class="ml-4 mt-5" xl="7">
         O DadosJusBr utiliza a inteligência de dados para a ação cidadã,
         promovendo um acesso mais democrático e fácil aos dados de remuneração
         do sistema de justiça brasileiro.
@@ -91,13 +96,16 @@
         auxílios? Quanto além do salário um funcionário recebeu em determinado
         mês? Quanto um órgão gastou em determinado mês? Todas essas perguntas
         podem ser respondidas através do DadosJusBr.
-      </div>
+      </b-col>
+      <b-col class="d-flex justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 "
+        xl="4">
       <img
         src="../../assets/Esquema_4.svg"
         style="heigh: 142px; width: 452px"
       />
-    </div>
-  </div>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -126,9 +134,11 @@ export default {
 
 <style scoped>
 .sloganContainer {
+  height: 5em !important;
   color: #ffffff;
-  font-size: 22px;
+  font-size: 1.5rem;
   background-color: #b361c6;
+  text-align: center;
 }
 
 .sobre {
