@@ -4,7 +4,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
     />
-    <b-container fluid>
+    <b-container class="p-0" style="background-color: #3e5363;" fluid>
       <nav-bar />
       <router-view />
       <page-footer />
@@ -31,9 +31,4 @@ export default {
   background-color: #ffffff;
 }
 
-@media only screen and (max-width: 600px) {
-  .contentContainer {
-    padding-bottom: 368px;
-  }
-}
 </style>
