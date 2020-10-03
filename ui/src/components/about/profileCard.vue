@@ -1,14 +1,20 @@
 <template>
-  <div class="teamPhotoCard">
+  <b-container class="pl-0 pr-0" style="background-color: #2fbb96;" fluid>
+  <b-row class=" align-items-center justify-content-center">
     <a :href="this.github" target="_blank">
       <img class="profilePhoto" :src="this.image" />
     </a>
     <br />
     <br />
+  </b-row>
+  <b-row class="mt-2 align-items-center justify-content-center">
     <b>{{ this.name }}</b>
     <br />
+  </b-row>
+  <b-row class=" align-items-center justify-content-center">
     {{ this.role }}
-  </div>
+  </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -45,9 +51,9 @@ export default {
 .teamPhotoCard {
   color: #3e5363;
   text-align: center;
-  height: 250px;
-  width: 250px;
-  font-size: 22px;
+  height: 6em;
+  width: 60%;
+  font-size: 1.3em;
 }
 
 @media only screen and (max-width: 500px) {
@@ -55,7 +61,7 @@ export default {
     text-align: center;
     height: 350px;
     width: 90%;
-    font-size: 19px;
+    font-size: 1.3em;
   }
   .profilePhoto {
     border-radius: 50%;
@@ -68,7 +74,7 @@ export default {
     text-align: center;
     height: 250px;
     width: 95%;
-    font-size: 17px;
+    font-size: 1.3em;
   }
   .profilePhoto {
     border-radius: 50%;
@@ -76,4 +82,5 @@ export default {
     height: 140px;
   }
 }
+
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <b-container fluid v-bind:style="colorFooter" class="footerContainer p-0 ">
-    <b-row class="mt-3">
-      <b-col cols="1"></b-col>
-      <b-col style="border-top: 1px solid white;"></b-col>
-      <b-col cols="1"></b-col>
-    </b-row>
+  <b-container class=" p-0 footerContainer " fluid v-bind:style="colorFooter" >
+    <b-row class="mt-0" >
+        <b-col v-bind:style="colorNavBar"  cols="1"></b-col>
+        <b-col style="border-top: 1px solid white;"></b-col>
+        <b-col v-bind:style="colorNavBar"  cols="1"></b-col>
+  </b-row>
     <b-row class="p-xl-5">
       <b-col cols="1" class="d-flex"></b-col>
       <b-col cols="3" class="d-none d-xl-block"

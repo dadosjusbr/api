@@ -1,5 +1,6 @@
 <template>
-  <b-container class="sobre " fluid>
+  <b-container class="sobre p-0"  fluid>
+
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
       <b-col class="ml-4 mt-5" xl="7">
         <b>VOCÊ JÁ TENTOU ACESSAR DADOS EM SITES DE ÓRGÃO PÚBLICOS? </b>
@@ -40,9 +41,11 @@
       </b-col>
     </b-row>
 
-    <b-row class="sloganContainer d-flex align-items-center justify-content-center  mt-5 mb-xl-0 mb-4 "
+    <b-row class="sloganContainer d-flex align-items-center justify-content-center   mt-5 mb-xl-0 mb-4 "
         xl="6">
-      <b>O DADOSJUSBR EXISTE PARA DENUNCIAR E LIBERTAR ESSES DADOS.</b>
+        <b-col cols="1"></b-col>
+      <b-col>O DADOSJUSBR EXISTE PARA DENUNCIAR E LIBERTAR ESSES DADOS.</b-col>
+      <b-col cols="1"></b-col>
     </b-row>
 
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">

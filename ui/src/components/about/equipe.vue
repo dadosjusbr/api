@@ -1,42 +1,34 @@
 <template>
-  <div>
-    <div class="equipe">
-      <b> TIME </b>
-      <div class="time">
+  <b-container class="p-0" fluid>
+    <b-row class="equipe">
+      <b-col cols="1"> </b-col>
+      <b-col class="mt-5">
+        <b class="equipe">TIME</b> 
+      </b-col>
+      <b-col cols="1"> </b-col>
+    </b-row>
+    <b-row class="equipe d-flex flex-wrap align-items-center">
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
         <profile-card
-          :name="'Marcos Barros'"
+          :name="'Joeberth Souza'"
           :role="'Desenvolvedor'"
-          :image="'https://avatars3.githubusercontent.com/u/34271729?s=460&v=4'"
-          :github="'https://github.com/marcosbmf'"
+          :image="'https://avatars3.githubusercontent.com/u/33490097?s=460&v=4'"
+          :github="'https://github.com/joeberth'"
         >
         </profile-card>
-        <profile-card
-          :name="'Nazareno Andrade'"
+      </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
+         <profile-card
+          :name="'Daniel Fireman'"
           :role="'Professor'"
           :image="
-            'https://avatars0.githubusercontent.com/u/1053850?s=460&u=e1cbfe4f7cba06cf5908f8967c2db24e142ff7c7&v=4  '
+            'https://avatars2.githubusercontent.com/u/8951363?s=400&u=acdedbbd00a15d2f913e3e1bde6b14f2c7451f90&v=4'
           "
-          :github="'https://github.com/nazareno'"
+          :github="'https://github.com/danielfireman'"
         >
         </profile-card>
-        <profile-card
-          :name="'Vinicius Agostini'"
-          :role="'Desenvolvedor'"
-          :image="
-            'https://avatars1.githubusercontent.com/u/12215291?s=460&u=313fcc28f44cb90215a50a7d512abf2b61768155&v=4'
-          "
-          :github="'https://github.com/viniagostini'"
-        >
-        </profile-card>
-        <profile-card
-          :name="'David Eduardo'"
-          :role="'Desenvolvedor'"
-          :image="
-            'https://avatars3.githubusercontent.com/u/25506334?s=460&u=46b571dfa3e0ed7c134f21a787954c2230ab9e68&v=4'
-          "
-          :github="'https://github.com/davidedup'"
-        >
-        </profile-card>
+      </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
         <profile-card
           :name="'Lorena Pereira'"
           :role="'Desenvolvedora'"
@@ -46,13 +38,17 @@
           :github="'https://github.com/Lorenaps'"
         >
         </profile-card>
+      </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
         <profile-card
-          :name="'Joeberth Souza'"
+          :name="'Marcos Barros'"
           :role="'Desenvolvedor'"
-          :image="'https://avatars3.githubusercontent.com/u/33490097?s=460&v=4'"
-          :github="'https://github.com/joeberth'"
+          :image="'https://avatars3.githubusercontent.com/u/34271729?s=460&v=4'"
+          :github="'https://github.com/marcosbmf'"
         >
         </profile-card>
+      </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
         <profile-card
           :name="'Mariana Souto'"
           :role="'UI/UX'"
@@ -62,6 +58,42 @@
           :github="'https://github.com/soutoam'"
         >
         </profile-card>
+        </b-col>
+        <b-col class="p-xl-5 mt-3" cols="6" xl="4">
+        <profile-card
+          :name="'Vinicius Agostini'"
+          :role="'Desenvolvedor'"
+          :image="
+            'https://avatars1.githubusercontent.com/u/12215291?s=460&u=313fcc28f44cb90215a50a7d512abf2b61768155&v=4'
+          "
+          :github="'https://github.com/viniagostini'"
+        >
+        </profile-card>
+        </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
+        <profile-card
+          :name="'David Eduardo'"
+          :role="'Desenvolvedor'"
+          :image="
+            'https://avatars3.githubusercontent.com/u/25506334?s=460&u=46b571dfa3e0ed7c134f21a787954c2230ab9e68&v=4'
+          "
+          :github="'https://github.com/davidedup'"
+        >
+        </profile-card>
+        </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
+        <profile-card
+          :name="'Nazareno Andrade'"
+          :role="'Professor'"
+          :image="
+            'https://avatars0.githubusercontent.com/u/1053850?s=460&u=e1cbfe4f7cba06cf5908f8967c2db24e142ff7c7&v=4  '
+          "
+          :github="'https://github.com/nazareno'"
+        >
+        </profile-card>
+        </b-col>
+      <b-col class="p-xl-5 mt-3" cols="6" xl="4">
+        
         <profile-card
           :name="'João Brunet'"
           :role="'Professor'"
@@ -69,19 +101,11 @@
           :github="'https://github.com/joaoarthurbm'"
         >
         </profile-card>
-        <profile-card
-          :name="'Daniel Fireman'"
-          :role="'Professor'"
-          :image="
-            'https://avatars2.githubusercontent.com/u/8951363?s=400&u=acdedbbd00a15d2f913e3e1bde6b14f2c7451f90&v=4'
-          "
-          :github="'https://github.com/danielfireman'"
-        >
-        </profile-card>
-      </div>
-    </div>
-    <div class="contribua">
-      <div class="contribuaText">
+       </b-col>
+    </b-row>
+    <b-row class="contribua d-flex flex-wrap align-items-center">
+       <b-col cols="1"></b-col>
+      <b-col cols="11" xl="6" class="mt-5 ml-3 ml-xl-0 mb-5 contribuaText align-items-center justify-content-center">
         <b>SE INTERESSOU, QUER AJUDAR?</b>
         <br />
         <br />
@@ -91,7 +115,8 @@
         <br />
         Por isso, precisamos de contribuidores para criar crawlers e parsers
         para alimentar nossa base de dados.
-      </div>
+      </b-col>
+      <b-col cols="11" xl="5" class=" mt-5 mb-5  ml-3 ml-xl-0 d-flex align-items-center justify-content-center">
       <a
         style="text-decoration: none;"
         href="https://github.com/dadosjusbr/coletores/blob/master/TUTORIAL.md"
@@ -101,20 +126,26 @@
           </b>
         </div>
       </a>
-    </div>
+      </b-col>
+       <b-col cols="1"></b-col>
+    </b-row>
 
-    <div class="parceiros">
-      <b> PARCEIROS </b>
-      <br />
-      <br />
-      <div class="parceirosLogo">
-        <img src="../../assets/logo_analytics.svg" class="logo" />
-        <img src="../../assets/logo_shuttleworth.svg" class="logo" />
-        <img src="../../assets/logo_APBMP.svg" class="logo" />
-        <img src="../../assets/logo_mppb.svg" class="logo" />
-      </div>
-    </div>
-  </div>
+    <b-row class="parceiros"> 
+      <b-col class="ml-3 mt-3">
+        <b> PARCEIROS </b>
+        <br />
+        <br />
+      </b-col>
+    </b-row>
+    <b-row class="parceiros d-flex flex-wrap">
+      <b-col cols="1" class="d-xl-none p-0"></b-col>
+      <b-col xl="3" cols="12" class="   " ><img src="../../assets/logo_analytics.svg" class="logo" /></b-col>
+      <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_shuttleworth.svg" class="logo" /></b-col>
+      <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_APBMP.svg" class="logo" /></b-col>
+      <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_mppb.svg" class="logo" /></b-col>
+      <b-col cols="1" xl="0" class="d-xl-none p-0"></b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -146,23 +177,16 @@ export default {
 
 <style scoped>
 .equipe {
-  font-size: 22px;
+  font-size: 1.3em;
   color: #3e5363;
   background-color: #2fbb96;
-  padding: 145px 100px 145px 100px;
+  
 }
 
 .parceiros {
   background-color: #2fbb96;
-  padding: 150px 100px 150px 100px;
   color: #3e5363;
-  font-size: 22px;
-}
-
-.parceirosLogo {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  font-size: 1.3em;
 }
 
 .contribuaBotao {
@@ -174,8 +198,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 70px;
-  margin-top: 20px;
 }
 
 .contribuaBotao:hover {
@@ -183,34 +205,15 @@ export default {
   color: #3e5363;
 }
 
-.contribuaText {
-  width: 700px;
-}
 
 a {
-  font-size: 22px;
+  font-size: 1.3em;
 }
 
-.contribua {
-  padding-bottom: 150px;
-  padding-top: 150px;
+.contribua {  
   background-color: #3e5363;
-  font-size: 22px;
+  font-size: 1.3em;
   color: white;
-  padding-left: 100px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.time {
-  width: 100%;
-  margin-top: 40px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 350px 350px 350px;
-  justify-items: center;
-  align-items: center;
 }
 
 .logo {
@@ -218,63 +221,4 @@ a {
   width: 295px;
 }
 
-@media only screen and (max-width: 500px) {
-  .equipe {
-    padding: 100px 20px 70px 20px;
-  }
-  .contribua {
-    padding: 60px 20px 60px 20px;
-    flex-direction: column;
-    align-items: space-around;
-    justify-content: center;
-  }
-  .contribuaBotao {
-    width: 100%;
-    margin: 0px 0px 0px 0px;
-    text-decoration: none;
-  }
-  a {
-    width: 100%;
-    height: 83px;
-  }
-  .contribuaText {
-    height: 370px;
-    width: 100%;
-  }
-
-  .time {
-    width: 100%;
-    margin-top: 80px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 300px 300px 300px 300px 300px;
-    justify-items: center;
-    align-items: center;
-  }
-  .parceirosLogo {
-    flex-wrap: wrap;
-  }
-  .logo {
-    height: 135px;
-    width: 162px;
-  }
-  .parceiros {
-    padding: 75px 20px 75px 20px;
-  }
-  br {
-    height: 15px;
-    display: block !important;
-  }
-}
-@media only screen and (max-width: 365px) {
-  .logo {
-    height: 120px;
-    width: 140px;
-  }
-  .contribuaText {
-    height: auto;
-    width: 100%;
-    margin-bottom: 30px;
-  }
-}
 </style>
