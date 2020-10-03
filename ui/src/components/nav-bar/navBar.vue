@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container class="p-0" fluid>
   <b-row v-bind:style="colorNavBar" class="navBar d-flex align-items-center ">
     <b-col cols="7" v-bind:style="auxBarColor" class="p-xl-5 mt-xl-0 mt-4  ml-1 ml-xl-5"  >
       <router-link to="/">
@@ -27,11 +27,11 @@
       </router-link>
     </b-col>
   </b-row>
-  <b-row class="mt-3">
-      <b-col cols="1"></b-col>
-      <b-col style="border-top: 1px solid white;"></b-col>
-      <b-col cols="1"></b-col>
-    </b-row>
+  <b-row class="mt-0" >
+        <b-col v-bind:style="colorNavBar"  cols="1"></b-col>
+        <b-col style="border-top: 1px solid white;"></b-col>
+        <b-col v-bind:style="colorNavBar"  cols="1"></b-col>
+  </b-row>
   </b-container>
 </template>
 
@@ -75,13 +75,11 @@ export default {
         this.colorNavBar.color = "#3E5363";
         this.textDecorationEquipe.color = "#3e5363";
         this.textDecorationDados.color = "#3e5363";
-        this.auxBarColor.borderBottom = "1px solid #3e5363";
         this.imgPath = "../../assets/icon_dadosjusbr_equipe.svg";
       } else if (this.$route.path == "/") {
         this.colorNavBar.backgroundColor = "#3e5363";
         this.textDecorationEquipe.textDecoration = "none";
         this.textDecorationDados.textDecoration = "none";
-        this.auxBarColor.borderBottom = "1px solid white";
         this.textDecorationEquipe.color = "white";
         this.textDecorationDados.color = "white";
         this.imgPath = "../../assets/icon_dadosjusbr_colored.svg";
@@ -91,7 +89,6 @@ export default {
         this.textDecorationEquipe.textDecoration = "none";
         this.textDecorationEquipe.color = "white";
         this.textDecorationDados.color = "white";
-        this.auxBarColor.borderBottom = "1px solid white";
         this.imgPath = "../../assets/icon_dadosjusbr_colored.svg";
       } else {
         this.colorNavBar.backgroundColor = "#3e5363";

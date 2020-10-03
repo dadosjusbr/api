@@ -4,11 +4,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
     />
-    <b-container class="p-0" style="background-color: #3e5363;" fluid>
       <nav-bar />
       <router-view />
       <page-footer />
-    </b-container>
   </div>
 </template>
 
