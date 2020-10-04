@@ -1,17 +1,17 @@
 <template>
-  <b-container class=" p-0 footerContainer " fluid v-bind:style="colorFooter" >
+  <b-container class="p-0 footerContainer" fluid v-bind:style="colorFooter" >
     <b-row class="mt-0" >
         <b-col v-bind:style="colorNavBar"  cols="1"></b-col>
-        <b-col style="border-top: 1px solid white;"></b-col>
+        <b-col cols="10" style="border-top: 1px solid white;"></b-col>
         <b-col v-bind:style="colorNavBar"  cols="1"></b-col>
   </b-row>
-    <b-row class="p-xl-5">
+    <b-row class="p-xl-5" v-bind:style="colorFooter">
       <b-col cols="1" class="d-flex"></b-col>
       <b-col cols="3" class="d-none d-xl-block"
        >
       <img src="../../assets/icon_dadosjusbr_white.svg" alt="" />
       </b-col>
-      <b-col xl="7" cols="10" class="mt-5 align-content-center" >
+      <b-col xl="7" cols="10" class="mt-5  align-content-center" >
         Alguma dica? Tem algum feedback geral? Se você tiver uma ideia que você
         gostaria de ver no DadosJusBr, envie-nos um e-mail
         (dadosjusbr@gmail.com) ou visite nosso
@@ -22,7 +22,7 @@
           github
         </a>
       </b-col>
-      <b-col cols="1"></b-col>
+      <b-col cols="1" class="d-flex"></b-col>
     </b-row>
   </b-container>
 </template>
@@ -45,9 +45,7 @@ export default {
         this.colorFooter.backgroundColor = "#3e5363";
       } else if (this.$route.path == "/dados") {
         this.colorFooter.backgroundColor = "#3e5363";
-      } else {
-         this.colorFooter.backgroundColor = "white";
-      }
+      } 
     },
   },
 };
