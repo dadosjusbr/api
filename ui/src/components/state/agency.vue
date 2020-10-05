@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container fluid>
     <md-empty-state
       v-show="noDataAvailable"
       md-rounded
@@ -9,112 +9,114 @@
     >
     </md-empty-state>
 
-    <div class="agencyContainer" v-show="!noDataAvailable">
-      <router-link
-        :to="{
-          name: 'agency',
-          params: {
-            agencyName: this.agency.Name.toLowerCase(),
-            year: this.yearWithData,
-            month: this.monthWithData,
-          },
-        }"
-      >
-        <b class="agencyName">
-          {{
-            this.agency.FullName + " (" + this.agency.Name.toUpperCase() + ")"
-          }}
-        </b>
-      </router-link>
-
-      <div class="buttonContainer" v-show="!simplifyComponent">
-        <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
-          <img
-            style="height: 30px; width:30px"
-            src="../../assets/previous.svg"
-          />
-        </md-button>
-        <md-button class="deactivatedButton" v-else
-          ><img src="../../assets/previousd.png"
-        /></md-button>
-        <a class="year"> {{ this.currentYear }} </a>
-        <md-button v-if="checkNextYear" v-on:click="nextYear()">
-          <img style="height: 30px; width:30px" src="../../assets/next.svg" />
-        </md-button>
-        <md-button class="deactivatedButton" v-else
-          ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
-        /></md-button>
-      </div>
-      <div class="agencyContent">
-        <div class="auxDiv">
-          <div class="remunerationMenu">
-            <div class="menuHeader">
-              <div style="width: 90%">
-                <p class="remunerationTotal">
-                  Total de Remunerações em {{ this.currentYear }}: R$
-                  {{ this.totals.totalRemuneration }}M
-                </p>
-              </div>
-              <div style="width: 5%" :id="this.agency.Name">
-                <img src="../../assets/icon-info.svg" />
-              </div>
-            </div>
+    <b-container fluid class="p-xl-5 p-0" v-show="!noDataAvailable">
+      <b-row class="mt-3 mb-2 align-items-center">
+        <b-col>
+        <router-link
+          :to="{
+            name: 'agency',
+            params: {
+              agencyName: this.agency.Name.toLowerCase(),
+              year: this.yearWithData,
+              month: this.monthWithData,
+            },
+          }"
+        >
+          <b class="agencyName">
+            {{
+              this.agency.FullName + " (" + this.agency.Name.toUpperCase() + ")"
+            }}
+          </b>
+        </router-link>
+         </b-col>
+      </b-row >
+      <b-row class="buttonContainer align-items-center justify-content-center mt-3 mb-2" v-show="!simplifyComponent"> 
+          <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
+            <img
+              style="height: 30px; width:30px"
+              src="../../assets/previous.svg"
+            />
+          </md-button>
+          <md-button class="deactivatedButton" v-else
+            ><img src="../../assets/previousd.png"
+          /></md-button>
+          <a class="year"> {{ this.currentYear }} </a>
+          <md-button v-if="checkNextYear" v-on:click="nextYear()">
+            <img style="height: 30px; width:30px" src="../../assets/next.svg" />
+          </md-button>
+          <md-button class="deactivatedButton" v-else
+            ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
+          /></md-button>
+      </b-row>
+      
+      <b-row class="menuHeader " >
+        <b-col class="pl-1 mt-xl-3">
+        <p>
+          Total de Remunerações em {{ this.currentYear }}: R$
+          {{ this.totals.totalRemuneration }}M
+        </p>
+        </b-col>
+        <b-col cols="1" class="mt-xl-3" :id="this.agency.Name">
+          <img style="width: 30%;" src="../../assets/icon-info.svg" />
+        </b-col>
+      <b-col cols="6" class="d-none d-xl-block" style="background-color: white;"> </b-col>
+      </b-row>
+      <b-row class="remunerationMenu" style="color: #ffffff;">
+          <b-col class="employeeClass mt-2">
             <div
-              class="employeesClassification"
-              style="padding-top: 15px; color: #ffffff;"
+              style="background-color: #364958;"
+              :class="[!this.dataFilter.wage ? 'squareOpac' : '', 'square']"
+              v-on:click="filterWage()"
             >
-              <div class="employeeClass">
-                <div
-                  style="background-color: #364958;"
-                  :class="[!this.dataFilter.wage ? 'squareOpac' : '', 'square']"
-                  v-on:click="filterWage()"
-                >
-                  <img
-                    style="width: 100%; height: 100%;"
-                    src="../../assets/icon-salario-oma.svg"
-                  />
-                </div>
-                <p>Salario: {{ this.totals.totalWage }}M</p>
-              </div>
-              <div class="employeeClass">
-                <div
-                  style="background-color: #c9e4ca;"
-                  :class="[
-                    !this.dataFilter.benefits ? 'squareOpac' : '',
-                    'square',
-                  ]"
-                  v-on:click="filterBenefits()"
-                >
-                  <img
-                    style="width: 100%; height: 100%;"
-                    src="../../assets/icon-beneficio-oma.svg"
-                  />
-                </div>
-                <p>Benefícios: {{ this.totals.totalBenefits }}M</p>
-              </div>
-              <div class="employeeClass">
-                <div
-                  style="background-color: #000000;"
-                  :class="[
-                    !this.dataFilter.noData ? 'squareOpac' : '',
-                    'square',
-                  ]"
-                  v-on:click="filterNoData()"
-                ></div>
-                <p>Sem Dados</p>
-              </div>
+              <img
+                style="width: 100%; height: 100%;"
+                src="../../assets/icon-salario-oma.svg"
+              />
             </div>
-          </div>
-        </div>
-        <div class="graphContainer">
-          <div class="graphHeader">
-            <p>Total de Remunerações por Mês em {{ this.year }}</p>
-          </div>
-          <div class="auxDivGraph">
-            <bar-graph :options="chartOptions" :series="chartDataToPlot" />
-          </div>
-        </div>
-        <div style="width: 90%; align-self: center; text-align: right;">
+            <p>Salario: {{ this.totals.totalWage }}M</p>
+          </b-col>
+          
+          <b-col class="employeeClass mt-2">
+            <div
+              style="background-color: #c9e4ca;"
+              :class="[
+                !this.dataFilter.benefits ? 'squareOpac' : '',
+                'square',
+              ]"
+              v-on:click="filterBenefits()"
+            >
+              <img
+                style="width: 100%; height: 100%;"
+                src="../../assets/icon-beneficio-oma.svg"
+              />
+            </div>
+            <p>Benefícios: {{ this.totals.totalBenefits }}M</p>
+          </b-col>
+          <b-col class="employeeClass mt-2">
+            <div
+              style="background-color: #000000;"
+              :class="[
+                !this.dataFilter.noData ? 'squareOpac' : '',
+                'square',
+              ]"
+              v-on:click="filterNoData()"
+            ></div>
+            <p>Sem Dados</p>
+          </b-col>
+        <b-col cols="6" class="d-none d-xl-block" style="background-color: white;"> </b-col>
+      </b-row>
+      <b-row class="graphHeader mt-5">
+        <b-col class="mt-xl-3 align-items-center justify-content-center">
+          <p>Total de Remunerações por Mês em {{ this.year }}</p>
+        </b-col>
+      </b-row >
+      
+      <b-row class="auxDivGraph">
+        <b-col cols="2" class="d-none d-xl-block"></b-col>
+        <b-col><bar-graph :options="chartOptions" :series="chartDataToPlot" /></b-col>
+        <b-col cols="2" class="d-none d-xl-block"></b-col>
+      </b-row>
+        <b-row class="ml-1 justify-content-xl-end" style="width: 100%; align-self: center; text-align: right;">
           <router-link
             :to="{
               name: 'agency',
@@ -130,9 +132,8 @@
               src="../../assets/button_explorar_meses.svg"
             />
           </router-link>
-        </div>
-      </div>
-    </div>
+        </b-row>
+    </b-container>
     <b-tooltip :target="this.agency.Name" triggers="hover">
       - Salário: valor recebido de acordo com a prestação de serviços, em
       decorrência do contrato de trabalho.
@@ -142,7 +143,10 @@
       gratificações, remuneração por função de confiança, benefícios pessoais ou
       eventuais, auxílios alimentação, saúde, escolar...
     </b-tooltip>
-  </div>
+    <b-row class="mt-0" >
+        <b-col style="border-top: 1px solid black;"></b-col>
+  </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -522,60 +526,28 @@ export default {
 <style scoped>
 .agencyName {
   color: #3e5363;
-  font-size: 22px;
+  font-size: 1.3rem;
 }
 
 .menuHeader {
-  width: 100%;
-  height: 80px;
   background-color: #3e5363;
-  line-height: 80px;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
   border-bottom: 1px solid #ffffff;
-  font-size: 22px;
+  font-size: 1.3rem;
   color: #ffffff;
 }
 
 .graphHeader {
-  height: 80px;
   background-color: #3e5363;
   color: white;
-  line-height: 80px;
-  font-size: 22px;
-  border-bottom: 1px solid #ffffff;
-}
-
-.year {
-  margin-top: 10px;
-}
-
-.auxDiv {
-  width: 90%;
-  align-self: center;
-}
-
-.auxDivGraph {
-  margin-left: 20%;
-}
-
-.agencyContent {
-  display: flex;
-  flex-direction: column;
+  font-size: 1.3rem;
 }
 
 .remunerationMenu {
-  height: 227px;
-  width: 505px;
   background-color: #3e5363;
-  margin-bottom: 50px;
-  margin-top: 50px;
 }
 
 .graphContainer {
   background-color: white;
-  min-width: 90%;
   align-self: center;
 }
 
@@ -584,9 +556,6 @@ a {
 }
 
 .buttonContainer {
-  margin-top: 10px;
-  width: 100%;
-  height: 27px;
   text-align: center;
 }
 
@@ -604,50 +573,6 @@ a {
   font-size: 17px;
 }
 
-.agencyContainer {
-  min-height: 900px;
-  padding-top: 50px;
-  padding-bottom: 50px;
-  margin-bottom: 30px;
-  margin-right: 15px;
-  margin-left: 15px;
-  background-color: #ffffff;
-}
 
-@media only screen and (max-width: 650px) {
-  .agencyContainer {
-    margin: 10px 0px 10px 0px;
-    padding: 10px 15px 0px 15px;
-  }
 
-  .remunerationMenu {
-    width: 100%;
-  }
-
-  .graphContainer {
-    width: 98%;
-  }
-
-  .employeeClass {
-    width: 25%;
-  }
-
-  .auxDiv {
-    width: 98%;
-  }
-
-  .auxDivGraph {
-    margin-left: 0;
-    padding: 0px 10px 0px 10px;
-  }
-}
-@media only screen and (max-width: 380px) {
-  .employeeClass {
-    width: 30%;
-  }
-
-  .remunerationTotal {
-    font-size: 14px;
-  }
-}
 </style>

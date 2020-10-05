@@ -1,16 +1,26 @@
 <template>
-  <div
-    style="min-height: 500px; text-align: center; background-color: #3e5363; padding-bottom: 50px;"
+  <b-container fluid class="p-0">
+  <b-row
+    style="text-align: center; background-color: #3e5363; "
   >
+  <b-col >
     <b-dropdown split size="lg" text="Paraíba" class="dropDownButton">
     </b-dropdown>
-    <agency
-      v-for="(agency, i) in agencies"
-      :agency="agency"
-      :key="i"
-      :year="new Date().getFullYear()"
-    />
-  </div>
+  </b-col>
+  </b-row>
+  <b-row style="text-align: center;">
+    <b-col cols="1" style="background-color: #3e5363;"></b-col>
+    <b-col >
+      <agency
+        v-for="(agency, i) in agencies"
+        :agency="agency"
+        :key="i"
+        :year="new Date().getFullYear()"
+      />
+    </b-col>
+    <b-col cols="1" style="background-color: #3e5363;"></b-col>
+  </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -69,4 +79,11 @@ export default {
   margin-bottom: 50px;
   border: 1px solid #ffffff;
 }
+
+@media only screen and (max-width: 650px) {
+  .dropDownButton {
+  width: 90%;
+  }
+}
+
 </style>
