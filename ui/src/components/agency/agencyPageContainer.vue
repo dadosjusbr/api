@@ -1,11 +1,16 @@
 <template>
-  <div class="agencyContainer">
-    <div v-show="this.chartData.length != 0" class="buttonContainer">
+  <b-container fluid  style="background-color: #ffffff;" >
+    <b-row class="mt-5"></b-row>
+    <b-row v-show="this.chartData.length != 0" class="mt-5 buttonContainer">
+      <b-col  class="buttonContainer d-flex align-items-center justify-content-center">
       <b class="agencyName">
         {{ this.agencyFullName + " (" + this.agencyName.toUpperCase() + ")" }}
       </b>
       <br />
-
+      </b-col>
+    </b-row>
+     <b-row v-show="this.chartData.length != 0" class="buttonContainer">
+      <b-col  class="buttonContainer d-flex align-items-center justify-content-center">
       <md-button
         v-if="this.activateButton.previous"
         v-on:click="previousMonth()"
@@ -27,18 +32,21 @@
       <md-button class="deactivatedButton" v-else
         ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
       /></md-button>
-    </div>
-    <div
+       </b-col >
+    </b-row>
+    <b-row
       v-show="
         this.Crawling_Timestamp != null &&
           this.agencySummary != null &&
           this.executorLog.cmd == ''
       "
-      class="cr"
+      class="cr  d-flex align-items-center justify-content-center"
     >
       Dados Capturados em {{ Crawling_Timestamp }}.
-    </div>
-    <div>
+    </b-row>
+    <b-row>
+      <b-col cols="1"></b-col>
+      <b-col>
       <agency-summary
         v-show="this.agencySummary != null && this.executorLog.cmd == ''"
         :agencySummary="agencySummary"
@@ -47,7 +55,9 @@
         @disable-servants="disableServants"
         @enable-servants="enableServants"
       />
-    </div>
+      </b-col>
+      <b-col cols="1"></b-col>
+    </b-row>
     <graph-container
       :series="chartDataToPlot"
       :date="{ month: this.months[this.month], year: this.year }"
@@ -77,7 +87,7 @@
         </a>
       </div>
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -437,13 +447,6 @@ export default {
   margin-bottom: 70px;
 }
 
-.agencyContainer {
-  margin-left: 11%;
-  margin-right: 11%;
-  background-color: #ffffff;
-  padding-top: 120px;
-}
-
 .agencyName {
   color: #3e5363;
   font-size: 22px;
@@ -456,12 +459,8 @@ export default {
 }
 
 .buttonContainer {
-  width: 105%;
-  height: 10%;
-  margin-left: -3%;
-  text-align: center;
   color: #3e5363;
-  font-size: 20px;
+  font-size: 1.3rem;
 }
 
 .downloadAndShare {
