@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <div class="buttonDiv">
+  <b-row>
+    <b-col class="buttonDiv">
       <img
         style="height: 83px; width:295px"
         src="../../assets/button_compartilhar.svg"
         v-on:click="showMenu()"
       />
-    </div>
+    </b-col>
     <div class="shareMenu" v-show="this.displayMenu">
       <button class="closeButton" v-on:click="hideMenu()">X</button>
       <h3 style="margin-top: 50px;">Compartilhar</h3>
@@ -37,7 +37,7 @@
       ></email>
     </div>
     <div class="overlay"></div>
-  </div>
+  </b-row>
 </template>
 
 <script>
@@ -81,11 +81,6 @@ export default {
 </script>
 
 <style>
-.buttonDiv {
-  text-align: center;
-  order: 2;
-  margin-right: 20px;
-}
 
 .button {
   width: 150px;

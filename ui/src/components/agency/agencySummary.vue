@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
-    <b-row class=" mt-xl-5 mb-5">
-      <b-col cols="7">
+    <b-row class=" mt-xl-5 mb-5 d-flex flex-wrap">
+      <b-col cols="12" xl="7" class="mb-4">
         <b-row class="wageTotal align-items-center justify-content-center"> 
           <b-col cols="2">
             <img
@@ -9,7 +9,7 @@
               src="../../assets/icon-remuneracao.svg"
             />
           </b-col>
-          <b-col style="text-align: center;">
+          <b-col style="text-align: center;" class="mt-2 mt-xl-0">
               <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
           </b-col>
           <b-col cols="2">
@@ -20,54 +20,51 @@
               />
           </b-col>
         </b-row> 
-        <b-row class="secondBox align-items-center justify-content-center pt-xl-3">
-          <b-col class="p-xl-0" cols="2">
+        <b-row class="secondBox align-items-center justify-content-center">
+          <b-col class="d-none d-xl-block" cols="2">
             <img
               src="../../assets/icon-salario.svg"
             />
           </b-col> 
-          <b-col cols="4" >
+          <b-col cols="12" xl="4" >
               <p>Maior Salário: {{ this.agencySummary.MaxWage }}</p>
-              <br />
               <p>Total Salários: {{ this.agencySummary.TotalWage }}</p>
           </b-col>
-          <b-col cols="2">
+          <b-col cols="2" class="d-none d-xl-block">
               <img
                 style="height: 36px; width:36px"
                 src="../../assets/icon-beneficio.svg"
               />
           </b-col> 
-          <b-col class="p-xl-0" cols="4">
+          <b-col class="p-xl-0" cols="12" xl="4">
               <p>Maior Benefício: {{ this.agencySummary.MaxPerk }}</p>
-              <br />
               <p>Total benefícios: {{ this.agencySummary.TotalPerks }}</p>
           </b-col> 
         </b-row> 
       </b-col>
       <div class="whiteSpace"></div>
-      <b-col >
+      <b-col cols="12" xl="4" class="mb-2" >
         <b-row class="wageTotal">       
-          <b-col cols="2" class="pl-xl-0 pt-xl-0">
+          <b-col cols="2" class="pl-xl-0 ">
               <img
-                style="height: 36px; width:36px; margin-top:-30%"
+                style="height: 36px; width:36px; "
                 src="../../assets/icon-empregados.svg"
               />
           </b-col>
-          <b-col cols="8" class="ml-xl-n4 pl-xl-0">              
-                <p>Total empregados: {{ this.agencySummary.TotalEmployees }}</p>
-              
+          <b-col cols="8" class="mt-2 mt-xl-0 d-flex align-items-center justify-content-center">              
+                <p>Total empregados: {{ this.agencySummary.TotalEmployees }}</p>              
           </b-col>
           <b-col cols="2">
                 <img
                   id="tooltip-target-2"
-                  style="height: 36px; width:36px; margin-top: 0%; margin-left: 70%"
+                  style="height: 36px; width:36px; margin-top: 50%; margin-left: 20%"
                   src="../../assets/icon-info.svg"
                 />
           </b-col>
         </b-row>
         
         <b-row class="secondBox  pt-xl-4">
-          <b-col  >
+          <b-col  class="mt-4 mt-xl-0">
             <b-row class="d-flex align-items-center justify-content-center">
               <div
                 style="background-color: #c9a0d0;"
@@ -80,7 +77,7 @@
               <p>Membros: {{ this.agencySummary.TotalMembers }}</p>
             </b-row>
           </b-col>
-          <b-col class="employeeClass">
+          <b-col class="mt-4 mt-xl-0">
             <b-row class="d-flex align-items-center justify-content-center">
               <div
                 style="background-color: #513658;"
@@ -95,6 +92,7 @@
             </b-row>
           </b-col>
         </b-row>
+        </b-col>
         <b-tooltip target="tooltip-target-1" triggers="hover">
           - Salário: valor recebido de acordo com a prestação de serviços, em
           decorrência do contrato de trabalho.
@@ -113,7 +111,6 @@
           - Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os
           analistas, técnicos, oficiais de justiça, etc.
         </b-tooltip>
-      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -152,11 +149,12 @@ export default {
 
 .wageTotal {
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.4em;
   text-align: center;
   background-color: #3e5363;
   border-bottom: 1px solid white;
-  line-height: 60px;
+  height: 4em !important;
+  justify-content:center;
 }
 
 .secondBox {
@@ -165,6 +163,7 @@ export default {
   text-align: center;
   background-color: #3e5363;
   border-bottom: 1px solid white;
+  height: 10em !important;
 }
 
 .employeesClassification {
@@ -188,6 +187,13 @@ export default {
   height: 45px;
   width: 45px;
   opacity: 0.2;
+}
+
+@media only screen and (max-width: 700px) {
+  .wageTotal {
+  font-size: 1.2em;
+}
+
 }
 
 </style>

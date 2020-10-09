@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-row>
     <md-empty-state
       md-rounded
       md-icon="highlight_off"
@@ -14,7 +14,7 @@
         Abra uma issue aqui</a
       >
     </md-empty-state>
-  </div>
+  </b-row>
 </template>
 
 <script>
