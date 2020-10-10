@@ -1,19 +1,23 @@
 <template>
-  <div class="graphContainer">
-    <div class="graphHeader">
-      Remuneração por quantidade de empregados em {{ this.date.month }} de
-      {{ this.date.year }}
-    </div>
-    <div class="graph">
-      <apexcharts
-        width="80%"
-        height="500"
-        type="bar"
-        :options="chartOptions"
-        :series="series"
-      />
-    </div>
-  </div>
+  <b-container fluid class="graphContainer">
+    <b-row class="graphHeader">
+      <b-col class="d-flex align-items-center justify-content-center">
+        Remuneração por quantidade de empregados em {{ this.date.month }} de
+        {{ this.date.year }}
+      </b-col>
+    </b-row>
+    <b-row >
+      <b-col cols="12" class="graph d-flex align-items-center justify-content-center">
+        <apexcharts
+          width="100%"
+          height="500"
+          type="bar"
+          :options="chartOptions"
+          :series="series"
+        />
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -134,37 +138,25 @@ export default {
 
 .graphContainer {
   text-align: center;
-  margin-bottom: 10px;
   background-color: white;
-  height: 665px;
   text-align: center;
 }
 
 .graphHeader {
-  width: 100%;
-  height: 104px;
-  box-shadow: 20px 20px 300px 0 rgba(0, 0, 0, 0.05);
   background-color: #3e5363;
-  line-height: 105px;
-  font-size: 22px;
+  font-size: 1.5em;
   color: #ffffff;
+  height: 5em !important;
 }
 
 .graph {
-  padding-left: 16%;
-  padding-top: 15px;
-  height: 500px;
+  margin-bottom: 5%;
+  height: 100%;
 }
 
-@media only screen and (max-width: 500px) {
-  .graph {
-    padding-left: 8%;
-    height: 100%;
-    padding-top: 23px;
-  }
-
-  .graphContainer {
-    height: 555px;
+@media only screen and (max-width: 700px) {
+  .graphHeader {
+    height: 7em !important;
   }
 }
 </style>

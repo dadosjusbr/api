@@ -1,11 +1,16 @@
 <template>
-  <div class="agencyContainer">
-    <div v-show="this.chartData.length != 0" class="buttonContainer">
-      <b class="agencyName">
+  <b-container fluid  style="background-color: #ffffff;" >
+    <b-row class="mt-4"></b-row>
+    <b-row v-show="this.chartData.length != 0" class="mt-5 mb-3 buttonContainer">
+      <b-col  class="buttonContainer d-flex align-items-center justify-content-center">
+      <b class="agencyName ">
         {{ this.agencyFullName + " (" + this.agencyName.toUpperCase() + ")" }}
       </b>
       <br />
-
+      </b-col>
+    </b-row>
+     <b-row v-show="this.chartData.length != 0" class="buttonContainer mb-3">
+      <b-col  class="buttonContainer d-flex align-items-center justify-content-center">
       <md-button
         v-if="this.activateButton.previous"
         v-on:click="previousMonth()"
@@ -27,32 +32,43 @@
       <md-button class="deactivatedButton" v-else
         ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
       /></md-button>
-    </div>
-    <div
+       </b-col >
+    </b-row>
+    <b-row
       v-show="
         this.Crawling_Timestamp != null &&
           this.agencySummary != null &&
           this.executorLog.cmd == ''
       "
-      class="cr"
+      class="cr  d-flex align-items-center justify-content-center mb-3"
     >
       Dados Capturados em {{ Crawling_Timestamp }}.
-    </div>
-    <div>
-      <agency-summary
-        v-show="this.agencySummary != null && this.executorLog.cmd == ''"
-        :agencySummary="agencySummary"
-        @disable-members="disableMembers"
-        @enable-members="enableMembers"
-        @disable-servants="disableServants"
-        @enable-servants="enableServants"
-      />
-    </div>
-    <graph-container
-      :series="chartDataToPlot"
-      :date="{ month: this.months[this.month], year: this.year }"
-      v-show="this.chartData.length != 0"
-    />
+    </b-row>
+    <b-row>
+      <b-col cols="1"></b-col>
+      <b-col>
+        <agency-summary
+          v-show="this.agencySummary != null && this.executorLog.cmd == ''"
+          :agencySummary="agencySummary"
+          @disable-members="disableMembers"
+          @enable-members="enableMembers"
+          @disable-servants="disableServants"
+          @enable-servants="enableServants"
+        />
+      </b-col>
+      <b-col cols="1"></b-col>
+    </b-row>
+    <b-row>
+      <b-col cols="1"></b-col>
+      <b-col >
+        <graph-container
+          :series="chartDataToPlot"
+          :date="{ month: this.months[this.month], year: this.year }"
+          v-show="this.chartData.length != 0"
+        />
+      </b-col>
+      <b-col cols="1"></b-col>
+    </b-row>
     <error-collecting-data-page
       v-show="this.executorLog.cmd != ''"
       :executorLog="this.executorLog"
@@ -60,24 +76,31 @@
     <no-data-available-page
       v-show="this.executorLog.cmd == '' && this.noDataAvailable"
     />
-    <div class="buttonContainer2">
-      <router-link to="/dados">
-        <img
-          style="height: 83px; width:295px"
-          src="../../assets/button-explorar-anos.svg"
-        />
-      </router-link>
-      <div class="downloadAndShare">
+    <b-row class="buttonContainer2 mb-5 ml-1 ">
+      <b-col cols="1" class="d-none d-xl-block"></b-col>
+      <b-col cols="12" xl="3" class="mb-2" >
+        <router-link to="/dados">
+          <img
+            style="height: 83px; width:295px"
+            src="../../assets/button-explorar-anos.svg"
+          />
+        </router-link>
+      </b-col>
+      <b-col cols="0" xl="1"></b-col>
+      <b-col cols="12" xl="3" class="mb-2">
         <social-media-share v-show="this.agencySummary != null" />
+      </b-col>
+      <b-col cols="12" xl="3" class="mb-2">
         <a :href="this.fileUrl">
           <img
             style="height: 83px; width:295px"
             src="../../assets/button-baixar.svg"
           />
         </a>
-      </div>
-    </div>
-  </div>
+      </b-col>
+      <b-col cols="1"></b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -432,81 +455,35 @@ export default {
 <style scoped>
 .buttonContainer2 {
   height: 82px;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 70px;
-}
-
-.agencyContainer {
-  margin-left: 11%;
-  margin-right: 11%;
-  background-color: #ffffff;
-  padding-top: 120px;
 }
 
 .agencyName {
   color: #3e5363;
-  font-size: 22px;
+  font-size: 1.4em;
 }
 
 .cr {
   text-align: center;
-  font-size: 16px;
+  font-size: 1.0em;
   color: #3e5363;
 }
 
 .buttonContainer {
-  width: 105%;
-  height: 10%;
-  margin-left: -3%;
-  text-align: center;
   color: #3e5363;
-  font-size: 20px;
+  font-size: 1.3em;
 }
 
-.downloadAndShare {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-}
 
-button {
-  margin-top: -0.2%;
-}
-
-@media only screen and (max-width: 650px) {
-  .agencyContainer {
-    margin-left: 3%;
-    margin-right: 3%;
+@media only screen and (max-width: 700px) {
+  .buttonContainer2 {
+  height: 82px;
+  margin-bottom: 66% !important;
   }
-}
-
-@media only screen and (max-width: 379px) {
   .agencyName {
-    margin-left: 0%;
-    margin-top: 0%;
+    color: #3e5363;
+    font-size: 1.2em;
   }
 
-  .cr {
-    text-align: center;
-    font-size: 0.85em;
-  }
-
-  .agencyContainer {
-    margin-left: 1%;
-    margin-right: 1%;
-  }
 }
 
-@media only screen and (min-width: 380px) and (max-width: 600px) {
-  .agencyName {
-    margin-left: 0%;
-    margin-top: 0%;
-  }
-
-  .agencyContainer {
-    margin-left: 3%;
-    margin-right: 3%;
-  }
-}
 </style>

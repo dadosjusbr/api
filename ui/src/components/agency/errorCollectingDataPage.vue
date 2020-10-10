@@ -13,7 +13,7 @@
       <b>Erro no comando: </b>
       <br />
       <textarea wrap="soft" class="textArea">
- {{ this.executorLog.cmd }} </textarea
+       {{ this.executorLog.cmd }} </textarea
       >
       <br />
       <b> Saída de erro: </b>
