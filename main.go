@@ -69,14 +69,17 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	var monthTotalsOfYear []models.MonthTotals
 	agencyName := c.Param("orgao")
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
+
 		if agencyMonthlyInfo.Summary.General.Wage.Total != 0 && agencyMonthlyInfo.Summary.General.Perks.Total != 0 && agencyMonthlyInfo.Summary.General.Others.Total != 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
-				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
-				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total + agencyMonthlyInfo.Summary.ServantActive.Perks.Total,
-				Others: agencyMonthlyInfo.Summary.MemberActive.Others.Total + agencyMonthlyInfo.Summary.ServantActive.Others.Total,
+				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total + agencyMonthlyInfo.Summary.Undefined.Wage.Total + agencyMonthlyInfo.Summary.Pensioner.Wage.Total,
+				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total + agencyMonthlyInfo.Summary.ServantActive.Perks.Total + agencyMonthlyInfo.Summary.Undefined.Perks.Total + agencyMonthlyInfo.Summary.Pensioner.Perks.Total,
+				Others: agencyMonthlyInfo.Summary.MemberActive.Others.Total + agencyMonthlyInfo.Summary.ServantActive.Others.Total + agencyMonthlyInfo.Summary.Undefined.Others.Total + agencyMonthlyInfo.Summary.Pensioner.Others.Total,
 			}
+
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 		}
+
 	}
 	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
 		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month

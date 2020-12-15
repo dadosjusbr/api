@@ -12,127 +12,142 @@
     <b-container fluid class="p-xl-5 p-0" v-show="!noDataAvailable">
       <b-row class="mt-3 mb-2 align-items-center">
         <b-col>
-        <router-link
-          :to="{
-            name: 'agency',
-            params: {
-              agencyName: this.agency.Name.toLowerCase(),
-              year: this.yearWithData,
-              month: this.monthWithData,
-            },
-          }"
-        >
-          <b class="agencyName">
-            {{
-              this.agency.FullName + " (" + this.agency.Name.toUpperCase() + ")"
-            }}
-          </b>
-        </router-link>
-         </b-col>
-      </b-row >
-      <b-row class="buttonContainer align-items-center justify-content-center mt-3 mb-2" v-show="!simplifyComponent"> 
-          <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
-            <img
-              style="height: 30px; width:30px"
-              src="../../assets/previous.svg"
-            />
-          </md-button>
-          <md-button class="deactivatedButton" v-else
-            ><img src="../../assets/previousd.png"
-          /></md-button>
-          <a class="year"> {{ this.currentYear }} </a>
-          <md-button v-if="checkNextYear" v-on:click="nextYear()">
-            <img style="height: 30px; width:30px" src="../../assets/next.svg" />
-          </md-button>
-          <md-button class="deactivatedButton" v-else
-            ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
-          /></md-button>
-      </b-row>
-      
-      <b-row class="menuHeader " >
-        <b-col class="pl-1 mt-xl-3">
-        <p>
-          Total de Remunerações em {{ this.currentYear }}: R$
-          {{ this.totals.totalRemuneration }}M
-        </p>
-        </b-col>
-        <b-col cols="1" class="mt-xl-3" :id="this.agency.Name">
-          <img style="width: 30%;" src="../../assets/icon-info.svg" />
-        </b-col>
-      <b-col cols="6" class="d-none d-xl-block" style="background-color: white;"> </b-col>
-      </b-row>
-      <b-row class="remunerationMenu" style="color: #ffffff;">
-          <b-col class="employeeClass mt-2">
-            <div
-              style="background-color: #364958;"
-              :class="[!this.dataFilter.wage ? 'squareOpac' : '', 'square']"
-              v-on:click="filterWage()"
-            >
-              <img
-                style="width: 100%; height: 100%;"
-                src="../../assets/icon-salario-oma.svg"
-              />
-            </div>
-            <p>Salario: {{ this.totals.totalWage }}M</p>
-          </b-col>
-          
-          <b-col class="employeeClass mt-2">
-            <div
-              style="background-color: #c9e4ca;"
-              :class="[
-                !this.dataFilter.benefits ? 'squareOpac' : '',
-                'square',
-              ]"
-              v-on:click="filterBenefits()"
-            >
-              <img
-                style="width: 100%; height: 100%;"
-                src="../../assets/icon-beneficio-oma.svg"
-              />
-            </div>
-            <p>Benefícios: {{ this.totals.totalBenefits }}M</p>
-          </b-col>
-          <b-col class="employeeClass mt-2">
-            <div
-              style="background-color: #000000;"
-              :class="[
-                !this.dataFilter.noData ? 'squareOpac' : '',
-                'square',
-              ]"
-              v-on:click="filterNoData()"
-            ></div>
-            <p>Sem Dados</p>
-          </b-col>
-        <b-col cols="6" class="d-none d-xl-block" style="background-color: white;"> </b-col>
-      </b-row>
-      <b-row class="graphHeader mt-5">
-        <b-col class="mt-xl-3 align-items-center justify-content-center">
-          <p>Total de Remunerações por Mês em {{ this.year }}</p>
-        </b-col>
-      </b-row >
-      
-      <b-row class="auxDivGraph">
-        <b-col cols="2" class="d-none d-xl-block"></b-col>
-        <b-col><bar-graph :options="chartOptions" :series="chartDataToPlot" /></b-col>
-        <b-col cols="2" class="d-none d-xl-block"></b-col>
-      </b-row>
-        <b-row class="ml-1 justify-content-xl-end" style="width: 100%; align-self: center; text-align: right;">
           <router-link
             :to="{
               name: 'agency',
               params: {
                 agencyName: this.agency.Name.toLowerCase(),
                 year: this.yearWithData,
-                month: this.monthWithData,
-              },
+                month: this.monthWithData
+              }
             }"
           >
-            <img
-              style="width: 295px; height: 83px;"
-              src="../../assets/button_explorar_meses.svg"
-            />
+            <b class="agencyName">
+              {{
+                this.agency.FullName +
+                  " (" +
+                  this.agency.Name.toUpperCase() +
+                  ")"
+              }}
+            </b>
           </router-link>
-        </b-row>
+        </b-col>
+      </b-row>
+      <b-row
+        class="buttonContainer align-items-center justify-content-center mt-3 mb-2"
+        v-show="!simplifyComponent"
+      >
+        <md-button v-if="checkPreviousYear" v-on:click="previousYear()">
+          <img
+            style="height: 30px; width:30px"
+            src="../../assets/previous.svg"
+          />
+        </md-button>
+        <md-button class="deactivatedButton" v-else
+          ><img src="../../assets/previousd.png"
+        /></md-button>
+        <a class="year"> {{ this.currentYear }} </a>
+        <md-button v-if="checkNextYear" v-on:click="nextYear()">
+          <img style="height: 30px; width:30px" src="../../assets/next.svg" />
+        </md-button>
+        <md-button class="deactivatedButton" v-else
+          ><img style="height: 30px; width:30px;" src="../../assets/nextd.svg"
+        /></md-button>
+      </b-row>
+
+      <b-row class="menuHeader ">
+        <b-col class="pl-1 mt-xl-3">
+          <p>
+            Total de Remunerações em {{ this.currentYear }}: R$
+            {{ this.totals.totalRemuneration }}
+          </p>
+        </b-col>
+        <b-col cols="1" class="mt-xl-3" :id="this.agency.Name">
+          <img style="width: 30%;" src="../../assets/icon-info.svg" />
+        </b-col>
+        <b-col
+          cols="6"
+          class="d-none d-xl-block"
+          style="background-color: white;"
+        >
+        </b-col>
+      </b-row>
+      <b-row class="remunerationMenu" style="color: #ffffff;">
+        <b-col class="employeeClass mt-2">
+          <div
+            style="background-color: #364958;"
+            :class="[!this.dataFilter.wage ? 'squareOpac' : '', 'square']"
+            v-on:click="filterWage()"
+          >
+            <img
+              style="width: 100%; height: 100%;"
+              src="../../assets/icon-salario-oma.svg"
+            />
+          </div>
+          <p>Salario: {{ this.totals.totalWage }}M</p>
+        </b-col>
+
+        <b-col class="employeeClass mt-2">
+          <div
+            style="background-color: #c9e4ca;"
+            :class="[!this.dataFilter.benefits ? 'squareOpac' : '', 'square']"
+            v-on:click="filterBenefits()"
+          >
+            <img
+              style="width: 100%; height: 100%;"
+              src="../../assets/icon-beneficio-oma.svg"
+            />
+          </div>
+          <p>Benefícios: {{ this.totals.totalBenefits }}M</p>
+        </b-col>
+        <b-col class="employeeClass mt-2">
+          <div
+            style="background-color: #000000;"
+            :class="[!this.dataFilter.noData ? 'squareOpac' : '', 'square']"
+            v-on:click="filterNoData()"
+          ></div>
+          <p>Sem Dados</p>
+        </b-col>
+        <b-col
+          cols="6"
+          class="d-none d-xl-block"
+          style="background-color: white;"
+        >
+        </b-col>
+      </b-row>
+      <b-row class="graphHeader mt-5">
+        <b-col class="mt-xl-3 align-items-center justify-content-center">
+          <p>Total de Remunerações por Mês em {{ this.year }}</p>
+        </b-col>
+      </b-row>
+
+      <b-row class="auxDivGraph">
+        <b-col cols="2" class="d-none d-xl-block"></b-col>
+        <b-col
+          ><bar-graph :options="chartOptions" :series="chartDataToPlot"
+        /></b-col>
+        <b-col cols="2" class="d-none d-xl-block"></b-col>
+      </b-row>
+      <b-row
+        class="ml-1 justify-content-xl-end"
+        style="width: 100%; align-self: center; text-align: right;"
+      >
+        <router-link
+          :to="{
+            name: 'agency',
+            params: {
+              agencyName: this.agency.Name.toLowerCase(),
+              year: this.yearWithData,
+              month: this.monthWithData
+            }
+          }"
+        >
+          <img
+            style="width: 295px; height: 83px;"
+            src="../../assets/button_explorar_meses.svg"
+          />
+        </router-link>
+      </b-row>
     </b-container>
     <b-tooltip :target="this.agency.Name" triggers="hover">
       - Salário: valor recebido de acordo com a prestação de serviços, em
@@ -143,9 +158,9 @@
       gratificações, remuneração por função de confiança, benefícios pessoais ou
       eventuais, auxílios alimentação, saúde, escolar...
     </b-tooltip>
-    <b-row class="mt-0" >
-        <b-col style="border-top: 1px solid black;"></b-col>
-  </b-row>
+    <b-row class="mt-0">
+      <b-col style="border-top: 1px solid black;"></b-col>
+    </b-row>
   </b-container>
 </template>
 
@@ -155,21 +170,21 @@ import barGraph from "@/components/state/barGraph.vue";
 export default {
   name: "agency",
   components: {
-    barGraph,
+    barGraph
   },
   props: {
     agency: {
       type: Object,
-      default: null,
+      default: null
     },
     simplifyComponent: {
       type: Boolean,
-      default: false,
+      default: false
     },
     year: {
       type: Number,
-      default: new Date().getFullYear(),
-    },
+      default: new Date().getFullYear()
+    }
   },
   data() {
     return {
@@ -177,12 +192,12 @@ export default {
       totals: {
         totalRemuneration: 0,
         totalWage: 0,
-        totalBenefits: 0,
+        totalBenefits: 0
       },
       dataFilter: {
         wage: true,
         benefits: true,
-        noData: true,
+        noData: true
       },
       monthWithData: 0,
       yearWithData: 0,
@@ -196,11 +211,11 @@ export default {
         chart: {
           stacked: true,
           toolbar: {
-            show: false,
+            show: false
           },
           zoom: {
-            enabled: true,
-          },
+            enabled: true
+          }
         },
         responsive: [
           {
@@ -209,10 +224,10 @@ export default {
               legend: {
                 position: "bottom",
                 offsetX: -10,
-                offsetY: 0,
+                offsetY: 0
               },
               chart: {
-                width: "100%",
+                width: "100%"
               },
               yaxis: {
                 decimalsInFloat: 2,
@@ -225,26 +240,26 @@ export default {
                     fontSize: "12px",
                     fontFamily: "Helvetica, Arial, sans-serif",
                     fontWeight: 600,
-                    cssClass: "apexcharts-yaxis-label",
+                    cssClass: "apexcharts-yaxis-label"
                   },
                   formatter: function(value) {
                     return "R$ " + (value / 1000000).toFixed(1) + "M";
-                  },
-                },
+                  }
+                }
               },
               xaxis: {
                 labels: {
                   rotate: -45,
-                  rotateAlways: true,
-                },
-              },
-            },
-          },
+                  rotateAlways: true
+                }
+              }
+            }
+          }
         ],
         plotOptions: {
           bar: {
-            horizontal: false,
-          },
+            horizontal: false
+          }
         },
         yaxis: {
           decimalsInFloat: 2,
@@ -255,8 +270,8 @@ export default {
               fontSize: "14px",
               fontWeight: "bold",
               fontFamily: undefined,
-              color: "#263238",
-            },
+              color: "#263238"
+            }
           },
           labels: {
             show: true,
@@ -267,13 +282,13 @@ export default {
               fontSize: "16px",
               fontFamily: "Helvetica, Arial, sans-serif",
               fontWeight: 600,
-              cssClass: "apexcharts-yaxis-label",
+              cssClass: "apexcharts-yaxis-label"
             },
             formatter: function(value) {
               if (value == 29000321) return "Não existem dados para esse mês";
               return "R$ " + (value / 1000000).toFixed(1) + "M";
-            },
-          },
+            }
+          }
         },
         xaxis: {
           categories: [
@@ -288,7 +303,7 @@ export default {
             "SET",
             "OUT",
             "NOV",
-            "DEZ",
+            "DEZ"
           ],
           title: {
             text: "Meses",
@@ -297,27 +312,27 @@ export default {
               fontSize: "15px",
               fontWeight: "bold",
               fontFamily: undefined,
-              color: "#263238",
-            },
-          },
+              color: "#263238"
+            }
+          }
         },
         legend: {
           show: false,
           position: "right",
-          offsetY: 120,
+          offsetY: 120
         },
         fill: {
           opacity: 1,
           image: {
             src: [
-              "https://catalogue.accasoftware.com/img/Prodotti/2920/PREVIEW/hachura-30.1.750x527-1_1563779607.PNG",
-            ],
-          },
+              "https://catalogue.accasoftware.com/img/Prodotti/2920/PREVIEW/hachura-30.1.750x527-1_1563779607.PNG"
+            ]
+          }
         },
         dataLabels: {
-          enabled: false,
-        },
-      },
+          enabled: false
+        }
+      }
     };
   },
   computed: {
@@ -334,7 +349,7 @@ export default {
       } else {
         return true;
       }
-    },
+    }
   },
   methods: {
     filterWage() {
@@ -373,8 +388,8 @@ export default {
         params: {
           agencyName: this.agency.Name.toLowerCase(),
           year: this.yearWithData,
-          month: this.monthWithData,
-        },
+          month: this.monthWithData
+        }
       });
     },
     async fetchData() {
@@ -404,7 +419,7 @@ export default {
       let totalWage = 0;
       let perksTotal = 0;
       let othersTotal = 0;
-      this.data.MonthTotals.forEach((month) => {
+      this.data.MonthTotals.forEach(month => {
         let monthSum = month.Wage + month.Others + month.Perks;
         if (maxMonth < monthSum)
           maxMonth = month.Wage + month.Others + month.Perks;
@@ -425,12 +440,12 @@ export default {
       if (this.data.MonthTotals.length != 12) {
         this.addMonthsWithNoValue();
       }
-      let wages = this.data.MonthTotals.map((month) => month["Wage"]);
+      let wages = this.data.MonthTotals.map(month => month["Wage"]);
       let benefits = this.data.MonthTotals.map(
-        (month) => month["Perks"] + month["Others"]
+        month => month["Perks"] + month["Others"]
       );
       let noDataMarker = [];
-      wages.forEach((wage) => {
+      wages.forEach(wage => {
         if (wage === 0) {
           noDataMarker.push(this.maxMonth);
         } else {
@@ -440,35 +455,35 @@ export default {
       this.series = [
         {
           name: "Benefícios",
-          data: benefits,
+          data: benefits
         },
         {
           name: "Salário",
-          data: wages,
+          data: wages
         },
         {
           name: "Sem dados",
-          data: noDataMarker,
-        },
+          data: noDataMarker
+        }
       ];
       this.chartDataToPlot = [
         {
           name: "Benefícios",
-          data: benefits,
+          data: benefits
         },
         {
           name: "Salário",
-          data: wages,
+          data: wages
         },
         {
           name: "Sem dados",
-          data: noDataMarker,
-        },
+          data: noDataMarker
+        }
       ];
     },
     addMonthsWithNoValue() {
       var existingMonths = new Array();
-      this.data.MonthTotals.forEach((monthTotal) => {
+      this.data.MonthTotals.forEach(monthTotal => {
         existingMonths.push(monthTotal.Month);
       });
       for (let i = 1; i <= 12; i++) {
@@ -476,7 +491,7 @@ export default {
           this.data.MonthTotals.push({
             Month: i,
             benefits: 0,
-            Wage: 0,
+            Wage: 0
           });
         }
       }
@@ -515,11 +530,11 @@ export default {
         this.generateSeries();
         this.sumRemuneration();
       }
-    },
+    }
   },
   async mounted() {
     this.fetchData();
-  },
+  }
 };
 </script>
 
@@ -572,7 +587,4 @@ a {
   color: white;
   font-size: 17px;
 }
-
-
-
 </style>
