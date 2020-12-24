@@ -379,7 +379,7 @@ export default {
     },
     async fetchData() {
       var response = await this.$http.get(
-        "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
+        "/orgao/totais/" + this.agency.Name + "/" + this.currentYear
       );
       if (this.simplifyComponent == true && response.data.MonthTotals == null) {
         this.noDataAvailable = true;
@@ -387,7 +387,7 @@ export default {
         while (response.data.MonthTotals == null) {
           this.currentYear -= 1;
           response = await this.$http.get(
-            "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
+            "/orgao/totais/" + this.agency.Name + "/" + this.currentYear
           );
         }
       }
@@ -487,7 +487,7 @@ export default {
     async nextYear() {
       this.currentYear = this.currentYear + 1;
       let resp = await this.$http.get(
-        "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
+        "/orgao/totais/" + this.agency.Name + "/" + this.currentYear
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);
@@ -503,7 +503,7 @@ export default {
     async previousYear() {
       this.currentYear = this.currentYear - 1;
       let resp = await this.$http.get(
-        "/orgao/totais/PB/" + this.agency.Name + "/" + this.currentYear
+        "/orgao/totais/" + this.agency.Name + "/" + this.currentYear
       );
       if (resp.data.MonthTotals == null) {
         alert("Não existem dados disponíveis para o ano: " + this.currentYear);

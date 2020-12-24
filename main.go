@@ -55,20 +55,19 @@ func newClient(c config) (*storage.Client, error) {
 }
 
 func getTotalsOfAgencyYear(c echo.Context) error {
-	stateName := c.Param("estado")
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
-
-	_, agenciesMonthlyInfo, err := client.GetOPE(stateName, year)
+	aID := c.Param("orgao")
+	agenciesMonthlyInfo, err := client.Db.GetMonthlyInfo([]storage.Agency{{ID: aID}}, year)
 	if err != nil {
-		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, stateName, err)
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou estado=%s inválidos", year, stateName))
+		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, aID, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
 	var monthTotalsOfYear []models.MonthTotals
-	agencyName := c.Param("orgao")
-	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[agencyName] {
+
+	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
 		if agencyMonthlyInfo.Summary.General.Wage.Total != 0 && agencyMonthlyInfo.Summary.General.Perks.Total != 0 && agencyMonthlyInfo.Summary.General.Others.Total != 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
@@ -90,13 +89,15 @@ func getBasicInfoOfState(c echo.Context) error {
 	stateName := c.Param("estado")
 	agencies, _, err := client.GetOPE(stateName, yearOfConsult)
 	if err != nil {
+		// That happens when there is no information on that year.
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
-	}
-	agencies, _, err = client.GetOPE(stateName, yearOfConsult)
-	if err != nil {
-		log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
+
+		agencies, _, err = client.GetOPE(stateName, yearOfConsult)
+		if err != nil {
+			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
+		}
 	}
 	var agenciesBasic []models.AgencyBasic
 	for k := range agencies {
@@ -296,7 +297,7 @@ func main() {
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
-	uiAPIGroup.GET("/v1/orgao/totais/:estado/:orgao/:ano", getTotalsOfAgencyYear)
+	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
 

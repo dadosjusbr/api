@@ -4,17 +4,16 @@
     style="text-align: center; background-color: #3e5363; "
   >
   <b-col >
-    <b-dropdown split size="lg" text="Paraíba" class="dropDownButton">
-    </b-dropdown>
+    <b-form-select v-on:change="fetchData" size="lg" class="dropDownButton" v-model="selected" :options="options"></b-form-select>
   </b-col>
   </b-row>
   <b-row style="text-align: center;">
     <b-col cols="1" style="background-color: #3e5363;"></b-col>
-    <b-col >
+    <b-col :key="selected">
       <agency
-        v-for="(agency, i) in agencies"
+        v-for="(agency,state) in agencies"
         :agency="agency"
-        :key="i"
+        :key="state"
         :year="new Date().getFullYear()"
       />
     </b-col>
@@ -33,17 +32,26 @@ export default {
   },
   data() {
     return {
-      flagUrl:
-        "https://1.bp.blogspot.com/-422XO8VbnkM/WFwr1v6yeoI/AAAAAAACRBM/0wtdW0JfArwQQMucxHxRrLSoHTsy7_6OwCEw/s1600/paraibano%2B2%2Bbandeira.png",
-      stateName: "PARAÍBA",
+      state: "PB",
+      selected: "PB",
+      options: [
+        { value: "Federal", text: 'Órgãos Federais' },
+        {
+          label: "Órgãos Estaduais",
+          options: [
+            { value: "PB", text: "Paraíba" }
+          ]
+        }
+      ],
       agencies: [],
     };
   },
   methods: {
     async fetchData() {
-      const { data } = await this.$http.get("/orgao/PB");
+      const { data } = await this.$http.get("/orgao/" + this.selected);
       this.stateData = data;
       this.agencies = this.stateData.Agency;
+      this.state = this.selected;
     },
   },
   mounted() {
@@ -53,7 +61,7 @@ export default {
     title: function() {
       return {
         inner: "DadosJusBr",
-        complement: this.stateName,
+        complement: this.selected,
       };
     },
     meta: function() {
@@ -62,7 +70,7 @@ export default {
           name: "description",
           content:
             "DadosJusBr é uma plataforma que realiza a libertação continua de dados de remuneração do sistema de justiça brasileiro. Esta página mostra dados do estado" +
-            this.stateName,
+            this.selected,
           id: "desc",
         },
       ];
