@@ -8,8 +8,6 @@ github.com/dadosjusbr/coletores v0.0.0-20201216050911-0186b4dcc191 h1:8zhYeBAwOA
 github.com/dadosjusbr/coletores v0.0.0-20201216050911-0186b4dcc191/go.mod h1:/MYAexbepJrBZGhKACp2ZAbRSrexfvccln0ig/0ci6E=
 github.com/dadosjusbr/coletores v0.0.0-20210128143605-77c986510054 h1:m4+rFp/q2nWMvgjDY1UvFognXk+KLTcOhNx9SBK2FOg=
 github.com/dadosjusbr/coletores v0.0.0-20210128143605-77c986510054/go.mod h1:/MYAexbepJrBZGhKACp2ZAbRSrexfvccln0ig/0ci6E=
-github.com/dadosjusbr/storage v0.0.0-20201216051404-ee117ef7121a h1:FHBYfAjNh95wPksCfjlg/8EGaqmB7bbyVM0G8s1laq0=
-github.com/dadosjusbr/storage v0.0.0-20201216051404-ee117ef7121a/go.mod h1:bpeLwX7UG7SIcy1eFxhLa8Z55rk4bo3gGhPSxTPimeo=
 github.com/dadosjusbr/storage v0.0.0-20210128192320-be4e600caff4 h1:D2ciazXwWHehidKSrb81ssP7jYXio0PE+9PLdC2rocU=
 github.com/dadosjusbr/storage v0.0.0-20210128192320-be4e600caff4/go.mod h1:bpeLwX7UG7SIcy1eFxhLa8Z55rk4bo3gGhPSxTPimeo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
