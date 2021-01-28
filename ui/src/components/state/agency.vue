@@ -384,7 +384,7 @@ export default {
       if (this.simplifyComponent == true && response.data.MonthTotals == null) {
         this.noDataAvailable = true;
       } else {
-        while (response.data.MonthTotals == null) {
+        while (response.data.MonthTotals == null && this.currentYear > 2018) {
           this.currentYear -= 1;
           response = await this.$http.get(
             "/orgao/totais/" + this.agency.Name + "/" + this.currentYear
