@@ -143,6 +143,7 @@
       <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_shuttleworth.svg" class="logo" /></b-col>
       <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_APBMP.svg" class="logo" /></b-col>
       <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_mppb.svg" class="logo" /></b-col>
+      <b-col xl="3" cols="12" class="p-0"><img src="../../assets/logo_inst_betty_jacob_laffer.svg" class="logo" /></b-col>
       <b-col cols="1" xl="0" class="d-xl-none p-0"></b-col>
     </b-row>
   </b-container>
