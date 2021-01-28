@@ -163,9 +163,9 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		} else {
 			salaryRange = -1 // -1 is maker when the salary is over 50000
 		}
-		if employeeAux.Type == "membro" && employeeAux.Active == true {
+		if *employeeAux.Type == "membro" && employeeAux.Active == true {
 			members[salaryRange]++
-		} else if employeeAux.Type == "servidor" && employeeAux.Active == true {
+		} else if *employeeAux.Type == "servidor" && employeeAux.Active == true {
 			servers[salaryRange]++
 		}
 	}

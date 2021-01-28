@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/dadosjusbr/storage"
+	"github.com/dadosjusbr/coletores"
 )
 
 // State - Struct cotains information of a state ans its agencies
@@ -73,6 +73,6 @@ type DataForChartAtAgencyScreen struct {
 
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
 type ProcInfoResult struct {
-	ProcInfo          *storage.ProcInfo
+	ProcInfo          *coletores.ProcInfo
 	CrawlingTimestamp time.Time
 }
