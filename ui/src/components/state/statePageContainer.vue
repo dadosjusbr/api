@@ -3,17 +3,18 @@
   <b-row
     style="text-align: center; background-color: #3e5363; "
   >
-  <b-col >
-    <b-form-select v-on:change="fetchData" size="lg" class="dropDownButton" v-model="selected" :options="options"></b-form-select>
+  <b-col>
+    <!-- watching the select property instead of relying on the onchange method due to this bug https://stackoverflow.com/a/53107234/5822594 -->
+    <b-form-select size="lg" class="dropDownButton" v-model="selected" :options="options"></b-form-select>
   </b-col>
   </b-row>
   <b-row style="text-align: center;">
     <b-col cols="1" style="background-color: #3e5363;"></b-col>
-    <b-col :key="selected">
+    <b-col :key="agencies">
       <agency
-        v-for="(agency,state) in agencies"
+        v-for="agency in agencies"
         :agency="agency"
-        :key="state"
+        :key="agency.Name"
         :year="new Date().getFullYear()"
       />
     </b-col>
@@ -32,7 +33,6 @@ export default {
   },
   data() {
     return {
-      state: "PB",
       selected: "PB",
       options: [
         { value: "Federal", text: 'Órgãos Federais' },
@@ -46,16 +46,19 @@ export default {
       agencies: [],
     };
   },
+  watch: {
+    selected(value) {
+      this.fetchData(value)
+    },
+  },
   methods: {
-    async fetchData() {
-      const { data } = await this.$http.get("/orgao/" + this.selected);
-      this.stateData = data;
-      this.agencies = this.stateData.Agency;
-      this.state = this.selected;
+    async fetchData(state) {
+      const { data } = await this.$http.get("/orgao/" + state);
+      this.agencies = data.Agency;
     },
   },
   mounted() {
-    this.fetchData();
+    this.fetchData(this.selected);
   },
   head: {
     title: function() {
