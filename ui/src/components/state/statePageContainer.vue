@@ -39,7 +39,8 @@ export default {
         {
           label: "Órgãos Estaduais",
           options: [
-            { value: "PB", text: "Paraíba" }
+            { value: "PB", text: "Paraíba" },
+            { value: "RJ", text: "Rio de Janeiro" }
           ]
         }
       ],
