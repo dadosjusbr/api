@@ -52,7 +52,7 @@
       <b-row class="menuHeader " >
         <b-col class="pl-1 mt-xl-3">
         <p>
-          Total de Remunerações em {{ this.currentYear }}: R$
+          Total de Remunerações de Membros em {{ this.currentYear }}: R$
           {{ this.totals.totalRemuneration }}M
         </p>
         </b-col>
@@ -107,7 +107,7 @@
       </b-row>
       <b-row class="graphHeader mt-5">
         <b-col class="mt-xl-3 align-items-center justify-content-center">
-          <p>Total de Remunerações por Mês em {{ this.year }}</p>
+          <p>Total de Remunerações de Membros por Mês em {{ this.year }}</p>
         </b-col>
       </b-row >
       

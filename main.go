@@ -70,9 +70,9 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
 		if agencyMonthlyInfo.Summary.General.Wage.Total != 0 && agencyMonthlyInfo.Summary.General.Perks.Total != 0 && agencyMonthlyInfo.Summary.General.Others.Total != 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
-				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
-				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total + agencyMonthlyInfo.Summary.ServantActive.Perks.Total,
-				Others: agencyMonthlyInfo.Summary.MemberActive.Others.Total + agencyMonthlyInfo.Summary.ServantActive.Others.Total,
+				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
+				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total,
+				Others: agencyMonthlyInfo.Summary.MemberActive.Others.Total,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 		}
@@ -203,7 +203,7 @@ func getSummaryOfAgency(c echo.Context) error {
 	}
 	agencySummary := models.AgencySummary{
 		FullName:  agency.Name,
-		TotalWage: agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.ServantActive.Wage.Total,
+		TotalWage: agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
 		MaxWage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Max,
 		TotalPerks: agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
 			agencyMonthlyInfo.Summary.MemberActive.Others.Total,
