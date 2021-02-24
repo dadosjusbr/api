@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-row class=" mt-xl-5 mb-5 d-flex flex-wrap">
+    <b-row class=" mt-xl-5 mb-1 d-flex flex-wrap">
       <b-col cols="12" xl="7" class="mb-4">
         <b-row class="wageTotal align-items-center justify-content-center"> 
           <b-col cols="2">
@@ -10,7 +10,7 @@
             />
           </b-col>
           <b-col style="text-align: center;" class="mt-2 mt-xl-0">
-              <p>Total remuneração: {{ this.agencySummary.TotalRemuneration }}</p>
+              <p>{{this.agencySummary.TotalEmployees}} Membros</p>
           </b-col>
           <b-col cols="2">
               <img
@@ -26,7 +26,7 @@
               src="../../assets/icon-salario.svg"
             />
           </b-col> 
-          <b-col cols="12" xl="4" >
+          <b-col class="mt-1" cols="12" xl="4" >
               <p>Maior Salário: {{ this.agencySummary.MaxWage }}</p>
               <p>Total Salários: {{ this.agencySummary.TotalWage }}</p>
           </b-col>
@@ -36,14 +36,14 @@
                 src="../../assets/icon-beneficio.svg"
               />
           </b-col> 
-          <b-col class="p-xl-0" cols="12" xl="4">
+          <b-col class="mt-1 p-xl-0" cols="12" xl="4">
               <p>Maior Benefício: {{ this.agencySummary.MaxPerk }}</p>
               <p>Total benefícios: {{ this.agencySummary.TotalPerks }}</p>
           </b-col> 
         </b-row> 
       </b-col>
-      <div class="whiteSpace"></div>
-      <b-col cols="12" xl="4" class="mb-2" >
+      <!-- <div class="whiteSpace"></div> -->
+      <!-- <b-col cols="12" xl="4" class="mb-2" >
         <b-row class="wageTotal">       
           <b-col cols="2" class="pl-xl-0 ">
               <img
@@ -92,7 +92,7 @@
             </b-row>
           </b-col>
         </b-row>
-        </b-col>
+        </b-col> -->
         <b-tooltip target="tooltip-target-1" triggers="hover">
           - Salário: valor recebido de acordo com a prestação de serviços, em
           decorrência do contrato de trabalho.
@@ -102,14 +102,9 @@
           <br />
           - Benefício: valores eventuais, por exemplo, auxílios alimentação, saúde,
           escolar...
-        </b-tooltip>
-        <b-tooltip target="tooltip-target-2" triggers="hover">
           - Membro: é o integrante da carreira 'principal' do órgão do sistema de
           justiça. Por exemplo, juízes, desembargadores, ministros, defensores,
           procuradores públicos, promotores de justiça, procuradores de justiça, etc
-          <br />
-          - Servidor: é todo integrante da carreira 'auxiliar', ou seja, são os
-          analistas, técnicos, oficiais de justiça, etc.
         </b-tooltip>
     </b-row>
   </b-container>
@@ -122,24 +117,6 @@ export default {
     agencySummary: {
       type: Object,
       default: null,
-    },
-  },
-  data() {
-    return {
-      members: true,
-      servants: true,
-    };
-  },
-  methods: {
-    membersClick() {
-      if (this.members) this.$emit("disable-members");
-      else this.$emit("enable-members");
-      this.members = !this.members;
-    },
-    serventsClick() {
-      if (this.servants) this.$emit("disable-servants");
-      else this.$emit("enable-servants");
-      this.servants = !this.servants;
     },
   },
 };

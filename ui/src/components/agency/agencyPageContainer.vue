@@ -50,10 +50,6 @@
         <agency-summary
           v-show="this.agencySummary != null && this.executorLog.cmd == ''"
           :agencySummary="agencySummary"
-          @disable-members="disableMembers"
-          @enable-members="enableMembers"
-          @disable-servants="disableServants"
-          @enable-servants="enableServants"
         />
       </b-col>
       <b-col cols="1"></b-col>
@@ -62,7 +58,7 @@
       <b-col cols="1"></b-col>
       <b-col >
         <graph-container
-          :series="chartDataToPlot"
+          :series="chartData"
           :date="{ month: this.months[this.month], year: this.year }"
           v-show="this.chartData.length != 0"
         />
@@ -151,7 +147,6 @@ export default {
       agencyFullName: "",
       agencySummary: null,
       chartData: [],
-      chartDataToPlot: [],
       Crawling_Timestamp: null,
     };
   },
@@ -177,22 +172,6 @@ export default {
         month = month - 1;
       }
       return { month, year };
-    },
-    disableMembers() {
-      this.chartDataToPlot.splice(0, 1);
-      this.chartDataToPlot.splice(0, 0, { data: [], name: "" });
-    },
-    enableMembers() {
-      this.chartDataToPlot.splice(0, 1);
-      this.chartDataToPlot.splice(0, 0, this.chartData[0]);
-    },
-    disableServants() {
-      this.chartDataToPlot.splice(1, 1);
-      this.chartDataToPlot.splice(1, 0, { data: [], name: "" });
-    },
-    enableServants() {
-      this.chartDataToPlot.splice(1, 1);
-      this.chartDataToPlot.splice(1, 0, this.chartData[1]);
     },
     async checkNextYear() {
       let activateButtonNext = true;
@@ -248,7 +227,6 @@ export default {
         )
         .then((response) => {
           this.chartData = this.generateSeries(response.data);
-          this.chartDataToPlot = this.generateSeries(response.data);
         })
         .then(this.fetchSummaryData())
         .then(this.checkNextYear())
@@ -276,7 +254,6 @@ export default {
         )
         .then((response) => {
           this.chartData = this.generateSeries(response.data);
-          this.chartDataToPlot = this.generateSeries(response.data);
         })
         .then(this.fetchSummaryData())
         .then(this.checkPreviousYear())
@@ -299,17 +276,6 @@ export default {
             data.Members["30000"],
             data.Members["20000"],
             data.Members["10000"],
-          ],
-        },
-        {
-          name: "Servidores",
-          data: [
-            data.Servers["-1"],
-            data.Servers["50000"],
-            data.Servers["40000"],
-            data.Servers["30000"],
-            data.Servers["20000"],
-            data.Servers["10000"],
           ],
         },
       ];
@@ -346,7 +312,6 @@ export default {
       }
       if (response != undefined) {
         this.chartData = this.generateSeries(response.data);
-        this.chartDataToPlot = this.generateSeries(response.data);
         this.fileUrl = response.data.PackageURL;
         this.fileHash = response.data.PackageHash;
       }

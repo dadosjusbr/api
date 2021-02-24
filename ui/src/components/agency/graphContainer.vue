@@ -2,8 +2,7 @@
   <b-container fluid class="graphContainer">
     <b-row class="graphHeader">
       <b-col class="d-flex align-items-center justify-content-center">
-        Remuneração por quantidade de empregados em {{ this.date.month }} de
-        {{ this.date.year }}
+        Distribuição da Remuneração dos Membros
       </b-col>
     </b-row>
     <b-row >
@@ -61,18 +60,6 @@ export default {
               chart: {
                 width: "95%",
               },
-              yaxis: {
-                labels: {
-                  maxWidth: 120,
-                  style: {
-                    colors: [],
-                    fontSize: "12px",
-                    fontFamily: "Helvetica, Arial, sans-serif",
-                    fontWeight: 600,
-                    cssClass: "apexcharts-yaxis-label",
-                  },
-                },
-              },
             },
           },
         ],
@@ -107,14 +94,7 @@ export default {
             "< R$ 10 mil",
           ],
           title: {
-            text: "Quantidade de funcionários",
-            margin: 10,
-            style: {
-              fontSize: "16px",
-              fontWeight: "bold",
-              fontFamily: undefined,
-              color: "#263238",
-            },
+            text: "Quantidade",
           },
         },
         fill: {
