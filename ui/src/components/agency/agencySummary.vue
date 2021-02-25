@@ -10,7 +10,7 @@
             />
           </b-col>
           <b-col style="text-align: center;" class="mt-2 mt-xl-0">
-              <p>{{this.agencySummary.TotalEmployees}} Membros</p>
+              <p>{{this.agencySummary.TotalMembers}} Membros</p>
           </b-col>
           <b-col cols="2">
               <img
@@ -52,7 +52,7 @@
               />
           </b-col>
           <b-col cols="8" class="mt-2 mt-xl-0 d-flex align-items-center justify-content-center">              
-                <p>Total empregados: {{ this.agencySummary.TotalEmployees }}</p>              
+                <p>Total empregados: {{ this.agencySummary.TotalMembers }}</p>              
           </b-col>
           <b-col cols="2">
                 <img

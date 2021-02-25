@@ -35,7 +35,7 @@
        </b-col >
     </b-row>
     <b-row
-      v-show="
+      v-if="
         this.Crawling_Timestamp != null &&
           this.agencySummary != null &&
           this.executorLog.cmd == ''
@@ -48,7 +48,7 @@
       <b-col cols="1"></b-col>
       <b-col>
         <agency-summary
-          v-show="this.agencySummary != null && this.executorLog.cmd == ''"
+          v-if="this.agencySummary != null && this.executorLog.cmd == ''"
           :agencySummary="agencySummary"
         />
       </b-col>
@@ -66,11 +66,11 @@
       <b-col cols="1"></b-col>
     </b-row>
     <error-collecting-data-page
-      v-show="this.executorLog.cmd != ''"
+      v-if="this.executorLog.cmd != ''"
       :executorLog="this.executorLog"
     />
     <no-data-available-page
-      v-show="this.executorLog.cmd == '' && this.noDataAvailable"
+      v-if="this.executorLog.cmd == '' && this.noDataAvailable"
     />
     <b-row class="buttonContainer2 mb-5 ml-1 ">
       <b-col cols="1" class="d-none d-xl-block"></b-col>
@@ -84,7 +84,7 @@
       </b-col>
       <b-col cols="0" xl="1"></b-col>
       <b-col cols="12" xl="3" class="mb-2">
-        <social-media-share v-show="this.agencySummary != null" />
+        <social-media-share v-if="this.agencySummary != null" />
       </b-col>
       <b-col cols="12" xl="3" class="mb-2">
         <a :href="this.fileUrl">
@@ -330,16 +330,12 @@ export default {
       if (response != undefined) {
         this.agencyFullName = response.data.FullName;
         this.agencySummary = {
-          TotalEmployees: formatter.format(
-            Math.trunc(response.data.TotalMembers + response.data.TotalServants)
-          ),
           TotalWage:
             "R$ " + formatter.format(response.data.TotalWage.toFixed(2)),
           TotalPerks:
             "R$ " + formatter.format(response.data.TotalPerks.toFixed(2)),
           MaxWage: "R$ " + formatter.format(response.data.MaxWage.toFixed(2)),
           TotalMembers: response.data.TotalMembers,
-          TotalServants: response.data.TotalServants,
           MaxPerk: "R$ " + formatter.format(response.data.MaxPerk.toFixed(2)),
           TotalRemuneration:
             "R$ " +
