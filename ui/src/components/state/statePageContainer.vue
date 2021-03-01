@@ -41,7 +41,8 @@ export default {
           options: [
             { value: "PB", text: "Paraíba" },
             { value: "RJ", text: "Rio de Janeiro" },
-            { value: "RS", text: "Rio Grande do Sul" }
+            { value: "RS", text: "Rio Grande do Sul" },
+            { value: "SP", text: "São Paulo" }
           ]
         }
       ],
