@@ -426,17 +426,17 @@ export default {
         this.addMonthsWithNoValue();
       }
       let wages = this.data.MonthTotals.map((month) => month["Wage"]);
-      let benefits = this.data.MonthTotals.map(
-        (month) => month["Perks"] + month["Others"]
-      );
+      let benefits = this.data.MonthTotals.map((month) => month["Perks"] + month["Others"]);
+
       let noDataMarker = [];
-      wages.forEach((wage) => {
-        if (wage === 0) {
+      for (var i = 0; i < wages.length; i++) {
+        if (wages[i]+benefits[i] == 0) {
           noDataMarker.push(this.maxMonth);
         } else {
           noDataMarker.push(0);
         }
-      });
+      }
+
       this.series = [
         {
           name: "Benefícios",
@@ -475,8 +475,9 @@ export default {
         if (!existingMonths.includes(i)) {
           this.data.MonthTotals.push({
             Month: i,
-            benefits: 0,
+            Perks: 0,
             Wage: 0,
+            Others: 0,
           });
         }
       }
