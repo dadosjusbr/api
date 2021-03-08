@@ -129,6 +129,19 @@
       </b-col>
        <b-col cols="1"></b-col>
     </b-row>
+    <b-row class="parceiros"> 
+      <b-col class="ml-3 mt-3">
+        <b> REALIZAÇÂO </b>
+        <br />
+        <br />
+      </b-col>
+    </b-row>
+    <b-row class="parceiros d-flex flex-wrap">
+      <b-col cols="1" class="d-xl-none p-0"></b-col>
+      <b-col xl="3" cols="12" class="   " ><img src="../../assets/logo_ufcg.svg" class="logo" /></b-col>
+      <b-col xl="3" cols="12" class="   " ><img src="../../assets/logo_tb.svg" class="logo" /></b-col>
+      <b-col cols="1" xl="0" class="d-xl-none p-0"></b-col>
+    </b-row>
 
     <b-row class="parceiros"> 
       <b-col class="ml-3 mt-3">
