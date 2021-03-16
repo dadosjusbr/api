@@ -40,6 +40,8 @@ export default {
           label: "Órgãos Estaduais",
           options: [
             { value: "BA", text: "Bahia" },
+            { value: "GO", text: "Goiás" },
+            { value: "MG", text: "Minas Gerais" },
             { value: "PB", text: "Paraíba" },
             { value: "PR", text: "Paraná" },
             { value: "RJ", text: "Rio de Janeiro" },
