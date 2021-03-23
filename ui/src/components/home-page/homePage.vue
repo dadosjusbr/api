@@ -3,7 +3,7 @@
 
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
       <b-col class="ml-4 mt-5" xl="7">
-        <b>VOCÊ JÁ TENTOU ACESSAR DADOS EM SITES DE ÓRGÃO PÚBLICOS? </b>
+        <b>VOCÊ JÁ TENTOU ACESSAR DADOS EM SITES DE ÓRGÃOS PÚBLICOS? </b>
         <br />
         <br />
         A
@@ -22,11 +22,11 @@
         Porém, a LAI pouco diz sobre a forma como esses dados devem ser
         disponibilizados. Por isso, nos sites dos órgãos são encontrados
         arquivos em diversos formatos (pdf, html, planilhas eletrônicas, json e
-        etc), além disso nomenclaturas e formatação são muitas vezes diferentes
+        etc). Além disso nomenclaturas e formatação são muitas vezes diferentes
         para cada órgão.
         <br />
         <br />
-        Devido a essas características realizar um controle social e financeiro
+        Devido a essas características, realizar um controle social e financeiro
         sobre essa enorme quantidade de dados de gastos públicos é uma tarefa
         difícil para uma pessoa.
       </b-col>
@@ -50,7 +50,7 @@
 
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center">
         <b-col class="ml-4 mt-5" xl="7">
-        <b> COMO NOS FAZEMOS ISSO? </b>
+        <b> COMO NÓS FAZEMOS ISSO? </b>
         <br />
         <br />    
         Os agentes públicos do sistema de justiça brasileiro recebem outras
@@ -69,14 +69,14 @@
 
     <b-row class="infoCard p-xl-5 d-flex flex-wrap align-items-center" >
       <b-col class="ml-4 mt-5" xl="7">
-        Inspirados em projetos como o
+        Inspirado em projetos como o
         <a href="https://serenata.ai/"> Serenata de amor </a> e
         <a href="https://brasil.io/"> Brasil.io</a>, o DadosJusBr surge com o
         objetivo de apresentar de forma detalhada, organizada e unificada os
         dados de gastos com remuneração dos órgãos que constituem o sistema de
         justiça brasileiro, assim facilitando o acesso e promovendo o controle
-        social sobre esses gastos do poder judiciário, ministério público,
-        defensoria pública e procuradorias.
+        social sobre esses gastos do poder Judiciário, Ministério Público, 
+        Defensoria Pública e Procuradorias.
       </b-col>
       <b-col class="d-flex justify-content-center mt-xl-0 mt-5 mb-xl-0 mb-4 "
         xl="4">
