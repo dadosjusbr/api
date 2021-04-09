@@ -41,12 +41,14 @@ export default {
           options: [
             { value: "BA", text: "Bahia" },
             { value: "CE", text: "Ceará" },
+            { value: "ES", text: "Espírito Santo" },
             { value: "GO", text: "Goiás" },
             { value: "MG", text: "Minas Gerais" },
             { value: "PB", text: "Paraíba" },
             { value: "PR", text: "Paraná" },
-            { value: "RJ", text: "Rio de Janeiro" },
+            { value: "RN", text: "Rio Grande do Norte" },
             { value: "RS", text: "Rio Grande do Sul" },
+            { value: "RJ", text: "Rio de Janeiro" },
             { value: "SP", text: "São Paulo" }
           ]
         }
