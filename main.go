@@ -68,7 +68,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	var monthTotalsOfYear []models.MonthTotals
 
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
-		if agencyMonthlyInfo.Summary.General.Wage.Total != 0 && agencyMonthlyInfo.Summary.General.Perks.Total != 0 && agencyMonthlyInfo.Summary.General.Others.Total != 0 {
+		if agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.MemberActive.Perks.Total + agencyMonthlyInfo.Summary.MemberActive.Others.Total > 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
 				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total,
