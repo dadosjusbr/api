@@ -46,6 +46,7 @@ export default {
             { value: "MG", text: "Minas Gerais" },
             { value: "PB", text: "Paraíba" },
             { value: "PR", text: "Paraná" },
+            { value: "PE", text: "Pernambuco" },
             { value: "RN", text: "Rio Grande do Norte" },
             { value: "RS", text: "Rio Grande do Sul" },
             { value: "RJ", text: "Rio de Janeiro" },
