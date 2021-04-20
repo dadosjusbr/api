@@ -39,6 +39,7 @@ export default {
         {
           label: "Órgãos Estaduais",
           options: [
+            { value: "AL", text: "Alagoas" },
             { value: "BA", text: "Bahia" },
             { value: "CE", text: "Ceará" },
             { value: "ES", text: "Espírito Santo" },
