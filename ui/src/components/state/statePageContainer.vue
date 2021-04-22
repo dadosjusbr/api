@@ -51,7 +51,8 @@ export default {
             { value: "RN", text: "Rio Grande do Norte" },
             { value: "RS", text: "Rio Grande do Sul" },
             { value: "RJ", text: "Rio de Janeiro" },
-            { value: "SP", text: "São Paulo" }
+            { value: "SP", text: "São Paulo" },
+            { value: "SE", text: "Sergipe" }
           ]
         }
       ],
