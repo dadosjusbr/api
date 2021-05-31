@@ -68,7 +68,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	var monthTotalsOfYear []models.MonthTotals
 
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
-		if agencyMonthlyInfo.Summary.MemberActive.Wage.Total + agencyMonthlyInfo.Summary.MemberActive.Perks.Total + agencyMonthlyInfo.Summary.MemberActive.Others.Total > 0 {
+		if agencyMonthlyInfo.Summary.MemberActive.Wage.Total+agencyMonthlyInfo.Summary.MemberActive.Perks.Total+agencyMonthlyInfo.Summary.MemberActive.Others.Total > 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
 				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total,
@@ -235,7 +235,7 @@ func main() {
 	uiAPIGroup := e.Group("/uiapi")
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org"},
+			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 		}))
 		log.Println("Using production CORS")
