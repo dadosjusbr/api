@@ -161,6 +161,8 @@ func getSummaryOfAgency(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
+	next := verifyNextOMA(month, year, agencyName)
+	previous := verifyPreviousOMA(month, year, agencyName)
 	agencySummary := models.AgencySummary{
 		FullName:  agency.Name,
 		TotalWage: agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
@@ -172,10 +174,42 @@ func getSummaryOfAgency(c echo.Context) error {
 			agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
 			agencyMonthlyInfo.Summary.MemberActive.Others.Total +
 			agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
-		TotalMembers: agencyMonthlyInfo.Summary.MemberActive.Count,
-		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
+		TotalMembers:      agencyMonthlyInfo.Summary.MemberActive.Count,
+		CrawlingTime:      agencyMonthlyInfo.CrawlingTimestamp,
+		NextOmaExists:     next,
+		PreviousOmaExists: previous,
 	}
 	return c.JSON(http.StatusOK, agencySummary)
+}
+
+func verifyNextOMA(month int, year int, agencyName string) bool {
+	m, y := getNextDate(year, month)
+	_, _, err := client.GetOMA(m, y, agencyName)
+	return err == nil
+}
+func verifyPreviousOMA(month int, year int, agencyName string) bool {
+	m, y := getPreviousDate(year, month)
+	_, _, err := client.GetOMA(m, y, agencyName)
+	return err == nil
+}
+
+func getNextDate(year int, month int) (int, int) {
+	if month == 12 {
+		month = 1
+		year += 1
+	} else {
+		month += 1
+	}
+	return month, year
+}
+func getPreviousDate(year int, month int) (int, int) {
+	if month == 1 {
+		month = 12
+		year -= 1
+	} else {
+		month -= 1
+	}
+	return month, year
 }
 
 func apiOMA(c echo.Context) error {
