@@ -46,6 +46,8 @@ type AgencySummary struct {
 	TotalInactives    int
 	MaxPerk           float64
 	TotalRemuneration float64
+	NextOmaExists     bool
+	PreviousOmaExists bool
 }
 
 // AgencyTotalsYear - Represents the totals of an year
