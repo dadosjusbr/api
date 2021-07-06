@@ -52,8 +52,9 @@ type AgencySummary struct {
 
 // AgencyTotalsYear - Represents the totals of an year
 type AgencyTotalsYear struct {
-	Year        int
-	MonthTotals []MonthTotals
+	Year           int
+	MonthTotals    []MonthTotals
+	AgencyFullName string
 }
 
 // MonthTotals - Detailed info of a month (wage, perks, other)
