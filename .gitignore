@@ -5,4 +5,3 @@ coverage.txt
 exportEnvVars.sh
 .env
 node_modules/
-gin-bin.exe

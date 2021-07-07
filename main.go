@@ -66,6 +66,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
 	var monthTotalsOfYear []models.MonthTotals
+
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
 		if agencyMonthlyInfo.Summary.MemberActive.Wage.Total+agencyMonthlyInfo.Summary.MemberActive.Perks.Total+agencyMonthlyInfo.Summary.MemberActive.Others.Total > 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
