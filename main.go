@@ -65,11 +65,6 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
-	agency, err := client.Db.GetAgency(aID)
-	if err != nil {
-		log.Printf("[totals of agency year] error getting data for first screen(estado:%s):%q", aID, err)
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
-	}
 	var monthTotalsOfYear []models.MonthTotals
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
 		if agencyMonthlyInfo.Summary.MemberActive.Wage.Total+agencyMonthlyInfo.Summary.MemberActive.Perks.Total+agencyMonthlyInfo.Summary.MemberActive.Others.Total > 0 {
@@ -84,7 +79,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
 		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month
 	})
-	agencyTotalsYear := models.AgencyTotalsYear{Year: year, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name}
+	agencyTotalsYear := models.AgencyTotalsYear{Year: year, MonthTotals: monthTotalsOfYear}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
