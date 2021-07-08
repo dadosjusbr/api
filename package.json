@@ -4,7 +4,6 @@
     "private": true,
     "scripts": {
         "serve": "cd ui && vue-cli-service serve",
-        "dev": "gin -p 8081 --all -i run main.go",
         "build": "cd ui && vue-cli-service build",
         "lint": "cd ui && vue-cli-service lint"
     },
