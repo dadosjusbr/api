@@ -46,12 +46,15 @@ type AgencySummary struct {
 	TotalInactives    int
 	MaxPerk           float64
 	TotalRemuneration float64
+	NextOmaExists     bool
+	PreviousOmaExists bool
 }
 
 // AgencyTotalsYear - Represents the totals of an year
 type AgencyTotalsYear struct {
-	Year        int
-	MonthTotals []MonthTotals
+	Year           int
+	MonthTotals    []MonthTotals
+	AgencyFullName string
 }
 
 // MonthTotals - Detailed info of a month (wage, perks, other)
