@@ -1,0 +1,21 @@
+{
+    "name": "api-dadosjus",
+    "version": "1.0.0",
+    "description": "> Ao mudar o foco para o sistema de justiça (incluindo MPs, Procuradorias e Defensorias) tivemos que mudar o formato de dados, coletores e o site. Estamos trabalhando árduamente para chegar na versão 1.0, o que deve acontecer no primeiro semestre de 2020.",
+    "main": "index.js",
+    "scripts": {
+        "dev": "gin -p 8081 --all -i run main.go",
+        "start": "go run main.go"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dadosjusbr/api.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/dadosjusbr/api/issues"
+    },
+    "homepage": "https://github.com/dadosjusbr/api#readme"
+}
