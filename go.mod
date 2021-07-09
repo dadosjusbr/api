@@ -4,10 +4,7 @@ module github.com/dadosjusbr/remuneracao-magistrados
 go 1.14
 
 require (
-	github.com/0xAX/notificator v0.0.0-20191016112426-3962a5ea8da1 // indirect
 	github.com/aws/aws-sdk-go v1.37.19 // indirect
-	github.com/codegangsta/envy v0.0.0-20141216192214-4b78388c8ce4 // indirect
-	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dadosjusbr/coletores v0.0.0-20210225194537-7e275e79b7ce
 	github.com/dadosjusbr/storage v0.0.0-20210225163554-5d1f42f9a8bf
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
@@ -21,7 +18,6 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
-	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/ncw/swift v1.0.53 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tidwall/pretty v1.0.2 // indirect
@@ -35,7 +31,6 @@ require (
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
