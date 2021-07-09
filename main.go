@@ -176,10 +176,10 @@ func getSummaryOfAgency(c echo.Context) error {
 			agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
 			agencyMonthlyInfo.Summary.MemberActive.Others.Total +
 			agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
-		TotalMembers:      agencyMonthlyInfo.Summary.MemberActive.Count,
-		CrawlingTime:      agencyMonthlyInfo.CrawlingTimestamp,
-		NextOmaExists:     verifyNextOMA(month, year, agencyName),
-		PreviousOmaExists: verifyPreviousOMA(month, year, agencyName),
+		TotalMembers: agencyMonthlyInfo.Summary.MemberActive.Count,
+		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
+		HasNext:      verifyNextOMA(month, year, agencyName),
+		HasPrevious:  verifyPreviousOMA(month, year, agencyName),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
