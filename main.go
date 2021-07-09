@@ -185,33 +185,24 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func verifyNextOMA(month int, year int, agencyName string) bool {
-	m, y := getNextDate(year, month)
-	_, _, err := client.GetOMA(m, y, agencyName)
-	return err == nil
-}
-func verifyPreviousOMA(month int, year int, agencyName string) bool {
-	m, y := getPreviousDate(year, month)
-	_, _, err := client.GetOMA(m, y, agencyName)
-	return err == nil
-}
-
-func getNextDate(year int, month int) (int, int) {
 	if month == 12 {
 		month = 1
 		year += 1
 	} else {
 		month += 1
 	}
-	return month, year
+	_, _, err := client.GetOMA(month, year, agencyName)
+	return err == nil
 }
-func getPreviousDate(year int, month int) (int, int) {
+func verifyPreviousOMA(month int, year int, agencyName string) bool {
 	if month == 1 {
 		month = 12
 		year -= 1
 	} else {
 		month -= 1
 	}
-	return month, year
+	_, _, err := client.GetOMA(month, year, agencyName)
+	return err == nil
 }
 
 func apiOMA(c echo.Context) error {
