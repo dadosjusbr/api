@@ -161,8 +161,6 @@ func getSummaryOfAgency(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
-	next := verifyNextOMA(month, year, agencyName)
-	previous := verifyPreviousOMA(month, year, agencyName)
 	agencySummary := models.AgencySummary{
 		FullName:  agency.Name,
 		TotalWage: agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
@@ -176,8 +174,8 @@ func getSummaryOfAgency(c echo.Context) error {
 			agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
 		TotalMembers:      agencyMonthlyInfo.Summary.MemberActive.Count,
 		CrawlingTime:      agencyMonthlyInfo.CrawlingTimestamp,
-		NextOmaExists:     next,
-		PreviousOmaExists: previous,
+		NextOmaExists:     verifyNextOMA(month, year, agencyName),
+		PreviousOmaExists: verifyPreviousOMA(month, year, agencyName),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
