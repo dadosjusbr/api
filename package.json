@@ -1,0 +1,19 @@
+{
+    "name": "api-dadosjus",
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "gin -p 8081 --all -i run main.go",
+        "start": "go run main.go"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dadosjusbr/api.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/dadosjusbr/api/issues"
+    },
+    "homepage": "https://github.com/dadosjusbr/api#readme"
+}
