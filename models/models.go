@@ -82,8 +82,10 @@ type ProcInfoResult struct {
 
 // GeneralTotals - contains the summary from all DadosJusBr data
 type GeneralTotals struct {
-	AgencyAmount        int64
-	MonthlyTotalsAmount int64
-	StartDate           time.Time
-	EndDate             time.Time
+	AgencyAmount             int64
+	MonthlyTotalsAmount      int64
+	StartDate                time.Time
+	EndDate                  time.Time
+	RemunerationRecordsCount int
+	GeneralRemunerationValue float64
 }
