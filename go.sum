@@ -28,6 +28,10 @@ github.com/dadosjusbr/storage v0.0.0-20210225163554-5d1f42f9a8bf h1:y3ckjmd4NSfM
 github.com/dadosjusbr/storage v0.0.0-20210225163554-5d1f42f9a8bf/go.mod h1:bpeLwX7UG7SIcy1eFxhLa8Z55rk4bo3gGhPSxTPimeo=
 github.com/dadosjusbr/storage v0.0.0-20210728193401-9b0c2a9fb2ae h1:Xz6jAxYxMz7Imb5SZ2PKen1y0YIi//EqnhhnRdUERNo=
 github.com/dadosjusbr/storage v0.0.0-20210728193401-9b0c2a9fb2ae/go.mod h1:bpeLwX7UG7SIcy1eFxhLa8Z55rk4bo3gGhPSxTPimeo=
+github.com/dadosjusbr/storage v0.0.0-20210729190155-495f924de00d h1:qiJzReFLXCuyyhcodlIz37i5298ske34uFCbpHL/G+A=
+github.com/dadosjusbr/storage v0.0.0-20210729190155-495f924de00d/go.mod h1:nDknQDn8z5l9zQAYRxdM8FCu1/tVJCEeLIKlN5tMkPg=
+github.com/dadosjusbr/storage v0.0.0-20210729201440-c69eb072aa63 h1:P/AjkAjAM/eelS0LY+oM0gWafuMupzje8e7C7fq7U8I=
+github.com/dadosjusbr/storage v0.0.0-20210729201440-c69eb072aa63/go.mod h1:nDknQDn8z5l9zQAYRxdM8FCu1/tVJCEeLIKlN5tMkPg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -189,6 +193,7 @@ go.mongodb.org/mongo-driver v1.4.5 h1:TLtO+iD8krabXxvY1F1qpBOHgOxhLWR7XsT7kQeRmM
 go.mongodb.org/mongo-driver v1.4.5/go.mod h1:WcMNYLx/IlOxLe6JRJiv2uXuCz6zBLndR4SoGjYphSc=
 go.mongodb.org/mongo-driver v1.4.6 h1:rh7GdYmDrb8AQSkF8yteAus8qYOgOASWDOv1BWqBXkU=
 go.mongodb.org/mongo-driver v1.4.6/go.mod h1:WcMNYLx/IlOxLe6JRJiv2uXuCz6zBLndR4SoGjYphSc=
+go.mongodb.org/mongo-driver v1.5.1/go.mod h1:gRXCHX4Jo7J0IJ1oDQyUxF7jfy19UfxniMS4xxMmUqw=
 go.mongodb.org/mongo-driver v1.7.0 h1:hHrvOBWlWB2c7+8Gh/Xi5jj82AgidK/t7KVXBZ+IyUA=
 go.mongodb.org/mongo-driver v1.7.0/go.mod h1:Q4oFMbo1+MSNqICAdYMlC/zSTrwCogR4R8NzkI+yfU8=
 golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=

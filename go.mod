@@ -9,7 +9,7 @@ require (
 	github.com/codegangsta/envy v0.0.0-20141216192214-4b78388c8ce4 // indirect
 	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dadosjusbr/coletores v0.0.0-20210720115853-beb3b3d771c9
-	github.com/dadosjusbr/storage v0.0.0-20210728193401-9b0c2a9fb2ae
+	github.com/dadosjusbr/storage v0.0.0-20210729201440-c69eb072aa63
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
