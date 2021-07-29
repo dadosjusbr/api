@@ -79,3 +79,11 @@ type ProcInfoResult struct {
 	ProcInfo          *coletores.ProcInfo
 	CrawlingTimestamp time.Time
 }
+
+// GeneralTotals - contains the summary from all DadosJusBr data
+type GeneralTotals struct {
+	AgencyAmount        int64
+	MonthlyTotalsAmount int64
+	StartDate           time.Time
+	EndDate             time.Time
+}
