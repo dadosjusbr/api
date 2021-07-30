@@ -36,6 +36,7 @@ type config struct {
 }
 
 var client *storage.Client
+var loc *time.Location
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -230,7 +231,7 @@ func apiOMA(c echo.Context) error {
 	}
 }
 
-func getGenralSystemInfo(c echo.Context) error {
+func generalSummaryHandler(c echo.Context) error {
 	agencyAmount, err := client.GetAgenciesCount()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
@@ -251,13 +252,15 @@ func getGenralSystemInfo(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
-	loc, err := time.LoadLocation("America/Sao_Paulo")
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error formatando data"))
-	}
 	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
 	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	return c.JSON(http.StatusOK, models.GeneralTotals{AgencyAmount: agencyAmount, MonthlyTotalsAmount: miCount, StartDate: fdate, EndDate: ldate, RemunerationRecordsCount: remunerationSummary.Count, GeneralRemunerationValue: remunerationSummary.Value})
+	return c.JSON(http.StatusOK, models.GeneralTotals{
+		AgencyAmount:             agencyAmount,
+		MonthlyTotalsAmount:      miCount,
+		StartDate:                fdate,
+		EndDate:                  ldate,
+		RemunerationRecordsCount: remunerationSummary.Count,
+		GeneralRemunerationValue: remunerationSummary.Value})
 }
 
 func getGeneralRemunerationFromYear(c echo.Context) error {
@@ -276,7 +279,11 @@ var conf config
 
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
-
+	l, timerr := time.LoadLocation("America/Sao_Paulo")
+	loc = l
+	if timerr != nil {
+		log.Fatal(timerr.Error())
+	}
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -322,8 +329,8 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
-	uiAPIGroup.GET("/v1/geral/salario/:ano", getGeneralRemunerationFromYear)
-	uiAPIGroup.GET("/v1/geral/resumo", getGenralSystemInfo)
+	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
+	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
 
 	// Public API configuration
 	apiGroup := e.Group("/api", middleware.CORSWithConfig(middleware.CORSConfig{
