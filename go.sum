@@ -22,6 +22,8 @@ github.com/dadosjusbr/coletores v0.0.0-20210225194537-7e275e79b7ce h1:kYOomjEwbm
 github.com/dadosjusbr/coletores v0.0.0-20210225194537-7e275e79b7ce/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
 github.com/dadosjusbr/coletores v0.0.0-20210720115853-beb3b3d771c9 h1:ZJp3aECV29k7ESI1ZQFmsxWMgRUMxJoOrn+kMno1DgQ=
 github.com/dadosjusbr/coletores v0.0.0-20210720115853-beb3b3d771c9/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
+github.com/dadosjusbr/coletores v0.0.0-20210802134500-ae9b0d567249 h1:NT3TmTBXUeuGiDDpPVG3GmfVjRkpNiblWyNulG48QYA=
+github.com/dadosjusbr/coletores v0.0.0-20210802134500-ae9b0d567249/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
 github.com/dadosjusbr/storage v0.0.0-20210128192320-be4e600caff4 h1:D2ciazXwWHehidKSrb81ssP7jYXio0PE+9PLdC2rocU=
 github.com/dadosjusbr/storage v0.0.0-20210128192320-be4e600caff4/go.mod h1:bpeLwX7UG7SIcy1eFxhLa8Z55rk4bo3gGhPSxTPimeo=
 github.com/dadosjusbr/storage v0.0.0-20210225163554-5d1f42f9a8bf h1:y3ckjmd4NSfMFz01Krg3WehU4x7pgOACm9JBlR4Jmns=
@@ -101,6 +103,8 @@ github.com/klauspost/compress v1.11.8 h1:difgzQsp5mdAz9v8lm3P/I+EpDKMU/6uTMw1y1F
 github.com/klauspost/compress v1.11.8/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/klauspost/compress v1.13.1 h1:wXr2uRxZTJXHLly6qhJabee5JqIhTRoLBhDOA74hDEQ=
 github.com/klauspost/compress v1.13.1/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
+github.com/klauspost/compress v1.13.2 h1:YecVYiuZPySnUyT8Ar9d5VawPwybeQw9IcwsLfdfdEk=
+github.com/klauspost/compress v1.13.2/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
