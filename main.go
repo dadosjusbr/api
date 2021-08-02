@@ -284,7 +284,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	loc = l
-	err := envconfig.Process("remuneracao-magistrados", &conf)
+	err = envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
