@@ -279,11 +279,11 @@ var conf config
 
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
-	l, timerr := time.LoadLocation("America/Sao_Paulo")
-	loc = l
-	if timerr != nil {
-		log.Fatal(timerr.Error())
+	l, err := time.LoadLocation("America/Sao_Paulo")
+	if err != nil {
+		log.Fatal(err.Error())
 	}
+	loc = l
 	err := envconfig.Process("remuneracao-magistrados", &conf)
 	if err != nil {
 		log.Fatal(err.Error())
