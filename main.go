@@ -36,6 +36,7 @@ type config struct {
 }
 
 var client *storage.Client
+var loc *time.Location
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -230,13 +231,60 @@ func apiOMA(c echo.Context) error {
 	}
 }
 
+func generalSummaryHandler(c echo.Context) error {
+	agencyAmount, err := client.GetAgenciesCount()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	miCount, err := client.GetNumberOfMonthsCollected()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	fmonth, fyear, err := client.GetFirstDateWithMonthlyInfo()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	lmonth, lyear, err := client.GetLastDateWithMonthlyInfo()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	remunerationSummary, err := client.Db.GetRemunerationSummary()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
+	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
+	return c.JSON(http.StatusOK, models.GeneralTotals{
+		AgencyAmount:             agencyAmount,
+		MonthlyTotalsAmount:      miCount,
+		StartDate:                fdate,
+		EndDate:                  ldate,
+		RemunerationRecordsCount: remunerationSummary.Count,
+		GeneralRemunerationValue: remunerationSummary.Value})
+}
+
+func getGeneralRemunerationFromYear(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	data, err := client.Db.GetGeneralMonthlyInfosFromYear(year)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	return c.JSON(http.StatusOK, data)
+}
+
 var conf config
 
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
-
-	err := envconfig.Process("remuneracao-magistrados", &conf)
+	l, err := time.LoadLocation("America/Sao_Paulo")
 	if err != nil {
+		log.Fatal(err.Error())
+	}
+	loc = l
+	if err := envconfig.Process("remuneracao-magistrados", &conf); err != nil {
 		log.Fatal(err.Error())
 	}
 
@@ -280,6 +328,8 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
+	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
+	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
 
 	// Public API configuration
 	apiGroup := e.Group("/api", middleware.CORSWithConfig(middleware.CORSConfig{
