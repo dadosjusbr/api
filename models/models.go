@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/dadosjusbr/coletores"
+	"github.com/dadosjusbr/storage"
 )
 
 // State - Struct cotains information of a state ans its agencies
@@ -55,6 +56,7 @@ type AgencyTotalsYear struct {
 	Year           int
 	MonthTotals    []MonthTotals
 	AgencyFullName string
+	SummaryPackage *storage.Package `json:"SummaryPackage,omitempty"`
 }
 
 // MonthTotals - Detailed info of a month (wage, perks, other)

@@ -24,6 +24,8 @@ github.com/dadosjusbr/coletores v0.0.0-20210720115853-beb3b3d771c9 h1:ZJp3aECV29
 github.com/dadosjusbr/coletores v0.0.0-20210720115853-beb3b3d771c9/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
 github.com/dadosjusbr/coletores v0.0.0-20210802134500-ae9b0d567249 h1:NT3TmTBXUeuGiDDpPVG3GmfVjRkpNiblWyNulG48QYA=
 github.com/dadosjusbr/coletores v0.0.0-20210802134500-ae9b0d567249/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
+github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d h1:yzoqpzpV4kv8LDH11dh3MASUtgs6LSu6qIRN6gCTffs=
+github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
 github.com/dadosjusbr/storage v0.0.0-20210128192320-be4e600caff4 h1:D2ciazXwWHehidKSrb81ssP7jYXio0PE+9PLdC2rocU=
 github.com/dadosjusbr/storage v0.0.0-20210128192320-be4e600caff4/go.mod h1:bpeLwX7UG7SIcy1eFxhLa8Z55rk4bo3gGhPSxTPimeo=
 github.com/dadosjusbr/storage v0.0.0-20210225163554-5d1f42f9a8bf h1:y3ckjmd4NSfMFz01Krg3WehU4x7pgOACm9JBlR4Jmns=
@@ -34,6 +36,8 @@ github.com/dadosjusbr/storage v0.0.0-20210729190155-495f924de00d h1:qiJzReFLXCuy
 github.com/dadosjusbr/storage v0.0.0-20210729190155-495f924de00d/go.mod h1:nDknQDn8z5l9zQAYRxdM8FCu1/tVJCEeLIKlN5tMkPg=
 github.com/dadosjusbr/storage v0.0.0-20210729201440-c69eb072aa63 h1:P/AjkAjAM/eelS0LY+oM0gWafuMupzje8e7C7fq7U8I=
 github.com/dadosjusbr/storage v0.0.0-20210729201440-c69eb072aa63/go.mod h1:nDknQDn8z5l9zQAYRxdM8FCu1/tVJCEeLIKlN5tMkPg=
+github.com/dadosjusbr/storage v0.0.0-20210823221622-f84af40caa5a h1:yCd8SII0aKDUJ9eK//AkZvpcpCrh3YK8PPzmROI7Ono=
+github.com/dadosjusbr/storage v0.0.0-20210823221622-f84af40caa5a/go.mod h1:nDknQDn8z5l9zQAYRxdM8FCu1/tVJCEeLIKlN5tMkPg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -42,6 +46,8 @@ github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZm
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
+github.com/go-stack/stack v1.8.1 h1:ntEHSVwIt7PNXNpgPmVfMrNhLtgjlmnZha2kOpuRiDw=
+github.com/go-stack/stack v1.8.1/go.mod h1:dcoOX6HbPZSZptuspn9bctJ+N/CnF5gGygcUP3XYfe4=
 github.com/gobuffalo/attrs v0.0.0-20190224210810-a9411de4debd/go.mod h1:4duuawTqi2wkkpB4ePgWMaai6/Kc6WEz83bhFwpHzj0=
 github.com/gobuffalo/depgen v0.0.0-20190329151759-d478694a28d3/go.mod h1:3STtPUQYuzV0gBVOY3vy6CfMm/ljR4pABfrTeHNLHUY=
 github.com/gobuffalo/depgen v0.1.0/go.mod h1:+ifsuy7fhi15RWncXQQKjWS9JPkdah5sZvtHc2RXGlg=
@@ -105,6 +111,8 @@ github.com/klauspost/compress v1.13.1 h1:wXr2uRxZTJXHLly6qhJabee5JqIhTRoLBhDOA74
 github.com/klauspost/compress v1.13.1/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
 github.com/klauspost/compress v1.13.2 h1:YecVYiuZPySnUyT8Ar9d5VawPwybeQw9IcwsLfdfdEk=
 github.com/klauspost/compress v1.13.2/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
+github.com/klauspost/compress v1.13.4 h1:0zhec2I8zGnjWcKyLl6i3gPqKANCCn5e9xmviEEeX6s=
+github.com/klauspost/compress v1.13.4/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
@@ -200,6 +208,8 @@ go.mongodb.org/mongo-driver v1.4.6/go.mod h1:WcMNYLx/IlOxLe6JRJiv2uXuCz6zBLndR4S
 go.mongodb.org/mongo-driver v1.5.1/go.mod h1:gRXCHX4Jo7J0IJ1oDQyUxF7jfy19UfxniMS4xxMmUqw=
 go.mongodb.org/mongo-driver v1.7.0 h1:hHrvOBWlWB2c7+8Gh/Xi5jj82AgidK/t7KVXBZ+IyUA=
 go.mongodb.org/mongo-driver v1.7.0/go.mod h1:Q4oFMbo1+MSNqICAdYMlC/zSTrwCogR4R8NzkI+yfU8=
+go.mongodb.org/mongo-driver v1.7.1 h1:jwqTeEM3x6L9xDXrCxN0Hbg7vdGfPBOTIkr0+/LYZDA=
+go.mongodb.org/mongo-driver v1.7.1/go.mod h1:Q4oFMbo1+MSNqICAdYMlC/zSTrwCogR4R8NzkI+yfU8=
 golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20190422162423-af44ce270edf/go.mod h1:WFFai1msRO1wXaEeE5yQxYXgSfI8pQAWXbQop6sCtWE=
@@ -212,6 +222,8 @@ golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 h1:/ZScEX8SfEmUGRHs0gxpqt
 golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
 golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 h1:/UOmuWzQfxxo9UtlXMwuQU8CMgg1eZXqTRwkSQJWKOI=
 golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 h1:HWj/xjIHfjYU5nVXpTM0s39J9CbLn7Cc5a7IC5rwsMQ=
+golang.org/x/crypto v0.0.0-20210817164053-32db794688a5/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3 h1:0GoQqolDA55aaLxZyTzK/Y2ePZzZTUrRacwib7cNsYQ=
 golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
@@ -263,6 +275,8 @@ golang.org/x/text v0.3.5 h1:i6eZZ+zk0SOf0xgBpEpPD18qWcJda6q1sxt3S0kzyUQ=
 golang.org/x/text v0.3.5/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/text v0.3.6 h1:aRYxNxv6iGQlyVaZmk6ZgYEDa+Jg18DxebPSrd6bg1M=
 golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+golang.org/x/text v0.3.7 h1:olpwvP2KacW1ZWvsR7uQhoyTYvKAupfQrRGBFM352Gk=
+golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
 golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20190329151228-23e29df326fe/go.mod h1:LCzVGOaR6xXOjkQ3onu1FJEFr0SW1gC7cKk1uF8kGRs=
 golang.org/x/tools v0.0.0-20190416151739-9c9e1878f421/go.mod h1:LCzVGOaR6xXOjkQ3onu1FJEFr0SW1gC7cKk1uF8kGRs=

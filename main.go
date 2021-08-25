@@ -30,6 +30,7 @@ type config struct {
 	MongoDBName string `envconfig:"MONGODB_NAME"`
 	MongoMICol  string `envconfig:"MONGODB_MICOL" required:"true"`
 	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
+	MongoPkgCol string `envconfig:"MONGODB_PKGCOL" required:"true"`
 
 	// Omited fields
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
@@ -41,9 +42,9 @@ var loc *time.Location
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
 	if c.MongoMICol == "" || c.MongoAgCol == "" {
-		return nil, fmt.Errorf("error creating storage client: db collections must not be empty. MI:\"%s\", AG:\"%s\"", c.MongoMICol, c.MongoAgCol)
+		return nil, fmt.Errorf("error creating storage client: db collections must not be empty. MI:\"%s\", AG:\"%s\", PKG:\"%s\"", c.MongoMICol, c.MongoAgCol, c.MongoPkgCol)
 	}
-	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol)
+	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol, c.MongoPkgCol)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DB client: %q", err)
 	}
@@ -85,7 +86,8 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
 		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month
 	})
-	agencyTotalsYear := models.AgencyTotalsYear{Year: year, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name}
+	pkg, _ := client.Db.GetPackage(storage.PackageFilterOpts{AgencyID: &aID, Year: &year, Month: nil, Group: nil})
+	agencyTotalsYear := models.AgencyTotalsYear{Year: year, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name, SummaryPackage: pkg}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
