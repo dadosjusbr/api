@@ -277,6 +277,23 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, data)
 }
 
+func getAllAgencies(c echo.Context) error {
+	agencies, err := client.Db.GetAllAgencies()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
+	}
+	return c.JSON(http.StatusOK, agencies)
+}
+
+func getAgencyById(c echo.Context) error {
+	agencyName := c.Param("orgao")
+	agency, err := client.Db.GetAgency(agencyName)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, "Agency not found")
+	}
+	return c.JSON(http.StatusFound, agency)
+}
+
 var conf config
 
 func main() {
@@ -334,12 +351,15 @@ func main() {
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
 
 	// Public API configuration
-	apiGroup := e.Group("/api", middleware.CORSWithConfig(middleware.CORSConfig{
+	apiGroup := e.Group("/", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	// Return OMA (órgão/mês/ano) information
-	apiGroup.GET("/v1/orgao/:orgao/:ano/:mes", apiOMA)
+	apiGroup.GET("v1/orgao/:orgao/:ano/:mes", apiOMA)
+
+	apiGroup.GET("v1/orgao/:orgao", getAgencyById)
+	apiGroup.GET("v1/orgaos", getAllAgencies)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
