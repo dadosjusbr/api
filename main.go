@@ -365,19 +365,19 @@ func main() {
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
 
 	// Public API configuration
-	apiGroup := e.Group("/", middleware.CORSWithConfig(middleware.CORSConfig{
+	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	// Return OMA (órgão/mês/ano) information
-	apiGroup.GET("v1/orgao/:orgao/:ano/:mes", apiOMA)
+	apiGroup.GET("/orgao/:orgao/:ano/:mes", apiOMA)
 
 	// Return agency
-	apiGroup.GET("v1/orgao/:orgao", getAgencyById)
+	apiGroup.GET("/orgao/:orgao", getAgencyById)
 	// Return all agencies
-	apiGroup.GET("v1/orgaos", getAllAgencies)
+	apiGroup.GET("/orgaos", getAllAgencies)
 	// Return MIs by year
-	apiGroup.GET("v1/resumo/:orgao/:ano", getMonthlyInfo)
+	apiGroup.GET("/resumo/:orgao/:ano", getMonthlyInfo)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
