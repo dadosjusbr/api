@@ -372,8 +372,11 @@ func main() {
 	// Return OMA (órgão/mês/ano) information
 	apiGroup.GET("v1/orgao/:orgao/:ano/:mes", apiOMA)
 
+	// Return agency
 	apiGroup.GET("v1/orgao/:orgao", getAgencyById)
+	// Return all agencies
 	apiGroup.GET("v1/orgaos", getAllAgencies)
+	// Return MIs by year
 	apiGroup.GET("v1/resumo/:orgao/:ano", getMonthlyInfo)
 
 	s := &http.Server{
