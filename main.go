@@ -294,6 +294,20 @@ func getAgencyById(c echo.Context) error {
 	return c.JSON(http.StatusFound, agency)
 }
 
+func getMonthlyInfo(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	agencyName := c.Param("orgao")
+	monthlyInfo, err := client.Db.GetMonthlyInfo([]storage.Agency{{ID: agencyName}}, year)
+	if err != nil {
+		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
+	}
+	return c.JSON(http.StatusOK, monthlyInfo)
+}
+
 var conf config
 
 func main() {
@@ -360,6 +374,7 @@ func main() {
 
 	apiGroup.GET("v1/orgao/:orgao", getAgencyById)
 	apiGroup.GET("v1/orgaos", getAllAgencies)
+	apiGroup.GET("v1/resumo/:orgao/:ano", getMonthlyInfo)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
