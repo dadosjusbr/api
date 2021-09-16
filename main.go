@@ -208,31 +208,6 @@ func verifyPreviousOMA(month int, year int, agencyName string) bool {
 	return err == nil
 }
 
-func apiOMA(c echo.Context) error {
-	year, err := strconv.Atoi(c.Param("ano"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
-	}
-	month, err := strconv.Atoi(c.Param("mes"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
-	}
-	agName := c.Param("orgao")
-	agMI, _, err := client.GetOMA(month, year, agName)
-	if err != nil {
-		c.Logger().Printf("Error fetching data for API (%s?%s):%q", c.Path(), c.QueryString(), err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	switch format := c.QueryParam("format"); format {
-	case "zip":
-		return c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
-	case "json", "":
-		return c.JSONPretty(http.StatusOK, agMI.Employee, " ")
-	default:
-		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, escolher o formato entre json e zip!"))
-	}
-}
-
 func generalSummaryHandler(c echo.Context) error {
 	agencyAmount, err := client.GetAgenciesCount()
 	if err != nil {
@@ -300,12 +275,34 @@ func getMonthlyInfo(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
 	agencyName := c.Param("orgao")
-	monthlyInfo, err := client.Db.GetMonthlyInfo([]storage.Agency{{ID: agencyName}}, year)
+	var monthlyInfo map[string][]storage.AgencyMonthlyInfo
+	monthlyInfo, err = client.Db.GetMonthlyInfo([]storage.Agency{{ID: agencyName}}, year)
+	month := c.Param("month")
+	if month == "" {
+		m, err := strconv.Atoi(month)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mes=%d inválido", m))
+		}
+		client.GetOMA(m, year, agencyName)
+	}
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
 	}
-	return c.JSON(http.StatusOK, monthlyInfo)
+	type SummaryzedMI struct {
+		AgencyID string            `json:"aid,omitempty" bson:"aid,omitempty"`
+		Month    int               `json:"month,omitempty" bson:"month,omitempty"`
+		Year     int               `json:"year,omitempty" bson:"year,omitempty"`
+		Summary  storage.Summaries `json:"summary,omitempty" bson:"summary,omitempty"`
+		Package  *storage.Backup   `json:"package,omitempty" bson:"package,omitempty"`
+	}
+	var summaryzedMI []SummaryzedMI
+	for i := range monthlyInfo {
+		for _, mi := range monthlyInfo[i] {
+			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: mi.Package, Summary: mi.Summary})
+		}
+	}
+	return c.JSON(http.StatusOK, summaryzedMI)
 }
 
 var conf config
@@ -369,15 +366,14 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
-	// Return OMA (órgão/mês/ano) information
-	apiGroup.GET("/orgao/:orgao/:ano/:mes", apiOMA)
-
 	// Return agency
 	apiGroup.GET("/orgao/:orgao", getAgencyById)
 	// Return all agencies
 	apiGroup.GET("/orgaos", getAllAgencies)
 	// Return MIs by year
-	apiGroup.GET("/resumo/:orgao/:ano", getMonthlyInfo)
+	apiGroup.GET("/dados/:orgao/:ano", getMonthlyInfo)
+	// Return MIs by month
+	apiGroup.GET("/dados/:orgao/:ano/:mes", getMonthlyInfo)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
