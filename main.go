@@ -34,10 +34,15 @@ type config struct {
 
 	// Omited fields
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
+
+	// Site env
+	DadosJusUrl    string `envconfig:"DADOSJUS_URL" required:"true"`
+	PackageRepoUrl string `envconfig:"PACKAGE_REPO_URL" required:"true"`
 }
 
 var client *storage.Client
 var loc *time.Location
+var conf config
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -290,22 +295,33 @@ func getMonthlyInfo(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
 	}
 	type SummaryzedMI struct {
-		AgencyID string            `json:"aid,omitempty" bson:"aid,omitempty"`
-		Month    int               `json:"month,omitempty" bson:"month,omitempty"`
-		Year     int               `json:"year,omitempty" bson:"year,omitempty"`
-		Summary  storage.Summaries `json:"summary,omitempty" bson:"summary,omitempty"`
-		Package  *storage.Backup   `json:"package,omitempty" bson:"package,omitempty"`
+		AgencyID string `json:"aid,omitempty" bson:"aid,omitempty"`
+		Month    int    `json:"month,omitempty" bson:"month,omitempty"`
+		Year     int    `json:"year,omitempty" bson:"year,omitempty"`
+		Summary  interface{}
+		Package  struct {
+			URL  string `json:"url" bson:"url,omitempty"`
+			Hash string `json:"hash" bson:"hash,omitempty"`
+		}
 	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
 		for _, mi := range monthlyInfo[i] {
-			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: mi.Package, Summary: mi.Summary})
+			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: struct {
+				URL  string `json:"url" bson:"url,omitempty"`
+				Hash string `json:"hash" bson:"hash,omitempty"`
+			}{
+				URL:  formatDownloadUrl(mi.Package.URL),
+				Hash: mi.Package.Hash,
+			}, Summary: mi.Summary})
 		}
 	}
 	return c.JSON(http.StatusOK, summaryzedMI)
 }
 
-var conf config
+func formatDownloadUrl(url string) string {
+	return strings.Replace(url, conf.PackageRepoUrl, conf.DadosJusUrl, -1)
+}
 
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
