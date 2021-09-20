@@ -294,15 +294,16 @@ func getMonthlyInfo(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
 	}
+	type Backup struct {
+		URL  string `json:"url" bson:"url,omitempty"`
+		Hash string `json:"hash" bson:"hash,omitempty"`
+	}
 	type SummaryzedMI struct {
 		AgencyID string `json:"aid,omitempty" bson:"aid,omitempty"`
 		Month    int    `json:"month,omitempty" bson:"month,omitempty"`
 		Year     int    `json:"year,omitempty" bson:"year,omitempty"`
 		Summary  interface{}
-		Package  struct {
-			URL  string `json:"url" bson:"url,omitempty"`
-			Hash string `json:"hash" bson:"hash,omitempty"`
-		}
+		Package  Backup `json:"package,omitempty" bson:"package,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
