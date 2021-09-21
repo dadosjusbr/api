@@ -36,8 +36,8 @@ type config struct {
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
 
 	// Site env
-	DadosJusUrl    string `envconfig:"DADOSJUS_URL" required:"true"`
-	PackageRepoUrl string `envconfig:"PACKAGE_REPO_URL" required:"true"`
+	DadosJusURL    string `envconfig:"DADOSJUS_URL" required:"true"`
+	PackageRepoURL string `envconfig:"PACKAGE_REPO_URL" required:"true"`
 }
 
 var client *storage.Client
