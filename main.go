@@ -294,27 +294,162 @@ func getMonthlyInfo(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
 	}
+
+	// we recreate all struct to controll the serialization better
+
 	type Backup struct {
-		URL  string `json:"url" bson:"url,omitempty"`
-		Hash string `json:"hash" bson:"hash,omitempty"`
+		URL  string `json:"url,omitempty"`
+		Hash string `json:"hash,omitempty"`
 	}
+
+	type DataSummary struct {
+		Max     float64 `json:"max,omitempty"`
+		Min     float64 `json:"min,omitempty"`
+		Average float64 `json:"avg,omitempty"`
+		Total   float64 `json:"total,omitempty"`
+	}
+	type Summary struct {
+		Count           int         `json:"count,omitempty"`
+		Wage            DataSummary `json:"wage,omitempty"`
+		Perks           DataSummary `json:"perks,omitempty"`
+		Others          DataSummary `json:"others,omitempty"`
+		IncomeHistogram map[int]int `json:"hist,omitempty"`
+		Benefits        DataSummary `json:"benefits,omitempty"`
+	}
+	type Summaries struct {
+		General       Summary `json:"general,omitempty"`
+		MemberActive  Summary `json:"memberactive,omitempty"`
+		Undefined     Summary `json:"undefined,omitempty"`
+		ServantActive Summary `json:"servantactive,omitempty"`
+	}
+
 	type SummaryzedMI struct {
-		AgencyID string `json:"aid,omitempty" bson:"aid,omitempty"`
-		Month    int    `json:"month,omitempty" bson:"month,omitempty"`
-		Year     int    `json:"year,omitempty" bson:"year,omitempty"`
-		Summary  interface{}
-		Package  Backup `json:"package,omitempty" bson:"package,omitempty"`
+		AgencyID string    `json:"aid,omitempty"`
+		Month    int       `json:"month,omitempty"`
+		Year     int       `json:"year,omitempty"`
+		Summary  Summaries `json:"summaries,omitempty"`
+		Package  Backup    `json:"package,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
 		for _, mi := range monthlyInfo[i] {
-			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: struct {
-				URL  string `json:"url" bson:"url,omitempty"`
-				Hash string `json:"hash" bson:"hash,omitempty"`
-			}{
+			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: Backup{
 				URL:  formatDownloadUrl(mi.Package.URL),
 				Hash: mi.Package.Hash,
-			}, Summary: mi.Summary})
+			}, Summary: Summaries{
+				General: Summary{
+					Count: mi.Summary.General.Count,
+					Wage: DataSummary{
+						Max:     mi.Summary.General.Wage.Max,
+						Min:     mi.Summary.General.Wage.Min,
+						Average: mi.Summary.General.Wage.Average,
+						Total:   mi.Summary.General.Wage.Total,
+					},
+					Perks: DataSummary{
+						Max:     mi.Summary.General.Perks.Max,
+						Min:     mi.Summary.General.Perks.Min,
+						Average: mi.Summary.General.Perks.Average,
+						Total:   mi.Summary.General.Perks.Total,
+					},
+					Others: DataSummary{
+						Max:     mi.Summary.General.Others.Max,
+						Min:     mi.Summary.General.Others.Min,
+						Average: mi.Summary.General.Others.Average,
+						Total:   mi.Summary.General.Others.Total,
+					},
+					Benefits: DataSummary{
+						Max:     mi.Summary.General.Benefits.Max,
+						Min:     mi.Summary.General.Benefits.Min,
+						Average: mi.Summary.General.Benefits.Average,
+						Total:   mi.Summary.General.Benefits.Total,
+					},
+					IncomeHistogram: mi.Summary.General.IncomeHistogram,
+				},
+				MemberActive: Summary{
+					Count: mi.Summary.MemberActive.Count,
+					Wage: DataSummary{
+						Max:     mi.Summary.MemberActive.Wage.Max,
+						Min:     mi.Summary.MemberActive.Wage.Min,
+						Average: mi.Summary.MemberActive.Wage.Average,
+						Total:   mi.Summary.MemberActive.Wage.Total,
+					},
+					Perks: DataSummary{
+						Max:     mi.Summary.MemberActive.Perks.Max,
+						Min:     mi.Summary.MemberActive.Perks.Min,
+						Average: mi.Summary.MemberActive.Perks.Average,
+						Total:   mi.Summary.MemberActive.Perks.Total,
+					},
+					Others: DataSummary{
+						Max:     mi.Summary.MemberActive.Others.Max,
+						Min:     mi.Summary.MemberActive.Others.Min,
+						Average: mi.Summary.MemberActive.Others.Average,
+						Total:   mi.Summary.MemberActive.Others.Total,
+					},
+					Benefits: DataSummary{
+						Max:     mi.Summary.MemberActive.Benefits.Max,
+						Min:     mi.Summary.MemberActive.Benefits.Min,
+						Average: mi.Summary.MemberActive.Benefits.Average,
+						Total:   mi.Summary.MemberActive.Benefits.Total,
+					},
+					IncomeHistogram: mi.Summary.MemberActive.IncomeHistogram,
+				},
+				Undefined: Summary{
+					Count: mi.Summary.Undefined.Count,
+					Wage: DataSummary{
+						Max:     mi.Summary.Undefined.Wage.Max,
+						Min:     mi.Summary.Undefined.Wage.Min,
+						Average: mi.Summary.Undefined.Wage.Average,
+						Total:   mi.Summary.Undefined.Wage.Total,
+					},
+					Perks: DataSummary{
+						Max:     mi.Summary.Undefined.Perks.Max,
+						Min:     mi.Summary.Undefined.Perks.Min,
+						Average: mi.Summary.Undefined.Perks.Average,
+						Total:   mi.Summary.Undefined.Perks.Total,
+					},
+					Others: DataSummary{
+						Max:     mi.Summary.Undefined.Others.Max,
+						Min:     mi.Summary.Undefined.Others.Min,
+						Average: mi.Summary.Undefined.Others.Average,
+						Total:   mi.Summary.Undefined.Others.Total,
+					},
+					Benefits: DataSummary{
+						Max:     mi.Summary.Undefined.Benefits.Max,
+						Min:     mi.Summary.Undefined.Benefits.Min,
+						Average: mi.Summary.Undefined.Benefits.Average,
+						Total:   mi.Summary.Undefined.Benefits.Total,
+					},
+					IncomeHistogram: mi.Summary.Undefined.IncomeHistogram,
+				},
+				ServantActive: Summary{
+					Count: mi.Summary.ServantActive.Count,
+					Wage: DataSummary{
+						Max:     mi.Summary.ServantActive.Wage.Max,
+						Min:     mi.Summary.ServantActive.Wage.Min,
+						Average: mi.Summary.ServantActive.Wage.Average,
+						Total:   mi.Summary.ServantActive.Wage.Total,
+					},
+					Perks: DataSummary{
+						Max:     mi.Summary.ServantActive.Perks.Max,
+						Min:     mi.Summary.ServantActive.Perks.Min,
+						Average: mi.Summary.ServantActive.Perks.Average,
+						Total:   mi.Summary.ServantActive.Perks.Total,
+					},
+					Others: DataSummary{
+						Max:     mi.Summary.ServantActive.Others.Max,
+						Min:     mi.Summary.ServantActive.Others.Min,
+						Average: mi.Summary.ServantActive.Others.Average,
+						Total:   mi.Summary.ServantActive.Others.Total,
+					},
+					Benefits: DataSummary{
+						Max:     mi.Summary.ServantActive.Benefits.Max,
+						Min:     mi.Summary.ServantActive.Benefits.Min,
+						Average: mi.Summary.ServantActive.Benefits.Average,
+						Total:   mi.Summary.ServantActive.Benefits.Total,
+					},
+					IncomeHistogram: mi.Summary.ServantActive.IncomeHistogram,
+				},
+			}})
 		}
 	}
 	return c.JSON(http.StatusOK, summaryzedMI)
