@@ -34,10 +34,15 @@ type config struct {
 
 	// Omited fields
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
+
+	// Site env
+	DadosJusURL    string `envconfig:"DADOSJUS_URL" required:"true"`
+	PackageRepoURL string `envconfig:"PACKAGE_REPO_URL" required:"true"`
 }
 
 var client *storage.Client
 var loc *time.Location
+var conf config
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -208,31 +213,6 @@ func verifyPreviousOMA(month int, year int, agencyName string) bool {
 	return err == nil
 }
 
-func apiOMA(c echo.Context) error {
-	year, err := strconv.Atoi(c.Param("ano"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
-	}
-	month, err := strconv.Atoi(c.Param("mes"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
-	}
-	agName := c.Param("orgao")
-	agMI, _, err := client.GetOMA(month, year, agName)
-	if err != nil {
-		c.Logger().Printf("Error fetching data for API (%s?%s):%q", c.Path(), c.QueryString(), err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	switch format := c.QueryParam("format"); format {
-	case "zip":
-		return c.Redirect(http.StatusPermanentRedirect, agMI.Package.URL)
-	case "json", "":
-		return c.JSONPretty(http.StatusOK, agMI.Employee, " ")
-	default:
-		return c.String(http.StatusBadRequest, fmt.Sprintf("Por favor, escolher o formato entre json e zip!"))
-	}
-}
-
 func generalSummaryHandler(c echo.Context) error {
 	agencyAmount, err := client.GetAgenciesCount()
 	if err != nil {
@@ -277,7 +257,112 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, data)
 }
 
-var conf config
+func getAllAgencies(c echo.Context) error {
+	agencies, err := client.Db.GetAllAgencies()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
+	}
+	return c.JSON(http.StatusOK, agencies)
+}
+
+func getAgencyById(c echo.Context) error {
+	agencyName := c.Param("orgao")
+	agency, err := client.Db.GetAgency(agencyName)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, "Agency not found")
+	}
+	return c.JSON(http.StatusFound, agency)
+}
+
+func getMonthlyInfo(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+	agencyName := c.Param("orgao")
+	var monthlyInfo map[string][]storage.AgencyMonthlyInfo
+	month := c.Param("mes")
+	if month != "" {
+		m, err := strconv.Atoi(month)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mes=%d inválido", m))
+		}
+		oma, _, err := client.GetOMA(m, year, agencyName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Error getting OMA data"))
+		}
+		fmt.Println("oioi")
+		monthlyInfo = map[string][]storage.AgencyMonthlyInfo{
+			agencyName: {*oma},
+		}
+	} else {
+		monthlyInfo, err = client.Db.GetMonthlyInfo([]storage.Agency{{ID: agencyName}}, year)
+	}
+	if err != nil {
+		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
+	}
+
+	// we recreate all struct to controll the serialization better
+
+	type Backup struct {
+		URL  string `json:"url,omitempty"`
+		Hash string `json:"hash,omitempty"`
+	}
+
+	type DataSummary struct {
+		Max     float64 `json:"max,omitempty"`
+		Min     float64 `json:"min,omitempty"`
+		Average float64 `json:"avg,omitempty"`
+		Total   float64 `json:"total,omitempty"`
+	}
+	type Summary struct {
+		Count              int         `json:"quantidade,omitempty"`
+		Wage               DataSummary `json:"salario,omitempty"`
+		OtherRemunerations DataSummary `json:"outras_remuneracoes,omitempty"`
+	}
+	type Summaries struct {
+		MemberActive Summary `json:"membros_ativos,omitempty"`
+	}
+
+	type SummaryzedMI struct {
+		AgencyID string    `json:"aid,omitempty"`
+		Month    int       `json:"mes,omitempty"`
+		Year     int       `json:"ano,omitempty"`
+		Summary  Summaries `json:"sumarios,omitempty"`
+		Package  Backup    `json:"pacote,omitempty"`
+	}
+	var summaryzedMI []SummaryzedMI
+	for i := range monthlyInfo {
+		for _, mi := range monthlyInfo[i] {
+			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: Backup{
+				URL:  formatDownloadUrl(mi.Package.URL),
+				Hash: mi.Package.Hash,
+			}, Summary: Summaries{
+				MemberActive: Summary{
+					Count: mi.Summary.MemberActive.Count,
+					Wage: DataSummary{
+						Max:     mi.Summary.MemberActive.Wage.Max,
+						Min:     mi.Summary.MemberActive.Wage.Min,
+						Average: mi.Summary.MemberActive.Wage.Average,
+						Total:   mi.Summary.MemberActive.Wage.Total,
+					},
+					OtherRemunerations: DataSummary{
+						Max:     mi.Summary.MemberActive.Others.Max + mi.Summary.MemberActive.Perks.Max,
+						Min:     mi.Summary.MemberActive.Others.Min + mi.Summary.MemberActive.Perks.Min,
+						Average: mi.Summary.MemberActive.Others.Average + mi.Summary.MemberActive.Perks.Average,
+						Total:   mi.Summary.MemberActive.Others.Total + mi.Summary.MemberActive.Perks.Total,
+					},
+				},
+			}})
+		}
+	}
+	return c.JSON(http.StatusOK, summaryzedMI)
+}
+
+func formatDownloadUrl(url string) string {
+	return strings.Replace(url, conf.PackageRepoURL, conf.DadosJusURL, -1)
+}
 
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
@@ -334,12 +419,18 @@ func main() {
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
 
 	// Public API configuration
-	apiGroup := e.Group("/api", middleware.CORSWithConfig(middleware.CORSConfig{
+	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
-	// Return OMA (órgão/mês/ano) information
-	apiGroup.GET("/v1/orgao/:orgao/:ano/:mes", apiOMA)
+	// Return agency
+	apiGroup.GET("/orgao/:orgao", getAgencyById)
+	// Return all agencies
+	apiGroup.GET("/orgaos", getAllAgencies)
+	// Return MIs by year
+	apiGroup.GET("/dados/:orgao/:ano", getMonthlyInfo)
+	// Return MIs by month
+	apiGroup.GET("/dados/:orgao/:ano/:mes", getMonthlyInfo)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
