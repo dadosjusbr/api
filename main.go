@@ -318,7 +318,7 @@ func getMonthlyInfo(c echo.Context) error {
 	}
 	type Summary struct {
 		Count              int         `json:"quantidade,omitempty"`
-		Wage               DataSummary `json:"salario,omitempty"`
+		Wage               DataSummary `json:"remuneracao_base,omitempty"`
 		OtherRemunerations DataSummary `json:"outras_remuneracoes,omitempty"`
 	}
 	type Summaries struct {
@@ -330,7 +330,7 @@ func getMonthlyInfo(c echo.Context) error {
 		Month    int       `json:"mes,omitempty"`
 		Year     int       `json:"ano,omitempty"`
 		Summary  Summaries `json:"sumarios,omitempty"`
-		Package  Backup    `json:"pacote,omitempty"`
+		Package  Backup    `json:"pacote_de_dados,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
