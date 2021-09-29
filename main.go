@@ -313,7 +313,7 @@ func getMonthlyInfo(c echo.Context) error {
 	type DataSummary struct {
 		Max     float64 `json:"max,omitempty"`
 		Min     float64 `json:"min,omitempty"`
-		Average float64 `json:"avg,omitempty"`
+		Average float64 `json:"media,omitempty"`
 		Total   float64 `json:"total,omitempty"`
 	}
 	type Summary struct {
@@ -326,7 +326,7 @@ func getMonthlyInfo(c echo.Context) error {
 	}
 
 	type SummaryzedMI struct {
-		AgencyID string    `json:"aid,omitempty"`
+		AgencyID string    `json:"id_orgao,omitempty"`
 		Month    int       `json:"mes,omitempty"`
 		Year     int       `json:"ano,omitempty"`
 		Summary  Summaries `json:"sumarios,omitempty"`
