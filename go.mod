@@ -9,15 +9,15 @@ require (
 	github.com/codegangsta/envy v0.0.0-20141216192214-4b78388c8ce4 // indirect
 	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d
-	github.com/dadosjusbr/storage v0.0.0-20210830133747-df0bf2311b12
+	github.com/dadosjusbr/proto v0.0.0-20211004174721-e51d25d61af2
+	github.com/dadosjusbr/storage v0.0.0-20211007181046-cb009c8c4ee9
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
@@ -30,11 +30,12 @@ require (
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
-	go.mongodb.org/mongo-driver v1.7.1 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
+	go.mongodb.org/mongo-driver v1.7.3 // indirect
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
