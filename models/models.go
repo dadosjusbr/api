@@ -3,8 +3,9 @@ package models
 import (
 	"time"
 
-	"github.com/dadosjusbr/coletores"
+	"github.com/dadosjusbr/proto/coleta"
 	"github.com/dadosjusbr/storage"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // State - Struct cotains information of a state ans its agencies
@@ -40,7 +41,7 @@ type AgencySummary struct {
 	TotalWage         float64
 	TotalPerks        float64
 	MaxWage           float64
-	CrawlingTime      time.Time
+	CrawlingTime      *timestamppb.Timestamp
 	AgencyName        string
 	TotalMembers      int
 	TotalServants     int
@@ -61,10 +62,9 @@ type AgencyTotalsYear struct {
 
 // MonthTotals - Detailed info of a month (wage, perks, other)
 type MonthTotals struct {
-	Month  int
-	Wage   float64
-	Perks  float64
-	Others float64
+	Month              int
+	BaseRemuneration   float64
+	OtherRemunerations float64
 }
 
 // DataForChartAtAgencyScreen - contains all necessary data to load chart
@@ -78,8 +78,8 @@ type DataForChartAtAgencyScreen struct {
 
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
 type ProcInfoResult struct {
-	ProcInfo          *coletores.ProcInfo
-	CrawlingTimestamp time.Time
+	ProcInfo          *coleta.ProcInfo
+	CrawlingTimestamp *timestamppb.Timestamp
 }
 
 // GeneralTotals - contains the summary from all DadosJusBr data
