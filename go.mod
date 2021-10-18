@@ -9,8 +9,8 @@ require (
 	github.com/codegangsta/envy v0.0.0-20141216192214-4b78388c8ce4 // indirect
 	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d
-	github.com/dadosjusbr/proto v0.0.0-20211004174721-e51d25d61af2
-	github.com/dadosjusbr/storage v0.0.0-20211007181046-cb009c8c4ee9
+	github.com/dadosjusbr/proto v0.0.0-20211015231253-b8391964395a
+	github.com/dadosjusbr/storage v0.0.0-20211011202858-c4685ca18a61
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
