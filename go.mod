@@ -10,7 +10,7 @@ require (
 	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d
 	github.com/dadosjusbr/proto v0.0.0-20211015231253-b8391964395a
-	github.com/dadosjusbr/storage v0.0.0-20211011202858-c4685ca18a61
+	github.com/dadosjusbr/storage v0.0.0-20211022224243-00a21c711bab
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect

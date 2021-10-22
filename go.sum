@@ -48,6 +48,8 @@ github.com/dadosjusbr/storage v0.0.0-20211007181046-cb009c8c4ee9 h1:3QiIEexWus37
 github.com/dadosjusbr/storage v0.0.0-20211007181046-cb009c8c4ee9/go.mod h1:QwThwjQA+ZNDB1pYpiIBeXo/mtg7GDJcNDVH3wWDCHQ=
 github.com/dadosjusbr/storage v0.0.0-20211011202858-c4685ca18a61 h1:54MlDJk/1/u9jDHXnjw0QR+LtriXE7yl6m0oVHW/Ssc=
 github.com/dadosjusbr/storage v0.0.0-20211011202858-c4685ca18a61/go.mod h1:QwThwjQA+ZNDB1pYpiIBeXo/mtg7GDJcNDVH3wWDCHQ=
+github.com/dadosjusbr/storage v0.0.0-20211022224243-00a21c711bab h1:tSDmnA9z8KMPm67XSt3JuA/MtB5asrzi7leOZPLWFaA=
+github.com/dadosjusbr/storage v0.0.0-20211022224243-00a21c711bab/go.mod h1:QwThwjQA+ZNDB1pYpiIBeXo/mtg7GDJcNDVH3wWDCHQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
