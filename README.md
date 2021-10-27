@@ -37,7 +37,22 @@ Fazer o download do repositório remuneraçoes:
 $ git clone https://github.com/dadosjusbr/api.git
 ```
 
-Após a instalação, Renomear o arquivo `.env.example` na raiz do projeto para `.env` e configurar suas variáveis de ambiente.  
+Após a instalação, Renomear o arquivo `.env.example` na raiz do projeto para `.env` e configurar suas variáveis de ambiente:
+
+
+Variável          | Descição
+----------------- | -----------------
+PORT              | Porta que servirá a API
+MONGODB_URI       | URI de conexão com o mongobd
+MONGODB_NAME      | Nome do banco de dados mongodb
+MONGODB_MICOL     | *Falta descrição*
+MONGODB_AGCOL     | Nome da coleção de **órgãos**
+MONGODB_PKGCOL    | Nome da coleção de **arquivos coletados**
+DADOSJUSBR_ENV    | `Development|Production` Ambiente
+DADOSJUS_URL      | *Falta descrição*
+PACKAGE_REPO_URL  | *Falta descrição*
+
+
 Agora a aplicação está pronta para ter um servidor local funcionando, para isso, fazemos:
 
 ```console
