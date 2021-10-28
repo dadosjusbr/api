@@ -326,29 +326,44 @@ func getMonthlyInfo(c echo.Context) error {
 		Summary  Summaries `json:"sumarios,omitempty"`
 		Package  Backup    `json:"pacote_de_dados,omitempty"`
 	}
+	type MIError struct {
+		ErrorMessage string `json:"message,omitempty"`
+		Status       int32  `json:"status,omitempty"`
+		Cmd          string `json:"cmd,omitempty"`
+	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
+		// Verify if there's only one MI and there's an error, to return this error in mi by month route in api
+		if len(monthlyInfo[i]) == 1 && monthlyInfo[i][0].ProcInfo != nil && month != "" {
+			return c.JSON(http.StatusPartialContent, MIError{
+				ErrorMessage: monthlyInfo[i][0].ProcInfo.Stderr,
+				Status:       monthlyInfo[i][0].ProcInfo.Status,
+				Cmd:          monthlyInfo[i][0].ProcInfo.Cmd,
+			})
+		}
 		for _, mi := range monthlyInfo[i] {
-			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: Backup{
-				URL:  formatDownloadUrl(mi.Package.URL),
-				Hash: mi.Package.Hash,
-			}, Summary: Summaries{
-				MemberActive: Summary{
-					Count: mi.Summary.Count,
-					BaseRemuneration: DataSummary{
-						Max:     mi.Summary.BaseRemuneration.Max,
-						Min:     mi.Summary.BaseRemuneration.Min,
-						Average: mi.Summary.BaseRemuneration.Average,
-						Total:   mi.Summary.BaseRemuneration.Total,
+			if mi.ProcInfo == nil {
+				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: Backup{
+					URL:  formatDownloadUrl(mi.Package.URL),
+					Hash: mi.Package.Hash,
+				}, Summary: Summaries{
+					MemberActive: Summary{
+						Count: mi.Summary.Count,
+						BaseRemuneration: DataSummary{
+							Max:     mi.Summary.BaseRemuneration.Max,
+							Min:     mi.Summary.BaseRemuneration.Min,
+							Average: mi.Summary.BaseRemuneration.Average,
+							Total:   mi.Summary.BaseRemuneration.Total,
+						},
+						OtherRemunerations: DataSummary{
+							Max:     mi.Summary.OtherRemunerations.Max,
+							Min:     mi.Summary.OtherRemunerations.Min,
+							Average: mi.Summary.OtherRemunerations.Average,
+							Total:   mi.Summary.OtherRemunerations.Total,
+						},
 					},
-					OtherRemunerations: DataSummary{
-						Max:     mi.Summary.OtherRemunerations.Max,
-						Min:     mi.Summary.OtherRemunerations.Min,
-						Average: mi.Summary.OtherRemunerations.Average,
-						Total:   mi.Summary.OtherRemunerations.Total,
-					},
-				},
-			}})
+				}})
+			}
 		}
 	}
 	return c.JSON(http.StatusOK, summaryzedMI)
