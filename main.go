@@ -327,7 +327,7 @@ func getMonthlyInfo(c echo.Context) error {
 		Package  Backup    `json:"pacote_de_dados,omitempty"`
 	}
 	type MIError struct {
-		ErrorMessage string `json:"message,omitempty"`
+		ErrorMessage string `json:"err_msg,omitempty"`
 		Status       int32  `json:"status,omitempty"`
 		Cmd          string `json:"cmd,omitempty"`
 	}
