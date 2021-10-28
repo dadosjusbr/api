@@ -50,7 +50,7 @@ MONGODB_AGCOL     | Nome da coleção de **órgãos**
 MONGODB_PKGCOL    | Nome da coleção de **arquivos coletados**
 DADOSJUSBR_ENV    | `Development|Production` Ambiente
 DADOSJUS_URL      | Url utilizada para mapeamento dos arquivos para download para o site do dados jus
-PACKAGE_REPO_URL  | *Falta descrição*
+PACKAGE_REPO_URL  | Url utilizada para mapeamento dos arquivos para download para o repositório de arquivos swift
 
 
 Agora a aplicação está pronta para ter um servidor local funcionando, para isso, fazemos:
