@@ -45,7 +45,7 @@ Variável          | Descição
 PORT              | Porta que servirá a API
 MONGODB_URI       | URI de conexão com o mongobd
 MONGODB_NAME      | Nome do banco de dados mongodb
-MONGODB_MICOL     | *Falta descrição*
+MONGODB_MICOL     | Nome da coleção de **informações de remunerações mensais**
 MONGODB_AGCOL     | Nome da coleção de **órgãos**
 MONGODB_PKGCOL    | Nome da coleção de **arquivos coletados**
 DADOSJUSBR_ENV    | `Development|Production` Ambiente
