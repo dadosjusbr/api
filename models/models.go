@@ -62,6 +62,7 @@ type AgencyTotalsYear struct {
 
 // MonthTotals - Detailed info of a month (wage, perks, other)
 type MonthTotals struct {
+	Error              *coleta.ProcInfo
 	Month              int
 	BaseRemuneration   float64
 	OtherRemunerations float64

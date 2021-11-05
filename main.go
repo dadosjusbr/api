@@ -84,6 +84,13 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+		} else if agencyMonthlyInfo.ProcInfo != nil {
+			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
+				BaseRemuneration:   0,
+				OtherRemunerations: 0,
+				Error:              agencyMonthlyInfo.ProcInfo,
+			}
+			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 		}
 	}
 	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
