@@ -181,8 +181,8 @@ func getSummaryOfAgency(c echo.Context) error {
 			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		TotalMembers: agencyMonthlyInfo.Summary.Count,
 		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
-		HasNext:      verifyNextOMA(month, year, agencyName),
-		HasPrevious:  verifyPreviousOMA(month, year, agencyName),
+		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).Before(time.Now().Add(time.Hour * 24)),
+		HasPrevious:  time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(loc)),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
@@ -319,34 +319,27 @@ func getMonthlyInfo(c echo.Context) error {
 		MemberActive Summary `json:"membros_ativos,omitempty"`
 	}
 
-	type SummaryzedMI struct {
-		AgencyID string    `json:"id_orgao,omitempty"`
-		Month    int       `json:"mes,omitempty"`
-		Year     int       `json:"ano,omitempty"`
-		Summary  Summaries `json:"sumarios,omitempty"`
-		Package  Backup    `json:"pacote_de_dados,omitempty"`
-	}
 	type MIError struct {
 		ErrorMessage string `json:"err_msg,omitempty"`
 		Status       int32  `json:"status,omitempty"`
 		Cmd          string `json:"cmd,omitempty"`
 	}
+	type SummaryzedMI struct {
+		AgencyID string     `json:"id_orgao,omitempty"`
+		Month    int        `json:"mes,omitempty"`
+		Year     int        `json:"ano,omitempty"`
+		Summary  *Summaries `json:"sumarios,omitempty"`
+		Package  *Backup    `json:"pacote_de_dados,omitempty"`
+		Error    *MIError   `json:"error,omitempty"`
+	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
-		// Verify if there's only one MI and there's an error, to return this error in mi by month route in api
-		if len(monthlyInfo[i]) == 1 && monthlyInfo[i][0].ProcInfo != nil && month != "" {
-			return c.JSON(http.StatusPartialContent, MIError{
-				ErrorMessage: monthlyInfo[i][0].ProcInfo.Stderr,
-				Status:       monthlyInfo[i][0].ProcInfo.Status,
-				Cmd:          monthlyInfo[i][0].ProcInfo.Cmd,
-			})
-		}
 		for _, mi := range monthlyInfo[i] {
 			if mi.ProcInfo == nil {
-				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: Backup{
+				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: nil, Month: mi.Month, Year: mi.Year, Package: &Backup{
 					URL:  formatDownloadUrl(mi.Package.URL),
 					Hash: mi.Package.Hash,
-				}, Summary: Summaries{
+				}, Summary: &Summaries{
 					MemberActive: Summary{
 						Count: mi.Summary.Count,
 						BaseRemuneration: DataSummary{
@@ -363,6 +356,12 @@ func getMonthlyInfo(c echo.Context) error {
 						},
 					},
 				}})
+			} else {
+				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
+					ErrorMessage: monthlyInfo[i][0].ProcInfo.Stderr,
+					Status:       monthlyInfo[i][0].ProcInfo.Status,
+					Cmd:          monthlyInfo[i][0].ProcInfo.Cmd,
+				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil})
 			}
 		}
 	}
