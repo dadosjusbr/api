@@ -187,27 +187,6 @@ func getSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
-func verifyNextOMA(month int, year int, agencyName string) bool {
-	if month == 12 {
-		month = 1
-		year += 1
-	} else {
-		month += 1
-	}
-	_, _, err := client.GetOMA(month, year, agencyName)
-	return err == nil
-}
-func verifyPreviousOMA(month int, year int, agencyName string) bool {
-	if month == 1 {
-		month = 12
-		year -= 1
-	} else {
-		month -= 1
-	}
-	_, _, err := client.GetOMA(month, year, agencyName)
-	return err == nil
-}
-
 func generalSummaryHandler(c echo.Context) error {
 	agencyAmount, err := client.GetAgenciesCount()
 	if err != nil {
