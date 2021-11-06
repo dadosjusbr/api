@@ -188,7 +188,7 @@ func getSummaryOfAgency(c echo.Context) error {
 			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		TotalMembers: agencyMonthlyInfo.Summary.Count,
 		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
-		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).Before(time.Now().Add(time.Hour * 24)),
+		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).Before(time.Now().AddDate(0, 1, 0)),
 		HasPrevious:  time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(loc)),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
