@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 	"net/http"
 	"os"
 	"sort"
@@ -79,11 +78,17 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
 	}
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
-		if agencyMonthlyInfo.Summary.MemberActive.Wage.Total+agencyMonthlyInfo.Summary.MemberActive.Perks.Total+agencyMonthlyInfo.Summary.MemberActive.Others.Total > 0 {
+		if agencyMonthlyInfo.Summary.BaseRemuneration.Total+agencyMonthlyInfo.Summary.OtherRemunerations.Total > 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
-				Wage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
-				Perks:  agencyMonthlyInfo.Summary.MemberActive.Perks.Total,
-				Others: agencyMonthlyInfo.Summary.MemberActive.Others.Total,
+				BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
+				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+			}
+			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+		} else if agencyMonthlyInfo.ProcInfo != nil {
+			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
+				BaseRemuneration:   0,
+				OtherRemunerations: 0,
+				Error:              agencyMonthlyInfo.ProcInfo,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 		}
@@ -152,8 +157,8 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, models.DataForChartAtAgencyScreen{
-		Members:     agencyMonthlyInfo.Summary.MemberActive.IncomeHistogram,
-		MaxSalary:   agencyMonthlyInfo.Summary.MemberActive.Wage.Max,
+		Members:     agencyMonthlyInfo.Summary.IncomeHistogram,
+		MaxSalary:   agencyMonthlyInfo.Summary.BaseRemuneration.Max,
 		PackageURL:  agencyMonthlyInfo.Package.URL,
 		PackageHash: agencyMonthlyInfo.Package.URL,
 	})
@@ -174,43 +179,19 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
 	agencySummary := models.AgencySummary{
-		FullName:  agency.Name,
-		TotalWage: agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
-		MaxWage:   agencyMonthlyInfo.Summary.MemberActive.Wage.Max,
-		TotalPerks: agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
-			agencyMonthlyInfo.Summary.MemberActive.Others.Total,
-		MaxPerk: math.Max(agencyMonthlyInfo.Summary.MemberActive.Perks.Max, agencyMonthlyInfo.Summary.MemberActive.Others.Max),
-		TotalRemuneration: agencyMonthlyInfo.Summary.MemberActive.Wage.Total +
-			agencyMonthlyInfo.Summary.MemberActive.Perks.Total +
-			agencyMonthlyInfo.Summary.MemberActive.Others.Total +
-			agencyMonthlyInfo.Summary.MemberActive.Wage.Total,
-		TotalMembers: agencyMonthlyInfo.Summary.MemberActive.Count,
+		FullName:   agency.Name,
+		TotalWage:  agencyMonthlyInfo.Summary.BaseRemuneration.Total,
+		MaxWage:    agencyMonthlyInfo.Summary.BaseRemuneration.Max,
+		TotalPerks: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+		MaxPerk:    agencyMonthlyInfo.Summary.OtherRemunerations.Max,
+		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
+			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+		TotalMembers: agencyMonthlyInfo.Summary.Count,
 		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
-		HasNext:      verifyNextOMA(month, year, agencyName),
-		HasPrevious:  verifyPreviousOMA(month, year, agencyName),
+		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).Before(time.Now().AddDate(0, 1, 0)),
+		HasPrevious:  time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(loc)),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
-}
-
-func verifyNextOMA(month int, year int, agencyName string) bool {
-	if month == 12 {
-		month = 1
-		year += 1
-	} else {
-		month += 1
-	}
-	_, _, err := client.GetOMA(month, year, agencyName)
-	return err == nil
-}
-func verifyPreviousOMA(month int, year int, agencyName string) bool {
-	if month == 1 {
-		month = 12
-		year -= 1
-	} else {
-		month -= 1
-	}
-	_, _, err := client.GetOMA(month, year, agencyName)
-	return err == nil
 }
 
 func generalSummaryHandler(c echo.Context) error {
@@ -291,7 +272,6 @@ func getMonthlyInfo(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Error getting OMA data"))
 		}
-		fmt.Println("oioi")
 		monthlyInfo = map[string][]storage.AgencyMonthlyInfo{
 			agencyName: {*oma},
 		}
@@ -318,43 +298,57 @@ func getMonthlyInfo(c echo.Context) error {
 	}
 	type Summary struct {
 		Count              int         `json:"quantidade,omitempty"`
-		Wage               DataSummary `json:"remuneracao_base,omitempty"`
+		BaseRemuneration   DataSummary `json:"remuneracao_base,omitempty"`
 		OtherRemunerations DataSummary `json:"outras_remuneracoes,omitempty"`
 	}
 	type Summaries struct {
 		MemberActive Summary `json:"membros_ativos,omitempty"`
 	}
 
+	type MIError struct {
+		ErrorMessage string `json:"err_msg,omitempty"`
+		Status       int32  `json:"status,omitempty"`
+		Cmd          string `json:"cmd,omitempty"`
+	}
 	type SummaryzedMI struct {
-		AgencyID string    `json:"id_orgao,omitempty"`
-		Month    int       `json:"mes,omitempty"`
-		Year     int       `json:"ano,omitempty"`
-		Summary  Summaries `json:"sumarios,omitempty"`
-		Package  Backup    `json:"pacote_de_dados,omitempty"`
+		AgencyID string     `json:"id_orgao,omitempty"`
+		Month    int        `json:"mes,omitempty"`
+		Year     int        `json:"ano,omitempty"`
+		Summary  *Summaries `json:"sumarios,omitempty"`
+		Package  *Backup    `json:"pacote_de_dados,omitempty"`
+		Error    *MIError   `json:"error,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
 		for _, mi := range monthlyInfo[i] {
-			summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Month: mi.Month, Year: mi.Year, Package: Backup{
-				URL:  formatDownloadUrl(mi.Package.URL),
-				Hash: mi.Package.Hash,
-			}, Summary: Summaries{
-				MemberActive: Summary{
-					Count: mi.Summary.MemberActive.Count,
-					Wage: DataSummary{
-						Max:     mi.Summary.MemberActive.Wage.Max,
-						Min:     mi.Summary.MemberActive.Wage.Min,
-						Average: mi.Summary.MemberActive.Wage.Average,
-						Total:   mi.Summary.MemberActive.Wage.Total,
+			if mi.ProcInfo == nil {
+				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: nil, Month: mi.Month, Year: mi.Year, Package: &Backup{
+					URL:  formatDownloadUrl(mi.Package.URL),
+					Hash: mi.Package.Hash,
+				}, Summary: &Summaries{
+					MemberActive: Summary{
+						Count: mi.Summary.Count,
+						BaseRemuneration: DataSummary{
+							Max:     mi.Summary.BaseRemuneration.Max,
+							Min:     mi.Summary.BaseRemuneration.Min,
+							Average: mi.Summary.BaseRemuneration.Average,
+							Total:   mi.Summary.BaseRemuneration.Total,
+						},
+						OtherRemunerations: DataSummary{
+							Max:     mi.Summary.OtherRemunerations.Max,
+							Min:     mi.Summary.OtherRemunerations.Min,
+							Average: mi.Summary.OtherRemunerations.Average,
+							Total:   mi.Summary.OtherRemunerations.Total,
+						},
 					},
-					OtherRemunerations: DataSummary{
-						Max:     mi.Summary.MemberActive.Others.Max + mi.Summary.MemberActive.Perks.Max,
-						Min:     mi.Summary.MemberActive.Others.Min + mi.Summary.MemberActive.Perks.Min,
-						Average: mi.Summary.MemberActive.Others.Average + mi.Summary.MemberActive.Perks.Average,
-						Total:   mi.Summary.MemberActive.Others.Total + mi.Summary.MemberActive.Perks.Total,
-					},
-				},
-			}})
+				}})
+			} else {
+				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
+					ErrorMessage: monthlyInfo[i][0].ProcInfo.Stderr,
+					Status:       monthlyInfo[i][0].ProcInfo.Status,
+					Cmd:          monthlyInfo[i][0].ProcInfo.Cmd,
+				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil})
+			}
 		}
 	}
 	return c.JSON(http.StatusOK, summaryzedMI)
