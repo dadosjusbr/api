@@ -319,7 +319,7 @@ func getMonthlyInfo(c echo.Context) error {
 		MemberActive Summary `json:"membros_ativos,omitempty"`
 	}
 	type Metadata struct {
-		NoLoginRequired 	bool 	 `json:"login_nao_necessario"`
+		NoLoginRequired   bool   `json:"login_nao_necessario"`
 		NoCaptchaRequired bool   `json:"captcha_nao_necessario"`
 		Access            string `json:"acesso,omitempty"`
 		Extension         string `json:"extensao,omitempty"`
@@ -327,16 +327,15 @@ func getMonthlyInfo(c echo.Context) error {
 		ConsistentFormat  bool   `json:"manteve_consistencia_no_formato,omitempty"`
 		BaseRevenue       string `json:"remuneracao_basica,omitempty"`
 		OtherRecipes      string `json:"outras_receitas,omitempty"`
-		Expenditure				string `json:"despesas,omitempty"`
+		Expenditure       string `json:"despesas,omitempty"`
 	}
-
 	type SummaryzedMI struct {
 		AgencyID string    `json:"id_orgao,omitempty"`
 		Month    int       `json:"mes,omitempty"`
 		Year     int       `json:"ano,omitempty"`
 		Summary  Summaries `json:"sumarios,omitempty"`
 		Package  Backup    `json:"pacote_de_dados,omitempty"`
-		Meta		 Metadata	 `json:"metadados,omitempty"`
+		Meta     Metadata  `json:"metadados,omitempty"`
 	}
 	type MIError struct {
 		ErrorMessage string `json:"err_msg,omitempty"`
@@ -357,37 +356,37 @@ func getMonthlyInfo(c echo.Context) error {
 			if mi.ProcInfo == nil {
 				summaryzedMI = append(summaryzedMI, SummaryzedMI{
 					AgencyID: mi.AgencyID,
-					Month: mi.Month,
-					Year: mi.Year,
+					Month:    mi.Month,
+					Year:     mi.Year,
 					Package: Backup{
-					URL:  formatDownloadUrl(mi.Package.URL),
-					Hash: mi.Package.Hash,
-				}, Summary: Summaries{
-					MemberActive: Summary{
-						Count: mi.Summary.Count,
-						BaseRemuneration: DataSummary{
-							Max:     mi.Summary.BaseRemuneration.Max,
-							Min:     mi.Summary.BaseRemuneration.Min,
-							Average: mi.Summary.BaseRemuneration.Average,
-							Total:   mi.Summary.BaseRemuneration.Total,
+						URL:  formatDownloadUrl(mi.Package.URL),
+						Hash: mi.Package.Hash,
+					}, Summary: Summaries{
+						MemberActive: Summary{
+							Count: mi.Summary.Count,
+							BaseRemuneration: DataSummary{
+								Max:     mi.Summary.BaseRemuneration.Max,
+								Min:     mi.Summary.BaseRemuneration.Min,
+								Average: mi.Summary.BaseRemuneration.Average,
+								Total:   mi.Summary.BaseRemuneration.Total,
+							},
+							OtherRemunerations: DataSummary{
+								Max:     mi.Summary.OtherRemunerations.Max,
+								Min:     mi.Summary.OtherRemunerations.Min,
+								Average: mi.Summary.OtherRemunerations.Average,
+								Total:   mi.Summary.OtherRemunerations.Total,
+							},
 						},
-						OtherRemunerations: DataSummary{
-							Max:     mi.Summary.OtherRemunerations.Max,
-							Min:     mi.Summary.OtherRemunerations.Min,
-							Average: mi.Summary.OtherRemunerations.Average,
-							Total:   mi.Summary.OtherRemunerations.Total,
-						},
-					},
-				}, Meta: Metadata{
-					NoLoginRequired: mi.Meta.NoLoginRequired,
-					NoCaptchaRequired: mi.Meta.NoCaptchaRequired,
-					Access: mi.Meta.Access,
-					Extension: mi.Meta.Extension,
-					StrictlyTabular: mi.Meta.StrictlyTabular,
-					ConsistentFormat: mi.Meta.ConsistentFormat,
-					BaseRevenue: mi.Meta.BaseRevenue,
-					OtherRecipes: mi.Meta.OtherRecipes,
-					Expenditure: mi.Meta.Expenditure}})
+					}, Meta: Metadata{
+						NoLoginRequired:   mi.Meta.NoLoginRequired,
+						NoCaptchaRequired: mi.Meta.NoCaptchaRequired,
+						Access:            mi.Meta.Access,
+						Extension:         mi.Meta.Extension,
+						StrictlyTabular:   mi.Meta.StrictlyTabular,
+						ConsistentFormat:  mi.Meta.ConsistentFormat,
+						BaseRevenue:       mi.Meta.BaseRevenue,
+						OtherRecipes:      mi.Meta.OtherRecipes,
+						Expenditure:       mi.Meta.Expenditure}})
 			}
 		}
 	}
