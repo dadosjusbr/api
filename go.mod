@@ -9,8 +9,8 @@ require (
 	github.com/codegangsta/envy v0.0.0-20141216192214-4b78388c8ce4 // indirect
 	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d
-	github.com/dadosjusbr/proto v0.0.0-20211015231253-b8391964395a
-	github.com/dadosjusbr/storage v0.0.0-20211022224243-00a21c711bab
+	github.com/dadosjusbr/proto v0.0.0-20211129103514-9c088f1a601c
+	github.com/dadosjusbr/storage v0.0.0-20211202193923-6e289e9854e1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
@@ -30,8 +30,8 @@ require (
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
-	go.mongodb.org/mongo-driver v1.7.3 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	go.mongodb.org/mongo-driver v1.8.0 // indirect
+	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
