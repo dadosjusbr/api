@@ -88,7 +88,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   0,
 				OtherRemunerations: 0,
-				Error:              agencyMonthlyInfo.ProcInfo,
+				Error:              &models.ProcError{Stdout: agencyMonthlyInfo.ProcInfo.Stdout, Stderr: agencyMonthlyInfo.ProcInfo.Stderr},
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 		}
