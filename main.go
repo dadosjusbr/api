@@ -84,6 +84,8 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+
+			// the status 4 is trated as error in system, so, we need to remove all mi with status 4 in ProcInfo indexing
 		} else if agencyMonthlyInfo.ProcInfo != nil && agencyMonthlyInfo.ProcInfo.Status != 4 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   0,
@@ -342,6 +344,7 @@ func getMonthlyInfo(c echo.Context) error {
 						},
 					},
 				}})
+				// the status 4 is trated as error in system, so, we need to remove all mi with status 4 in ProcInfo indexing
 			} else if mi.ProcInfo.Status != 4 {
 				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
 					ErrorMessage: mi.ProcInfo.Stderr,
