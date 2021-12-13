@@ -344,7 +344,7 @@ func getMonthlyInfo(c echo.Context) error {
 						},
 					},
 				}})
-				// the status 4 is trated as error in system, so, we need to remove all mi with status 4 in ProcInfo indexing
+				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 			} else if mi.ProcInfo.Status != 4 {
 				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
 					ErrorMessage: mi.ProcInfo.Stderr,
