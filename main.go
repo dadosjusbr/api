@@ -84,7 +84,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
-		} else if agencyMonthlyInfo.ProcInfo != nil {
+		} else if agencyMonthlyInfo.ProcInfo != nil && agencyMonthlyInfo.ProcInfo.Status != 4 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   0,
 				OtherRemunerations: 0,
@@ -342,11 +342,11 @@ func getMonthlyInfo(c echo.Context) error {
 						},
 					},
 				}})
-			} else {
+			} else if mi.ProcInfo.Status != 4 {
 				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
-					ErrorMessage: monthlyInfo[i][0].ProcInfo.Stderr,
-					Status:       monthlyInfo[i][0].ProcInfo.Status,
-					Cmd:          monthlyInfo[i][0].ProcInfo.Cmd,
+					ErrorMessage: mi.ProcInfo.Stderr,
+					Status:       mi.ProcInfo.Status,
+					Cmd:          mi.ProcInfo.Cmd,
 				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil})
 			}
 		}
