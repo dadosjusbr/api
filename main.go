@@ -85,7 +85,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
-			// the status 4 is trated as error in system, so, we need to remove all mi with status 4 in ProcInfo indexing
+			// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 		} else if agencyMonthlyInfo.ProcInfo != nil && agencyMonthlyInfo.ProcInfo.Status != 4 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   0,
