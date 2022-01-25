@@ -60,9 +60,14 @@ type AgencyTotalsYear struct {
 	SummaryPackage *storage.Package `json:"SummaryPackage,omitempty"`
 }
 
+type ProcError struct {
+	Stdout string `protobuf:"bytes,2,opt,name=stdout,proto3" json:"stdout,omitempty"` // String containing the standard output of the process.
+	Stderr string `protobuf:"bytes,3,opt,name=stderr,proto3" json:"stderr,omitempty"` // String containing the standard error of the process.
+}
+
 // MonthTotals - Detailed info of a month (wage, perks, other)
 type MonthTotals struct {
-	Error              *coleta.ProcInfo
+	Error              *ProcError
 	Month              int
 	BaseRemuneration   float64
 	OtherRemunerations float64
