@@ -289,7 +289,6 @@ func getMonthlyInfo(c echo.Context) error {
 		URL  string `json:"url,omitempty"`
 		Hash string `json:"hash,omitempty"`
 	}
-
 	type DataSummary struct {
 		Max     float64 `json:"max,omitempty"`
 		Min     float64 `json:"min,omitempty"`
@@ -304,7 +303,17 @@ func getMonthlyInfo(c echo.Context) error {
 	type Summaries struct {
 		MemberActive Summary `json:"membros_ativos,omitempty"`
 	}
-
+	type Metadata struct {
+		NoLoginRequired   bool   `json:"login_nao_necessario"`
+		NoCaptchaRequired bool   `json:"captcha_nao_necessario"`
+		Access            string `json:"acesso,omitempty"`
+		Extension         string `json:"extensao,omitempty"`
+		StrictlyTabular   bool   `json:"dados_estritamente_tabulares,omitempty"`
+		ConsistentFormat  bool   `json:"manteve_consistencia_no_formato,omitempty"`
+		BaseRevenue       string `json:"remuneracao_basica,omitempty"`
+		OtherRecipes      string `json:"outras_receitas,omitempty"`
+		Expenditure       string `json:"despesas,omitempty"`
+	}
 	type MIError struct {
 		ErrorMessage string `json:"err_msg,omitempty"`
 		Status       int32  `json:"status,omitempty"`
@@ -316,6 +325,7 @@ func getMonthlyInfo(c echo.Context) error {
 		Year     int        `json:"ano,omitempty"`
 		Summary  *Summaries `json:"sumarios,omitempty"`
 		Package  *Backup    `json:"pacote_de_dados,omitempty"`
+		Meta     *Metadata  `json:"metadados,omitempty`
 		Error    *MIError   `json:"error,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
@@ -341,13 +351,23 @@ func getMonthlyInfo(c echo.Context) error {
 							Total:   mi.Summary.OtherRemunerations.Total,
 						},
 					},
+				}, Meta: &Metadata{
+					NoLoginRequired:   mi.Meta.NoLoginRequired,
+					NoCaptchaRequired: mi.Meta.NoCaptchaRequired,
+					Access:            mi.Meta.Access,
+					Extension:         mi.Meta.Extension,
+					StrictlyTabular:   mi.Meta.StrictlyTabular,
+					ConsistentFormat:  mi.Meta.ConsistentFormat,
+					BaseRevenue:       mi.Meta.BaseRevenue,
+					OtherRecipes:      mi.Meta.OtherRecipes,
+					Expenditure:       mi.Meta.Expenditure,
 				}})
 			} else {
 				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
 					ErrorMessage: monthlyInfo[i][0].ProcInfo.Stderr,
 					Status:       monthlyInfo[i][0].ProcInfo.Status,
 					Cmd:          monthlyInfo[i][0].ProcInfo.Cmd,
-				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil})
+				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil, Meta: nil})
 			}
 		}
 	}
