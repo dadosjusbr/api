@@ -317,8 +317,8 @@ func getMonthlyInfo(c echo.Context) error {
 		Extension         string `json:"extensao,omitempty"`
 		StrictlyTabular   bool   `json:"dados_estritamente_tabulares,omitempty"`
 		ConsistentFormat  bool   `json:"manteve_consistencia_no_formato,omitempty"`
-		HaveEnrollment    bool   `json:"tem_matricula,omitempty"`
-		ThereIsACapacity  bool   `json:"tem_lotacao,omitempty"`
+		HasEnrollment     bool   `json:"tem_matricula,omitempty"`
+		HasCapacity       bool   `json:"tem_lotacao,omitempty"`
 		HasPosition       bool   `json:"tem_cargo,omitempty"`
 		BaseRevenue       string `json:"remuneracao_basica,omitempty"`
 		OtherRecipes      string `json:"outras_receitas,omitempty"`
@@ -374,8 +374,8 @@ func getMonthlyInfo(c echo.Context) error {
 					Extension:         mi.Meta.Extension,
 					StrictlyTabular:   mi.Meta.StrictlyTabular,
 					ConsistentFormat:  mi.Meta.ConsistentFormat,
-					HaveEnrollment:    mi.Meta.HaveEnrollment,
-					ThereIsACapacity:  mi.Meta.ThereIsACapacity,
+					HasEnrollment:     mi.Meta.HaveEnrollment,
+					HasCapacity:       mi.Meta.ThereIsACapacity,
 					HasPosition:       mi.Meta.HasPosition,
 					BaseRevenue:       mi.Meta.BaseRevenue,
 					OtherRecipes:      mi.Meta.OtherRecipes,
@@ -391,7 +391,7 @@ func getMonthlyInfo(c echo.Context) error {
 					ErrorMessage: mi.ProcInfo.Stderr,
 					Status:       mi.ProcInfo.Status,
 					Cmd:          mi.ProcInfo.Cmd,
-				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil, Meta: nil, Score: nil})
+				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil, Meta: nil})
 			}
 		}
 	}
