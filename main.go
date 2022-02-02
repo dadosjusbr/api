@@ -317,9 +317,17 @@ func getMonthlyInfo(c echo.Context) error {
 		Extension         string `json:"extensao,omitempty"`
 		StrictlyTabular   bool   `json:"dados_estritamente_tabulares,omitempty"`
 		ConsistentFormat  bool   `json:"manteve_consistencia_no_formato,omitempty"`
+		HasEnrollment     bool   `json:"tem_matricula,omitempty"`
+		HasCapacity       bool   `json:"tem_lotacao,omitempty"`
+		HasPosition       bool   `json:"tem_cargo,omitempty"`
 		BaseRevenue       string `json:"remuneracao_basica,omitempty"`
 		OtherRecipes      string `json:"outras_receitas,omitempty"`
 		Expenditure       string `json:"despesas,omitempty"`
+	}
+	type Score struct {
+		Score             float64 `json:"indice_transparencia"`
+		CompletenessScore float64 `json:"indice_completude"`
+		EasinessScore     float64 `json:"indice_facilidade"`
 	}
 	type MIError struct {
 		ErrorMessage string `json:"err_msg,omitempty"`
@@ -333,6 +341,7 @@ func getMonthlyInfo(c echo.Context) error {
 		Summary  *Summaries `json:"sumarios,omitempty"`
 		Package  *Backup    `json:"pacote_de_dados,omitempty"`
 		Meta     *Metadata  `json:"metadados,omitempty`
+		Score    *Score     `json:"indice_transparencia,omitempty`
 		Error    *MIError   `json:"error,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
@@ -365,9 +374,16 @@ func getMonthlyInfo(c echo.Context) error {
 					Extension:         mi.Meta.Extension,
 					StrictlyTabular:   mi.Meta.StrictlyTabular,
 					ConsistentFormat:  mi.Meta.ConsistentFormat,
+					HasEnrollment:     mi.Meta.HaveEnrollment,
+					HasCapacity:       mi.Meta.ThereIsACapacity,
+					HasPosition:       mi.Meta.HasPosition,
 					BaseRevenue:       mi.Meta.BaseRevenue,
 					OtherRecipes:      mi.Meta.OtherRecipes,
 					Expenditure:       mi.Meta.Expenditure,
+				}, Score: &Score{
+					Score:             mi.Score.Score,
+					CompletenessScore: mi.Score.CompletenessScore,
+					EasinessScore:     mi.Score.EasinessScore,
 				}})
 				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 			} else if mi.ProcInfo.Status != 4 {
