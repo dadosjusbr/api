@@ -82,6 +82,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
 				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+				CrawlingTimestamp:  agencyMonthlyInfo.CrawlingTimestamp,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
@@ -90,6 +91,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   0,
 				OtherRemunerations: 0,
+				CrawlingTimestamp:  agencyMonthlyInfo.CrawlingTimestamp,
 				Error:              &models.ProcError{Stdout: agencyMonthlyInfo.ProcInfo.Stdout, Stderr: agencyMonthlyInfo.ProcInfo.Stderr},
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)

@@ -71,6 +71,7 @@ type MonthTotals struct {
 	Month              int
 	BaseRemuneration   float64
 	OtherRemunerations float64
+	CrawlingTimestamp  *timestamppb.Timestamp
 }
 
 // DataForChartAtAgencyScreen - contains all necessary data to load chart
