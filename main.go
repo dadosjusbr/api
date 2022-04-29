@@ -30,6 +30,7 @@ type config struct {
 	MongoMICol  string `envconfig:"MONGODB_MICOL" required:"true"`
 	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
 	MongoPkgCol string `envconfig:"MONGODB_PKGCOL" required:"true"`
+	MongoRevCol string `envconfig:"MONGODB_REVCOL" required:"true"`
 
 	// Omited fields
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
@@ -48,7 +49,7 @@ func newClient(c config) (*storage.Client, error) {
 	if c.MongoMICol == "" || c.MongoAgCol == "" {
 		return nil, fmt.Errorf("error creating storage client: db collections must not be empty. MI:\"%s\", AG:\"%s\", PKG:\"%s\"", c.MongoMICol, c.MongoAgCol, c.MongoPkgCol)
 	}
-	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol, c.MongoPkgCol)
+	db, err := storage.NewDBClient(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol, c.MongoPkgCol, c.MongoRevCol)
 	if err != nil {
 		return nil, fmt.Errorf("error creating DB client: %q", err)
 	}
