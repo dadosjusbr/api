@@ -293,6 +293,10 @@ func getMonthlyInfo(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
 	}
 
+	if len(monthlyInfo[agencyName]) == 0 {
+		return c.NoContent(http.StatusNotFound)
+	}
+
 	// we recreate all struct to controll the serialization better
 
 	type Backup struct {
