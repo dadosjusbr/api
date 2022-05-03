@@ -6,7 +6,7 @@ go 1.14
 require (
 	github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d // indirect
 	github.com/dadosjusbr/proto v0.0.0-20220304160723-47e93e9d97b5
-	github.com/dadosjusbr/storage v0.0.0-20220429164600-10bec91b117f
+	github.com/dadosjusbr/storage v0.0.0-20220503142353-6248a1924532
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
