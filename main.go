@@ -102,7 +102,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month
 	})
 	pkg, _ := client.Db.GetPackage(storage.PackageFilterOpts{AgencyID: &aID, Year: &year, Month: nil, Group: nil})
-	agencyTotalsYear := models.AgencyTotalsYear{Year: year, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name, SummaryPackage: pkg}
+	agencyTotalsYear := models.AgencyTotalsYear{Year: year, Agency: agency, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name, SummaryPackage: pkg}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 

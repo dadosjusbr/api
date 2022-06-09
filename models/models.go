@@ -55,6 +55,7 @@ type AgencySummary struct {
 // AgencyTotalsYear - Represents the totals of an year
 type AgencyTotalsYear struct {
 	Year           int
+	Agency         *storage.Agency
 	MonthTotals    []MonthTotals
 	AgencyFullName string
 	SummaryPackage *storage.Package `json:"SummaryPackage,omitempty"`
