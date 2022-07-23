@@ -9,14 +9,16 @@ require (
 	github.com/dadosjusbr/storage v0.0.0-20220603141039-b29d063d880e
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
-	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
+	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.15.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.1 // indirect
+	github.com/lib/pq v1.10.6
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/ncw/swift v1.0.53 // indirect
 	github.com/tidwall/pretty v1.0.2 // indirect
