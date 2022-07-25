@@ -83,7 +83,7 @@ func (p PostgresDB) GetByfilter(query string, arguments []interface{}) ([]models
 	return results, nil
 }
 
-func (p PostgresDB) GetCountResults(query string, arguments []interface{}) (int,error){
+func (p PostgresDB) GetCountResults(query string, arguments []interface{}) (int, error) {
 	var count int
 	var err error
 	if len(arguments) > 0 {
@@ -92,7 +92,7 @@ func (p PostgresDB) GetCountResults(query string, arguments []interface{}) (int,
 		err = p.conn.QueryRow(query).Scan(&count)
 	}
 	if err != nil {
-		return -1, fmt.Errorf("erro ao pegar contagem de resultados: %v",err)
+		return -1, fmt.Errorf("erro ao pegar contagem de resultados: %v", err)
 	}
 	return count, nil
 }

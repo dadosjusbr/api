@@ -7,11 +7,11 @@ import (
 )
 
 type Filter struct {
-	years      []string
-	months     []string
-	agencies   []string
-	categories []string
-	types      []string
+	Years      []string
+	Months     []string
+	Agencies   []string
+	Categories []string
+	Types      []string
 }
 
 func NewFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*Filter, error) {
@@ -51,10 +51,10 @@ func NewFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*Fi
 	}
 
 	return &Filter{
-		years:      years,
-		months:     months,
-		agencies:   agencies,
-		categories: categories,
-		types:      types,
+		Years:      years,
+		Months:     months,
+		Agencies:   agencies,
+		Categories: categories,
+		Types:      types,
 	}, nil
 }

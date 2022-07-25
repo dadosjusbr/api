@@ -9,7 +9,7 @@ require (
 	github.com/dadosjusbr/storage v0.0.0-20220603141039-b29d063d880e
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
-	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
+	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0

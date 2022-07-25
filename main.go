@@ -522,28 +522,28 @@ func remunerationQuery(filter *models.Filter, limit int) string {
 func arguments(filter *models.Filter) []interface{} {
 	var arguments []interface{}
 	if filter != nil {
-		if len(filter.years) > 0 {
-			for _, y := range filter.years {
+		if len(filter.Years) > 0 {
+			for _, y := range filter.Years {
 				arguments = append(arguments, y)
 			}
 		}
-		if len(filter.months) > 0 {
-			for _, m := range filter.months {
+		if len(filter.Months) > 0 {
+			for _, m := range filter.Months {
 				arguments = append(arguments, m)
 			}
 		}
-		if len(filter.agencies) > 0 {
-			for _, a := range filter.agencies {
+		if len(filter.Agencies) > 0 {
+			for _, a := range filter.Agencies {
 				arguments = append(arguments, a)
 			}
 		}
-		if len(filter.categories) > 0 {
-			for _, c := range filter.categories {
+		if len(filter.Categories) > 0 {
+			for _, c := range filter.Categories {
 				arguments = append(arguments, c)
 			}
 		}
-		if len(filter.types) > 0 {
-			for _, t := range filter.types {
+		if len(filter.Types) > 0 {
+			for _, t := range filter.Types {
 				arguments = append(arguments, t)
 			}
 		}
@@ -557,13 +557,13 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	*query = *query + " WHERE"
 
 	//Insere os filtros de ano caso existam
-	if len(filter.years) > 0 {
-		for i := 0; i < len(filter.years); i++ {
+	if len(filter.Years) > 0 {
+		for i := 0; i < len(filter.Years); i++ {
 			if i == 0 {
 				*query = fmt.Sprintf("%s (", *query)
 			}
 			*query = fmt.Sprintf("%s ct.ano = $%d", *query, i+1)
-			if i < len(filter.years)-1 {
+			if i < len(filter.Years)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
 		}
@@ -571,17 +571,17 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	}
 
 	//Insere os filtros de mês
-	if len(filter.months) > 0 {
-		lastIndex := len(filter.years)
+	if len(filter.Months) > 0 {
+		lastIndex := len(filter.Years)
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
-		for i := lastIndex; i < len(filter.months)+lastIndex; i++ {
+		for i := lastIndex; i < len(filter.Months)+lastIndex; i++ {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
 			*query = fmt.Sprintf("%s ct.mes = $%d", *query, i+1)
-			if i < len(filter.months)+lastIndex-1 {
+			if i < len(filter.Months)+lastIndex-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
 		}
@@ -589,17 +589,17 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	}
 
 	//Insere o filtro de órgãos
-	if len(filter.agencies) > 0 {
-		lastIndex := len(filter.years) + len(filter.months)
+	if len(filter.Agencies) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months)
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
-		for i := lastIndex; i < lastIndex+len(filter.agencies); i++ {
+		for i := lastIndex; i < lastIndex+len(filter.Agencies); i++ {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
 			*query = fmt.Sprintf("%s ct.id_orgao = $%d", *query, i+1)
-			if i < lastIndex+len(filter.agencies)-1 {
+			if i < lastIndex+len(filter.Agencies)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
 		}
@@ -607,17 +607,17 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	}
 
 	//Insere o filtro de categoria das remunerações
-	if len(filter.categories) > 0 {
-		lastIndex := len(filter.years) + len(filter.months) + len(filter.agencies)
+	if len(filter.Categories) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
-		for i := lastIndex; i < lastIndex+len(filter.categories); i++ {
+		for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
 			*query = fmt.Sprintf("%s r.tipo = $%d", *query, i+1)
-			if i < lastIndex+len(filter.categories)-1 {
+			if i < lastIndex+len(filter.Categories)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
 		}
@@ -625,17 +625,17 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	}
 
 	//Insere o filtro do tipo de órgãos
-	if len(filter.types) > 0 {
-		lastIndex := len(filter.years) + len(filter.months) + len(filter.agencies) + len(filter.categories)
+	if len(filter.Types) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies) + len(filter.Categories)
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
-		for i := lastIndex; i < lastIndex+len(filter.types); i++ {
+		for i := lastIndex; i < lastIndex+len(filter.Types); i++ {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
 			*query = fmt.Sprintf("%s o.entidade = $%d", *query, i+1)
-			if i < lastIndex+len(filter.categories)-1 {
+			if i < lastIndex+len(filter.Categories)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
 		}
