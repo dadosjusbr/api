@@ -12,6 +12,7 @@ import (
 
 	"github.com/dadosjusbr/remuneracao-magistrados/models"
 	"github.com/dadosjusbr/storage"
+	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
 
 	"github.com/kelseyhightower/envconfig"
@@ -38,11 +39,23 @@ type config struct {
 	// Site env
 	DadosJusURL    string `envconfig:"DADOSJUS_URL" required:"true"`
 	PackageRepoURL string `envconfig:"PACKAGE_REPO_URL" required:"true"`
+
+	// PostgresDB config
+	PgUser     string `envconfig:"PG_USER"`
+	PgPassword string `envconfig:"PG_PASSWORD"`
+	PgDatabase string `envconfig:"PG_DATABASE"`
+	PgHost     string `envconfig:"PG_HOST"`
+	PgPort     string `envconfig:"PG_PORT"`
+
+	// Query limit env
+	SearchLimit   int `envconfig:"SEARCH_LIMIT"`
+	DownloadLimit int `envconfig:"DOWNLOAD_LIMIT"`
 }
 
 var client *storage.Client
 var loc *time.Location
 var conf config
+var postgresDb *PostgresDB
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -405,8 +418,248 @@ func getMonthlyInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, summaryzedMI)
 }
 
+func searchByUrl(c echo.Context) error {
+	var years string
+	var months string
+	var agencies string
+	var categories string
+	var types string
+	//Pegando os query params
+	years = c.QueryParam("anos")
+	months = c.QueryParam("meses")
+	agencies = c.QueryParam("orgaos")
+	categories = c.QueryParam("categorias")
+	types = c.QueryParam("tipos")
+
+	//Criando os filtros a partir dos query params e validando eles
+	filter, err := models.NewFilter(years, months, agencies, categories, types)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// Pegando os resultados da pesquisa a partir dos filtros
+	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.SearchLimit), arguments(filter))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	count, err := postgresDb.GetCountResults(countRemunerationQuery(filter), arguments(filter))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	response := models.SearchResponse{
+		Count:   count,
+		Results: results,
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func downloadByUrl(c echo.Context) error {
+	var years string
+	var months string
+	var agencies string
+	var categories string
+	var types string
+	//Pegando os query params
+	years = c.QueryParam("anos")
+	months = c.QueryParam("meses")
+	agencies = c.QueryParam("orgaos")
+	categories = c.QueryParam("categorias")
+	types = c.QueryParam("tipos")
+
+	//Criando os filtros a partir dos query params e validando eles
+	filter, err := models.NewFilter(years, months, agencies, categories, types)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=download.csv")
+	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
+	err = gocsv.Marshal(results, c.Response().Writer)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
+	}
+	return nil
+}
+
+//Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
+func remunerationQuery(filter *models.Filter, limit int) string {
+	//A query padrão sem os filtros
+	query := ` 
+	SELECT 
+		ct.id_orgao as orgao,
+		ct.mes as mes,
+		ct.ano as ano,
+		c.matricula AS matricula,
+		c.nome AS nome, 
+		c.funcao as funcao,
+		c.local_trabalho as local_trabalho,
+		c.tipo as tipo_empregado,
+		c.ativo as ativo,
+		r.tipo as tipo_remuneracao,
+		r.item as item,
+		r.natureza as natureza,
+		r.valor as valor 
+	FROM contracheques c
+		INNER JOIN remuneracoes r ON r.id_contracheque = c.id
+		INNER JOIN coletas ct ON ct.id = c.id_coleta
+		INNER JOIN orgaos o ON o.id = ct.id_orgao
+	`
+	if filter != nil {
+		addFiltersInQuery(&query, filter)
+	}
+
+	return fmt.Sprintf("%s FETCH FIRST %d ROWS ONLY;", query, limit)
+}
+
+//Função que define os argumentos passados para a query
+func arguments(filter *models.Filter) []interface{} {
+	var arguments []interface{}
+	if filter != nil {
+		if len(filter.Years) > 0 {
+			for _, y := range filter.Years {
+				arguments = append(arguments, y)
+			}
+		}
+		if len(filter.Months) > 0 {
+			for _, m := range filter.Months {
+				arguments = append(arguments, m)
+			}
+		}
+		if len(filter.Agencies) > 0 {
+			for _, a := range filter.Agencies {
+				arguments = append(arguments, a)
+			}
+		}
+		if len(filter.Categories) > 0 {
+			for _, c := range filter.Categories {
+				arguments = append(arguments, c)
+			}
+		}
+		if len(filter.Types) > 0 {
+			for _, t := range filter.Types {
+				arguments = append(arguments, t)
+			}
+		}
+	}
+
+	return arguments
+}
+
+//Função que insere os filtros na query
+func addFiltersInQuery(query *string, filter *models.Filter) {
+	*query = *query + " WHERE"
+
+	//Insere os filtros de ano caso existam
+	if len(filter.Years) > 0 {
+		for i := 0; i < len(filter.Years); i++ {
+			if i == 0 {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s ct.ano = $%d", *query, i+1)
+			if i < len(filter.Years)-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere os filtros de mês
+	if len(filter.Months) > 0 {
+		lastIndex := len(filter.Years)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		for i := lastIndex; i < len(filter.Months)+lastIndex; i++ {
+			if i == lastIndex {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s ct.mes = $%d", *query, i+1)
+			if i < len(filter.Months)+lastIndex-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere o filtro de órgãos
+	if len(filter.Agencies) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		for i := lastIndex; i < lastIndex+len(filter.Agencies); i++ {
+			if i == lastIndex {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s ct.id_orgao = $%d", *query, i+1)
+			if i < lastIndex+len(filter.Agencies)-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere o filtro de categoria das remunerações
+	if len(filter.Categories) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
+			if i == lastIndex {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s r.tipo = $%d", *query, i+1)
+			if i < lastIndex+len(filter.Categories)-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere o filtro do tipo de órgãos
+	if len(filter.Types) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies) + len(filter.Categories)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		for i := lastIndex; i < lastIndex+len(filter.Types); i++ {
+			if i == lastIndex {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s o.entidade = $%d", *query, i+1)
+			if i < lastIndex+len(filter.Categories)-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+}
+
 func formatDownloadUrl(url string) string {
 	return strings.Replace(url, conf.PackageRepoURL, conf.DadosJusURL, -1)
+}
+
+func countRemunerationQuery(filter *models.Filter) string {
+	query := ` 
+	SELECT 
+		COUNT(*)
+	FROM contracheques c
+		INNER JOIN remuneracoes r ON r.id_contracheque = c.id
+		INNER JOIN coletas ct ON ct.id = c.id_coleta
+		INNER JOIN orgaos o ON o.id = ct.id_orgao
+	`
+	if filter != nil {
+		addFiltersInQuery(&query, filter)
+	}
+	return fmt.Sprintf("%s;", query)
 }
 
 func main() {
@@ -425,6 +678,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	pgCredentials, err := NewPgCredentials(conf)
+	if err != nil {
+		log.Fatal("Error creating postgres credentials: %v", err)
+	}
+
+	postgresDb, err = NewPostgresDB(*pgCredentials)
+	if err != nil {
+		log.Fatalf("Error connecting to postgres: %v", err)
+	}
+	defer postgresDb.Disconnect()
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
 
@@ -462,6 +726,10 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
+	// Retorna um conjunto de dados a partir de filtros informados por query params
+	uiAPIGroup.GET("/v2/pesquisar", searchByUrl)
+	// Baixa um conjunto de dados a partir de filtros informados por query params
+	uiAPIGroup.GET("/v2/download", downloadByUrl)
 
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
