@@ -437,7 +437,7 @@ func searchByUrl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	// Pegando os resultados da pesquisa a partir dos filtros
+	// Pegando os resultados da pesquisa a partir dos filtros;
 	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.SearchLimit), arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -449,8 +449,10 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	response := models.SearchResponse{
-		Count:   count,
-		Results: results,
+		Valid:         count <= conf.DownloadLimit,
+		Count:         count,
+		DownloadLimit: conf.DownloadLimit,
+		Results:       results,
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -507,9 +509,8 @@ func remunerationQuery(filter *models.Filter, limit int) string {
 		r.natureza as natureza,
 		r.valor as valor 
 	FROM contracheques c
-		INNER JOIN remuneracoes r ON r.id_contracheque = c.id
+		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
 		INNER JOIN coletas ct ON ct.id = c.id_coleta
-		INNER JOIN orgaos o ON o.id = ct.id_orgao
 	`
 	if filter != nil {
 		addFiltersInQuery(&query, filter)
@@ -652,9 +653,8 @@ func countRemunerationQuery(filter *models.Filter) string {
 	SELECT 
 		COUNT(*)
 	FROM contracheques c
-		INNER JOIN remuneracoes r ON r.id_contracheque = c.id
+		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
 		INNER JOIN coletas ct ON ct.id = c.id_coleta
-		INNER JOIN orgaos o ON o.id = ct.id_orgao
 	`
 	if filter != nil {
 		addFiltersInQuery(&query, filter)
