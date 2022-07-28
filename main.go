@@ -8,7 +8,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/models"
@@ -445,31 +444,16 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	// Enviando as duas chamadas em paralelo, como forma de acelerar a pesquisa.
-	var results []models.SearchResult
-	var count int
-	var errFilter, errCounter error
-	waiter := sync.WaitGroup{}
-	waiter.Add(2)
-	go func() {
-		results, errFilter = postgresDb.Filter(remunerationQuery(filter, conf.SearchLimit), arguments(filter))
-		waiter.Done()
-	}()
-	go func() {
-		count, errCounter = postgresDb.Count(countRemunerationQuery(filter), arguments(filter))
-		waiter.Done()
-	}()
-	waiter.Wait()
-	if errFilter != nil || errCounter != nil {
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit+1), arguments(filter))
+	if err != nil {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-
 	response := models.SearchResponse{
-		Valid:         count <= conf.DownloadLimit,
-		Count:         count,
-		DownloadLimit: conf.DownloadLimit,
-		Results:       results,
+		DownloadAvaliable: len(results) <= conf.DownloadLimit,
+		DownloadLimit:     conf.DownloadLimit,
+		SearchLimit:       conf.SearchLimit,
+		Results:           results[0:conf.SearchLimit], // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
