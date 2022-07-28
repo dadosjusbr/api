@@ -704,6 +704,10 @@ func main() {
 
 	// Internal API configuration
 	uiAPIGroup := e.Group("/uiapi")
+	uiAPIGroup.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		Level: 5,
+	}))
+	uiAPIGroup.Use(middleware.Logger())
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
