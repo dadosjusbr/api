@@ -27,7 +27,7 @@ type PostgresCredentials struct {
 
 //Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
 func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
-	conn, err := sqlx.Open("postgres", pgCredentials.uri)
+	conn, err := sqlx.Open("nrpostgres", pgCredentials.uri)
 	if err != nil {
 		return nil, fmt.Errorf("error while accessing database: %q", err)
 	}
