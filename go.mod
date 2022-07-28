@@ -21,6 +21,8 @@ require (
 	github.com/lib/pq v1.10.6
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/ncw/swift v1.0.53 // indirect
+	github.com/newrelic/go-agent/v3 v3.17.0 // indirect
+	github.com/newrelic/go-agent/v3/integrations/nrecho-v3 v1.0.1 // indirect
 	github.com/tidwall/pretty v1.0.2 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect

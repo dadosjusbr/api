@@ -14,6 +14,8 @@ import (
 	"github.com/dadosjusbr/storage"
 	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
+	"github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
+	"github.com/newrelic/go-agent/v3/newrelic"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
@@ -50,6 +52,10 @@ type config struct {
 	// Query limit env
 	SearchLimit   int `envconfig:"SEARCH_LIMIT"`
 	DownloadLimit int `envconfig:"DOWNLOAD_LIMIT"`
+
+	// Newrelic config
+	NewRelicApp     string `envconfig:"NEWRELIC_APP_NAME"`
+	NewRelicLicense string `envconfig:"NEWRELIC_LICENSE"`
 }
 
 var client *storage.Client
@@ -704,11 +710,20 @@ func main() {
 
 	// Internal API configuration
 	uiAPIGroup := e.Group("/uiapi")
-	uiAPIGroup.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-		Level: 5,
-	}))
 	uiAPIGroup.Use(middleware.Logger())
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
+		if conf.NewRelicApp == "" || conf.NewRelicLicense == "" {
+			log.Fatalf("Missing environment variables NEWRELIC_APP_NAME or NEWRELIC_LICENSE")
+		}
+		app, err := newrelic.NewApplication(
+			newrelic.ConfigAppName(conf.NewRelicApp),
+			newrelic.ConfigLicense(conf.NewRelicLicense),
+			newrelic.ConfigAppLogForwardingEnabled(true),
+		)
+		if err != nil {
+			log.Fatalf("Error bringin up new relic:%q", err)
+		}
+		uiAPIGroup.Use(nrecho.Middleware(app))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
