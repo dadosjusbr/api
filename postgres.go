@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/models"
 	"github.com/jmoiron/sqlx"
@@ -26,6 +28,11 @@ func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
 	conn, err := sqlx.Open("postgres", pgCredentials.uri)
 	if err != nil {
 		return nil, fmt.Errorf("error while accessing database: %q", err)
+	}
+	ctx, canc := context.WithTimeout(context.Background(), 30*time.Second)
+	defer canc()
+	if err := conn.DB.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("Error connecting to postgres (creds:%+v):%w", pgCredentials, err)
 	}
 	return &PostgresDB{
 		conn,
