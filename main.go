@@ -462,7 +462,7 @@ func searchByUrl(c echo.Context) error {
 		returnedResults = results[0:upper]
 	}
 	response := models.SearchResponse{
-		DownloadAvailable:  len(results) <= conf.DownloadLimit,
+		DownloadAvailable:  len(results) > 0 && len(results) <= conf.DownloadLimit,
 		NumRowsIfAvailable: len(results),
 		DownloadLimit:      conf.DownloadLimit,
 		SearchLimit:        conf.SearchLimit,
