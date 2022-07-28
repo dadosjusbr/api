@@ -444,12 +444,12 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.SearchLimit), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.SearchLimit), arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	count, err := postgresDb.GetCountResults(countRemunerationQuery(filter), arguments(filter))
+	count, err := postgresDb.Count(countRemunerationQuery(filter), arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -482,7 +482,7 @@ func downloadByUrl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -715,15 +715,16 @@ func main() {
 		if conf.NewRelicApp == "" || conf.NewRelicLicense == "" {
 			log.Fatalf("Missing environment variables NEWRELIC_APP_NAME or NEWRELIC_LICENSE")
 		}
-		app, err := newrelic.NewApplication(
+		nr, err := newrelic.NewApplication(
 			newrelic.ConfigAppName(conf.NewRelicApp),
 			newrelic.ConfigLicense(conf.NewRelicLicense),
 			newrelic.ConfigAppLogForwardingEnabled(true),
 		)
+		postgresDb.newrelic = nr
 		if err != nil {
 			log.Fatalf("Error bringin up new relic:%q", err)
 		}
-		uiAPIGroup.Use(nrecho.Middleware(app))
+		uiAPIGroup.Use(nrecho.Middleware(nr))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
