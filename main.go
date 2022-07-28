@@ -450,10 +450,11 @@ func searchByUrl(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	response := models.SearchResponse{
-		DownloadAvailable: len(results) <= conf.DownloadLimit,
-		DownloadLimit:     conf.DownloadLimit,
-		SearchLimit:       conf.SearchLimit,
-		Results:           results[0:conf.SearchLimit], // retornando os SearchLimit primeiros elementos.
+		DownloadAvailable:  len(results) <= conf.DownloadLimit,
+		NumRowsIfAvailable: len(results),
+		DownloadLimit:      conf.DownloadLimit,
+		SearchLimit:        conf.SearchLimit,
+		Results:            results[0:conf.SearchLimit], // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
