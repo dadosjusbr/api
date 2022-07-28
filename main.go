@@ -704,9 +704,6 @@ func main() {
 
 	// Internal API configuration
 	uiAPIGroup := e.Group("/uiapi")
-	uiAPIGroup.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-		Level: 5,
-	}))
 	uiAPIGroup.Use(middleware.Logger())
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
