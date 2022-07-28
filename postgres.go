@@ -7,7 +7,7 @@ import (
 
 	"github.com/dadosjusbr/remuneracao-magistrados/models"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	_ "github.com/newrelic/go-agent/v3/integrations/nrpq"
 )
 
 type PostgresDB struct {
