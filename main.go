@@ -449,12 +449,24 @@ func searchByUrl(c echo.Context) error {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
+
+	returnedResults := []models.SearchResult{}
+	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
+	if len(results) > 0 {
+		// Nesse caso, precisamos checamos se a quantidade de resultados
+		// é menor que o search limit (para evitar array out of bounds)
+		upper := conf.SearchLimit
+		if len(results) < conf.SearchLimit {
+			upper = len(results)
+		}
+		returnedResults = results[0:upper]
+	}
 	response := models.SearchResponse{
 		DownloadAvailable:  len(results) <= conf.DownloadLimit,
 		NumRowsIfAvailable: len(results),
 		DownloadLimit:      conf.DownloadLimit,
 		SearchLimit:        conf.SearchLimit,
-		Results:            results[0:conf.SearchLimit], // retornando os SearchLimit primeiros elementos.
+		Results:            returnedResults, // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
