@@ -495,22 +495,19 @@ func remunerationQuery(filter *models.Filter, limit int) string {
 	//A query padrão sem os filtros
 	query := ` 
 	SELECT 
-		ct.id_orgao as orgao,
-		ct.mes as mes,
-		ct.ano as ano,
+		c.id_orgao as orgao,
+		c.mes as mes,
+		c.ano as ano,
 		c.matricula AS matricula,
 		c.nome AS nome, 
-		c.funcao as funcao,
-		c.local_trabalho as local_trabalho,
-		c.tipo as tipo_empregado,
-		c.ativo as ativo,
-		r.tipo as tipo_remuneracao,
-		r.item as item,
+		c.funcao as cargo,
+		c.local_trabalho as lotacao,
+		r.categoria as categoria,
+		r.item as detalhamento_contracheque,
 		r.natureza as natureza,
 		r.valor as valor 
 	FROM contracheques c
 		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
-		INNER JOIN coletas ct ON ct.id = c.id_coleta
 	`
 	if filter != nil {
 		addFiltersInQuery(&query, filter)
@@ -540,13 +537,19 @@ func arguments(filter *models.Filter) []interface{} {
 		}
 		if len(filter.Categories) > 0 {
 			for _, c := range filter.Categories {
-				arguments = append(arguments, c)
+				if c == "outras"{
+					arguments = append(arguments, "OUTRAS REMUNERAÇÕES")
+				}
+				if c == "base"{
+					arguments = append(arguments, "SALÁRIO BASE")
+				}
+				if c == "descontos"{
+					arguments = append(arguments, "DESCONTOS")
+				}
 			}
 		}
-		if len(filter.Types) > 0 {
-			for _, t := range filter.Types {
-				arguments = append(arguments, t)
-			}
+		if filter.Types != "" {
+				arguments = append(arguments, fmt.Sprintf("%%%s%%",filter.Types) )
 		}
 	}
 
@@ -563,7 +566,7 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			if i == 0 {
 				*query = fmt.Sprintf("%s (", *query)
 			}
-			*query = fmt.Sprintf("%s ct.ano = $%d", *query, i+1)
+			*query = fmt.Sprintf("%s c.ano = $%d", *query, i+1)
 			if i < len(filter.Years)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
@@ -581,7 +584,7 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
-			*query = fmt.Sprintf("%s ct.mes = $%d", *query, i+1)
+			*query = fmt.Sprintf("%s c.mes = $%d", *query, i+1)
 			if i < len(filter.Months)+lastIndex-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
@@ -599,7 +602,7 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
-			*query = fmt.Sprintf("%s ct.id_orgao = $%d", *query, i+1)
+			*query = fmt.Sprintf("%s c.id_orgao = $%d", *query, i+1)
 			if i < lastIndex+len(filter.Agencies)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
@@ -617,7 +620,7 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
-			*query = fmt.Sprintf("%s r.tipo = $%d", *query, i+1)
+			*query = fmt.Sprintf("%s r.categoria = $%d", *query, i+1)
 			if i < lastIndex+len(filter.Categories)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
@@ -626,21 +629,9 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	}
 
 	//Insere o filtro do tipo de órgãos
-	if len(filter.Types) > 0 {
+	if filter.Types != "" {
 		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies) + len(filter.Categories)
-		if lastIndex > 0 {
-			*query = fmt.Sprintf("%s AND", *query)
-		}
-		for i := lastIndex; i < lastIndex+len(filter.Types); i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s o.entidade = $%d", *query, i+1)
-			if i < lastIndex+len(filter.Categories)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
-		}
-		*query = fmt.Sprintf("%s)", *query)
+		*query = fmt.Sprintf("%s AND ( c.id_orgao like $%d )", *query,lastIndex + 1)
 	}
 }
 
@@ -654,7 +645,6 @@ func countRemunerationQuery(filter *models.Filter) string {
 		COUNT(*)
 	FROM contracheques c
 		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
-		INNER JOIN coletas ct ON ct.id = c.id_coleta
 	`
 	if filter != nil {
 		addFiltersInQuery(&query, filter)
