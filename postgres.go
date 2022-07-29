@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/dadosjusbr/remuneracao-magistrados/models"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	_ "github.com/newrelic/go-agent/v3/integrations/nrpq"
+	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 type PostgresDB struct {
-	conn *sqlx.DB
+	conn     *sqlx.DB
+	newrelic *newrelic.Application
 }
 
 type PostgresCredentials struct {
@@ -23,12 +27,17 @@ type PostgresCredentials struct {
 
 //Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
 func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
-	conn, err := sqlx.Open("postgres", pgCredentials.uri)
+	conn, err := sqlx.Open("nrpostgres", pgCredentials.uri)
 	if err != nil {
 		return nil, fmt.Errorf("error while accessing database: %q", err)
 	}
+	ctx, canc := context.WithTimeout(context.Background(), 30*time.Second)
+	defer canc()
+	if err := conn.DB.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("Error connecting to postgres (creds:%+v):%w", pgCredentials, err)
+	}
 	return &PostgresDB{
-		conn,
+		conn: conn,
 	}, nil
 }
 
@@ -69,13 +78,16 @@ func (p *PostgresDB) Disconnect() error {
 	return nil
 }
 
-func (p PostgresDB) GetByfilter(query string, arguments []interface{}) ([]models.SearchResult, error) {
+func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchResult, error) {
 	results := []models.SearchResult{}
 	var err error
+	txn := p.newrelic.StartTransaction("pg.Filter")
+	defer txn.End()
+	ctx := newrelic.NewContext(context.Background(), txn)
 	if len(arguments) > 0 {
-		err = p.conn.Select(&results, query, arguments...)
+		err = p.conn.SelectContext(ctx, &results, query, arguments...)
 	} else {
-		err = p.conn.Select(&results, query)
+		err = p.conn.SelectContext(ctx, &results, query)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("erro ao fazer a seleção por filtro: %v", err)
@@ -83,13 +95,17 @@ func (p PostgresDB) GetByfilter(query string, arguments []interface{}) ([]models
 	return results, nil
 }
 
-func (p PostgresDB) GetCountResults(query string, arguments []interface{}) (int, error) {
+func (p PostgresDB) Count(query string, arguments []interface{}) (int, error) {
 	var count int
 	var err error
+
+	txn := p.newrelic.StartTransaction("pg.Count")
+	defer txn.End()
+	ctx := newrelic.NewContext(context.Background(), txn)
 	if len(arguments) > 0 {
-		err = p.conn.QueryRow(query, arguments...).Scan(&count)
+		err = p.conn.QueryRowContext(ctx, query, arguments...).Scan(&count)
 	} else {
-		err = p.conn.QueryRow(query).Scan(&count)
+		err = p.conn.QueryRowContext(ctx, query).Scan(&count)
 	}
 	if err != nil {
 		return -1, fmt.Errorf("erro ao pegar contagem de resultados: %v", err)

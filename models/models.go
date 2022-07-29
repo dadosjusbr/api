@@ -117,8 +117,9 @@ type SearchResult struct {
 
 //A resposta que será enviada pela rota de pesquisa
 type SearchResponse struct {
-	Valid         bool           `json:"valid"`
-	Count         int            `json:"count"`
-	DownloadLimit int            `json:"download_limit"`
-	Results       []SearchResult `json:"result"`
+	DownloadAvailable  bool           `json:"download_available"`
+	NumRowsIfAvailable int            `json:"num_rows_if_available"`
+	SearchLimit        int            `json:"search_limit"`
+	DownloadLimit      int            `json:"download_limit"`
+	Results            []SearchResult `json:"result"`
 }

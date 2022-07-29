@@ -14,6 +14,8 @@ import (
 	"github.com/dadosjusbr/storage"
 	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
+	"github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
+	"github.com/newrelic/go-agent/v3/newrelic"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo"
@@ -50,6 +52,10 @@ type config struct {
 	// Query limit env
 	SearchLimit   int `envconfig:"SEARCH_LIMIT"`
 	DownloadLimit int `envconfig:"DOWNLOAD_LIMIT"`
+
+	// Newrelic config
+	NewRelicApp     string `envconfig:"NEWRELIC_APP_NAME"`
+	NewRelicLicense string `envconfig:"NEWRELIC_LICENSE"`
 }
 
 var client *storage.Client
@@ -438,21 +444,29 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.SearchLimit), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit+1), arguments(filter))
 	if err != nil {
+		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	count, err := postgresDb.GetCountResults(countRemunerationQuery(filter), arguments(filter))
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+	returnedResults := []models.SearchResult{}
+	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
+	if len(results) > 0 {
+		// Nesse caso, precisamos checamos se a quantidade de resultados
+		// é menor que o search limit (para evitar array out of bounds)
+		upper := conf.SearchLimit
+		if len(results) < conf.SearchLimit {
+			upper = len(results)
+		}
+		returnedResults = results[0:upper]
 	}
-
 	response := models.SearchResponse{
-		Valid:         count <= conf.DownloadLimit,
-		Count:         count,
-		DownloadLimit: conf.DownloadLimit,
-		Results:       results,
+		DownloadAvailable:  len(results) > 0 && len(results) <= conf.DownloadLimit,
+		NumRowsIfAvailable: len(results),
+		DownloadLimit:      conf.DownloadLimit,
+		SearchLimit:        conf.SearchLimit,
+		Results:            returnedResults, // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -476,7 +490,7 @@ func downloadByUrl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := postgresDb.GetByfilter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -694,7 +708,21 @@ func main() {
 
 	// Internal API configuration
 	uiAPIGroup := e.Group("/uiapi")
+	uiAPIGroup.Use(middleware.Logger())
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
+		if conf.NewRelicApp == "" || conf.NewRelicLicense == "" {
+			log.Fatalf("Missing environment variables NEWRELIC_APP_NAME or NEWRELIC_LICENSE")
+		}
+		nr, err := newrelic.NewApplication(
+			newrelic.ConfigAppName(conf.NewRelicApp),
+			newrelic.ConfigLicense(conf.NewRelicLicense),
+			newrelic.ConfigAppLogForwardingEnabled(true),
+		)
+		postgresDb.newrelic = nr
+		if err != nil {
+			log.Fatalf("Error bringin up new relic:%q", err)
+		}
+		uiAPIGroup.Use(nrecho.Middleware(nr))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
