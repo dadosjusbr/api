@@ -108,10 +108,9 @@ type SearchResult struct {
 	Matricula                *string `db:"matricula" json:"matricula" csv:"matricula" tableheader:"matricula"`
 	Nome                     string  `db:"nome" json:"nome" csv:"nome" tableheader:"nome"`
 	Cargo                    *string `db:"cargo" json:"cargo" csv:"cargo" tableheader:"cargo"`
-	Lotacao                  *string `db:"lotacao" json:"lotação" csv:"lotação" tableheader:"lotação"`
-	Categoria                string  `db:"categoria" json:"categoria" csv:"categoria" tableheader:"categoria"`
+	Lotacao                  *string `db:"lotacao" json:"lotacao" csv:"lotacao" tableheader:"lotacao"`
+	Categoria                string  `db:"categoria_contracheque" json:"categoria_contracheque" csv:"categoria_contracheque" tableheader:"categoria_contracheque"`
 	DetalhamentoContracheque string  `db:"detalhamento_contracheque" json:"detalhamento_contracheque" csv:"detalhamento_contracheque" tableheader:"detalhamento_contracheque"`
-	Natureza                 string  `db:"natureza" json:"natureza" csv:"natureza" tableheader:"natureza"`
 	Valor                    float64 `db:"valor" json:"valor" csv:"valor" tableheader:"valor"`
 }
 

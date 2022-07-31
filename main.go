@@ -514,11 +514,10 @@ func remunerationQuery(filter *models.Filter, limit int) string {
 		c.ano as ano,
 		c.matricula AS matricula,
 		c.nome AS nome, 
-		c.funcao as cargo,
-		c.local_trabalho as lotacao,
-		r.categoria as categoria,
-		r.item as detalhamento_contracheque,
-		r.natureza as natureza,
+		c.cargo as cargo,
+		c.lotacao as lotacao,
+		r.categoria_contracheque as categoria_contracheque,
+		r.detalhamento_contracheque as detalhamento_contracheque,
 		r.valor as valor 
 	FROM contracheques c
 		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
@@ -551,15 +550,7 @@ func arguments(filter *models.Filter) []interface{} {
 		}
 		if len(filter.Categories) > 0 {
 			for _, c := range filter.Categories {
-				if c == "outras"{
-					arguments = append(arguments, "OUTRAS REMUNERAÇÕES")
-				}
-				if c == "base"{
-					arguments = append(arguments, "SALÁRIO BASE")
-				}
-				if c == "descontos"{
-					arguments = append(arguments, "DESCONTOS")
-				}
+				arguments = append(arguments, c)
 			}
 		}
 		if filter.Types != "" {
@@ -634,7 +625,7 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
-			*query = fmt.Sprintf("%s r.categoria = $%d", *query, i+1)
+			*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
 			if i < lastIndex+len(filter.Categories)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
