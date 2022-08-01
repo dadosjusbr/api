@@ -628,7 +628,7 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			if i == lastIndex {
 				*query = fmt.Sprintf("%s (", *query)
 			}
-			*query = fmt.Sprintf("%s r.tipo = $%d", *query, i+1)
+			*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
 			if i < lastIndex+len(filter.Categories)-1 {
 				*query = fmt.Sprintf("%s OR", *query)
 			}
