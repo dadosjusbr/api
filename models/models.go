@@ -102,19 +102,16 @@ type GeneralTotals struct {
 
 //Os campos que serão trazido pela query de pesquisa
 type SearchResult struct {
-	Orgao           string  `db:"orgao" json:"orgao" csv:"orgao" tableheader:"orgao"`
-	Mes             int     `db:"mes" json:"mes" csv:"mes" tableheader:"mes"`
-	Ano             int     `db:"ano" json:"ano" csv:"ano" tableheader:"ano"`
-	Matricula       *string `db:"matricula" json:"matricula" csv:"matricula" tableheader:"matricula"`
-	Nome            string  `db:"nome" json:"nome" csv:"nome" tableheader:"nome"`
-	Funcao          *string `db:"funcao" json:"funcao" csv:"funcao" tableheader:"funcao"`
-	LocalTrabalho   *string `db:"local_trabalho" json:"local_trabalho" csv:"local_trabalho" tableheader:"local_trabalho"`
-	TipoEmpregado   string  `db:"tipo_empregado" json:"tipo_empregado" csv:"tipo_empregado" tableheader:"tipo_empregado"`
-	Ativo           bool    `db:"ativo" json:"ativo" csv:"ativo" tableheader:"ativo"`
-	TipoRemuneracao string  `db:"tipo_remuneracao" json:"tipo_remuneracao" csv:"tipo_remuneracao" tableheader:"tipo_remuneracao"`
-	Item            string  `db:"item" json:"item" csv:"item" tableheader:"item"`
-	Natureza        string  `db:"natureza" json:"natureza" csv:"natureza" tableheader:"natureza"`
-	Valor           float64 `db:"valor" json:"valor" csv:"valor" tableheader:"valor"`
+	Orgao                    string  `db:"orgao" json:"orgao" csv:"orgao" tableheader:"orgao"`
+	Mes                      int     `db:"mes" json:"mes" csv:"mes" tableheader:"mes"`
+	Ano                      int     `db:"ano" json:"ano" csv:"ano" tableheader:"ano"`
+	Matricula                *string `db:"matricula" json:"matricula" csv:"matricula" tableheader:"matricula"`
+	Nome                     string  `db:"nome" json:"nome" csv:"nome" tableheader:"nome"`
+	Cargo                    *string `db:"cargo" json:"cargo" csv:"cargo" tableheader:"cargo"`
+	Lotacao                  *string `db:"lotacao" json:"lotacao" csv:"lotacao" tableheader:"lotacao"`
+	CategoriaContracheque    string  `db:"categoria_contracheque" json:"categoria_contracheque" csv:"categoria_contracheque" tableheader:"categoria_contracheque"`
+	DetalhamentoContracheque string  `db:"detalhamento_contracheque" json:"detalhamento_contracheque" csv:"detalhamento_contracheque" tableheader:"detalhamento_contracheque"`
+	Valor                    float64 `db:"valor" json:"valor" csv:"valor" tableheader:"valor"`
 }
 
 //A resposta que será enviada pela rota de pesquisa

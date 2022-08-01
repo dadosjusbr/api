@@ -514,13 +514,10 @@ func remunerationQuery(filter *models.Filter, limit int) string {
 		ct.ano as ano,
 		c.matricula AS matricula,
 		c.nome AS nome, 
-		c.funcao as funcao,
-		c.local_trabalho as local_trabalho,
-		c.tipo as tipo_empregado,
-		c.ativo as ativo,
-		r.tipo as tipo_remuneracao,
-		r.item as item,
-		r.natureza as natureza,
+		c.cargo as cargo,
+		c.lotacao as lotacao,
+		r.categoria_contracheque as categoria_contracheque,
+		r.detalhamento_contracheque as detalhamento_contracheque,
 		r.valor as valor 
 	FROM contracheques c
 		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
