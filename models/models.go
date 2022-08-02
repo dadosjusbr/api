@@ -109,7 +109,7 @@ type SearchResult struct {
 	Nome                     string  `db:"nome" json:"nome" csv:"nome" tableheader:"nome"`
 	Cargo                    *string `db:"cargo" json:"cargo" csv:"cargo" tableheader:"cargo"`
 	Lotacao                  *string `db:"lotacao" json:"lotacao" csv:"lotacao" tableheader:"lotacao"`
-	Categoria                string  `db:"categoria_contracheque" json:"categoria_contracheque" csv:"categoria_contracheque" tableheader:"categoria_contracheque"`
+	CategoriaContracheque    string  `db:"categoria_contracheque" json:"categoria_contracheque" csv:"categoria_contracheque" tableheader:"categoria_contracheque"`
 	DetalhamentoContracheque string  `db:"detalhamento_contracheque" json:"detalhamento_contracheque" csv:"detalhamento_contracheque" tableheader:"detalhamento_contracheque"`
 	Valor                    float64 `db:"valor" json:"valor" csv:"valor" tableheader:"valor"`
 }
