@@ -495,7 +495,7 @@ func downloadByUrl(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	c.Response().Header().Set("Content-Disposition", "attachment; filename=download.csv")
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
 	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
 	err = gocsv.Marshal(results, c.Response().Writer)
 	if err != nil {
