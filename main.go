@@ -553,10 +553,9 @@ func arguments(filter *models.Filter) []interface{} {
 				arguments = append(arguments, c)
 			}
 		}
-		if len(filter.Types) > 0 {
-			for _, t := range filter.Types {
-				arguments = append(arguments, t)
-			}
+		if filter.Types != "" {
+			// Adicionando '% %' na clausura LIKE
+			arguments = append(arguments, fmt.Sprintf("%%%s%%", filter.Types))
 		}
 	}
 
@@ -636,21 +635,9 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 	}
 
 	//Insere o filtro do tipo de órgãos
-	if len(filter.Types) > 0 {
+	if filter.Types != "" {
 		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies) + len(filter.Categories)
-		if lastIndex > 0 {
-			*query = fmt.Sprintf("%s AND", *query)
-		}
-		for i := lastIndex; i < lastIndex+len(filter.Types); i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s o.entidade = $%d", *query, i+1)
-			if i < lastIndex+len(filter.Categories)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
-		}
-		*query = fmt.Sprintf("%s)", *query)
+		*query = fmt.Sprintf("%s AND ( c.id_orgao like $%d )", *query, lastIndex+1)
 	}
 }
 
