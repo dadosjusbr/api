@@ -6,3 +6,4 @@ exportEnvVars.sh
 .env
 node_modules/
 gin-bin*
+api

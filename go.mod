@@ -1,5 +1,5 @@
 // +heroku goVersion go1.17
-module github.com/dadosjusbr/remuneracao-magistrados
+module github.com/dadosjusbr/api
 
 go 1.17
 

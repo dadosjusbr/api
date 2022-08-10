@@ -1,1 +1,1 @@
-web: remuneracao-magistrados
+web: api

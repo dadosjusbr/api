@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dadosjusbr/remuneracao-magistrados/models"
+	"github.com/dadosjusbr/api/models"
 	"github.com/dadosjusbr/storage"
 	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
@@ -665,7 +665,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	loc = l
-	if err := envconfig.Process("remuneracao-magistrados", &conf); err != nil {
+	if err := envconfig.Process("api", &conf); err != nil {
 		log.Fatal(err.Error())
 	}
 
