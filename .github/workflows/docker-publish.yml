@@ -25,7 +25,7 @@ jobs:
   build-and-push-image:
     strategy:
       matrix:
-        platform: [linux/amd64, linux/arm64]
+        platform: [amd64, arm64]
 
     runs-on: ubuntu-latest
     permissions:
