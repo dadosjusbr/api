@@ -1,38 +1,8 @@
 version: "3"
 services:
-  database:
-    build:
-      dockerfile: ./database.dockerfile
-      context: "."
-    environment:
-      POSTGRES_HOST: ${PG_HOST}
-      POSTGRES_DB: ${PG_DATABASE}
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_USER: ${PG_USER}
-    ports:
-      - 5432:${PG_PORT}
-
   api:
-    build:
-      dockerfile: ./Dockerfile
-      context: "."
-    environment:
-      - PORT=$PORT
-      - MONGODB_URI=$MONGODB_URI
-      - MONGODB_NAME=$MONGODB_NAME
-      - MONGODB_MICOL=$MONGODB_MICOL
-      - MONGODB_AGCOL=$MONGODB_PKGCOL
-      - MONGODB_REVCOL=$MONGODB_REVCOL
-      - DADOSJUSBR_ENV=$DADOSJUSBR_ENV
-      - DADOSJUS_URL=$DADOSJUS_URL
-      - PACKAGE_REPO_URL=$PACKAGE_REPO_URL
-      - SEARCH_LIMIT=$SEARCH_LIMIT
-      - DOWNLOAD_LIMIT=$DOWNLOAD_LIMIT
-      - PG_PORT=$PG_PORT
-      - PG_HOST=$PG_HOST
-      - PG_DATABASE=$PG_DATABASE
-      - PG_USER=$PG_USER
-      - PG_PASSWORD=$PG_PASSWORD
-      - API_PORT=$API_PORT
+    image: ghcr.io/dadosjusbr/api:main
+    env_file:
+      - .env
     ports:
-      - 8080:${API_PORT}
+      - 80:8080

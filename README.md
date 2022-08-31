@@ -88,7 +88,7 @@ $ go run .
 Para rodar o servidor utilizando o Docker, execute o seguinte comando no terminal:
 
 ```console
-$ docker-compose up -d --build
+$ docker-compose -f docker-compose-dev.yml up -d
 ```
 
 Para exibir os logs do docker e saber se ocorreu tudo bem:
@@ -97,6 +97,13 @@ Para exibir os logs do docker e saber se ocorreu tudo bem:
 $ docker-compose logs
 ```
 
+Para parar o container
+
+```console
+$ docker-compose -f docker-compose-dev.yml down
+```
+
 ## Testando servidor
 
 Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://{HOST}:{API_PORT}/v1/orgaos
+
