@@ -23,6 +23,11 @@ env:
 
 jobs:
   build:
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [ amd64, arm64 ]
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -63,6 +68,6 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:amd64
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.platform }}
