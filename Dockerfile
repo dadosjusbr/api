@@ -1,19 +1,16 @@
-FROM golang:alpine
+FROM golang:1.17.0-alpine AS builder
 
-WORKDIR /app
-
+WORKDIR /build
 COPY ./go.* ./
-
-RUN go mod tidy
-
+RUN go mod download
 COPY . .
- 
+RUN go build -o api
+
+FROM alpine
+
+COPY --from=builder /build/api /
 EXPOSE $API_PORT
-
-EXPOSE $PORT
-
-ENV PORT=$PORT \
-    MONGODB_URI=$MONGODB_URI \
+ENV MONGODB_URI=$MONGODB_URI \
     MONGODB_NAME=$MONGODB_NAME \
     MONGODB_MICOL=$MONGODB_MICOL \
     MONGODB_AGCOL=$MONGODB_AGCOL \
@@ -30,5 +27,4 @@ ENV PORT=$PORT \
     PG_USER=$PG_USER \
     PG_PASSWORD=$PG_PASSWORD \
     API_PORT=$API_PORT
-
-CMD ["go","run","."]
+CMD ["/api"]

@@ -35,6 +35,4 @@ services:
       - PG_PASSWORD=$PG_PASSWORD
       - API_PORT=$API_PORT
     ports:
-      - 3333:${API_PORT}
-    depends_on:
-      - database
+      - 8080:${API_PORT}

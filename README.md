@@ -22,6 +22,7 @@ Esse projeto foi elaborado com o intuito de praticar a cidadania e tornar os dad
 ## Como rodar a aplicação localmente?
 
 #
+
 ### Caso você não tenha [Docker](https://www.docker.com/get-started/) e o [Docker compose](https://docs.docker.com/compose/install/) instalados na sua máquina, é necessário as seguintes dependências:
 
 - [MongoDb](https://docs.mongodb.com/guides/server/install/) Versão 3.6+
@@ -29,7 +30,9 @@ Esse projeto foi elaborado com o intuito de praticar a cidadania e tornar os dad
 - [GoLang](https://golang.org/doc/install) Versão 1.14+
 
 - [Postgresql](https://www.postgresql.org/download/) Versão 14.4+
+
 #
+
 ### Fazer o download do repositório remuneraçoes:
 
 ```console
@@ -38,40 +41,42 @@ $ git clone https://github.com/dadosjusbr/api.git
 
 ### Após a instalação, Renomear o arquivo `.env.example` na raiz do projeto para `.env` e configurar suas variáveis de ambiente:
 
-
-Variável          | Descrição
------------------ | -----------------
-API_PORT              | Porta que servirá a API
-MONGODB_URI       | URI de conexão com o mongobd
-MONGODB_NAME      | Nome do banco de dados mongodb
-MONGODB_MICOL     | Nome da coleção de **informações de remunerações mensais**
-MONGODB_AGCOL     | Nome da coleção de **órgãos**
-MONGODB_PKGCOL    | Nome da coleção de **arquivos coletados**
-DADOSJUSBR_ENV    | `Development|Production` Ambiente
-DADOSJUS_URL      | URI utilizada para mapeamento dos arquivos para download para o site do dados jus
-PACKAGE_REPO_URL  | URI utilizada para mapeamento dos arquivos para download para o repositório de arquivos swift
-SEARCH_LIMIT      | Número limite de dados que a rota de pesquisa irá trazer     
-DOWNLOAD_LIMIT    | Número limite de dados que a rota de download irá baixar
-PG_PORT           | Porta de conexão com o banco de dados postgres
-PG_HOST           | Host do banco de dados postgres
-PG_DATABASE       | Nome do banco de dados postgres postgres
-NEWRELIC_APP_NAME | Nome do app New Relic
-NEWRELIC_LICENSE  | Licensa New Relic
+| Variável          | Descrição                                                                                     |
+| ----------------- | --------------------------------------------------------------------------------------------- | -------------------- |
+| API_PORT          | Porta que servirá a API                                                                       |
+| MONGODB_URI       | URI de conexão com o mongobd                                                                  |
+| MONGODB_NAME      | Nome do banco de dados mongodb                                                                |
+| MONGODB_MICOL     | Nome da coleção de **informações de remunerações mensais**                                    |
+| MONGODB_AGCOL     | Nome da coleção de **órgãos**                                                                 |
+| MONGODB_PKGCOL    | Nome da coleção de **arquivos coletados**                                                     |
+| DADOSJUSBR_ENV    | `Development                                                                                  | Production` Ambiente |
+| DADOSJUS_URL      | URI utilizada para mapeamento dos arquivos para download para o site do dados jus             |
+| PACKAGE_REPO_URL  | URI utilizada para mapeamento dos arquivos para download para o repositório de arquivos swift |
+| SEARCH_LIMIT      | Número limite de dados que a rota de pesquisa irá trazer                                      |
+| DOWNLOAD_LIMIT    | Número limite de dados que a rota de download irá baixar                                      |
+| PG_PORT           | Porta de conexão com o banco de dados postgres                                                |
+| PG_HOST           | Host do banco de dados postgres                                                               |
+| PG_DATABASE       | Nome do banco de dados postgres postgres                                                      |
+| NEWRELIC_APP_NAME | Nome do app New Relic                                                                         |
+| NEWRELIC_LICENSE  | Licensa New Relic                                                                             |
 
 > ## Atenção
-Caso você utilize o Docker para executar o script, saiba que o host do banco de dados postgres precisa ser o endereço IP da sua máquina, pois o Docker não consegue acessar o banco utilizando "localhost" como host local.
-Para saber o endereço IP da sua máquina, rode o seguinte comando no terminal: 
+>
+> Caso você utilize o Docker para executar o script, saiba que o host do banco de dados postgres precisa ser o endereço IP da sua máquina, pois o Docker não consegue acessar o banco utilizando "localhost" como host local.
+> Para saber o endereço IP da sua máquina, rode o seguinte comando no terminal:
 
 ```console
-$ curl ifconfig.me
+$ hostname -I | cut -d" " -f1
 ```
 
-Será exibido algo parecido com isso: 
-> 123.456.789.10%  
+Será exibido algo parecido com isso:
+
+> 123.456.789.10%
 
 Copie tudo que estiver antes do "%" e cole na variável de ambiente PG_HOST
 
 ## Rodando o servidor sem Docker
+
 Para rodar o servidor sem utilizar o Docker, execute o seguinte comando no terminal:
 
 ```console
@@ -79,10 +84,11 @@ $ go run .
 ```
 
 ## Rodando o servidor com Docker
+
 Para rodar o servidor utilizando o Docker, execute o seguinte comando no terminal:
 
 ```console
-$ docker-compose up -d
+$ docker-compose up -d --build
 ```
 
 Para exibir os logs do docker e saber se ocorreu tudo bem:
@@ -90,5 +96,7 @@ Para exibir os logs do docker e saber se ocorreu tudo bem:
 ```console
 $ docker-compose logs
 ```
-# 
-### Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://localhost:{API_PORT}
+
+## Testando servidor
+
+Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://{HOST}:{API_PORT}/v1/orgaos
