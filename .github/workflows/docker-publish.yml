@@ -61,7 +61,6 @@ jobs:
 
     strategy:
       matrix:
-        tag: [main-amd, main-arm]
         platform: [linux/amd64, linux/arm64]
 
     runs-on: ubuntu-latest
@@ -80,7 +79,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ matrix.tag }}
+          tags: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ matrix.platform }}
+          platforms: "linux/${{ matrix.platform }}"
 
