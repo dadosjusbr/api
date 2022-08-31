@@ -6,4 +6,3 @@ services:
       - .env
     ports:
       - 80:8080
-
