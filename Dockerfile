@@ -8,9 +8,18 @@ RUN go build -o api
 
 FROM alpine
 
+# Important when starting API locally.
+RUN apk add --no-cache tzdata
+
+# Copia binário a partir do ambiente builder
 COPY --from=builder /build/api /
-EXPOSE $API_PORT
-ENV MONGODB_URI=$MONGODB_URI \
+
+# É necessário expor ao menos uma porta
+EXPOSE 8081
+
+# Declara e exporta variáveis de ambiente necessárias.
+ENV PORT=$PORT \
+    MONGODB_URI=$MONGODB_URI \
     MONGODB_NAME=$MONGODB_NAME \
     MONGODB_MICOL=$MONGODB_MICOL \
     MONGODB_AGCOL=$MONGODB_AGCOL \
@@ -25,6 +34,7 @@ ENV MONGODB_URI=$MONGODB_URI \
     PG_HOST=$PG_HOST \
     PG_DATABASE=$PG_DATABASE \
     PG_USER=$PG_USER \
-    PG_PASSWORD=$PG_PASSWORD \
-    API_PORT=$API_PORT
+    PG_PASSWORD=$PG_PASSWORD
+
+# Inicia a API
 CMD ["/api"]

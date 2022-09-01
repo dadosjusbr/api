@@ -43,7 +43,7 @@ $ git clone https://github.com/dadosjusbr/api.git
 
 | Variável          | Descrição                                                                                     |
 | ----------------- | --------------------------------------------------------------------------------------------- | -------------------- |
-| API_PORT          | Porta que servirá a API                                                                       |
+| PORT              | Porta que servirá a API                                                                       |
 | MONGODB_URI       | URI de conexão com o mongobd                                                                  |
 | MONGODB_NAME      | Nome do banco de dados mongodb                                                                |
 | MONGODB_MICOL     | Nome da coleção de **informações de remunerações mensais**                                    |
@@ -105,5 +105,5 @@ $ docker-compose -f docker-compose-dev.yml down
 
 ## Testando servidor
 
-Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://{HOST}:{API_PORT}/v1/orgaos
+Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://{HOST}:{PORT}/v1/orgaos
 
