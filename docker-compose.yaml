@@ -1,0 +1,9 @@
+version: '3'
+services:
+  site:
+    build:
+      context: '.'
+    env_file:
+      - .env
+    ports:
+      - 80:8081
