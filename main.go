@@ -262,6 +262,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 	}
 	data, err := client.Db.GetGeneralMonthlyInfosFromYear(year)
 	if err != nil {
+		fmt.Println("Error searching for monthly info from year: %w", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
 	return c.JSON(http.StatusOK, data)
@@ -270,6 +271,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 func getAllAgencies(c echo.Context) error {
 	agencies, err := client.Db.GetAllAgencies()
 	if err != nil {
+		fmt.Println("Error while listing agencies: %w", err)
 		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
 	}
 	return c.JSON(http.StatusOK, agencies)
