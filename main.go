@@ -221,27 +221,27 @@ func getSummaryOfAgency(c echo.Context) error {
 func generalSummaryHandler(c echo.Context) error {
 	agencyAmount, err := client.GetAgenciesCount()
 	if err != nil {
-		log.Printf("Error buscando dados: %q", err)
+		log.Printf("Error buscando dados - GetAgenciesCount: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados:"))
 	}
 	miCount, err := client.GetNumberOfMonthsCollected()
 	if err != nil {
-		log.Printf("Error buscando dados: %q", err)
+		log.Printf("Error buscando dados - GetNumberOfMonthsCollected: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
 	fmonth, fyear, err := client.GetFirstDateWithMonthlyInfo()
 	if err != nil {
-		log.Printf("Error buscando dados: %q", err)
+		log.Printf("Error buscando dados - GetFirstDateWithMonthlyInfo: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
 	lmonth, lyear, err := client.GetLastDateWithMonthlyInfo()
 	if err != nil {
-		log.Printf("Error buscando dados: %q", err)
+		log.Printf("Error buscando dados - GetLastDateWithMonthlyInfo: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
 	remunerationSummary, err := client.Db.GetRemunerationSummary()
 	if err != nil {
-		log.Printf("Error buscando dados: %q", err)
+		log.Printf("Error buscando dados - GetRemunerationSummary: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
 	}
 	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
