@@ -701,10 +701,10 @@ func main() {
 		Index:  "index.html",
 	}))
 	e.Static("/static", "templates/assets")
+	e.Use(middleware.Logger())
 
 	// Internal API configuration
 	uiAPIGroup := e.Group("/uiapi")
-	uiAPIGroup.Use(middleware.Logger())
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
 		if conf.NewRelicApp == "" || conf.NewRelicLicense == "" {
 			log.Fatalf("Missing environment variables NEWRELIC_APP_NAME or NEWRELIC_LICENSE")
