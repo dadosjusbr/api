@@ -78,8 +78,8 @@ func (p *PostgresDB) Disconnect() error {
 	return nil
 }
 
-func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchResult, error) {
-	results := []models.SearchResult{}
+func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchDetails, error) {
+	results := []models.SearchDetails{}
 	var err error
 	txn := p.newrelic.StartTransaction("pg.Filter")
 	defer txn.End()

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/zip"
 	"fmt"
 	"log"
 	"net/http"
@@ -446,29 +447,25 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit+1), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter), arguments(filter))
 	if err != nil {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	returnedResults := []models.SearchResult{}
-	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
-	if len(results) > 0 {
-		// Nesse caso, precisamos checamos se a quantidade de resultados
-		// é menor que o search limit (para evitar array out of bounds)
-		upper := conf.SearchLimit
-		if len(results) < conf.SearchLimit {
-			upper = len(results)
-		}
-		returnedResults = results[0:upper]
+	remunerations, numRows, err := getSearchResults(results, filter.Category)
+	if err != nil {
+		log.Printf("Error getting search results: %q", err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
+	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
+
 	response := models.SearchResponse{
-		DownloadAvailable:  len(results) > 0 && len(results) <= conf.DownloadLimit,
-		NumRowsIfAvailable: len(results),
+		DownloadAvailable:  numRows > 0 && numRows <= conf.DownloadLimit,
+		NumRowsIfAvailable: numRows,
 		DownloadLimit:      conf.DownloadLimit,
 		SearchLimit:        conf.SearchLimit,
-		Results:            returnedResults, // retornando os SearchLimit primeiros elementos.
+		Results:            remunerations, // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -492,43 +489,99 @@ func downloadByUrl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter), arguments(filter))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	searchResults, _, err := getSearchResults(results, filter.Category)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
 	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
-	err = gocsv.Marshal(results, c.Response().Writer)
+	err = gocsv.Marshal(searchResults[:conf.DownloadLimit], c.Response().Writer)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
 	}
 	return nil
 }
 
+func getSearchResults(results []models.SearchDetails, category string) ([]models.SearchResult, int, error) {
+	searchResults := []models.SearchResult{}
+
+	numRows := 0
+	if len(results) == 0 {
+		return searchResults, numRows, nil
+	} else {
+		// A razão para essa ordenação é que quando o usuário escolhe diversos órgãos
+		// provavelmente ele prefere ver dados de todos eles. Dessa forma, aumentamos
+		// as chances do preview limitado retornar dados de diversos órgãos.
+		sort.SliceStable(results, func(i, j int) bool {
+			return results[i].Ano < results[j].Ano || results[i].Mes < results[j].Mes
+		})
+		// forma de evitar a descompactação de arquivos que estão
+		// fora do limite e, por isso, não serão retornados.
+		mustUnzip := true
+		for _, r := range results {
+			if mustUnzip {
+				read, err := zip.OpenReader(r.ZipUrl)
+				if err != nil {
+					return nil, numRows, fmt.Errorf("failed to open zip (%s) %q", r.ZipUrl, err)
+				}
+				defer read.Close()
+				remunerations, err := getRemunerationsFromZip(r.ZipUrl)
+				if err != nil {
+					return nil, numRows, fmt.Errorf("failed to get remunerations from zip (%s) %q", r.ZipUrl, err)
+				}
+				// Queremos guardar na memória apenas os resultados da categoria que o
+				// usuário pediu.
+				for _, rem := range remunerations {
+					if category == "" || category == rem.CategoriaContracheque {
+						searchResults = append(searchResults, rem)
+					}
+				}
+			}
+			// Aqui a gente faz um "early return" se o número de resultados for maior
+			// que o limite de resultados da pesquisa.
+			// Isso evita que a gente precise processar todos os arquivos zip.
+			switch category {
+			case "outras":
+				numRows += r.Outras
+			case "base":
+				numRows += r.Base
+			case "descontos":
+				numRows += r.Descontos
+			default:
+				numRows += r.Descontos + r.Base + r.Outras
+			}
+			if numRows > conf.DownloadLimit {
+				mustUnzip = false
+			}
+		}
+		return searchResults[:100], numRows, nil
+	}
+}
+
 //Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
-func remunerationQuery(filter *models.Filter, limit int) string {
+func remunerationQuery(filter *models.Filter) string {
 	//A query padrão sem os filtros
-	query := ` 
-	SELECT 
-		c.id_orgao as orgao,
-		c.mes as mes,
-		c.ano as ano,
-		c.matricula AS matricula,
-		c.nome AS nome, 
-		c.cargo as cargo,
-		c.lotacao as lotacao,
-		r.categoria_contracheque as categoria_contracheque,
-		r.detalhamento_contracheque as detalhamento_contracheque,
-		r.valor as valor 
-	FROM contracheques c
-		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
+	query := `SELECT
+		id_orgao as orgao,
+		mes as mes,
+		ano as ano,
+		linhas_descontos as descontos,
+		linhas_base as base,
+		linhas_outras as outras,
+		zip_url as zip_url
+	FROM remuneracoes 
 	`
 	if filter != nil {
 		addFiltersInQuery(&query, filter)
 	}
 
-	return fmt.Sprintf("%s FETCH FIRST %d ROWS ONLY;", query, limit)
+	return query
 }
 
 //Função que define os argumentos passados para a query
@@ -550,15 +603,11 @@ func arguments(filter *models.Filter) []interface{} {
 				arguments = append(arguments, a)
 			}
 		}
-		if len(filter.Categories) > 0 {
-			for _, c := range filter.Categories {
-				arguments = append(arguments, c)
-			}
-		}
-		if filter.Types != "" {
-			// Adicionando '% %' na clausura LIKE
-			arguments = append(arguments, fmt.Sprintf("%%%s%%", filter.Types))
-		}
+		// if len(filter.Categories) > 0 {
+		// 	for _, c := range filter.Categories {
+		// 		arguments = append(arguments, c)
+		// 	}
+		// }
 	}
 
 	return arguments
@@ -570,16 +619,12 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 
 	//Insere os filtros de ano caso existam
 	if len(filter.Years) > 0 {
+		var years []string
+		years = append(years, filter.Years...)
 		for i := 0; i < len(filter.Years); i++ {
-			if i == 0 {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s c.ano = $%d", *query, i+1)
-			if i < len(filter.Years)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
+			years[i] = fmt.Sprintf("$%d", i+1)
 		}
-		*query = fmt.Sprintf("%s)", *query)
+		*query = fmt.Sprintf("%s ano IN (%s)", *query, strings.Join(years, ","))
 	}
 
 	//Insere os filtros de mês
@@ -588,16 +633,12 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
+		var months []string
+		months = append(months, filter.Months...)
 		for i := lastIndex; i < len(filter.Months)+lastIndex; i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s c.mes = $%d", *query, i+1)
-			if i < len(filter.Months)+lastIndex-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
+			months[i-lastIndex] = fmt.Sprintf("$%d", i+1)
 		}
-		*query = fmt.Sprintf("%s)", *query)
+		*query = fmt.Sprintf("%s mes IN (%s)", *query, strings.Join(months, ","))
 	}
 
 	//Insere o filtro de órgãos
@@ -606,58 +647,35 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
+		var agencies []string
+		agencies = append(agencies, filter.Agencies...)
 		for i := lastIndex; i < lastIndex+len(filter.Agencies); i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s c.id_orgao = $%d", *query, i+1)
-			if i < lastIndex+len(filter.Agencies)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
+			agencies[i-lastIndex] = fmt.Sprintf("$%d", i+1)
 		}
-		*query = fmt.Sprintf("%s)", *query)
+		*query = fmt.Sprintf("%s id_orgao IN (%s)", *query, strings.Join(agencies, ","))
 	}
 
 	//Insere o filtro de categoria das remunerações
-	if len(filter.Categories) > 0 {
-		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
-		if lastIndex > 0 {
-			*query = fmt.Sprintf("%s AND", *query)
-		}
-		for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
-			if i < lastIndex+len(filter.Categories)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
-		}
-		*query = fmt.Sprintf("%s)", *query)
-	}
-
-	//Insere o filtro do tipo de órgãos
-	if filter.Types != "" {
-		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies) + len(filter.Categories)
-		*query = fmt.Sprintf("%s AND ( c.id_orgao like $%d )", *query, lastIndex+1)
-	}
+	// if len(filter.Categories) > 0 {
+	// 	lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
+	// 	if lastIndex > 0 {
+	// 		*query = fmt.Sprintf("%s AND", *query)
+	// 	}
+	// 	for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
+	// 		if i == lastIndex {
+	// 			*query = fmt.Sprintf("%s (", *query)
+	// 		}
+	// 		*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
+	// 		if i < lastIndex+len(filter.Categories)-1 {
+	// 			*query = fmt.Sprintf("%s OR", *query)
+	// 		}
+	// 	}
+	// 	*query = fmt.Sprintf("%s)", *query)
+	// }
 }
 
 func formatDownloadUrl(url string) string {
 	return strings.Replace(url, conf.PackageRepoURL, conf.DadosJusURL, -1)
-}
-
-func countRemunerationQuery(filter *models.Filter) string {
-	query := ` 
-	SELECT 
-		COUNT(*)
-	FROM contracheques c
-		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
-	`
-	if filter != nil {
-		addFiltersInQuery(&query, filter)
-	}
-	return fmt.Sprintf("%s;", query)
 }
 
 func main() {
