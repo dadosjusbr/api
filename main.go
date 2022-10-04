@@ -157,7 +157,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
 	}
-	agencyName := c.Param("orgao")
+	agencyName := strings.ToLower(c.Param("orgao"))
 	agencyMonthlyInfo, _, err := client.GetOMA(month, year, agencyName)
 	if err != nil {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
@@ -291,7 +291,7 @@ func getMonthlyInfo(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
-	agencyName := c.Param("orgao")
+	agencyName := strings.ToLower(c.Param("orgao"))
 	var monthlyInfo map[string][]storage.AgencyMonthlyInfo
 	month := c.Param("mes")
 	if month != "" {
