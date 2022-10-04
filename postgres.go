@@ -78,7 +78,24 @@ func (p *PostgresDB) Disconnect() error {
 	return nil
 }
 
-func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchDetails, error) {
+func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchResult, error) {
+	results := []models.SearchResult{}
+	var err error
+	txn := p.newrelic.StartTransaction("pg.Filter")
+	defer txn.End()
+	ctx := newrelic.NewContext(context.Background(), txn)
+	if len(arguments) > 0 {
+		err = p.conn.SelectContext(ctx, &results, query, arguments...)
+	} else {
+		err = p.conn.SelectContext(ctx, &results, query)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("erro ao fazer a seleção por filtro: %v", err)
+	}
+	return results, nil
+}
+
+func (p PostgresDB) lowCostFilter(query string, arguments []interface{}) ([]models.SearchDetails, error) {
 	results := []models.SearchDetails{}
 	var err error
 	txn := p.newrelic.StartTransaction("pg.Filter")

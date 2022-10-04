@@ -446,25 +446,29 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.Filter(remunerationQuery(filter), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit+1), arguments(filter))
 	if err != nil {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	remunerations, numRows, err := getSearchResults(results, filter.Category)
-	if err != nil {
-		log.Printf("Error getting search results: %q", err)
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
+	returnedResults := []models.SearchResult{}
 	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
-
+	if len(results) > 0 {
+		// Nesse caso, precisamos checamos se a quantidade de resultados
+		// é menor que o search limit (para evitar array out of bounds)
+		upper := conf.SearchLimit
+		if len(results) < conf.SearchLimit {
+			upper = len(results)
+		}
+		returnedResults = results[0:upper]
+	}
 	response := models.SearchResponse{
-		DownloadAvailable:  numRows > 0 && numRows <= conf.DownloadLimit,
-		NumRowsIfAvailable: numRows,
+		DownloadAvailable:  len(results) > 0 && len(results) <= conf.DownloadLimit,
+		NumRowsIfAvailable: len(results),
 		DownloadLimit:      conf.DownloadLimit,
 		SearchLimit:        conf.SearchLimit,
-		Results:            remunerations, // retornando os SearchLimit primeiros elementos.
+		Results:            returnedResults, // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -488,7 +492,83 @@ func downloadByUrl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := postgresDb.Filter(remunerationQuery(filter), arguments(filter))
+	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
+	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
+	err = gocsv.Marshal(results, c.Response().Writer)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
+	}
+	return nil
+}
+
+func lowCostSearch(c echo.Context) error {
+	var years string
+	var months string
+	var agencies string
+	var categories string
+	var types string
+	//Pegando os query params
+	years = c.QueryParam("anos")
+	months = c.QueryParam("meses")
+	agencies = c.QueryParam("orgaos")
+	categories = c.QueryParam("categorias")
+	types = c.QueryParam("tipos")
+
+	//Criando os filtros a partir dos query params e validando eles
+	filter, err := models.NewFilter(years, months, agencies, categories, types)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// Pegando os resultados da pesquisa a partir dos filtros;
+	results, err := postgresDb.lowCostFilter(lowCostRemunerationQuery(filter), lowCostArguments(filter))
+	if err != nil {
+		log.Printf("Error querying BD (filter or counter):%q", err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	remunerations, numRows, err := getSearchResults(results, filter.Category)
+	if err != nil {
+		log.Printf("Error getting search results: %q", err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
+
+	response := models.SearchResponse{
+		DownloadAvailable:  numRows > 0 && numRows <= conf.DownloadLimit,
+		NumRowsIfAvailable: numRows,
+		DownloadLimit:      conf.DownloadLimit,
+		SearchLimit:        conf.SearchLimit,
+		Results:            remunerations, // retornando os SearchLimit primeiros elementos.
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func lowCostDownload(c echo.Context) error {
+	var years string
+	var months string
+	var agencies string
+	var categories string
+	var types string
+	//Pegando os query params
+	years = c.QueryParam("anos")
+	months = c.QueryParam("meses")
+	agencies = c.QueryParam("orgaos")
+	categories = c.QueryParam("categorias")
+	types = c.QueryParam("tipos")
+
+	//Criando os filtros a partir dos query params e validando eles
+	filter, err := models.NewFilter(years, months, agencies, categories, types)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	results, err := postgresDb.lowCostFilter(lowCostRemunerationQuery(filter), lowCostArguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -559,7 +639,7 @@ func getSearchResults(results []models.SearchDetails, category string) ([]models
 }
 
 //Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
-func remunerationQuery(filter *models.Filter) string {
+func lowCostRemunerationQuery(filter *models.Filter) string {
 	//A query padrão sem os filtros
 	query := `SELECT
 		id_orgao as orgao,
@@ -569,7 +649,7 @@ func remunerationQuery(filter *models.Filter) string {
 		linhas_base as base,
 		linhas_outras as outras,
 		zip_url as zip_url
-	FROM remuneracoes 
+	FROM remuneracoes_zips 
 	`
 	if filter != nil {
 		addFiltersInQuery(&query, filter)
@@ -578,8 +658,32 @@ func remunerationQuery(filter *models.Filter) string {
 	return query
 }
 
+func remunerationQuery(filter *models.Filter, limit int) string {
+	//A query padrão sem os filtros
+	query := ` 
+	SELECT 
+		c.id_orgao as orgao,
+		c.mes as mes,
+		c.ano as ano,
+		c.matricula AS matricula,
+		c.nome AS nome, 
+		c.cargo as cargo,
+		c.lotacao as lotacao,
+		r.categoria_contracheque as categoria_contracheque,
+		r.detalhamento_contracheque as detalhamento_contracheque,
+		r.valor as valor 
+	FROM contracheques c
+		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
+	`
+	if filter != nil {
+		addFiltersInQuery(&query, filter)
+	}
+
+	return fmt.Sprintf("%s FETCH FIRST %d ROWS ONLY;", query, limit)
+}
+
 //Função que define os argumentos passados para a query
-func arguments(filter *models.Filter) []interface{} {
+func lowCostArguments(filter *models.Filter) []interface{} {
 	var arguments []interface{}
 	if filter != nil {
 		if len(filter.Years) > 0 {
@@ -602,6 +706,36 @@ func arguments(filter *models.Filter) []interface{} {
 		// 		arguments = append(arguments, c)
 		// 	}
 		// }
+	}
+
+	return arguments
+}
+
+func arguments(filter *models.Filter) []interface{} {
+	var arguments []interface{}
+	if filter != nil {
+		if len(filter.Years) > 0 {
+			for _, y := range filter.Years {
+				arguments = append(arguments, y)
+			}
+		}
+		if len(filter.Months) > 0 {
+			for _, m := range filter.Months {
+				arguments = append(arguments, m)
+			}
+		}
+		if len(filter.Agencies) > 0 {
+			for _, a := range filter.Agencies {
+				arguments = append(arguments, a)
+			}
+		}
+		if filter.Category != "" {
+			arguments = append(arguments, filter.Category)
+		}
+		if filter.Types != "" {
+			// Adicionando '% %' na clausura LIKE
+			arguments = append(arguments, fmt.Sprintf("%%%s%%", filter.Types))
+		}
 	}
 
 	return arguments
@@ -756,6 +890,10 @@ func main() {
 	uiAPIGroup.GET("/v2/pesquisar", searchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", downloadByUrl)
+
+	uiAPIGroup.GET("/v3/pesquisar", lowCostSearch)
+	// Baixa um conjunto de dados a partir de filtros informados por query params
+	uiAPIGroup.GET("/v3/download", lowCostDownload)
 
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
