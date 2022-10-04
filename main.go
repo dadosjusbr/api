@@ -652,7 +652,7 @@ func lowCostRemunerationQuery(filter *models.Filter) string {
 	FROM remuneracoes_zips 
 	`
 	if filter != nil {
-		addFiltersInQuery(&query, filter)
+		lowCostAddFiltersInQuery(&query, filter)
 	}
 
 	return query
