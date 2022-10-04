@@ -1,7 +1,6 @@
 package main
 
 import (
-	"archive/zip"
 	"fmt"
 	"log"
 	"net/http"
@@ -526,11 +525,6 @@ func getSearchResults(results []models.SearchDetails, category string) ([]models
 		mustUnzip := true
 		for _, r := range results {
 			if mustUnzip {
-				read, err := zip.OpenReader(r.ZipUrl)
-				if err != nil {
-					return nil, numRows, fmt.Errorf("failed to open zip (%s) %q", r.ZipUrl, err)
-				}
-				defer read.Close()
 				remunerations, err := getRemunerationsFromZip(r.ZipUrl)
 				if err != nil {
 					return nil, numRows, fmt.Errorf("failed to get remunerations from zip (%s) %q", r.ZipUrl, err)
