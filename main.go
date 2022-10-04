@@ -741,8 +741,80 @@ func arguments(filter *models.Filter) []interface{} {
 	return arguments
 }
 
-//Função que insere os filtros na query
 func addFiltersInQuery(query *string, filter *models.Filter) {
+	*query = *query + " WHERE"
+
+	//Insere os filtros de ano caso existam
+	if len(filter.Years) > 0 {
+		for i := 0; i < len(filter.Years); i++ {
+			if i == 0 {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s c.ano = $%d", *query, i+1)
+			if i < len(filter.Years)-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere os filtros de mês
+	if len(filter.Months) > 0 {
+		lastIndex := len(filter.Years)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		for i := lastIndex; i < len(filter.Months)+lastIndex; i++ {
+			if i == lastIndex {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s c.mes = $%d", *query, i+1)
+			if i < len(filter.Months)+lastIndex-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere o filtro de órgãos
+	if len(filter.Agencies) > 0 {
+		lastIndex := len(filter.Years) + len(filter.Months)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		for i := lastIndex; i < lastIndex+len(filter.Agencies); i++ {
+			if i == lastIndex {
+				*query = fmt.Sprintf("%s (", *query)
+			}
+			*query = fmt.Sprintf("%s c.id_orgao = $%d", *query, i+1)
+			if i < lastIndex+len(filter.Agencies)-1 {
+				*query = fmt.Sprintf("%s OR", *query)
+			}
+		}
+		*query = fmt.Sprintf("%s)", *query)
+	}
+
+	//Insere o filtro de categoria das remunerações
+	if filter.Category != "" {
+		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
+		if lastIndex > 0 {
+			*query = fmt.Sprintf("%s AND", *query)
+		}
+		*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, lastIndex+1)
+		// for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
+		// 	if i == lastIndex {
+		// 		*query = fmt.Sprintf("%s (", *query)
+		// 	}
+		// 	*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
+		// 	if i < lastIndex+len(filter.Categories)-1 {
+		// 		*query = fmt.Sprintf("%s OR", *query)
+		// 	}
+		// }
+	}
+}
+
+//Função que insere os filtros na query
+func lowCostAddFiltersInQuery(query *string, filter *models.Filter) {
 	*query = *query + " WHERE"
 
 	//Insere os filtros de ano caso existam
