@@ -17,7 +17,10 @@ require (
 	google.golang.org/protobuf v1.28.0
 )
 
+require github.com/jmespath/go-jmespath v0.4.0 // indirect
+
 require (
+	github.com/aws/aws-sdk-go v1.44.111
 	github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-stack/stack v1.8.1 // indirect

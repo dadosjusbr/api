@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/dadosjusbr/api/models"
 	"github.com/dadosjusbr/storage"
 	"github.com/gocarina/gocsv"
@@ -26,6 +28,9 @@ type config struct {
 	Port   int    `envconfig:"PORT"`
 	DBUrl  string `envconfig:"MONGODB_URI"`
 	DBName string `envconfig:"MONGODB_NAME"`
+
+	AwsS3Bucket string `envconfig:"AWS_S3_BUCKET"`
+	AwsRegion   string `envconfig:"AWS_REGION"`
 
 	// StorageDB config
 	MongoURI    string `envconfig:"MONGODB_URI"`
@@ -62,6 +67,7 @@ var client *storage.Client
 var loc *time.Location
 var conf config
 var postgresDb *PostgresDB
+var sess *session.Session
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -544,7 +550,7 @@ func lowCostSearch(c echo.Context) error {
 		NumRowsIfAvailable: numRows,
 		DownloadLimit:      conf.DownloadLimit,
 		SearchLimit:        conf.SearchLimit,
-		Results:            remunerations, // retornando os SearchLimit primeiros elementos.
+		Results:            remunerations[:conf.SearchLimit], // retornando os SearchLimit primeiros elementos.
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -580,7 +586,11 @@ func lowCostDownload(c echo.Context) error {
 
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
 	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
-	err = gocsv.Marshal(searchResults[:conf.DownloadLimit], c.Response().Writer)
+	if len(searchResults) > conf.DownloadLimit {
+		err = gocsv.Marshal(searchResults[:conf.DownloadLimit], c.Response().Writer)
+	} else {
+		err = gocsv.Marshal(searchResults, c.Response().Writer)
+	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
 	}
@@ -602,39 +612,21 @@ func getSearchResults(results []models.SearchDetails, category string) ([]models
 		})
 		// forma de evitar a descompactação de arquivos que estão
 		// fora do limite e, por isso, não serão retornados.
-		mustUnzip := true
+		var paths []string
 		for _, r := range results {
-			if mustUnzip {
-				remunerations, err := getRemunerationsFromZip(r.ZipUrl)
-				if err != nil {
-					return nil, numRows, fmt.Errorf("failed to get remunerations from zip (%s) %q", r.ZipUrl, err)
-				}
-				// Queremos guardar na memória apenas os resultados da categoria que o
-				// usuário pediu.
-				for _, rem := range remunerations {
-					if category == "" || category == rem.CategoriaContracheque {
-						searchResults = append(searchResults, rem)
-					}
-				}
-			}
-			// Aqui a gente faz um "early return" se o número de resultados for maior
-			// que o limite de resultados da pesquisa.
-			// Isso evita que a gente precise processar todos os arquivos zip.
-			switch category {
-			case "outras":
-				numRows += r.Outras
-			case "base":
-				numRows += r.Base
-			case "descontos":
-				numRows += r.Descontos
-			default:
-				numRows += r.Descontos + r.Base + r.Outras
-			}
-			if numRows > conf.DownloadLimit {
-				mustUnzip = false
-			}
+			object := strings.Replace(r.ZipUrl, "https://dadosjusbr-public.s3.amazonaws.com/", "", 1)
+			paths = append(paths, object)
+			// Queremos guardar na memória apenas os resultados da categoria que o
+			// usuário pediu.
 		}
-		return searchResults[:100], numRows, nil
+		searchResults, err := download(aws.BackgroundContext(), sess, conf.AwsS3Bucket, paths)
+		if err != nil {
+			return nil, numRows, fmt.Errorf("failed to get remunerations from s3 %q", err)
+		}
+		// Aqui a gente faz um "early return" se o número de resultados for maior
+		// que o limite de resultados da pesquisa.
+		// Isso evita que a gente precise processar todos os arquivos zip.
+		return searchResults, len(searchResults), nil
 	}
 }
 
@@ -701,11 +693,6 @@ func lowCostArguments(filter *models.Filter) []interface{} {
 				arguments = append(arguments, a)
 			}
 		}
-		// if len(filter.Categories) > 0 {
-		// 	for _, c := range filter.Categories {
-		// 		arguments = append(arguments, c)
-		// 	}
-		// }
 	}
 
 	return arguments
@@ -801,15 +788,6 @@ func addFiltersInQuery(query *string, filter *models.Filter) {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
 		*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, lastIndex+1)
-		// for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
-		// 	if i == lastIndex {
-		// 		*query = fmt.Sprintf("%s (", *query)
-		// 	}
-		// 	*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
-		// 	if i < lastIndex+len(filter.Categories)-1 {
-		// 		*query = fmt.Sprintf("%s OR", *query)
-		// 	}
-		// }
 	}
 }
 
@@ -854,24 +832,6 @@ func lowCostAddFiltersInQuery(query *string, filter *models.Filter) {
 		}
 		*query = fmt.Sprintf("%s id_orgao IN (%s)", *query, strings.Join(agencies, ","))
 	}
-
-	//Insere o filtro de categoria das remunerações
-	// if len(filter.Categories) > 0 {
-	// 	lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
-	// 	if lastIndex > 0 {
-	// 		*query = fmt.Sprintf("%s AND", *query)
-	// 	}
-	// 	for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
-	// 		if i == lastIndex {
-	// 			*query = fmt.Sprintf("%s (", *query)
-	// 		}
-	// 		*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
-	// 		if i < lastIndex+len(filter.Categories)-1 {
-	// 			*query = fmt.Sprintf("%s OR", *query)
-	// 		}
-	// 	}
-	// 	*query = fmt.Sprintf("%s)", *query)
-	// }
 }
 
 func formatDownloadUrl(url string) string {
@@ -905,6 +865,13 @@ func main() {
 		log.Fatalf("Error connecting to postgres: %v", err)
 	}
 	defer postgresDb.Disconnect()
+
+	sess, err = session.NewSession(&aws.Config{
+		Region: aws.String(conf.AwsRegion),
+	})
+	if err != nil {
+		log.Fatalf("Error creating aws session: %v", err)
+	}
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
 
