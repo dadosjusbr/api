@@ -7,18 +7,17 @@ import (
 )
 
 type Filter struct {
-	Years      []string
-	Months     []string
-	Agencies   []string
-	Categories []string
-	Types      string
+	Years    []string
+	Months   []string
+	Agencies []string
+	Category string
+	Types    string
 }
 
 func NewFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*Filter, error) {
 	var years []string
 	var months []string
 	var agencies []string
-	var categories []string
 	var types string
 
 	if yearsQp == "" && monthsQp == "" && agenciesQp == "" && categoriesQp == "" && typesQp == "" {
@@ -43,18 +42,12 @@ func NewFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*Fi
 	if agenciesQp != "" {
 		agencies = strings.Split(agenciesQp, ",")
 	}
-	if categoriesQp != "" {
-		categories = strings.Split(categoriesQp, ",")
-	}
-	if typesQp != "" {
-		types = typesQp
-	}
 
 	return &Filter{
-		Years:      years,
-		Months:     months,
-		Agencies:   agencies,
-		Categories: categories,
-		Types:      types,
+		Years:    years,
+		Months:   months,
+		Agencies: agencies,
+		Category: categoriesQp,
+		Types:    types,
 	}, nil
 }

@@ -101,6 +101,17 @@ type GeneralTotals struct {
 }
 
 //Os campos que serão trazido pela query de pesquisa
+type SearchDetails struct {
+	Descontos int    `db:"descontos" json:"descontos"`
+	Base      int    `db:"base" json:"base"`
+	Outras    int    `db:"outras" json:"outras"`
+	Orgao     string `db:"orgao" json:"orgao"`
+	Mes       int    `db:"mes" json:"mes"`
+	Ano       int    `db:"ano" json:"ano"`
+	ZipUrl    string `db:"zip_url" json:"zip_url"`
+	CsvUrl    string `db:"csv_url" json:"csv_url"`
+}
+
 type SearchResult struct {
 	Orgao                    string  `db:"orgao" json:"orgao" csv:"orgao" tableheader:"orgao"`
 	Mes                      int     `db:"mes" json:"mes" csv:"mes" tableheader:"mes"`

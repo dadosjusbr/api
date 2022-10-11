@@ -27,6 +27,9 @@ type config struct {
 	DBUrl  string `envconfig:"MONGODB_URI"`
 	DBName string `envconfig:"MONGODB_NAME"`
 
+	AwsS3Bucket string `envconfig:"AWS_S3_BUCKET" required:"true"`
+	AwsRegion   string `envconfig:"AWS_REGION" required:"true"`
+
 	// StorageDB config
 	MongoURI    string `envconfig:"MONGODB_URI"`
 	MongoDBName string `envconfig:"MONGODB_NAME"`
@@ -62,6 +65,7 @@ var client *storage.Client
 var loc *time.Location
 var conf config
 var postgresDb *PostgresDB
+var sess *AwsSession
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(c config) (*storage.Client, error) {
@@ -446,7 +450,7 @@ func searchByUrl(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit+1), arguments(filter))
+	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter, conf.DownloadLimit+1), postgresDb.Arguments(filter))
 	if err != nil {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -492,7 +496,7 @@ func downloadByUrl(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := postgresDb.Filter(remunerationQuery(filter, conf.DownloadLimit), arguments(filter))
+	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter, conf.DownloadLimit), postgresDb.Arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -506,158 +510,102 @@ func downloadByUrl(c echo.Context) error {
 	return nil
 }
 
-//Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
-func remunerationQuery(filter *models.Filter, limit int) string {
-	//A query padrão sem os filtros
-	query := ` 
-	SELECT 
-		c.id_orgao as orgao,
-		c.mes as mes,
-		c.ano as ano,
-		c.matricula AS matricula,
-		c.nome AS nome, 
-		c.cargo as cargo,
-		c.lotacao as lotacao,
-		r.categoria_contracheque as categoria_contracheque,
-		r.detalhamento_contracheque as detalhamento_contracheque,
-		r.valor as valor 
-	FROM contracheques c
-		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
-	`
-	if filter != nil {
-		addFiltersInQuery(&query, filter)
+func lowCostSearch(c echo.Context) error {
+	//Pegando os query params
+	years := c.QueryParam("anos")
+	months := c.QueryParam("meses")
+	agencies := c.QueryParam("orgaos")
+	categories := c.QueryParam("categorias")
+	types := c.QueryParam("tipos")
+	zip := c.QueryParam("zip") == "true"
+	//Criando os filtros a partir dos query params e validando eles
+	filter, err := models.NewFilter(years, months, agencies, categories, types)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	return fmt.Sprintf("%s FETCH FIRST %d ROWS ONLY;", query, limit)
+	// Pegando os resultados da pesquisa a partir dos filtros;
+	results, err := postgresDb.LowCostFilter(postgresDb.LowCostRemunerationQuery(filter), postgresDb.LowCostArguments(filter))
+	if err != nil {
+		log.Printf("Error querying BD (filter or counter):%q", err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	remunerations, numRows, err := getSearchResults(conf.SearchLimit, filter.Category, results, zip)
+	if err != nil {
+		log.Printf("Error getting search results: %q", err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	response := models.SearchResponse{
+		DownloadAvailable:  numRows > 0 && numRows <= conf.DownloadLimit,
+		NumRowsIfAvailable: numRows,
+		DownloadLimit:      conf.DownloadLimit,
+		SearchLimit:        conf.SearchLimit,
+		Results:            remunerations, // retornando os SearchLimit primeiros elementos.
+	}
+	return c.JSON(http.StatusOK, response)
 }
 
-//Função que define os argumentos passados para a query
-func arguments(filter *models.Filter) []interface{} {
-	var arguments []interface{}
-	if filter != nil {
-		if len(filter.Years) > 0 {
-			for _, y := range filter.Years {
-				arguments = append(arguments, y)
-			}
-		}
-		if len(filter.Months) > 0 {
-			for _, m := range filter.Months {
-				arguments = append(arguments, m)
-			}
-		}
-		if len(filter.Agencies) > 0 {
-			for _, a := range filter.Agencies {
-				arguments = append(arguments, a)
-			}
-		}
-		if len(filter.Categories) > 0 {
-			for _, c := range filter.Categories {
-				arguments = append(arguments, c)
-			}
-		}
-		if filter.Types != "" {
-			// Adicionando '% %' na clausura LIKE
-			arguments = append(arguments, fmt.Sprintf("%%%s%%", filter.Types))
-		}
+func lowCostDownload(c echo.Context) error {
+	//Pegando os query params
+	years := c.QueryParam("anos")
+	months := c.QueryParam("meses")
+	agencies := c.QueryParam("orgaos")
+	categories := c.QueryParam("categorias")
+	types := c.QueryParam("tipos")
+	zip := c.QueryParam("zip") == "true"
+
+	//Criando os filtros a partir dos query params e validando eles
+	filter, err := models.NewFilter(years, months, agencies, categories, types)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	return arguments
+	results, err := postgresDb.LowCostFilter(postgresDb.LowCostRemunerationQuery(filter), postgresDb.LowCostArguments(filter))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	searchResults, _, err := getSearchResults(conf.DownloadLimit, filter.Category, results, zip)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
+	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
+	if len(searchResults) > conf.DownloadLimit {
+		err = gocsv.Marshal(searchResults[:conf.DownloadLimit], c.Response().Writer)
+	} else {
+		err = gocsv.Marshal(searchResults, c.Response().Writer)
+	}
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
+	}
+	return nil
 }
 
-//Função que insere os filtros na query
-func addFiltersInQuery(query *string, filter *models.Filter) {
-	*query = *query + " WHERE"
-
-	//Insere os filtros de ano caso existam
-	if len(filter.Years) > 0 {
-		for i := 0; i < len(filter.Years); i++ {
-			if i == 0 {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s c.ano = $%d", *query, i+1)
-			if i < len(filter.Years)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
+func getSearchResults(limit int, category string, results []models.SearchDetails, zip bool) ([]models.SearchResult, int, error) {
+	searchResults := []models.SearchResult{}
+	numRows := 0
+	if len(results) == 0 {
+		return searchResults, numRows, nil
+	} else {
+		// A razão para essa ordenação é que quando o usuário escolhe diversos órgãos
+		// provavelmente ele prefere ver dados de todos eles. Dessa forma, aumentamos
+		// as chances do preview limitado retornar dados de diversos órgãos.
+		sort.SliceStable(results, func(i, j int) bool {
+			return results[i].Ano < results[j].Ano || results[i].Mes < results[j].Mes
+		})
+		searchResults, numRows, err := sess.GetRemunerationsFromS3(limit, conf.DownloadLimit, category, conf.AwsS3Bucket, results, zip)
+		if err != nil {
+			return nil, numRows, fmt.Errorf("failed to get remunerations from s3 %q", err)
 		}
-		*query = fmt.Sprintf("%s)", *query)
-	}
-
-	//Insere os filtros de mês
-	if len(filter.Months) > 0 {
-		lastIndex := len(filter.Years)
-		if lastIndex > 0 {
-			*query = fmt.Sprintf("%s AND", *query)
-		}
-		for i := lastIndex; i < len(filter.Months)+lastIndex; i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s c.mes = $%d", *query, i+1)
-			if i < len(filter.Months)+lastIndex-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
-		}
-		*query = fmt.Sprintf("%s)", *query)
-	}
-
-	//Insere o filtro de órgãos
-	if len(filter.Agencies) > 0 {
-		lastIndex := len(filter.Years) + len(filter.Months)
-		if lastIndex > 0 {
-			*query = fmt.Sprintf("%s AND", *query)
-		}
-		for i := lastIndex; i < lastIndex+len(filter.Agencies); i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s c.id_orgao = $%d", *query, i+1)
-			if i < lastIndex+len(filter.Agencies)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
-		}
-		*query = fmt.Sprintf("%s)", *query)
-	}
-
-	//Insere o filtro de categoria das remunerações
-	if len(filter.Categories) > 0 {
-		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies)
-		if lastIndex > 0 {
-			*query = fmt.Sprintf("%s AND", *query)
-		}
-		for i := lastIndex; i < lastIndex+len(filter.Categories); i++ {
-			if i == lastIndex {
-				*query = fmt.Sprintf("%s (", *query)
-			}
-			*query = fmt.Sprintf("%s r.categoria_contracheque = $%d", *query, i+1)
-			if i < lastIndex+len(filter.Categories)-1 {
-				*query = fmt.Sprintf("%s OR", *query)
-			}
-		}
-		*query = fmt.Sprintf("%s)", *query)
-	}
-
-	//Insere o filtro do tipo de órgãos
-	if filter.Types != "" {
-		lastIndex := len(filter.Years) + len(filter.Months) + len(filter.Agencies) + len(filter.Categories)
-		*query = fmt.Sprintf("%s AND ( c.id_orgao like $%d )", *query, lastIndex+1)
+		return searchResults, numRows, nil
 	}
 }
 
 func formatDownloadUrl(url string) string {
 	return strings.Replace(url, conf.PackageRepoURL, conf.DadosJusURL, -1)
-}
-
-func countRemunerationQuery(filter *models.Filter) string {
-	query := ` 
-	SELECT 
-		COUNT(*)
-	FROM contracheques c
-		INNER JOIN remuneracoes r ON r.id_coleta = c.id_coleta AND r.id_contracheque = c.id
-	`
-	if filter != nil {
-		addFiltersInQuery(&query, filter)
-	}
-	return fmt.Sprintf("%s;", query)
 }
 
 func main() {
@@ -688,6 +636,11 @@ func main() {
 	}
 	defer postgresDb.Disconnect()
 
+	sess, err = NewAwsSession(conf.AwsRegion)
+	if err != nil {
+		log.Fatalf("Error creating aws session: %v", err)
+	}
+
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
 
 	e := echo.New()
@@ -714,10 +667,11 @@ func main() {
 			newrelic.ConfigLicense(conf.NewRelicLicense),
 			newrelic.ConfigAppLogForwardingEnabled(true),
 		)
-		postgresDb.newrelic = nr
 		if err != nil {
 			log.Fatalf("Error bringin up new relic:%q", err)
 		}
+		postgresDb.newrelic = nr
+		sess.newrelic = nr
 		uiAPIGroup.Use(nrecho.Middleware(nr))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
@@ -744,6 +698,10 @@ func main() {
 	uiAPIGroup.GET("/v2/pesquisar", searchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", downloadByUrl)
+
+	uiAPIGroup.GET("/v3/pesquisar", lowCostSearch)
+	// Baixa um conjunto de dados a partir de filtros informados por query params
+	uiAPIGroup.GET("/v3/download", lowCostDownload)
 
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
