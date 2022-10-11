@@ -16,11 +16,11 @@ import (
 )
 
 type AwsSession struct {
-	sess *session.Session
+	sess     *session.Session
 	newrelic *newrelic.Application
 }
 
-func NewAwsSession(region string) (*AwsSession,error){
+func NewAwsSession(region string) (*AwsSession, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(region),
 	})
@@ -30,7 +30,7 @@ func NewAwsSession(region string) (*AwsSession,error){
 	return &AwsSession{sess: sess}, nil
 }
 
-func (s AwsSession) GetRemunerationsFromS3(category, scope string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
+func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, bucket string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
 	forDownload := []s3manager.BatchDownloadObject{}
 	var buffer []aws.WriteAtBuffer
 	var paths []string
@@ -38,10 +38,11 @@ func (s AwsSession) GetRemunerationsFromS3(category, scope string, results []mod
 	var mustUnzip = true
 	for _, r := range results {
 		// Forma de evitar o download de arquivos que estão fora do limite.
-		if mustUnzip{
+		if mustUnzip {
 			// Pegando apenas a chave do arquivo zipado.
-			object := strings.Replace(r.ZipUrl, fmt.Sprintf("https://%s.s3.amazonaws.com/",conf.AwsS3Bucket), "", 1)
+			object := strings.Replace(r.ZipUrl, fmt.Sprintf("https://%s.s3.amazonaws.com/", bucket), "", 1)
 			paths = append(paths, object)
+			buffer = append(buffer, aws.WriteAtBuffer{})
 		}
 		/* Aqui a gente faz um "early return" se o número de resultados for maior
 		que o limite de resultados da pesquisa.
@@ -56,17 +57,16 @@ func (s AwsSession) GetRemunerationsFromS3(category, scope string, results []mod
 		default:
 			numRows += r.Descontos + r.Base + r.Outras
 		}
-		if numRows > conf.DownloadLimit {
+		if numRows > downloadLimit {
 			mustUnzip = false
 		}
 	}
-	
+
 	for i, key := range paths {
-		buffer = append(buffer, aws.WriteAtBuffer{})
 		// Criando a lista de objetos que serão baixados do S3.
 		forDownload = append(forDownload, s3manager.BatchDownloadObject{
 			Object: &s3.GetObjectInput{
-				Bucket: aws.String(conf.AwsS3Bucket),
+				Bucket: aws.String(bucket),
 				Key:    aws.String(key),
 			},
 			Writer: &buffer[i],
@@ -77,18 +77,19 @@ func (s AwsSession) GetRemunerationsFromS3(category, scope string, results []mod
 	defer txn.End()
 	ctx := newrelic.NewContext(aws.BackgroundContext(), txn)
 	// Executando o download
-	err := s3manager.NewDownloader(s.sess).DownloadWithIterator(ctx, &s3manager.DownloadObjectsIterator{Objects: forDownload})
+	downloader := s3manager.NewDownloader(s.sess)
+	err := downloader.DownloadWithIterator(ctx, &s3manager.DownloadObjectsIterator{Objects: forDownload})
 	if err != nil {
 		return nil, 0, fmt.Errorf("error downloading files from S3: %q", err)
 	}
-	
+
 	var searchResults []models.SearchResult
 	reachedLimit := false
 	for _, downloadObject := range forDownload {
 		// Queremos processar apenas os dados dentro dos limites definidos.
 		if reachedLimit {
 			break
-		} 
+		}
 		buf, ok := downloadObject.Writer.(*aws.WriteAtBuffer)
 		if !ok {
 			return nil, 0, fmt.Errorf("error converting downloaded object (%s) to WriteAtBuffer", *downloadObject.Object.Key)
@@ -96,12 +97,12 @@ func (s AwsSession) GetRemunerationsFromS3(category, scope string, results []mod
 
 		zipReader, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(len(buf.Bytes())))
 		if err != nil {
-			return nil,0, fmt.Errorf("error creating zip reader: %w", err)
+			return nil, 0, fmt.Errorf("error creating zip reader: %w", err)
 		}
 
 		fReader, err := zipReader.File[0].Open()
 		if err != nil {
-			return nil, 0, fmt.Errorf("error opening zip file (%s): %w",*downloadObject.Object.Key, err)
+			return nil, 0, fmt.Errorf("error opening zip file (%s): %w", *downloadObject.Object.Key, err)
 		}
 		defer fReader.Close()
 
@@ -109,18 +110,10 @@ func (s AwsSession) GetRemunerationsFromS3(category, scope string, results []mod
 		if err := gocsv.Unmarshal(fReader, &r); err != nil {
 			return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
 		}
-		
-		limit := 0
-		// Limitando os resultados de acordo com a rota acessada.
-		if scope == "pesquisa"{
-			limit = conf.SearchLimit
-		} else if scope == "download"{
-			limit = conf.DownloadLimit
-		}
 		/* Queremos guardar na memória apenas os resultados da categoria que o
 		usuário pediu.*/
 		for _, rem := range r {
-			if len(searchResults) < limit{
+			if len(searchResults) < limit {
 				if category == "" || category == rem.CategoriaContracheque {
 					searchResults = append(searchResults, rem)
 				}

@@ -531,7 +531,7 @@ func lowCostSearch(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	remunerations, numRows, err := getSearchResults(results, filter.Category, "pesquisa")
+	remunerations, numRows, err := getSearchResults(conf.SearchLimit, filter.Category, results)
 	if err != nil {
 		log.Printf("Error getting search results: %q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -566,7 +566,7 @@ func lowCostDownload(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	searchResults, _, err := getSearchResults(results, filter.Category, "download")
+	searchResults, _, err := getSearchResults(conf.DownloadLimit, filter.Category, results)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -584,7 +584,7 @@ func lowCostDownload(c echo.Context) error {
 	return nil
 }
 
-func getSearchResults(results []models.SearchDetails, category,scope string) ([]models.SearchResult, int, error) {
+func getSearchResults(limit int, category string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
 	searchResults := []models.SearchResult{}
 	numRows := 0
 	if len(results) == 0 {
@@ -596,8 +596,7 @@ func getSearchResults(results []models.SearchDetails, category,scope string) ([]
 		sort.SliceStable(results, func(i, j int) bool {
 			return results[i].Ano < results[j].Ano || results[i].Mes < results[j].Mes
 		})
-
-		searchResults, numRows, err := sess.GetRemunerationsFromS3(category,scope,results)
+		searchResults, numRows, err := sess.GetRemunerationsFromS3(limit, conf.DownloadLimit, category, conf.AwsS3Bucket, results)
 		if err != nil {
 			return nil, numRows, fmt.Errorf("failed to get remunerations from s3 %q", err)
 		}
