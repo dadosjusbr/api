@@ -165,7 +165,8 @@ func (p PostgresDB) LowCostRemunerationQuery(filter *models.Filter) string {
 		linhas_descontos as descontos,
 		linhas_base as base,
 		linhas_outras as outras,
-		zip_url as zip_url
+		zip_url as zip_url,
+		csv_url as csv_url
 	FROM remuneracoes_zips 
 	`
 	if filter != nil {
@@ -335,5 +336,3 @@ func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 
 	return arguments
 }
-
-

@@ -30,7 +30,7 @@ func NewAwsSession(region string) (*AwsSession, error) {
 	return &AwsSession{sess: sess}, nil
 }
 
-func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, bucket string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
+func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, bucket string, results []models.SearchDetails, shouldZip bool) ([]models.SearchResult, int, error) {
 	forDownload := []s3manager.BatchDownloadObject{}
 	var buffer []aws.WriteAtBuffer
 	var paths []string
@@ -39,9 +39,14 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 	for _, r := range results {
 		// Forma de evitar o download de arquivos que estão fora do limite.
 		if mustUnzip {
-			// Pegando apenas a chave do arquivo zipado.
-			object := strings.Replace(r.ZipUrl, fmt.Sprintf("https://%s.s3.amazonaws.com/", bucket), "", 1)
+			var object string
+			if shouldZip {
+				object = strings.Replace(r.ZipUrl, fmt.Sprintf("https://%s.s3.amazonaws.com/", bucket), "", 1)
+			} else {
+				object = strings.Replace(r.CsvUrl, fmt.Sprintf("https://%s.s3.amazonaws.com/", bucket), "", 1)
+			}
 			paths = append(paths, object)
+			// Pegando apenas a chave do arquivo zipado.
 			buffer = append(buffer, aws.WriteAtBuffer{})
 		}
 		/* Aqui a gente faz um "early return" se o número de resultados for maior
@@ -95,20 +100,26 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 			return nil, 0, fmt.Errorf("error converting downloaded object (%s) to WriteAtBuffer", *downloadObject.Object.Key)
 		}
 
-		zipReader, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(len(buf.Bytes())))
-		if err != nil {
-			return nil, 0, fmt.Errorf("error creating zip reader: %w", err)
-		}
-
-		fReader, err := zipReader.File[0].Open()
-		if err != nil {
-			return nil, 0, fmt.Errorf("error opening zip file (%s): %w", *downloadObject.Object.Key, err)
-		}
-		defer fReader.Close()
-
 		var r []models.SearchResult
-		if err := gocsv.Unmarshal(fReader, &r); err != nil {
-			return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
+		if shouldZip {
+			zipReader, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(len(buf.Bytes())))
+			if err != nil {
+				return nil, 0, fmt.Errorf("error creating zip reader: %w", err)
+			}
+
+			fReader, err := zipReader.File[0].Open()
+			if err != nil {
+				return nil, 0, fmt.Errorf("error opening zip file (%s): %w", *downloadObject.Object.Key, err)
+			}
+			defer fReader.Close()
+
+			if err := gocsv.Unmarshal(fReader, &r); err != nil {
+				return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
+			}
+		} else {
+			if err := gocsv.UnmarshalBytes(buf.Bytes(), &r); err != nil {
+				return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
+			}
 		}
 		/* Queremos guardar na memória apenas os resultados da categoria que o
 		usuário pediu.*/
