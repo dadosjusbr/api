@@ -517,7 +517,6 @@ func lowCostSearch(c echo.Context) error {
 	agencies := c.QueryParam("orgaos")
 	categories := c.QueryParam("categorias")
 	types := c.QueryParam("tipos")
-	zip := c.QueryParam("zip") == "true"
 	//Criando os filtros a partir dos query params e validando eles
 	filter, err := models.NewFilter(years, months, agencies, categories, types)
 	if err != nil {
@@ -531,7 +530,7 @@ func lowCostSearch(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	remunerations, numRows, err := getSearchResults(conf.SearchLimit, filter.Category, results, zip)
+	remunerations, numRows, err := getSearchResults(conf.SearchLimit, filter.Category, results)
 	if err != nil {
 		log.Printf("Error getting search results: %q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -554,7 +553,6 @@ func lowCostDownload(c echo.Context) error {
 	agencies := c.QueryParam("orgaos")
 	categories := c.QueryParam("categorias")
 	types := c.QueryParam("tipos")
-	zip := c.QueryParam("zip") == "true"
 
 	//Criando os filtros a partir dos query params e validando eles
 	filter, err := models.NewFilter(years, months, agencies, categories, types)
@@ -566,25 +564,21 @@ func lowCostDownload(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	searchResults, _, err := getSearchResults(conf.DownloadLimit, filter.Category, results, zip)
+	searchResults, _, err := getSearchResults(conf.DownloadLimit, filter.Category, results)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
 	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
-	if len(searchResults) > conf.DownloadLimit {
-		err = gocsv.Marshal(searchResults[:conf.DownloadLimit], c.Response().Writer)
-	} else {
-		err = gocsv.Marshal(searchResults, c.Response().Writer)
-	}
+	err = gocsv.Marshal(searchResults, c.Response().Writer)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
 	}
 	return nil
 }
 
-func getSearchResults(limit int, category string, results []models.SearchDetails, zip bool) ([]models.SearchResult, int, error) {
+func getSearchResults(limit int, category string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
 	searchResults := []models.SearchResult{}
 	numRows := 0
 	if len(results) == 0 {
@@ -596,7 +590,7 @@ func getSearchResults(limit int, category string, results []models.SearchDetails
 		sort.SliceStable(results, func(i, j int) bool {
 			return results[i].Ano < results[j].Ano || results[i].Mes < results[j].Mes
 		})
-		searchResults, numRows, err := sess.GetRemunerationsFromS3(limit, conf.DownloadLimit, category, conf.AwsS3Bucket, results, zip)
+		searchResults, numRows, err := sess.GetRemunerationsFromS3(limit, conf.DownloadLimit, category, conf.AwsS3Bucket, results)
 		if err != nil {
 			return nil, numRows, fmt.Errorf("failed to get remunerations from s3 %q", err)
 		}

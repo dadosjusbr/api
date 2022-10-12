@@ -18,14 +18,10 @@ require (
 )
 
 require (
-	github.com/cosmtrek/air v1.40.4 // indirect
-	github.com/creack/pty v1.1.18 // indirect
-	github.com/fatih/color v1.13.0 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
+	github.com/stretchr/testify v1.7.1 // indirect
+	gopkg.in/yaml.v3 v3.0.0 // indirect
 )
 
 require (

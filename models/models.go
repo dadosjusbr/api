@@ -109,7 +109,6 @@ type SearchDetails struct {
 	Mes       int    `db:"mes" json:"mes"`
 	Ano       int    `db:"ano" json:"ano"`
 	ZipUrl    string `db:"zip_url" json:"zip_url"`
-	CsvUrl    string `db:"csv_url" json:"csv_url"`
 }
 
 type SearchResult struct {
