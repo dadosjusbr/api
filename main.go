@@ -223,40 +223,12 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func generalSummaryHandler(c echo.Context) error {
-	agencyAmount, err := client.GetAgenciesCount()
+	generalTotals, err := sess.GetGeneralTotalsFromS3(conf.AwsS3Bucket)
 	if err != nil {
-		log.Printf("Error buscando dados - GetAgenciesCount: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados:"))
+		fmt.Println("Error getting general summary handler:%w", err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro acessando resumo geral"))
 	}
-	miCount, err := client.GetNumberOfMonthsCollected()
-	if err != nil {
-		log.Printf("Error buscando dados - GetNumberOfMonthsCollected: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	fmonth, fyear, err := client.GetFirstDateWithMonthlyInfo()
-	if err != nil {
-		log.Printf("Error buscando dados - GetFirstDateWithMonthlyInfo: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	lmonth, lyear, err := client.GetLastDateWithMonthlyInfo()
-	if err != nil {
-		log.Printf("Error buscando dados - GetLastDateWithMonthlyInfo: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	remunerationSummary, err := client.Db.GetRemunerationSummary()
-	if err != nil {
-		log.Printf("Error buscando dados - GetRemunerationSummary: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	return c.JSON(http.StatusOK, models.GeneralTotals{
-		AgencyAmount:             agencyAmount,
-		MonthlyTotalsAmount:      miCount,
-		StartDate:                fdate,
-		EndDate:                  ldate,
-		RemunerationRecordsCount: remunerationSummary.Count,
-		GeneralRemunerationValue: remunerationSummary.Value})
+	return c.JSON(http.StatusOK, generalTotals)
 }
 
 func getGeneralRemunerationFromYear(c echo.Context) error {

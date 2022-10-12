@@ -3,6 +3,7 @@ package main
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -135,4 +136,24 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 		}
 	}
 	return searchResults, numRows, err
+}
+
+func (s AwsSession) GetGeneralTotalsFromS3(bucket string) (*models.GeneralTotals, error) {
+	fileKey := "resumo-geral.json"
+	buff := &aws.WriteAtBuffer{}
+	// Executando o download do resumo geral
+	downloader := s3manager.NewDownloader(s.sess)
+	_, err := downloader.Download(buff, &s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(fileKey),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error downloading '%s' from S3: %w", fileKey, err)
+	}
+	var generalTotals models.GeneralTotals
+	err = json.Unmarshal(buff.Bytes(), &generalTotals)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling '%s':%w", fileKey, err)
+	}
+	return &generalTotals, nil
 }
