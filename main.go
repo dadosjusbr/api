@@ -431,86 +431,6 @@ func getMonthlyInfo(c echo.Context) error {
 }
 
 func searchByUrl(c echo.Context) error {
-	var years string
-	var months string
-	var agencies string
-	var categories string
-	var types string
-	//Pegando os query params
-	years = c.QueryParam("anos")
-	months = c.QueryParam("meses")
-	agencies = c.QueryParam("orgaos")
-	categories = c.QueryParam("categorias")
-	types = c.QueryParam("tipos")
-
-	//Criando os filtros a partir dos query params e validando eles
-	filter, err := models.NewFilter(years, months, agencies, categories, types)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter, conf.DownloadLimit+1), postgresDb.Arguments(filter))
-	if err != nil {
-		log.Printf("Error querying BD (filter or counter):%q", err)
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	returnedResults := []models.SearchResult{}
-	// Devemos retornar um array vazio quando a pesquisa não retornar dados.
-	if len(results) > 0 {
-		// Nesse caso, precisamos checamos se a quantidade de resultados
-		// é menor que o search limit (para evitar array out of bounds)
-		upper := conf.SearchLimit
-		if len(results) < conf.SearchLimit {
-			upper = len(results)
-		}
-		returnedResults = results[0:upper]
-	}
-	response := models.SearchResponse{
-		DownloadAvailable:  len(results) > 0 && len(results) <= conf.DownloadLimit,
-		NumRowsIfAvailable: len(results),
-		DownloadLimit:      conf.DownloadLimit,
-		SearchLimit:        conf.SearchLimit,
-		Results:            returnedResults, // retornando os SearchLimit primeiros elementos.
-	}
-	return c.JSON(http.StatusOK, response)
-}
-
-func downloadByUrl(c echo.Context) error {
-	var years string
-	var months string
-	var agencies string
-	var categories string
-	var types string
-	//Pegando os query params
-	years = c.QueryParam("anos")
-	months = c.QueryParam("meses")
-	agencies = c.QueryParam("orgaos")
-	categories = c.QueryParam("categorias")
-	types = c.QueryParam("tipos")
-
-	//Criando os filtros a partir dos query params e validando eles
-	filter, err := models.NewFilter(years, months, agencies, categories, types)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter, conf.DownloadLimit), postgresDb.Arguments(filter))
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	c.Response().Header().Set("Content-Disposition", "attachment; filename=dadosjusbr-remuneracoes.csv")
-	c.Response().Header().Set("Content-Type", c.Response().Header().Get("Content-Type"))
-	err = gocsv.Marshal(results, c.Response().Writer)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do csv: %q", err))
-	}
-	return nil
-}
-
-func lowCostSearch(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")
 	months := c.QueryParam("meses")
@@ -524,7 +444,7 @@ func lowCostSearch(c echo.Context) error {
 	}
 
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := postgresDb.LowCostFilter(postgresDb.LowCostRemunerationQuery(filter), postgresDb.LowCostArguments(filter))
+	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter), postgresDb.Arguments(filter))
 	if err != nil {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -546,7 +466,7 @@ func lowCostSearch(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func lowCostDownload(c echo.Context) error {
+func downloadByUrl(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")
 	months := c.QueryParam("meses")
@@ -560,7 +480,7 @@ func lowCostDownload(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := postgresDb.LowCostFilter(postgresDb.LowCostRemunerationQuery(filter), postgresDb.LowCostArguments(filter))
+	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter), postgresDb.Arguments(filter))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -692,10 +612,6 @@ func main() {
 	uiAPIGroup.GET("/v2/pesquisar", searchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", downloadByUrl)
-
-	uiAPIGroup.GET("/v3/pesquisar", lowCostSearch)
-	// Baixa um conjunto de dados a partir de filtros informados por query params
-	uiAPIGroup.GET("/v3/download", lowCostDownload)
 
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
