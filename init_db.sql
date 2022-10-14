@@ -33,41 +33,47 @@ CREATE TABLE coletas(
     indice_completude DECIMAL NOT NULL,    -- Componente do índice de transparência resultante da análise dos metadados relacionados a disponibilidade dos dados
     indice_facilidade DECIMAL NOT NULL,    -- Componente do índice de transparência resultante da análise dos metadados relacionados a dificuldade para acessar os dados que estão disponíveis
     indice_transparencia DECIMAL NOT NULL,    -- Nota final, calculada utilizada os componentes de disponibilidade e dificuldade
- 
+    sumario JSON, -- JSON com algumas estatísticas referentes aos membros e remunerações de um órgão
+
+    /*
+    -- O formato de um sumário é parecido com isso:
+    "sumario": {
+        "membros":  214, -- Quantidade de membros ativos
+        "remuneracao_base": {
+            "maximo": 35462.22, -- Valor máximo de uma remuneração recebida por um membro
+            "minimo": 7473.09, -- Valor mínimo de uma remuneração recebida por um membro
+            "media":  33084.63186915894, -- Média das remunerações
+            "total":  7080111.220000014, -- Total das remunerações
+        },
+        "outras_remuneracoes": {
+            "maximo":  78348.23000000001, -- Valor máximo de uma outra remuneração recebida por um membro
+            "media":  9524.795887850474, -- Média das outras remunerações
+            "total":  2038306.3200000015, -- Total das outras remunerações
+        },
+        "histograma_renda": {
+            "10000":  1,  -- Quantidade de membros que recebem até 10 mil reais
+            "20000":  1,  -- Quantidade de membros que recebem entre 10 mil e 20 mil reais
+            "30000":  3,  -- Quantidade de membros que recebem entre 20 mil e 30 mil reais
+            "40000":  3,  -- Quantidade de membros que recebem entre 30 mil e 40 mil reais
+            "50000":  0,  -- Quantidade de membros que recebem entre 40 mil e 50 mil reais
+            "-1":     1,  -- Quantidade de membros que recebem mais de 50 mil reais
+        }
+    }
+    */
     CONSTRAINT coleta_orgao_fk FOREIGN KEY (id_orgao) REFERENCES orgaos(id) ON DELETE CASCADE
 );
 
 CREATE INDEX coletas_indice ON coletas(id_orgao,mes,ano);
 
-CREATE TABLE contracheques(
-    id INT NOT NULL,    -- Identificador da folha de pagamento dentro de uma coleta. Exemplos: 1, 2, 3...
-    id_coleta VARCHAR(25) NOT NULL,    -- Identificador da coleta associada a folha de pagamento
+CREATE TABLE remuneracoes(
     id_orgao VARCHAR(10) NOT NULL,    -- A sigla do órgão em minúsculo. Exemplos tjal, mpms, mpam...
     mes INT NOT NULL,    -- O mês que os dados coletados se referem. 
     ano INT NOT NULL,    -- O ano que os dados coletados se referem. 
-    nome TEXT,    -- Nome do servidor público
-    matricula VARCHAR(50),    -- Matrícula do servidor público
-    cargo TEXT,    -- Cargo do servidor público. Exemplos : PROMOTOR DE JUSTICA DE 1ª ENTRÂNCIA, PROCURADOR DE JUSTICA...
-    lotacao TEXT,    -- O local onde o membro está lotado.
+    linhas_descontos INT NOT NULL, -- Número de linhas para o determinado contracheque
+    linhas_base INT NOT NULL, -- Número de linhas para o determinado contracheque
+    linhas_outras INT NOT NULL, -- Número de linhas para o determinado contracheque
+    zip_url TEXT NOT NULL, -- Link para o zip que contém os dados da remuneração
 
-    CONSTRAINT contracheque_orgao_fk FOREIGN KEY (id_orgao) REFERENCES orgaos(id) ON DELETE CASCADE,
-    CONSTRAINT contracheques_pk PRIMARY KEY (id, id_coleta),
-    CONSTRAINT contracheque_coleta_fk FOREIGN KEY (id_coleta) REFERENCES coletas(id) ON DELETE CASCADE
+    CONSTRAINT remuneracoes_pk PRIMARY KEY (id_orgao, mes, ano )
 );
-
-CREATE INDEX contracheques_indice ON contracheques(id_orgao,mes,ano);
-
-CREATE TABLE remuneracoes(
-    id INT NOT NULL, -- Identificador da remuneração dentro de uma folha de pagamento. Exemplos: 1, 2, 3...,
-    id_contracheque INT NOT NULL,    -- Identificador da folha de pagamento. Exemplos : 1, 2, 3...
-    id_coleta VARCHAR(25) NOT NULL,  -- Identificador da coleta: id_orgao/mes/ano
-    detalhamento_contracheque TEXT NOT NULL,    -- Descrição do ítem de remuneração. Exemplos: diárias, auxílio-alimentação, auxílio moradia...
-    valor DECIMAL NOT NULL,     -- Valor associado ao item de remuneração
-    categoria_contracheque VARCHAR(15) NOT NULL,
-
-    CONSTRAINT remuneracoes_pk PRIMARY KEY (id, id_contracheque, id_coleta),
-    CONSTRAINT remuneracao_contracheque_fk FOREIGN KEY (id_contracheque,id_coleta) REFERENCES contracheques(id,id_coleta) ON DELETE CASCADE
-);
-
-CREATE INDEX remuneracoes_categoria ON remuneracoes(categoria_contracheque);
 

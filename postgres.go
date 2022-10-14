@@ -182,3 +182,61 @@ func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 
 	return arguments
 }
+
+//Contando a quantidade de órgãos que temos no banco
+func (p PostgresDB) CountAgencies() (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM orgaos`
+	err := p.conn.Get(&count, query)
+	if err != nil {
+		return 0, fmt.Errorf("error counting agencies: %q", err)
+	}
+	return count, nil
+}
+
+//Contando a quantidade de coletas(registros de remunerações) que temos no banco
+func (p PostgresDB) CountRemunerationRecords() (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM coletas`
+	err := p.conn.Get(&count, query)
+	if err != nil {
+		return 0, fmt.Errorf("error counting collections: %q", err)
+	}
+	return count, nil
+}
+
+/*Pegando o primeiro registro de remuneração que temos.
+A query ordena os registros por ano e mês e pega o primeiro registro*/
+func (p PostgresDB) GetFirstDateWithRemunerationRecords() (time.Time, error){
+	query := `SELECT ano, mes FROM coletas ORDER BY ano, mes LIMIT 1`
+	var year, month int
+	err := p.conn.QueryRow(query).Scan(&year, &month)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("error getting first date with remuneration records: %q", err)
+	}
+	return time.Date(year, time.Month(month), 2, 0, 0, 0, 0, time.UTC).In(loc), nil
+}
+
+/*Pegando o último registro de remuneração que temos.
+A query ordena, em ordem decrescente, os registros por ano e mês e pega 
+o primeiro registro*/
+func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error){
+	query := `SELECT ano, mes FROM coletas ORDER BY ano DESC, mes DESC LIMIT 1`
+	var year, month int
+	err := p.conn.QueryRow(query).Scan(&year, &month)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("error getting last date with remuneration records: %q", err)
+	}
+	return time.Date(year, time.Month(month), 2, 0, 0, 0, 0, time.UTC).In(loc), nil
+}
+
+/*Pegando a soma de todas as remunerações*/
+func (p PostgresDB) GetGeneralRemunerationValue() (float64, error){
+	var value float64
+	query := `SELECT SUM(CAST(sumario -> 'base_remuneration' ->> 'total' AS DECIMAL) + CAST(sumario -> 'other_remunerations' ->> 'total' AS DECIMAL)) FROM coletas;`
+	err := p.conn.Get(&value, query)
+	if err != nil {
+		return 0, fmt.Errorf("error getting general remuneration value: %q", err)
+	}
+	return value, nil
+}
