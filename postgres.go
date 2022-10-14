@@ -182,3 +182,53 @@ func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 
 	return arguments
 }
+
+func (p PostgresDB) CountAgencies() (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM orgaos`
+	err := p.conn.Get(&count, query)
+	if err != nil {
+		return 0, fmt.Errorf("error counting agencies: %q", err)
+	}
+	return count, nil
+}
+
+func (p PostgresDB) CountRemunerationRecords() (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM coletas`
+	err := p.conn.Get(&count, query)
+	if err != nil {
+		return 0, fmt.Errorf("error counting collections: %q", err)
+	}
+	return count, nil
+}
+
+func (p PostgresDB) GetFirstDateWithRemunerationRecords() (time.Time, error){
+	query := `SELECT ano, mes FROM coletas ORDER BY ano, mes LIMIT 1`
+	var year, month int
+	err := p.conn.QueryRow(query).Scan(&year, &month)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("error getting first date with remuneration records: %q", err)
+	}
+	return time.Date(year, time.Month(month), 2, 0, 0, 0, 0, time.UTC).In(loc), nil
+}
+
+func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error){
+	query := `SELECT ano, mes FROM coletas ORDER BY ano DESC, mes DESC LIMIT 1`
+	var year, month int
+	err := p.conn.QueryRow(query).Scan(&year, &month)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("error getting last date with remuneration records: %q", err)
+	}
+	return time.Date(year, time.Month(month), 2, 0, 0, 0, 0, time.UTC).In(loc), nil
+}
+
+func (p PostgresDB) GetGeneralRemunerationValue() (float64, error){
+	var value float64
+	query := `SELECT SUM(CAST(sumario -> 'base_remuneration' ->> 'total' AS DECIMAL) + CAST(sumario -> 'other_remunerations' ->> 'total' AS DECIMAL)) FROM coletas;`
+	err := p.conn.Get(&value, query)
+	if err != nil {
+		return 0, fmt.Errorf("error getting general remuneration value: %q", err)
+	}
+	return value, nil
+}

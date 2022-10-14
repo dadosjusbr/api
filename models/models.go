@@ -92,12 +92,12 @@ type ProcInfoResult struct {
 
 // GeneralTotals - contains the summary from all DadosJusBr data
 type GeneralTotals struct {
-	AgencyAmount             int64     `json:"agency_amount"`
-	MonthlyTotalsAmount      int64     `json:"monthly_total_amount"`
-	StartDate                time.Time `json:"start_date"`
-	EndDate                  time.Time `json:"end_date"`
-	RemunerationRecordsCount int       `json:"remuneration_records_count"`
-	GeneralRemunerationValue float64   `json:"general_remuneration_value"`
+	AgencyAmount             int
+	MonthlyTotalsAmount      int
+	StartDate                time.Time
+	EndDate                  time.Time
+	RemunerationRecordsCount int
+	GeneralRemunerationValue float64
 }
 
 //Os campos que serão trazido pela query de pesquisa
