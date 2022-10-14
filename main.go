@@ -223,43 +223,6 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func generalSummaryHandler(c echo.Context) error {
-	agencyAmount, err := client.GetAgenciesCount()
-	if err != nil {
-		log.Printf("Error buscando dados - GetAgenciesCount: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados:"))
-	}
-	miCount, err := client.GetNumberOfMonthsCollected()
-	if err != nil {
-		log.Printf("Error buscando dados - GetNumberOfMonthsCollected: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	fmonth, fyear, err := client.GetFirstDateWithMonthlyInfo()
-	if err != nil {
-		log.Printf("Error buscando dados - GetFirstDateWithMonthlyInfo: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	lmonth, lyear, err := client.GetLastDateWithMonthlyInfo()
-	if err != nil {
-		log.Printf("Error buscando dados - GetLastDateWithMonthlyInfo: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	remunerationSummary, err := client.Db.GetRemunerationSummary()
-	if err != nil {
-		log.Printf("Error buscando dados - GetRemunerationSummary: %q", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
-	}
-	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	return c.JSON(http.StatusOK, models.GeneralTotals{
-		AgencyAmount:             int(agencyAmount),
-		MonthlyTotalsAmount:      int(miCount),
-		StartDate:                fdate,
-		EndDate:                  ldate,
-		RemunerationRecordsCount: remunerationSummary.Count,
-		GeneralRemunerationValue: remunerationSummary.Value})
-}
-
-func v2GeneralSummaryHandler(c echo.Context) error {
 	agencies ,err := postgresDb.CountAgencies()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar orgãos: %q", err))
@@ -642,7 +605,6 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
-	uiAPIGroup.GET("/v2/geral/resumo", v2GeneralSummaryHandler)
 	// Retorna um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/pesquisar", searchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params
