@@ -233,7 +233,7 @@ func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error){
 /*Pegando a soma de todas as remunerações*/
 func (p PostgresDB) GetGeneralRemunerationValue() (float64, error){
 	var value float64
-	query := `SELECT SUM(CAST(sumario -> 'base_remuneration' ->> 'total' AS DECIMAL) + CAST(sumario -> 'other_remunerations' ->> 'total' AS DECIMAL)) FROM coletas;`
+	query := `SELECT SUM(CAST(sumario -> 'remuneracao_base' ->> 'total' AS DECIMAL) + CAST(sumario -> 'outras_remuneracoes' ->> 'total' AS DECIMAL)) FROM coletas;`
 	err := p.conn.Get(&value, query)
 	if err != nil {
 		return 0, fmt.Errorf("error getting general remuneration value: %q", err)
