@@ -197,7 +197,7 @@ func (p PostgresDB) CountAgencies() (int, error) {
 //Contando a quantidade de coletas(registros de remunerações) que temos no banco
 func (p PostgresDB) CountRemunerationRecords() (int, error) {
 	var count int
-	query := `SELECT COUNT(*) FROM coletas`
+	query := `SELECT COUNT(*) FROM coletas WHERE atual=true AND procinfo IS NULL`
 	err := p.conn.Get(&count, query)
 	if err != nil {
 		return 0, fmt.Errorf("error counting collections: %q", err)
@@ -207,8 +207,8 @@ func (p PostgresDB) CountRemunerationRecords() (int, error) {
 
 /*Pegando o primeiro registro de remuneração que temos.
 A query ordena os registros por ano e mês e pega o primeiro registro*/
-func (p PostgresDB) GetFirstDateWithRemunerationRecords() (time.Time, error){
-	query := `SELECT ano, mes FROM coletas ORDER BY ano, mes LIMIT 1`
+func (p PostgresDB) GetFirstDateWithRemunerationRecords() (time.Time, error) {
+	query := `SELECT ano, mes FROM coletas WHERE atual=true AND procinfo IS NULL ORDER BY ano, mes LIMIT 1`
 	var year, month int
 	err := p.conn.QueryRow(query).Scan(&year, &month)
 	if err != nil {
@@ -218,10 +218,10 @@ func (p PostgresDB) GetFirstDateWithRemunerationRecords() (time.Time, error){
 }
 
 /*Pegando o último registro de remuneração que temos.
-A query ordena, em ordem decrescente, os registros por ano e mês e pega 
+A query ordena, em ordem decrescente, os registros por ano e mês e pega
 o primeiro registro*/
-func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error){
-	query := `SELECT ano, mes FROM coletas ORDER BY ano DESC, mes DESC LIMIT 1`
+func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error) {
+	query := `SELECT ano, mes FROM coletas WHERE atual=true AND procinfo IS NULL ORDER BY ano DESC, mes DESC LIMIT 1`
 	var year, month int
 	err := p.conn.QueryRow(query).Scan(&year, &month)
 	if err != nil {
@@ -231,9 +231,9 @@ func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error){
 }
 
 /*Pegando a soma de todas as remunerações*/
-func (p PostgresDB) GetGeneralRemunerationValue() (float64, error){
+func (p PostgresDB) GetGeneralRemunerationValue() (float64, error) {
 	var value float64
-	query := `SELECT SUM(CAST(sumario -> 'remuneracao_base' ->> 'total' AS DECIMAL) + CAST(sumario -> 'outras_remuneracoes' ->> 'total' AS DECIMAL)) FROM coletas;`
+	query := `SELECT SUM(CAST(sumario -> 'remuneracao_base' ->> 'total' AS DECIMAL) + CAST(sumario -> 'outras_remuneracoes' ->> 'total' AS DECIMAL)) FROM coletas WHERE atual=true AND procinfo IS NULL;`
 	err := p.conn.Get(&value, query)
 	if err != nil {
 		return 0, fmt.Errorf("error getting general remuneration value: %q", err)
