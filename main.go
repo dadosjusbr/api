@@ -223,11 +223,11 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func generalSummaryHandler(c echo.Context) error {
-	agencies ,err := postgresDb.CountAgencies()
+	agencies, err := postgresDb.CountAgencies()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar orgãos: %q", err))
 	}
-	collections ,err := postgresDb.CountRemunerationRecords()
+	collections, err := postgresDb.CountRemunerationRecords()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar registros: %q", err))
 	}
@@ -247,13 +247,13 @@ func generalSummaryHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando valor total de remuneração: %q", err))
 	}
 	return c.JSON(http.StatusOK, models.GeneralTotals{
-			AgencyAmount:             agencies,
-			MonthlyTotalsAmount:      collections,
-			StartDate: 								fdate,
-			EndDate: 									ldate,
-			RemunerationRecordsCount: collections,
-			GeneralRemunerationValue: remuValue,
-		})
+		AgencyAmount:             agencies,
+		MonthlyTotalsAmount:      collections,
+		StartDate:                fdate,
+		EndDate:                  ldate,
+		RemunerationRecordsCount: collections,
+		GeneralRemunerationValue: remuValue,
+	})
 }
 
 func getGeneralRemunerationFromYear(c echo.Context) error {
@@ -342,6 +342,7 @@ func getMonthlyInfo(c echo.Context) error {
 	type Metadata struct {
 		NoLoginRequired   bool   `json:"login_nao_necessario"`
 		NoCaptchaRequired bool   `json:"captcha_nao_necessario"`
+		OpenFormat        bool   `json:"formato_aberto"`
 		Access            string `json:"acesso,omitempty"`
 		Extension         string `json:"extensao,omitempty"`
 		StrictlyTabular   bool   `json:"dados_estritamente_tabulares,omitempty"`
@@ -399,6 +400,7 @@ func getMonthlyInfo(c echo.Context) error {
 				}, Meta: &Metadata{
 					NoLoginRequired:   mi.Meta.NoLoginRequired,
 					NoCaptchaRequired: mi.Meta.NoCaptchaRequired,
+					OpenFormat:        mi.Meta.OpenFormat,
 					Access:            mi.Meta.Access,
 					Extension:         mi.Meta.Extension,
 					StrictlyTabular:   mi.Meta.StrictlyTabular,
