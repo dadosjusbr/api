@@ -340,19 +340,17 @@ func getMonthlyInfo(c echo.Context) error {
 		MemberActive Summary `json:"membros_ativos,omitempty"`
 	}
 	type Metadata struct {
-		NoLoginRequired   bool   `json:"login_nao_necessario"`
-		NoCaptchaRequired bool   `json:"captcha_nao_necessario"`
-		OpenFormat        bool   `json:"formato_aberto"`
-		Access            string `json:"acesso,omitempty"`
-		Extension         string `json:"extensao,omitempty"`
-		StrictlyTabular   bool   `json:"dados_estritamente_tabulares,omitempty"`
-		ConsistentFormat  bool   `json:"manteve_consistencia_no_formato,omitempty"`
-		HasEnrollment     bool   `json:"tem_matricula,omitempty"`
-		HasCapacity       bool   `json:"tem_lotacao,omitempty"`
-		HasPosition       bool   `json:"tem_cargo,omitempty"`
-		BaseRevenue       string `json:"remuneracao_basica,omitempty"`
-		OtherRecipes      string `json:"outras_receitas,omitempty"`
-		Expenditure       string `json:"despesas,omitempty"`
+		OpenFormat       bool   `json:"formato_aberto"`
+		Access           string `json:"acesso,omitempty"`
+		Extension        string `json:"extensao,omitempty"`
+		StrictlyTabular  bool   `json:"dados_estritamente_tabulares,omitempty"`
+		ConsistentFormat bool   `json:"manteve_consistencia_no_formato,omitempty"`
+		HasEnrollment    bool   `json:"tem_matricula,omitempty"`
+		HasCapacity      bool   `json:"tem_lotacao,omitempty"`
+		HasPosition      bool   `json:"tem_cargo,omitempty"`
+		BaseRevenue      string `json:"remuneracao_basica,omitempty"`
+		OtherRecipes     string `json:"outras_receitas,omitempty"`
+		Expenditure      string `json:"despesas,omitempty"`
 	}
 	type Score struct {
 		Score             float64 `json:"indice_transparencia"`
@@ -398,19 +396,17 @@ func getMonthlyInfo(c echo.Context) error {
 						},
 					},
 				}, Meta: &Metadata{
-					NoLoginRequired:   mi.Meta.NoLoginRequired,
-					NoCaptchaRequired: mi.Meta.NoCaptchaRequired,
-					OpenFormat:        mi.Meta.OpenFormat,
-					Access:            mi.Meta.Access,
-					Extension:         mi.Meta.Extension,
-					StrictlyTabular:   mi.Meta.StrictlyTabular,
-					ConsistentFormat:  mi.Meta.ConsistentFormat,
-					HasEnrollment:     mi.Meta.HaveEnrollment,
-					HasCapacity:       mi.Meta.ThereIsACapacity,
-					HasPosition:       mi.Meta.HasPosition,
-					BaseRevenue:       mi.Meta.BaseRevenue,
-					OtherRecipes:      mi.Meta.OtherRecipes,
-					Expenditure:       mi.Meta.Expenditure,
+					OpenFormat:       mi.Meta.OpenFormat,
+					Access:           mi.Meta.Access,
+					Extension:        mi.Meta.Extension,
+					StrictlyTabular:  mi.Meta.StrictlyTabular,
+					ConsistentFormat: mi.Meta.ConsistentFormat,
+					HasEnrollment:    mi.Meta.HaveEnrollment,
+					HasCapacity:      mi.Meta.ThereIsACapacity,
+					HasPosition:      mi.Meta.HasPosition,
+					BaseRevenue:      mi.Meta.BaseRevenue,
+					OtherRecipes:     mi.Meta.OtherRecipes,
+					Expenditure:      mi.Meta.Expenditure,
 				}, Score: &Score{
 					Score:             mi.Score.Score,
 					CompletenessScore: mi.Score.CompletenessScore,

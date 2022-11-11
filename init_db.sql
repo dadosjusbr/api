@@ -18,8 +18,6 @@ CREATE TABLE coletas(
     versao_coletor VARCHAR(25) NOT NULL,    -- Versão (identificador do commit) do repositório do coletor dos dados relacionados a coleta
     repositorio_parser VARCHAR(150), -- URL do repositório do parser dos dados relacionados a coleta. Somente preenchido quando o parser é diferente do coletor
     versao_parser VARCHAR(25), -- Versão (identificador do commit) do repositório do parser dos dados relacionados a coleta. Somente preenchido quando o parser é diferente do coletor
-    nao_requer_login BOOL NOT NULL ,    -- É necessário login para coleta dos dados?
-    nao_requer_captcha BOOL NOT NULL ,    -- É necessário captcha para coleta dos dados?
     estritamente_tabular BOOL NOT NULL ,    -- Órgãos que disponibilizam dados limpos (tidy data)
     formato_consistente BOOL NOT NULL ,    -- Órgão alterou a forma de expor seus dados entre o mês em questão e o mês anterior?
     tem_matricula BOOL NOT NULL ,    -- Órgão disponibiliza matrícula do servidor?
