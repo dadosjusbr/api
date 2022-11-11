@@ -16,6 +16,8 @@ github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d/go.mod h1:m9o
 github.com/dadosjusbr/proto v0.0.0-20211004174721-e51d25d61af2/go.mod h1:a04KL3nn5wvlJTuoTYggaeokQi3njDyt9L7Ss9EQEJQ=
 github.com/dadosjusbr/proto v0.0.0-20220304160723-47e93e9d97b5 h1:T1vX+7BhXkkYRZnRdla0Z8Uu9Emww7x2jNbowmbtOwM=
 github.com/dadosjusbr/proto v0.0.0-20220304160723-47e93e9d97b5/go.mod h1:a04KL3nn5wvlJTuoTYggaeokQi3njDyt9L7Ss9EQEJQ=
+github.com/dadosjusbr/proto v0.0.0-20221111143805-a41e9c57346c h1:AC8emyvDGDWay68+wvRilvHpm2//8LcOR3nFjGA5xEk=
+github.com/dadosjusbr/proto v0.0.0-20221111143805-a41e9c57346c/go.mod h1:gPA7VxjEmyez/xtln4qBj+tM1NO0/zcw3ryjxTRNSco=
 github.com/dadosjusbr/storage v0.0.0-20220909181728-9bb2c43b6167 h1:42ylKciXLQXqaiBj1hQCmAMI9yd2Znu7SPEb2VqKI30=
 github.com/dadosjusbr/storage v0.0.0-20220909181728-9bb2c43b6167/go.mod h1:MvpeR9RujJXivy8/uJzxtXRbGLJMuUJdZtjo6VjHuVs=
 github.com/dadosjusbr/storage v0.0.0-20221103234634-c0a0766ec7a2 h1:i++t+jyDgEE5AGHjLxQU6eAENhY9wCk8vBdqIkQ9cJE=
