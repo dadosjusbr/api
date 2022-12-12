@@ -5,7 +5,7 @@ go 1.17
 
 require (
 	github.com/dadosjusbr/proto v0.0.0-20221111143805-a41e9c57346c
-	github.com/dadosjusbr/storage v0.0.0-20221111185758-ffc02534141e
+	github.com/dadosjusbr/storage v0.0.0-20221212123433-da86095c8160
 	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
