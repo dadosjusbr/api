@@ -255,22 +255,22 @@ func generalSummaryHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando primeiro registro de remuneração: %q", err))
 	}
 	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	// lmonth, lyear, err := pgClient.GetLastDateWithMonthlyInfo()
-	// if err != nil {
-	// 	log.Printf("Error buscando dados - GetLastDateWithRemunerationRecords: %q", err)
-	// 	return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando último registro de remuneração: %q", err))
-	// }
-	// ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
+	lmonth, lyear, err := pgClient.GetLastDateWithMonthlyInfo()
+	if err != nil {
+		log.Printf("Error buscando dados - GetLastDateWithRemunerationRecords: %q", err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando último registro de remuneração: %q", err))
+	}
+	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
 	remuValue, err := pgClient.Db.GetGeneralMonthlyInfo()
 	if err != nil {
 		log.Printf("Error buscando dados - GetGeneralRemunerationValue: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando valor total de remuneração: %q", err))
 	}
 	return c.JSON(http.StatusOK, models.GeneralTotals{
-		AgencyAmount:        int(agencies),
-		MonthlyTotalsAmount: int(collections),
-		StartDate:           fdate,
-		// EndDate:                  ldate,
+		AgencyAmount:             int(agencies),
+		MonthlyTotalsAmount:      int(collections),
+		StartDate:                fdate,
+		EndDate:                  ldate,
 		RemunerationRecordsCount: int(collections),
 		GeneralRemunerationValue: remuValue,
 	})

@@ -219,23 +219,3 @@ func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 
 	return arguments
 }
-
-//Contando a quantidade de coletas(registros de remunerações) que temos no banco
-func (p PostgresDB) CountRemunerationRecords() (int, error) {
-	var count int
-	err := p.conn.Table("coletas").Select("COUNT(*)").Where(`atual=true AND (procinfo IS NULL OR procinfo::text = 'null')`).Scan(&count).Error
-	if err != nil {
-		return 0, fmt.Errorf("error counting collections: %q", err)
-	}
-	return count, nil
-}
-
-//Contando a quantidade de órgãos que temos no banco
-func (p PostgresDB) CountAgencies() (int, error) {
-	var count int
-	err := p.conn.Table("orgaos").Select("COUNT(*)").Scan(&count).Error
-	if err != nil {
-		return 0, fmt.Errorf("error counting agencies: %q", err)
-	}
-	return count, nil
-}
