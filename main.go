@@ -578,6 +578,11 @@ func main() {
 	}
 	defer postgresDb.Disconnect()
 
+	postgresDb.conn, err = pgDB.Connection()
+	if err != nil {
+		log.Fatalf("Error connecting to postgres: %v", err)
+	}
+
 	sess, err = NewAwsSession(conf.AwsRegion)
 	if err != nil {
 		log.Fatalf("Error creating aws session: %v", err)
