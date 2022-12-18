@@ -29,7 +29,7 @@ type PostgresCredentials struct {
 	uri      string
 }
 
-//Recebe os dados da conexão, verifica se está tudo certo e depois retorna a uri da conexão
+// Recebe os dados da conexão, verifica se está tudo certo e depois retorna a uri da conexão
 func NewPgCredentials(c config) (*PostgresCredentials, error) {
 	for k, v := range map[string]string{
 		"postgres-user":     c.PgUser,
@@ -58,7 +58,7 @@ func NewPgCredentials(c config) (*PostgresCredentials, error) {
 	}, nil
 }
 
-//Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
+// Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
 func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
 	conn, err := sql.Open("nrpostgres", pgCredentials.uri)
 	if err != nil {
@@ -123,9 +123,9 @@ func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.Sear
 	defer txn.End()
 	ctx := newrelic.NewContext(context.Background(), txn)
 	if len(arguments) > 0 {
-		err = p.conn.WithContext(ctx).Select(query, arguments...).Scan(&results).Error
+		err = p.conn.WithContext(ctx).Raw(query, arguments...).Scan(&results).Error
 	} else {
-		err = p.conn.WithContext(ctx).Select(query).Scan(&results).Error
+		err = p.conn.WithContext(ctx).Raw(query).Scan(&results).Error
 	}
 	if err != nil {
 		return nil, fmt.Errorf("erro ao fazer a seleção por filtro: %v", err)
@@ -133,7 +133,7 @@ func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.Sear
 	return results, nil
 }
 
-//Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
+// Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
 func (p PostgresDB) RemunerationQuery(filter *models.Filter) string {
 	//A query padrão sem os filtros
 	query := `SELECT
@@ -153,7 +153,7 @@ func (p PostgresDB) RemunerationQuery(filter *models.Filter) string {
 	return query
 }
 
-//Função que insere os filtros na query
+// Função que insere os filtros na query
 func (p PostgresDB) AddFiltersInQuery(query *string, filter *models.Filter) {
 	*query = *query + " WHERE"
 
@@ -196,7 +196,7 @@ func (p PostgresDB) AddFiltersInQuery(query *string, filter *models.Filter) {
 	}
 }
 
-//Função que define os argumentos passados para a query
+// Função que define os argumentos passados para a query
 func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 	var arguments []interface{}
 	if filter != nil {
