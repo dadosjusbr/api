@@ -457,15 +457,17 @@ func searchByUrl(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-
+	var category string
+	if filter != nil {
+		category = filter.Category
+	}
 	// Pegando os resultados da pesquisa a partir dos filtros;
 	results, err := postgresDb.Filter(postgresDb.RemunerationQuery(filter), postgresDb.Arguments(filter))
 	if err != nil {
 		log.Printf("Error querying BD (filter or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-
-	remunerations, numRows, err := getSearchResults(conf.SearchLimit, filter.Category, results)
+	remunerations, numRows, err := getSearchResults(conf.SearchLimit, category, results)
 	if err != nil {
 		log.Printf("Error getting search results: %q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -578,7 +580,7 @@ func main() {
 	}
 	defer postgresDb.Disconnect()
 
-	postgresDb.conn, err = pgDB.Connection()
+	postgresDb.conn, err = pgDB.GetConnection()
 	if err != nil {
 		log.Fatalf("Error connecting to postgres: %v", err)
 	}
