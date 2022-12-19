@@ -113,7 +113,6 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
-	fmt.Println(agenciesMonthlyInfo)
 	var monthTotalsOfYear []models.MonthTotals
 	agency, err := mgoClient.Db.GetAgency(aID)
 	if err != nil {
