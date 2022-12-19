@@ -180,13 +180,12 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
 	}
 	agencyName := strings.ToLower(c.Param("orgao"))
-	agencyMonthlyInfo, _, err := mgoClient.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, _, err := pgClient.GetOMA(month, year, agencyName)
 	if err != nil {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
-
-	if agencyMonthlyInfo.ProcInfo != nil {
+	if agencyMonthlyInfo.ProcInfo != nil && agencyMonthlyInfo.ProcInfo.String() != "" {
 		var newEnv = agencyMonthlyInfo.ProcInfo.Env
 		for _, omittedField := range conf.EnvOmittedFields {
 			for i, field := range newEnv {
@@ -206,7 +205,8 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		Members:     agencyMonthlyInfo.Summary.IncomeHistogram,
 		MaxSalary:   agencyMonthlyInfo.Summary.BaseRemuneration.Max,
 		PackageURL:  agencyMonthlyInfo.Package.URL,
-		PackageHash: agencyMonthlyInfo.Package.URL,
+		PackageHash: agencyMonthlyInfo.Package.Hash,
+		PackageSize: agencyMonthlyInfo.Package.Size,
 	})
 }
 
@@ -220,7 +220,7 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, agency, err := mgoClient.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, agency, err := pgClient.GetOMA(month, year, agencyName)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
@@ -320,7 +320,7 @@ func getMonthlyInfo(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mes=%d inválido", m))
 		}
-		oma, _, err := mgoClient.GetOMA(m, year, agencyName)
+		oma, _, err := pgClient.GetOMA(m, year, agencyName)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Error getting OMA data"))
 		}
@@ -328,7 +328,7 @@ func getMonthlyInfo(c echo.Context) error {
 			agencyName: {*oma},
 		}
 	} else {
-		monthlyInfo, err = mgoClient.Db.GetMonthlyInfo([]strModels.Agency{{ID: agencyName}}, year)
+		monthlyInfo, err = pgClient.Db.GetMonthlyInfo([]strModels.Agency{{ID: agencyName}}, year)
 	}
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
@@ -344,6 +344,7 @@ func getMonthlyInfo(c echo.Context) error {
 	type Backup struct {
 		URL  string `json:"url,omitempty"`
 		Hash string `json:"hash,omitempty"`
+		Size int64  `json:"size,omitempty"`
 	}
 	type DataSummary struct {
 		Max     float64 `json:"max,omitempty"`
@@ -383,62 +384,30 @@ func getMonthlyInfo(c echo.Context) error {
 		Cmd          string `json:"cmd,omitempty"`
 	}
 	type SummaryzedMI struct {
-		AgencyID string     `json:"id_orgao,omitempty"`
-		Month    int        `json:"mes,omitempty"`
-		Year     int        `json:"ano,omitempty"`
-		Summary  *Summaries `json:"sumarios,omitempty"`
-		Package  *Backup    `json:"pacote_de_dados,omitempty"`
-		Meta     *Metadata  `json:"metadados,omitempty`
-		Score    *Score     `json:"indice_transparencia,omitempty`
-		Error    *MIError   `json:"error,omitempty"`
+		strModels.AgencyMonthlyInfo
+		Error *MIError `json:"error,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
 		for _, mi := range monthlyInfo[i] {
-			if mi.ProcInfo == nil {
-				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: nil, Month: mi.Month, Year: mi.Year, Package: &Backup{
-					URL:  formatDownloadUrl(mi.Package.URL),
-					Hash: mi.Package.Hash,
-				}, Summary: &Summaries{
-					MemberActive: Summary{
-						Count: mi.Summary.Count,
-						BaseRemuneration: DataSummary{
-							Max:     mi.Summary.BaseRemuneration.Max,
-							Min:     mi.Summary.BaseRemuneration.Min,
-							Average: mi.Summary.BaseRemuneration.Average,
-							Total:   mi.Summary.BaseRemuneration.Total,
-						},
-						OtherRemunerations: DataSummary{
-							Max:     mi.Summary.OtherRemunerations.Max,
-							Min:     mi.Summary.OtherRemunerations.Min,
-							Average: mi.Summary.OtherRemunerations.Average,
-							Total:   mi.Summary.OtherRemunerations.Total,
-						},
-					},
-				}, Meta: &Metadata{
-					OpenFormat:       mi.Meta.OpenFormat,
-					Access:           mi.Meta.Access,
-					Extension:        mi.Meta.Extension,
-					StrictlyTabular:  mi.Meta.StrictlyTabular,
-					ConsistentFormat: mi.Meta.ConsistentFormat,
-					HasEnrollment:    mi.Meta.HaveEnrollment,
-					HasCapacity:      mi.Meta.ThereIsACapacity,
-					HasPosition:      mi.Meta.HasPosition,
-					BaseRevenue:      mi.Meta.BaseRevenue,
-					OtherRecipes:     mi.Meta.OtherRecipes,
-					Expenditure:      mi.Meta.Expenditure,
-				}, Score: &Score{
-					Score:             mi.Score.Score,
-					CompletenessScore: mi.Score.CompletenessScore,
-					EasinessScore:     mi.Score.EasinessScore,
-				}})
+			if mi.ProcInfo == nil || mi.ProcInfo.String() == "" {
+				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyMonthlyInfo: mi, Error: nil})
 				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 			} else if mi.ProcInfo.Status != 4 {
-				summaryzedMI = append(summaryzedMI, SummaryzedMI{AgencyID: mi.AgencyID, Error: &MIError{
-					ErrorMessage: mi.ProcInfo.Stderr,
-					Status:       mi.ProcInfo.Status,
-					Cmd:          mi.ProcInfo.Cmd,
-				}, Month: mi.Month, Year: mi.Year, Package: nil, Summary: nil, Meta: nil})
+				summaryzedMI = append(
+					summaryzedMI,
+					SummaryzedMI{
+						AgencyMonthlyInfo: strModels.AgencyMonthlyInfo{
+							AgencyID: mi.AgencyID,
+							Month:    mi.Month,
+							Year:     mi.Year,
+							Package:  nil,
+							Summary:  nil,
+							Meta:     nil},
+						Error: &MIError{
+							ErrorMessage: mi.ProcInfo.Stderr,
+							Status:       mi.ProcInfo.Status,
+							Cmd:          mi.ProcInfo.Cmd}})
 			}
 		}
 	}
