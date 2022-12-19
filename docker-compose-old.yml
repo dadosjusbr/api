@@ -1,8 +1,0 @@
-version: "3"
-services:
-  api:
-    image: ghcr.io/dadosjusbr/api:main
-    env_file:
-      - .env
-    ports:
-      - 80:8080
