@@ -61,7 +61,7 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 			mustUnzip = false
 		}
 	}
-	
+
 	for i, key := range paths {
 		// Criando a lista de objetos que serão baixados do S3.
 		forDownload = append(forDownload, s3manager.BatchDownloadObject{
@@ -114,7 +114,7 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 		usuário pediu.*/
 		for _, rem := range r {
 			if len(searchResults) < limit {
-				if category == "" || category == rem.CategoriaContracheque {
+				if category == "" || category == rem.CategoriaContracheque || category == "tudo" {
 					searchResults = append(searchResults, rem)
 				}
 			} else {

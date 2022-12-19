@@ -2,19 +2,22 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/dadosjusbr/api/models"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/newrelic/go-agent/v3/integrations/nrpq"
 	"github.com/newrelic/go-agent/v3/newrelic"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type PostgresDB struct {
-	conn     *sqlx.DB
-	newrelic *newrelic.Application
+	conn        *gorm.DB
+	newrelic    *newrelic.Application
+	credentials PostgresCredentials
 }
 
 type PostgresCredentials struct {
@@ -26,23 +29,7 @@ type PostgresCredentials struct {
 	uri      string
 }
 
-//Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
-func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
-	conn, err := sqlx.Open("nrpostgres", pgCredentials.uri)
-	if err != nil {
-		return nil, fmt.Errorf("error while accessing database: %q", err)
-	}
-	ctx, canc := context.WithTimeout(context.Background(), 30*time.Second)
-	defer canc()
-	if err := conn.DB.PingContext(ctx); err != nil {
-		return nil, fmt.Errorf("Error connecting to postgres (creds:%+v):%w", pgCredentials, err)
-	}
-	return &PostgresDB{
-		conn: conn,
-	}, nil
-}
-
-//Recebe os dados da conexão, verifica se está tudo certo e depois retorna a uri da conexão
+// Recebe os dados da conexão, verifica se está tudo certo e depois retorna a uri da conexão
 func NewPgCredentials(c config) (*PostgresCredentials, error) {
 	for k, v := range map[string]string{
 		"postgres-user":     c.PgUser,
@@ -71,10 +58,60 @@ func NewPgCredentials(c config) (*PostgresCredentials, error) {
 	}, nil
 }
 
-func (p *PostgresDB) Disconnect() error {
-	err := p.conn.Close()
+// Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
+func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
+	conn, err := sql.Open("nrpostgres", pgCredentials.uri)
 	if err != nil {
-		return fmt.Errorf("error closing connection: %q", err)
+		panic(err)
+	}
+	ctx, canc := context.WithTimeout(context.Background(), 30*time.Second)
+	defer canc()
+	if err := conn.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("error connecting to postgres (creds:%s):%q", pgCredentials.uri, err)
+	}
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: conn,
+	}))
+	if err != nil {
+		return nil, fmt.Errorf("error initializing gorm: %q", err)
+	}
+	return &PostgresDB{
+		conn: db,
+	}, nil
+}
+
+func (p *PostgresDB) Connect() error {
+	if p.conn != nil {
+		return nil
+	} else {
+		conn, err := sql.Open("nrpostgres", p.credentials.uri)
+		if err != nil {
+			panic(err)
+		}
+		ctx, canc := context.WithTimeout(context.Background(), 30*time.Second)
+		defer canc()
+		if err := conn.PingContext(ctx); err != nil {
+			return fmt.Errorf("error connecting to postgres (creds:%s):%q", p.credentials.uri, err)
+		}
+		db, err := gorm.Open(postgres.New(postgres.Config{
+			Conn: conn,
+		}))
+		if err != nil {
+			return fmt.Errorf("error initializing gorm: %q", err)
+		}
+		p.conn = db
+		return nil
+	}
+}
+
+func (p *PostgresDB) Disconnect() error {
+	db, err := p.conn.DB()
+	if err != nil {
+		return fmt.Errorf("error returning sql DB: %q", err)
+	}
+	err = db.Close()
+	if err != nil {
+		return fmt.Errorf("error closing DB connection: %q", err)
 	}
 	return nil
 }
@@ -86,9 +123,9 @@ func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.Sear
 	defer txn.End()
 	ctx := newrelic.NewContext(context.Background(), txn)
 	if len(arguments) > 0 {
-		err = p.conn.SelectContext(ctx, &results, query, arguments...)
+		err = p.conn.WithContext(ctx).Raw(query, arguments...).Scan(&results).Error
 	} else {
-		err = p.conn.SelectContext(ctx, &results, query)
+		err = p.conn.WithContext(ctx).Raw(query).Scan(&results).Error
 	}
 	if err != nil {
 		return nil, fmt.Errorf("erro ao fazer a seleção por filtro: %v", err)
@@ -96,7 +133,7 @@ func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.Sear
 	return results, nil
 }
 
-//Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
+// Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
 func (p PostgresDB) RemunerationQuery(filter *models.Filter) string {
 	//A query padrão sem os filtros
 	query := `SELECT
@@ -116,7 +153,7 @@ func (p PostgresDB) RemunerationQuery(filter *models.Filter) string {
 	return query
 }
 
-//Função que insere os filtros na query
+// Função que insere os filtros na query
 func (p PostgresDB) AddFiltersInQuery(query *string, filter *models.Filter) {
 	*query = *query + " WHERE"
 
@@ -159,7 +196,7 @@ func (p PostgresDB) AddFiltersInQuery(query *string, filter *models.Filter) {
 	}
 }
 
-//Função que define os argumentos passados para a query
+// Função que define os argumentos passados para a query
 func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 	var arguments []interface{}
 	if filter != nil {
@@ -181,62 +218,4 @@ func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
 	}
 
 	return arguments
-}
-
-//Contando a quantidade de órgãos que temos no banco
-func (p PostgresDB) CountAgencies() (int, error) {
-	var count int
-	query := `SELECT COUNT(*) FROM orgaos`
-	err := p.conn.Get(&count, query)
-	if err != nil {
-		return 0, fmt.Errorf("error counting agencies: %q", err)
-	}
-	return count, nil
-}
-
-//Contando a quantidade de coletas(registros de remunerações) que temos no banco
-func (p PostgresDB) CountRemunerationRecords() (int, error) {
-	var count int
-	query := `SELECT COUNT(*) FROM coletas WHERE atual=true AND procinfo IS NULL`
-	err := p.conn.Get(&count, query)
-	if err != nil {
-		return 0, fmt.Errorf("error counting collections: %q", err)
-	}
-	return count, nil
-}
-
-/*Pegando o primeiro registro de remuneração que temos.
-A query ordena os registros por ano e mês e pega o primeiro registro*/
-func (p PostgresDB) GetFirstDateWithRemunerationRecords() (time.Time, error) {
-	query := `SELECT ano, mes FROM coletas WHERE atual=true AND procinfo IS NULL ORDER BY ano, mes LIMIT 1`
-	var year, month int
-	err := p.conn.QueryRow(query).Scan(&year, &month)
-	if err != nil {
-		return time.Time{}, fmt.Errorf("error getting first date with remuneration records: %q", err)
-	}
-	return time.Date(year, time.Month(month), 2, 0, 0, 0, 0, time.UTC).In(loc), nil
-}
-
-/*Pegando o último registro de remuneração que temos.
-A query ordena, em ordem decrescente, os registros por ano e mês e pega
-o primeiro registro*/
-func (p PostgresDB) GetLastDateWithRemunerationRecords() (time.Time, error) {
-	query := `SELECT ano, mes FROM coletas WHERE atual=true AND procinfo IS NULL ORDER BY ano DESC, mes DESC LIMIT 1`
-	var year, month int
-	err := p.conn.QueryRow(query).Scan(&year, &month)
-	if err != nil {
-		return time.Time{}, fmt.Errorf("error getting last date with remuneration records: %q", err)
-	}
-	return time.Date(year, time.Month(month), 2, 0, 0, 0, 0, time.UTC).In(loc), nil
-}
-
-/*Pegando a soma de todas as remunerações*/
-func (p PostgresDB) GetGeneralRemunerationValue() (float64, error) {
-	var value float64
-	query := `SELECT SUM(CAST(sumario -> 'remuneracao_base' ->> 'total' AS DECIMAL) + CAST(sumario -> 'outras_remuneracoes' ->> 'total' AS DECIMAL)) FROM coletas WHERE atual=true AND procinfo IS NULL;`
-	err := p.conn.Get(&value, query)
-	if err != nil {
-		return 0, fmt.Errorf("error getting general remuneration value: %q", err)
-	}
-	return value, nil
 }

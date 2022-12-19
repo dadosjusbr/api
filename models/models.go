@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/dadosjusbr/proto/coleta"
-	"github.com/dadosjusbr/storage"
+	"github.com/dadosjusbr/storage/models"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -55,10 +55,10 @@ type AgencySummary struct {
 // AgencyTotalsYear - Represents the totals of an year
 type AgencyTotalsYear struct {
 	Year           int
-	Agency         *storage.Agency
+	Agency         *models.Agency
 	MonthTotals    []MonthTotals
 	AgencyFullName string
-	SummaryPackage *storage.Package `json:"SummaryPackage,omitempty"`
+	SummaryPackage *models.Package `json:"SummaryPackage,omitempty"`
 }
 
 type ProcError struct {
