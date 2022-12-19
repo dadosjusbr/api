@@ -114,7 +114,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
 	var monthTotalsOfYear []models.MonthTotals
-	agency, err := mgoClient.Db.GetAgency(aID)
+	agency, err := pgClient.Db.GetAgency(aID)
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(estado:%s):%q", aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
@@ -150,13 +150,13 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
-	agencies, err := mgoClient.GetOPE(stateName, yearOfConsult)
+	agencies, err := pgClient.GetOPE(stateName, yearOfConsult)
 	if err != nil {
 		// That happens when there is no information on that year.
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
 
-		agencies, err = mgoClient.GetOPE(stateName, yearOfConsult)
+		agencies, err = pgClient.GetOPE(stateName, yearOfConsult)
 		if err != nil {
 			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
@@ -290,7 +290,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 }
 
 func getAllAgencies(c echo.Context) error {
-	agencies, err := mgoClient.Db.GetAllAgencies()
+	agencies, err := pgClient.Db.GetAllAgencies()
 	if err != nil {
 		fmt.Println("Error while listing agencies: %w", err)
 		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
@@ -300,7 +300,7 @@ func getAllAgencies(c echo.Context) error {
 
 func getAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
-	agency, err := mgoClient.Db.GetAgency(agencyName)
+	agency, err := pgClient.Db.GetAgency(agencyName)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, "Agency not found")
 	}
