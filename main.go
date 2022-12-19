@@ -113,6 +113,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
+	fmt.Println(agenciesMonthlyInfo)
 	var monthTotalsOfYear []models.MonthTotals
 	agency, err := mgoClient.Db.GetAgency(aID)
 	if err != nil {
@@ -120,7 +121,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
 	}
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
-		if agencyMonthlyInfo.Summary.BaseRemuneration.Total+agencyMonthlyInfo.Summary.OtherRemunerations.Total > 0 {
+		if agencyMonthlyInfo.Summary != nil && agencyMonthlyInfo.Summary.BaseRemuneration.Total+agencyMonthlyInfo.Summary.OtherRemunerations.Total > 0 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
 				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
