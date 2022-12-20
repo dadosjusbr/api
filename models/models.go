@@ -82,6 +82,7 @@ type DataForChartAtAgencyScreen struct {
 	MaxSalary   float64
 	PackageURL  string
 	PackageHash string
+	PackageSize int64
 }
 
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
