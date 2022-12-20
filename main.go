@@ -129,6 +129,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
 			// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
+			// Fazemos duas checagens no formato do ProcInfo para saber se ele é vazio pois alguns dados diferem, no banco de dados, quando o procinfo é nulo.
 		} else if agencyMonthlyInfo.ProcInfo != nil && agencyMonthlyInfo.ProcInfo.String() != "" && agencyMonthlyInfo.ProcInfo.Status != 4 {
 			monthTotals := models.MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:   0,
@@ -185,6 +186,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
+	// Fazemos duas checagens no formato do ProcInfo para saber se ele é vazio pois alguns dados diferem, no banco de dados, quando o procinfo é nulo.
 	if agencyMonthlyInfo.ProcInfo != nil && agencyMonthlyInfo.ProcInfo.String() != "" {
 		var newEnv = agencyMonthlyInfo.ProcInfo.Env
 		for _, omittedField := range conf.EnvOmittedFields {
@@ -396,6 +398,7 @@ func getMonthlyInfo(c echo.Context) error {
 	var summaryzedMI []SummaryzedMI
 	for i := range monthlyInfo {
 		for _, mi := range monthlyInfo[i] {
+			// Fazemos duas checagens no formato do ProcInfo para saber se ele é vazio pois alguns dados diferem, no banco de dados, quando o procinfo é nulo.
 			if mi.ProcInfo == nil || mi.ProcInfo.String() == "" {
 				summaryzedMI = append(
 					summaryzedMI,
