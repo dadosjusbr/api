@@ -150,13 +150,13 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
-	agencies, err := mgoClient.GetOPE(stateName, yearOfConsult)
+	agencies, err := pgClient.GetOPE(stateName, yearOfConsult)
 	if err != nil {
 		// That happens when there is no information on that year.
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
 
-		agencies, err = mgoClient.GetOPE(stateName, yearOfConsult)
+		agencies, err = pgClient.GetOPE(stateName, yearOfConsult)
 		if err != nil {
 			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
@@ -281,7 +281,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
-	data, err := mgoClient.Db.GetGeneralMonthlyInfosFromYear(year)
+	data, err := pgClient.Db.GetGeneralMonthlyInfosFromYear(year)
 	if err != nil {
 		fmt.Println("Error searching for monthly info from year: %w", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
