@@ -300,7 +300,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
-	data, err := mgoS3Client.Db.GetGeneralMonthlyInfosFromYear(year)
+	data, err := pgS3Client.Db.GetGeneralMonthlyInfosFromYear(year)
 	if err != nil {
 		fmt.Println("Error searching for monthly info from year: %w", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
