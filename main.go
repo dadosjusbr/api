@@ -66,16 +66,16 @@ type config struct {
 	NewRelicLicense string `envconfig:"NEWRELIC_LICENSE"`
 }
 
-var mgoClient *storage.Client
-var pgClient *storage.Client
+var mgoS3Client *storage.Client
+var pgS3Client *storage.Client
 var loc *time.Location
 var conf config
 var postgresDb *PostgresDB
 var sess *AwsSession
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
-func newClient(db interfaces.IDatabaseRepository) (*storage.Client, error) {
-	client, err := storage.NewClient(db, &fileStorage.S3Client{})
+func newClient(db interfaces.IDatabaseRepository, cloud interfaces.IStorageRepository) (*storage.Client, error) {
+	client, err := storage.NewClient(db, cloud)
 	if err != nil {
 		return nil, fmt.Errorf("error creating storage.client: %q", err)
 	}
@@ -102,19 +102,27 @@ func newMongoDB(c config) (*mongo.DBClient, error) {
 	return db, nil
 }
 
+func newS3Client(c config) (*fileStorage.S3Client, error) {
+	s3Client, err := fileStorage.NewS3Client(c.AwsRegion, c.AwsS3Bucket)
+	if err != nil {
+		return nil, fmt.Errorf("error creating S3 client: %v", err.Error())
+	}
+	return s3Client, nil
+}
+
 func getTotalsOfAgencyYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
 	aID := c.Param("orgao")
-	agenciesMonthlyInfo, err := pgClient.Db.GetMonthlyInfo([]strModels.Agency{{ID: aID}}, year)
+	agenciesMonthlyInfo, err := pgS3Client.Db.GetMonthlyInfo([]strModels.Agency{{ID: aID}}, year)
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
 	}
 	var monthTotalsOfYear []models.MonthTotals
-	agency, err := pgClient.Db.GetAgency(aID)
+	agency, err := pgS3Client.Db.GetAgency(aID)
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(estado:%s):%q", aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
@@ -143,7 +151,16 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
 		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month
 	})
-	pkg, _ := mgoClient.Db.GetPackage(strModels.PackageFilterOpts{AgencyID: &aID, Year: &year, Month: nil, Group: nil})
+	destKey := fmt.Sprintf("%s/datapackage/%s-%d.zip", aID, aID, year)
+	bkp, _ := pgS3Client.Cloud.GetFile(destKey)
+	var pkg *strModels.Package
+	if bkp != nil {
+		pkg = &strModels.Package{
+			AgencyID: &aID,
+			Year:     &year,
+			Package:  *bkp,
+		}
+	}
 	agencyTotalsYear := models.AgencyTotalsYear{Year: year, Agency: agency, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name, SummaryPackage: pkg}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
@@ -151,13 +168,13 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
-	agencies, err := pgClient.GetOPE(stateName, yearOfConsult)
+	agencies, err := pgS3Client.GetOPE(stateName, yearOfConsult)
 	if err != nil {
 		// That happens when there is no information on that year.
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
 
-		agencies, err = pgClient.GetOPE(stateName, yearOfConsult)
+		agencies, err = pgS3Client.GetOPE(stateName, yearOfConsult)
 		if err != nil {
 			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
@@ -181,7 +198,7 @@ func getSalaryOfAgencyMonthYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d", year))
 	}
 	agencyName := strings.ToLower(c.Param("orgao"))
-	agencyMonthlyInfo, _, err := pgClient.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, _, err := pgS3Client.GetOMA(month, year, agencyName)
 	if err != nil {
 		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
@@ -222,7 +239,7 @@ func getSummaryOfAgency(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%d", month))
 	}
 	agencyName := c.Param("orgao")
-	agencyMonthlyInfo, agency, err := pgClient.GetOMA(month, year, agencyName)
+	agencyMonthlyInfo, agency, err := pgS3Client.GetOMA(month, year, agencyName)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
 	}
@@ -243,27 +260,27 @@ func getSummaryOfAgency(c echo.Context) error {
 }
 
 func generalSummaryHandler(c echo.Context) error {
-	agencies, err := pgClient.GetAgenciesCount()
+	agencies, err := pgS3Client.GetAgenciesCount()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar orgãos: %q", err))
 	}
-	collections, err := pgClient.GetNumberOfMonthsCollected()
+	collections, err := pgS3Client.GetNumberOfMonthsCollected()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar registros: %q", err))
 	}
-	fmonth, fyear, err := pgClient.Db.GetFirstDateWithMonthlyInfo()
+	fmonth, fyear, err := pgS3Client.Db.GetFirstDateWithMonthlyInfo()
 	if err != nil {
 		log.Printf("Error buscando dados - GetFirstDateWithRemunerationRecords: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando primeiro registro de remuneração: %q", err))
 	}
 	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	lmonth, lyear, err := pgClient.GetLastDateWithMonthlyInfo()
+	lmonth, lyear, err := pgS3Client.GetLastDateWithMonthlyInfo()
 	if err != nil {
 		log.Printf("Error buscando dados - GetLastDateWithRemunerationRecords: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando último registro de remuneração: %q", err))
 	}
 	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(loc)
-	remuValue, err := pgClient.Db.GetGeneralMonthlyInfo()
+	remuValue, err := pgS3Client.Db.GetGeneralMonthlyInfo()
 	if err != nil {
 		log.Printf("Error buscando dados - GetGeneralRemunerationValue: %q", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando valor total de remuneração: %q", err))
@@ -283,7 +300,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
 	}
-	data, err := pgClient.Db.GetGeneralMonthlyInfosFromYear(year)
+	data, err := pgS3Client.Db.GetGeneralMonthlyInfosFromYear(year)
 	if err != nil {
 		fmt.Println("Error searching for monthly info from year: %w", err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
@@ -292,7 +309,7 @@ func getGeneralRemunerationFromYear(c echo.Context) error {
 }
 
 func getAllAgencies(c echo.Context) error {
-	agencies, err := pgClient.Db.GetAllAgencies()
+	agencies, err := pgS3Client.Db.GetAllAgencies()
 	if err != nil {
 		fmt.Println("Error while listing agencies: %w", err)
 		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
@@ -302,7 +319,7 @@ func getAllAgencies(c echo.Context) error {
 
 func getAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
-	agency, err := pgClient.Db.GetAgency(agencyName)
+	agency, err := pgS3Client.Db.GetAgency(agencyName)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, "Agency not found")
 	}
@@ -322,7 +339,7 @@ func getMonthlyInfo(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mes=%d inválido", m))
 		}
-		oma, _, err := pgClient.GetOMA(m, year, agencyName)
+		oma, _, err := pgS3Client.GetOMA(m, year, agencyName)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Error getting OMA data"))
 		}
@@ -330,7 +347,7 @@ func getMonthlyInfo(c echo.Context) error {
 			agencyName: {*oma},
 		}
 	} else {
-		monthlyInfo, err = pgClient.Db.GetMonthlyInfo([]strModels.Agency{{ID: agencyName}}, year)
+		monthlyInfo, err = pgS3Client.Db.GetMonthlyInfo([]strModels.Agency{{ID: agencyName}}, year)
 	}
 	if err != nil {
 		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
@@ -574,12 +591,18 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// Criando o client do S3
+	s3Client, err := newS3Client(conf)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Criando o client do storage a partir do mongodb
 	mongoDB, err := newMongoDB(conf)
 	if err != nil {
 		log.Fatal(err)
 	}
-	mgoClient, err = newClient(mongoDB)
+	mgoS3Client, err = newClient(mongoDB, s3Client)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -588,7 +611,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pgClient, err = newClient(pgDB)
+	pgS3Client, err = newClient(pgDB, s3Client)
 	if err != nil {
 		log.Fatal(err)
 	}
