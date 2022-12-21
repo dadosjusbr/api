@@ -5,7 +5,7 @@ go 1.17
 
 require (
 	github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12
-	github.com/dadosjusbr/storage v0.0.0-20221219122037-c0cdc4c5c573
+	github.com/dadosjusbr/storage v0.0.0-20221220155200-efa9b313127e
 	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
