@@ -1,0 +1,90 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "API do dadosjusbr.org",
+        "contact": {
+            "name": "DadosJusBr",
+            "url": "https://dadosjusbr.org"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/v1/orgao/{orgao}": {
+            "get": {
+                "description": "Busca um órgão específico utilizando sua Unidade Federativa.",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "getAgencyById",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: al, ba, df.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Agency"
+                        }
+                    },
+                    "404": {
+                        "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "responses.Agency": {
+            "type": "object",
+            "properties": {
+                "aid": {
+                    "type": "string"
+                },
+                "collecting": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/responses.Collecting"
+                    }
+                },
+                "entity": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "uf": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.Collecting": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

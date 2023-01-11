@@ -1,0 +1,58 @@
+definitions:
+  responses.Agency:
+    properties:
+      aid:
+        type: string
+      collecting:
+        items:
+          $ref: '#/definitions/responses.Collecting'
+        type: array
+      entity:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      uf:
+        type: string
+      url:
+        type: string
+    type: object
+  responses.Collecting:
+    properties:
+      description:
+        items:
+          type: string
+        type: array
+      timestamp:
+        type: integer
+    type: object
+info:
+  contact:
+    name: DadosJusBr
+    url: https://dadosjusbr.org
+  title: API do dadosjusbr.org
+  version: "1.0"
+paths:
+  /v1/orgao/{orgao}:
+    get:
+      description: Busca um órgão específico utilizando sua Unidade Federativa.
+      operationId: getAgencyById
+      parameters:
+      - description: 'ID do órgão. Exemplos: al, ba, df.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/responses.Agency'
+        "404":
+          description: Órgão não encontrado.
+          schema:
+            type: string
+swagger: "2.0"

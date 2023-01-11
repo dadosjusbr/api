@@ -10,7 +10,9 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/dadosjusbr/api/docs"
 	"github.com/dadosjusbr/api/models"
+	_ "github.com/dadosjusbr/api/responses"
 	"github.com/dadosjusbr/storage"
 	strModels "github.com/dadosjusbr/storage/models"
 	"github.com/dadosjusbr/storage/repositories/database/mongo"
@@ -19,12 +21,12 @@ import (
 	"github.com/dadosjusbr/storage/repositories/interfaces"
 	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
-	"github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
-	"github.com/newrelic/go-agent/v3/newrelic"
-
 	"github.com/kelseyhightower/envconfig"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/newrelic/go-agent/v3/integrations/nrecho-v4"
+	"github.com/newrelic/go-agent/v3/newrelic"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 type config struct {
@@ -317,9 +319,16 @@ func getAllAgencies(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencies)
 }
 
+//	@ID				getAgencyById
+//	@Description	Busca um órgão específico utilizando sua Unidade Federativa.
+//	@Produce		json
+//	@Param			orgao				path		string				true	"ID do órgão. Exemplos: al, ba, df."
+//	@Success		302					{object}	responses.Agency	"Requisição bem sucedida."
+//	@Failure		404					{string}	string				"Órgão não encontrado."
+//	@Router			/v1/orgao/{orgao} 	[get]
 func getAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
-	agency, err := pgS3Client.Db.GetAgency(agencyName)
+	agency, err := pgS3Client.Db.GetAgency(strings.ToLower(agencyName))
 	if err != nil {
 		return c.JSON(http.StatusNotFound, "Agency not found")
 	}
@@ -580,6 +589,10 @@ func formatDownloadUrl(url string) string {
 	return strings.Replace(url, conf.PackageRepoURL, conf.DadosJusURL, -1)
 }
 
+//	@title			API do dadosjusbr.org
+//	@version		1.0
+//	@contact.name	DadosJusBr
+//	@contact.url	https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
@@ -708,7 +721,7 @@ func main() {
 	apiGroup.GET("/dados/:orgao/:ano", getMonthlyInfo)
 	// Return MIs by month
 	apiGroup.GET("/dados/:orgao/:ano/:mes", getMonthlyInfo)
-
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
 		ReadTimeout:  5 * time.Minute,
