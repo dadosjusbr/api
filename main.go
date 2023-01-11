@@ -168,16 +168,17 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
-	agencies, err := pgS3Client.GetOPE(stateName, yearOfConsult)
+	groupName := c.Param("grupo")
+	agencies, err := pgS3Client.GetOPE(groupName, stateName, yearOfConsult)
 	if err != nil {
 		// That happens when there is no information on that year.
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
 
-		agencies, err = pgS3Client.GetOPE(stateName, yearOfConsult)
+		agencies, err = pgS3Client.GetOPE(groupName, stateName, yearOfConsult)
 		if err != nil {
 			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d, estado=%s ou grupo=%s são inválidos", yearOfConsult, stateName, groupName))
 		}
 	}
 	var agenciesBasic []models.AgencyBasic
@@ -185,6 +186,28 @@ func getBasicInfoOfState(c echo.Context) error {
 		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agencies[k].Name, AgencyCategory: agencies[k].Entity})
 	}
 	state := models.State{Name: stateName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
+	return c.JSON(http.StatusOK, state)
+}
+func getBasicInfoOfType(c echo.Context) error {
+	yearOfConsult := time.Now().Year()
+	groupName := c.Param("grupo")
+	agencies, err := pgS3Client.GetOPT(groupName, yearOfConsult)
+	if err != nil {
+		// That happens when there is no information on that year.
+		log.Printf("[basic info type] first error getting data for first screen(ano:%d, grupo:%s). Going to try again with last year:%q", yearOfConsult, groupName, err)
+		yearOfConsult = yearOfConsult - 1
+
+		agencies, err = pgS3Client.GetOPT(groupName, yearOfConsult)
+		if err != nil {
+			log.Printf("[basic info type] error getting data for first screen(ano:%d, grupo:%s):%q", yearOfConsult, groupName, err)
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou grupo=%s são inválidos", yearOfConsult, groupName))
+		}
+	}
+	var agenciesBasic []models.AgencyBasic
+	for k := range agencies {
+		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agencies[k].Name, AgencyCategory: agencies[k].Entity})
+	}
+	state := models.State{Name: groupName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
 	return c.JSON(http.StatusOK, state)
 }
 
@@ -687,7 +710,9 @@ func main() {
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
-	uiAPIGroup.GET("/v1/orgao/:estado", getBasicInfoOfState)
+	uiAPIGroup.GET("/v1/orgao/:grupo/:estado", getBasicInfoOfState)
+	// Return basic information of a type
+	uiAPIGroup.GET("/v1/orgao/:grupo", getBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
 	// Retorna um conjunto de dados a partir de filtros informados por query params
