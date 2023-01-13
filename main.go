@@ -168,17 +168,16 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 func getBasicInfoOfState(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	stateName := c.Param("estado")
-	groupName := c.Param("grupo")
-	agencies, err := pgS3Client.GetOPE(groupName, stateName, yearOfConsult)
+	agencies, err := pgS3Client.GetOPE(stateName, yearOfConsult)
 	if err != nil {
 		// That happens when there is no information on that year.
 		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
 		yearOfConsult = yearOfConsult - 1
 
-		agencies, err = pgS3Client.GetOPE(groupName, stateName, yearOfConsult)
+		agencies, err = pgS3Client.GetOPE(stateName, yearOfConsult)
 		if err != nil {
 			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d, estado=%s ou grupo=%s são inválidos", yearOfConsult, stateName, groupName))
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
 		}
 	}
 	var agenciesBasic []models.AgencyBasic
@@ -191,13 +190,32 @@ func getBasicInfoOfState(c echo.Context) error {
 func getBasicInfoOfType(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	groupName := c.Param("grupo")
-	agencies, err := pgS3Client.GetOPT(groupName, yearOfConsult)
+	var agencies []strModels.Agency
+	var err error
+	// Esse trecho é para garantir que o site não vai quebrar antes do front ser modificado.
+	// Posteriormente isso será apagado pq não será mais necessário e chamará apenas a função GetOPJ.
+	var estadual bool
+	values := [27]string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
+	for k := range values {
+		if groupName == values[k] {
+			estadual = true
+		}
+	}
+	if estadual {
+		agencies, err = pgS3Client.GetOPE(groupName, yearOfConsult)
+	} else {
+		agencies, err = pgS3Client.GetOPJ(groupName, yearOfConsult)
+	}
 	if err != nil {
 		// That happens when there is no information on that year.
 		log.Printf("[basic info type] first error getting data for first screen(ano:%d, grupo:%s). Going to try again with last year:%q", yearOfConsult, groupName, err)
 		yearOfConsult = yearOfConsult - 1
 
-		agencies, err = pgS3Client.GetOPT(groupName, yearOfConsult)
+		if estadual {
+			agencies, err = pgS3Client.GetOPE(groupName, yearOfConsult)
+		} else {
+			agencies, err = pgS3Client.GetOPJ(groupName, yearOfConsult)
+		}
 		if err != nil {
 			log.Printf("[basic info type] error getting data for first screen(ano:%d, grupo:%s):%q", yearOfConsult, groupName, err)
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou grupo=%s são inválidos", yearOfConsult, groupName))
@@ -620,15 +638,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Criando o client do storage a partir do mongodb
-	mongoDB, err := newMongoDB(conf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	mgoS3Client, err = newClient(mongoDB, s3Client)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// // Criando o client do storage a partir do mongodb
+	// mongoDB, err := newMongoDB(conf)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// mgoS3Client, err = newClient(mongoDB, s3Client)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	pgDB, err := newPostgresDB(conf)
 	if err != nil {
@@ -710,7 +728,7 @@ func main() {
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", getTotalsOfAgencyYear)
 	// Return basic information of a state
-	uiAPIGroup.GET("/v1/orgao/:grupo/:estado", getBasicInfoOfState)
+	uiAPIGroup.GET("/v1/orgao/estado/:estado", getBasicInfoOfState)
 	// Return basic information of a type
 	uiAPIGroup.GET("/v1/orgao/:grupo", getBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
