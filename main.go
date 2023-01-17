@@ -400,11 +400,11 @@ func getMonthlyInfo(c echo.Context) error {
 		OpenFormat       bool   `json:"formato_aberto"`
 		Access           string `json:"acesso,omitempty"`
 		Extension        string `json:"extensao,omitempty"`
-		StrictlyTabular  bool   `json:"dados_estritamente_tabulares,omitempty"`
-		ConsistentFormat bool   `json:"manteve_consistencia_no_formato,omitempty"`
-		HasEnrollment    bool   `json:"tem_matricula,omitempty"`
-		HasCapacity      bool   `json:"tem_lotacao,omitempty"`
-		HasPosition      bool   `json:"tem_cargo,omitempty"`
+		StrictlyTabular  bool   `json:"dados_estritamente_tabulares"`
+		ConsistentFormat bool   `json:"manteve_consistencia_no_formato"`
+		HasEnrollment    bool   `json:"tem_matricula"`
+		HasCapacity      bool   `json:"tem_lotacao"`
+		HasPosition      bool   `json:"tem_cargo"`
 		BaseRevenue      string `json:"remuneracao_basica,omitempty"`
 		OtherRecipes     string `json:"outras_receitas,omitempty"`
 		Expenditure      string `json:"despesas,omitempty"`
