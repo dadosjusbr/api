@@ -28,10 +28,10 @@ github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d h1:yzoqpzpV4k
 github.com/dadosjusbr/coletores v0.0.0-20210820092208-154c2887348d/go.mod h1:m9opDykSJIwaf+veICpleWMranaaWEbx5RNQhKZAgXU=
 github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12 h1:ufl8nbCEo6g2VHUbedGy0gYk9Sgrynf9rcnzuSw4TEg=
 github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12/go.mod h1:gPA7VxjEmyez/xtln4qBj+tM1NO0/zcw3ryjxTRNSco=
-github.com/dadosjusbr/storage v0.0.0-20221219122037-c0cdc4c5c573 h1:zK775oxB3IJnfS1z+0wNd2b8DVQ4djn0YnSFuvMUfHg=
-github.com/dadosjusbr/storage v0.0.0-20221219122037-c0cdc4c5c573/go.mod h1:X7NgRt/qEqFJFsL2ZS5Mrtx3UhsZg6DG3b692ySEStU=
 github.com/dadosjusbr/storage v0.0.0-20221220155200-efa9b313127e h1:vGdu2S8Au8PFNkjYzuH8MJBgI8v+NP2ZS60Ohxu69dw=
 github.com/dadosjusbr/storage v0.0.0-20221220155200-efa9b313127e/go.mod h1:4if792wTksntxVCBRjNJ7v4N27rWtsEh8MGJNNGYSwg=
+github.com/dadosjusbr/storage v0.0.0-20230113125700-f82d8e33165b h1:+69+pIVhiDVcstZ6ieOlTecu7BWOKJhkbI6qmo+yCtg=
+github.com/dadosjusbr/storage v0.0.0-20230113125700-f82d8e33165b/go.mod h1:4if792wTksntxVCBRjNJ7v4N27rWtsEh8MGJNNGYSwg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -422,6 +422,8 @@ google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQ
 google.golang.org/protobuf v1.27.1/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
 google.golang.org/protobuf v1.28.0 h1:w43yiav+6bVFTBQFZX0r7ipe9JQ1QsbMgHwbBziscLw=
 google.golang.org/protobuf v1.28.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
+google.golang.org/protobuf v1.28.1 h1:d0NfwRgPtno5B1Wa6L2DAG+KivqkdutMf1UhdNx175w=
+google.golang.org/protobuf v1.28.1/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=

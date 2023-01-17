@@ -5,7 +5,7 @@ go 1.17
 
 require (
 	github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12
-	github.com/dadosjusbr/storage v0.0.0-20221220155200-efa9b313127e
+	github.com/dadosjusbr/storage v0.0.0-20230113125700-f82d8e33165b
 	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -13,7 +13,7 @@ require (
 	github.com/newrelic/go-agent/v3 v3.19.2
 	github.com/newrelic/go-agent/v3/integrations/nrecho-v3 v1.0.1
 	github.com/newrelic/go-agent/v3/integrations/nrpq v1.1.1
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.1
 )
