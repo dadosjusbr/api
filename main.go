@@ -164,37 +164,13 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 	agencyTotalsYear := models.AgencyTotalsYear{Year: year, Agency: agency, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name, SummaryPackage: pkg}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
-
-func getBasicInfoOfState(c echo.Context) error {
-	yearOfConsult := time.Now().Year()
-	stateName := c.Param("estado")
-	agencies, err := pgS3Client.GetOPE(stateName, yearOfConsult)
-	if err != nil {
-		// That happens when there is no information on that year.
-		log.Printf("[basic info state] first error getting data for first screen(ano:%d, estado:%s). Going to try again with last year:%q", yearOfConsult, stateName, err)
-		yearOfConsult = yearOfConsult - 1
-
-		agencies, err = pgS3Client.GetOPE(stateName, yearOfConsult)
-		if err != nil {
-			log.Printf("[basic info state] error getting data for first screen(ano:%d, estado:%s):%q", yearOfConsult, stateName, err)
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetros ano=%d ou estado=%s são inválidos", yearOfConsult, stateName))
-		}
-	}
-	var agenciesBasic []models.AgencyBasic
-	for k := range agencies {
-		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agencies[k].Name, AgencyCategory: agencies[k].Entity})
-	}
-	state := models.State{Name: stateName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
-	return c.JSON(http.StatusOK, state)
-}
 func getBasicInfoOfType(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	groupName := c.Param("grupo")
 	var agencies []strModels.Agency
 	var err error
-	// Esse trecho é para garantir que o site não vai quebrar antes do front ser modificado.
-	// Posteriormente isso será apagado pq não será mais necessário e chamará apenas a função GetOPJ.
 	var estadual bool
+	// Verificando se trata-se de um estado ou jurisdição
 	values := [27]string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 	for k := range values {
 		if groupName == values[k] {
@@ -727,9 +703,7 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", getSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", getTotalsOfAgencyYear)
-	// Return basic information of a state
-	uiAPIGroup.GET("/v1/orgao/estado/:estado", getBasicInfoOfState)
-	// Return basic information of a type
+	// Return basic information of a type or state
 	uiAPIGroup.GET("/v1/orgao/:grupo", getBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", getGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", generalSummaryHandler)
