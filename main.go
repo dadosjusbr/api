@@ -215,7 +215,7 @@ func getBasicInfoOfType(c echo.Context) error {
 	for k := range agencies {
 		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agencies[k].Name, AgencyCategory: agencies[k].Entity})
 	}
-	state := models.State{Name: groupName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
+	state := models.State{Name: c.Param("grupo"), ShortName: "", FlagURL: "", Agency: agenciesBasic}
 	return c.JSON(http.StatusOK, state)
 }
 
