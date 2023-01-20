@@ -170,6 +170,20 @@ func getBasicInfoOfType(c echo.Context) error {
 	var agencies []strModels.Agency
 	var err error
 	var estadual bool
+	jurisdicao := map[string]string{
+		"justica-eleitoral":    "Eleitoral",
+		"ministerios-publicos": "Ministério",
+		"justica-estadual":     "Estadual",
+		"justica-do-trabalho":  "Trabalho",
+		"justica-federal":      "Federal",
+		"justica-militar":      "Militar",
+		"justica-superior":     "Superior",
+		"conselhos-de-justica": "Conselho",
+	}
+	// Adaptando as URLs do site com o banco de dados
+	if jurisdicao[groupName] != "" {
+		groupName = jurisdicao[groupName]
+	}
 	// Verificando se trata-se de um estado ou jurisdição
 	values := [27]string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 	for k := range values {
