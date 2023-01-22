@@ -170,6 +170,7 @@ func getBasicInfoOfType(c echo.Context) error {
 	var agencies []strModels.Agency
 	var err error
 	var estadual bool
+	var exists bool
 	jurisdicao := map[string]string{
 		"justica-eleitoral":    "Eleitoral",
 		"ministerios-publicos": "Ministério",
@@ -180,17 +181,37 @@ func getBasicInfoOfType(c echo.Context) error {
 		"justica-superior":     "Superior",
 		"conselhos-de-justica": "Conselho",
 	}
+
 	// Adaptando as URLs do site com o banco de dados
+	// Primeiro consultamos entre as chaves do mapa.
 	if jurisdicao[groupName] != "" {
 		groupName = jurisdicao[groupName]
-	}
-	// Verificando se trata-se de um estado ou jurisdição
-	values := [27]string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
-	for k := range values {
-		if groupName == values[k] {
-			estadual = true
+	} else {
+		// Caso não encontremos entre as chaves, verificamos entre os valores do mapa.
+		// Isso pois, até a consolidação ser finalizada, o front consulta a api com /Eleitoral, /Trabalho, etc.
+		for i := range jurisdicao {
+			if groupName == jurisdicao[i] {
+				exists = true
+				break
+			}
+		}
+		// Se a jurisdição não existir no mapa, verificamos se trata-se de um estado
+		if !exists {
+			values := [27]string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
+			for k := range values {
+				if groupName == values[k] {
+					estadual = true
+					exists = true
+					break
+				}
+			}
+		}
+		// Se o parâmetro dado não for encontrado de forma alguma, retornamos um NOT FOUND (404)
+		if !exists {
+			return c.JSON(http.StatusNotFound, fmt.Sprintf("Grupo não encontrado: %s.", groupName))
 		}
 	}
+
 	if estadual {
 		agencies, err = pgS3Client.GetOPE(groupName, yearOfConsult)
 	} else {
