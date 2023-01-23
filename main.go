@@ -170,13 +170,44 @@ func getBasicInfoOfType(c echo.Context) error {
 	var agencies []strModels.Agency
 	var err error
 	var estadual bool
-	// Verificando se trata-se de um estado ou jurisdição
-	values := [27]string{"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
-	for k := range values {
-		if groupName == values[k] {
-			estadual = true
+	var exists bool
+	jurisdicao := map[string]string{
+		"justica-eleitoral":    "Eleitoral",
+		"ministerios-publicos": "Ministério",
+		"justica-estadual":     "Estadual",
+		"justica-do-trabalho":  "Trabalho",
+		"justica-federal":      "Federal",
+		"justica-militar":      "Militar",
+		"justica-superior":     "Superior",
+		"conselhos-de-justica": "Conselho",
+	}
+
+	// Adaptando as URLs do site com o banco de dados
+	// Primeiro consultamos entre as chaves do mapa.
+	if jurisdicao[groupName] != "" {
+		groupName = jurisdicao[groupName]
+	} else {
+		// Caso não encontremos entre as chaves, verificamos entre os valores do mapa.
+		// Isso pois, até a consolidação ser finalizada, o front consulta a api com /Eleitoral, /Trabalho, etc.
+		for _, value := range jurisdicao {
+			if groupName == value {
+				exists = true
+				break
+			}
+		}
+		// Se a jurisdição não existir no mapa, verificamos se trata-se de um estado
+		if !exists {
+			values := map[string]struct{}{"AC": {}, "AL": {}, "AP": {}, "AM": {}, "BA": {}, "CE": {}, "DF": {}, "ES": {}, "GO": {}, "MA": {}, "MT": {}, "MS": {}, "MG": {}, "PA": {}, "PB": {}, "PR": {}, "PE": {}, "PI": {}, "RJ": {}, "RN": {}, "RS": {}, "RO": {}, "RR": {}, "SC": {}, "SP": {}, "SE": {}, "TO": {}}
+			if _, estadual = values[groupName]; estadual {
+				exists = true
+			}
+		}
+		// Se o parâmetro dado não for encontrado de forma alguma, retornamos um NOT FOUND (404)
+		if !exists {
+			return c.JSON(http.StatusNotFound, fmt.Sprintf("Grupo não encontrado: %s.", groupName))
 		}
 	}
+
 	if estadual {
 		agencies, err = pgS3Client.GetOPE(groupName, yearOfConsult)
 	} else {
@@ -201,7 +232,7 @@ func getBasicInfoOfType(c echo.Context) error {
 	for k := range agencies {
 		agenciesBasic = append(agenciesBasic, models.AgencyBasic{Name: agencies[k].ID, FullName: agencies[k].Name, AgencyCategory: agencies[k].Entity})
 	}
-	state := models.State{Name: groupName, ShortName: "", FlagURL: "", Agency: agenciesBasic}
+	state := models.State{Name: c.Param("grupo"), ShortName: "", FlagURL: "", Agency: agenciesBasic}
 	return c.JSON(http.StatusOK, state)
 }
 
