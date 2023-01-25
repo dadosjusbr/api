@@ -347,8 +347,9 @@ func getAllAgencies(c echo.Context) error {
 		fmt.Println("Error while listing agencies: %w", err)
 		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
 	}
+	host := c.Request().Host
 	for i := range agencies {
-		agencies[i].URL = fmt.Sprintf("v1/orgao/%s", agencies[i].ID)
+		agencies[i].URL = fmt.Sprintf("%s/v1/orgao/%s", host, agencies[i].ID)
 	}
 	return c.JSON(http.StatusOK, agencies)
 }
@@ -359,7 +360,8 @@ func getAgencyById(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, "Agency not found")
 	}
-	agency.URL = fmt.Sprintf("v1/orgao/%s", agency.ID)
+	host := c.Request().Host
+	agency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, agency.ID)
 	return c.JSON(http.StatusFound, agency)
 }
 
