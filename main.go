@@ -436,6 +436,14 @@ func getMonthlyInfo(c echo.Context) error {
 		CompletenessScore float64 `json:"indice_completude"`
 		EasinessScore     float64 `json:"indice_facilidade"`
 	}
+	type Collect struct {
+		Duration       float64 `json:"duracao_segundos,omitempty"`
+		CrawlerRepo    string  `json:"repositorio_coletor,omitempty"`
+		CrawlerVersion string  `json:"versao_coletor,omitempty"`
+		ParserRepo     string  `json:"repositorio_parser,omitempty"`
+		ParserVersion  string  `json:"versao_parser,omitempty"`
+	}
+
 	type MIError struct {
 		ErrorMessage string `json:"err_msg,omitempty"`
 		Status       int32  `json:"status,omitempty"`
@@ -449,6 +457,7 @@ func getMonthlyInfo(c echo.Context) error {
 		Package  *Backup    `json:"pacote_de_dados,omitempty"`
 		Meta     *Metadata  `json:"metadados,omitempty`
 		Score    *Score     `json:"indice_transparencia,omitempty`
+		Collect  *Collect   `json:"dados_coleta,omitempty`
 		Error    *MIError   `json:"error,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
@@ -502,6 +511,13 @@ func getMonthlyInfo(c echo.Context) error {
 							Score:             mi.Score.Score,
 							CompletenessScore: mi.Score.CompletenessScore,
 							EasinessScore:     mi.Score.EasinessScore,
+						},
+						Collect: &Collect{
+							Duration:       mi.Duration,
+							CrawlerRepo:    mi.CrawlerRepo,
+							CrawlerVersion: mi.CrawlerVersion,
+							ParserRepo:     mi.ParserRepo,
+							ParserVersion:  mi.ParserVersion,
 						}})
 				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 			} else if mi.ProcInfo.Status != 4 {
