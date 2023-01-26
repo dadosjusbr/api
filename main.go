@@ -162,10 +162,6 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 			Package:  *bkp,
 		}
 	}
-	// agencyMonthlyInfo, agency, err := pgS3Client.GetOMA(1, year, aID)
-	if err != nil {
-		fmt.Println("Erro ao buscar a quantidade de membros")
-	}
 
 	agencyTotalsYear := models.AgencyTotalsYear{Year: year, Agency: agency, MonthTotals: monthTotalsOfYear, AgencyFullName: agency.Name, SummaryPackage: pkg}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
