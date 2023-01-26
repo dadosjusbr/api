@@ -70,6 +70,7 @@ type ProcError struct {
 type MonthTotals struct {
 	Error              *ProcError
 	Month              int
+	TotalMembers	   int
 	BaseRemuneration   float64
 	OtherRemunerations float64
 	CrawlingTimestamp  *timestamppb.Timestamp
