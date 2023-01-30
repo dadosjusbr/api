@@ -196,7 +196,7 @@ func getBasicInfoOfType(c echo.Context) error {
 	if estadual {
 		agencies, err = pgS3Client.GetOPE(groupName)
 	} else {
-		agencies, err = pgS3Client.GetOPJ(groupName, yearOfConsult)
+		agencies, err = pgS3Client.GetOPJ(groupName)
 	}
 	if err != nil {
 		// That happens when there is no information on that year.
@@ -206,7 +206,7 @@ func getBasicInfoOfType(c echo.Context) error {
 		if estadual {
 			agencies, err = pgS3Client.GetOPE(groupName)
 		} else {
-			agencies, err = pgS3Client.GetOPJ(groupName, yearOfConsult)
+			agencies, err = pgS3Client.GetOPJ(groupName)
 		}
 		if err != nil {
 			log.Printf("[basic info type] error getting data for first screen(ano:%d, grupo:%s):%q", yearOfConsult, groupName, err)
