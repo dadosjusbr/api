@@ -13,10 +13,8 @@ import (
 	"github.com/dadosjusbr/api/models"
 	"github.com/dadosjusbr/storage"
 	strModels "github.com/dadosjusbr/storage/models"
-	"github.com/dadosjusbr/storage/repositories/database/mongo"
-	"github.com/dadosjusbr/storage/repositories/database/postgres"
-	"github.com/dadosjusbr/storage/repositories/fileStorage"
-	"github.com/dadosjusbr/storage/repositories/interfaces"
+	"github.com/dadosjusbr/storage/repo/database"
+	"github.com/dadosjusbr/storage/repo/file_storage"
 	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
 	"github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
@@ -66,7 +64,6 @@ type config struct {
 	NewRelicLicense string `envconfig:"NEWRELIC_LICENSE"`
 }
 
-var mgoS3Client *storage.Client
 var pgS3Client *storage.Client
 var loc *time.Location
 var conf config
@@ -74,7 +71,7 @@ var postgresDb *PostgresDB
 var sess *AwsSession
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
-func newClient(db interfaces.IDatabaseRepository, cloud interfaces.IStorageRepository) (*storage.Client, error) {
+func newClient(db database.Interface, cloud file_storage.Interface) (*storage.Client, error) {
 	client, err := storage.NewClient(db, cloud)
 	if err != nil {
 		return nil, fmt.Errorf("error creating storage.client: %q", err)
@@ -82,28 +79,16 @@ func newClient(db interfaces.IDatabaseRepository, cloud interfaces.IStorageRepos
 	return client, nil
 }
 
-func newPostgresDB(c config) (*postgres.PostgresDB, error) {
-	pgDb, err := postgres.NewPostgresDB(c.PgUser, c.PgPassword, c.PgDatabase, c.PgHost, c.PgPort)
+func newPostgresDB(c config) (*database.PostgresDB, error) {
+	pgDb, err := database.NewPostgresDB(c.PgUser, c.PgPassword, c.PgDatabase, c.PgHost, c.PgPort)
 	if err != nil {
 		return nil, fmt.Errorf("error creating postgres DB client: %q", err)
 	}
 	return pgDb, nil
 }
 
-func newMongoDB(c config) (*mongo.DBClient, error) {
-	if c.MongoMICol == "" || c.MongoAgCol == "" {
-		return nil, fmt.Errorf("error creating storage client: db collections must not be empty. MI:\"%s\", AG:\"%s\", PKG:\"%s\"", c.MongoMICol, c.MongoAgCol, c.MongoPkgCol)
-	}
-	db, err := mongo.NewMongoDB(c.MongoURI, c.MongoDBName, c.MongoMICol, c.MongoAgCol, c.MongoPkgCol, c.MongoRevCol)
-	if err != nil {
-		return nil, fmt.Errorf("error creating mongo DB client: %q", err)
-	}
-	db.Collection(c.MongoMICol)
-	return db, nil
-}
-
-func newS3Client(c config) (*fileStorage.S3Client, error) {
-	s3Client, err := fileStorage.NewS3Client(c.AwsRegion, c.AwsS3Bucket)
+func newS3Client(c config) (*file_storage.S3Client, error) {
+	s3Client, err := file_storage.NewS3Client(c.AwsRegion, c.AwsS3Bucket)
 	if err != nil {
 		return nil, fmt.Errorf("error creating S3 client: %v", err.Error())
 	}
@@ -211,9 +196,9 @@ func getBasicInfoOfType(c echo.Context) error {
 	}
 
 	if estadual {
-		agencies, err = pgS3Client.GetOPE(groupName, yearOfConsult)
+		agencies, err = pgS3Client.GetOPE(groupName)
 	} else {
-		agencies, err = pgS3Client.GetOPJ(groupName, yearOfConsult)
+		agencies, err = pgS3Client.GetOPJ(groupName)
 	}
 	if err != nil {
 		// That happens when there is no information on that year.
@@ -221,9 +206,9 @@ func getBasicInfoOfType(c echo.Context) error {
 		yearOfConsult = yearOfConsult - 1
 
 		if estadual {
-			agencies, err = pgS3Client.GetOPE(groupName, yearOfConsult)
+			agencies, err = pgS3Client.GetOPE(groupName)
 		} else {
-			agencies, err = pgS3Client.GetOPJ(groupName, yearOfConsult)
+			agencies, err = pgS3Client.GetOPJ(groupName)
 		}
 		if err != nil {
 			log.Printf("[basic info type] error getting data for first screen(ano:%d, grupo:%s):%q", yearOfConsult, groupName, err)
@@ -364,6 +349,10 @@ func getAllAgencies(c echo.Context) error {
 		fmt.Println("Error while listing agencies: %w", err)
 		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
 	}
+	host := c.Request().Host
+	for i := range agencies {
+		agencies[i].URL = fmt.Sprintf("%s/v1/orgao/%s", host, agencies[i].ID)
+	}
 	return c.JSON(http.StatusOK, agencies)
 }
 
@@ -373,6 +362,8 @@ func getAgencyById(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, "Agency not found")
 	}
+	host := c.Request().Host
+	agency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, agency.ID)
 	return c.JSON(http.StatusFound, agency)
 }
 
@@ -447,6 +438,14 @@ func getMonthlyInfo(c echo.Context) error {
 		CompletenessScore float64 `json:"indice_completude"`
 		EasinessScore     float64 `json:"indice_facilidade"`
 	}
+	type Collect struct {
+		Duration       float64 `json:"duracao_segundos,omitempty"`
+		CrawlerRepo    string  `json:"repositorio_coletor,omitempty"`
+		CrawlerVersion string  `json:"versao_coletor,omitempty"`
+		ParserRepo     string  `json:"repositorio_parser,omitempty"`
+		ParserVersion  string  `json:"versao_parser,omitempty"`
+	}
+
 	type MIError struct {
 		ErrorMessage string `json:"err_msg,omitempty"`
 		Status       int32  `json:"status,omitempty"`
@@ -460,6 +459,7 @@ func getMonthlyInfo(c echo.Context) error {
 		Package  *Backup    `json:"pacote_de_dados,omitempty"`
 		Meta     *Metadata  `json:"metadados,omitempty`
 		Score    *Score     `json:"indice_transparencia,omitempty`
+		Collect  *Collect   `json:"dados_coleta,omitempty`
 		Error    *MIError   `json:"error,omitempty"`
 	}
 	var summaryzedMI []SummaryzedMI
@@ -513,6 +513,13 @@ func getMonthlyInfo(c echo.Context) error {
 							Score:             mi.Score.Score,
 							CompletenessScore: mi.Score.CompletenessScore,
 							EasinessScore:     mi.Score.EasinessScore,
+						},
+						Collect: &Collect{
+							Duration:       mi.Duration,
+							CrawlerRepo:    mi.CrawlerRepo,
+							CrawlerVersion: mi.CrawlerVersion,
+							ParserRepo:     mi.ParserRepo,
+							ParserVersion:  mi.ParserVersion,
 						}})
 				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 			} else if mi.ProcInfo.Status != 4 {
@@ -646,16 +653,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// // Criando o client do storage a partir do mongodb
-	// mongoDB, err := newMongoDB(conf)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// mgoS3Client, err = newClient(mongoDB, s3Client)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	pgDB, err := newPostgresDB(conf)
 	if err != nil {
