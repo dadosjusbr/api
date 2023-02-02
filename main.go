@@ -118,7 +118,7 @@ func getTotalsOfAgencyYear(c echo.Context) error {
 				BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
 				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 				CrawlingTimestamp:  agencyMonthlyInfo.CrawlingTimestamp,
-				TotalMembers: 	 agencyMonthlyInfo.Summary.Count,
+				TotalMembers:       agencyMonthlyInfo.Summary.Count,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
@@ -644,7 +644,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	loc = l
-	if err := envconfig.Process("api", &conf); err != nil {
+	if err := envconfig.Process("", &conf); err != nil {
 		log.Fatal(err.Error())
 	}
 

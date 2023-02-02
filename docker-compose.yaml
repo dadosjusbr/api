@@ -1,8 +1,7 @@
 version: '3'
 services:
   site:
-    build:
-      context: '.'
+    image: ghcr.io/dadosjusbr/api:main
     env_file:
       - .env
     ports:
