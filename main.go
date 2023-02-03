@@ -196,7 +196,7 @@ func getBasicInfoOfType(c echo.Context) error {
 	}
 
 	if estadual {
-		agencies, err = pgS3Client.GetOPE(groupName)
+		agencies, err = pgS3Client.GetStateAgencies(groupName)
 	} else {
 		agencies, err = pgS3Client.GetOPJ(groupName)
 	}
@@ -206,7 +206,7 @@ func getBasicInfoOfType(c echo.Context) error {
 		yearOfConsult = yearOfConsult - 1
 
 		if estadual {
-			agencies, err = pgS3Client.GetOPE(groupName)
+			agencies, err = pgS3Client.GetStateAgencies(groupName)
 		} else {
 			agencies, err = pgS3Client.GetOPJ(groupName)
 		}
