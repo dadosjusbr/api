@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"archive/zip"
@@ -16,8 +16,8 @@ import (
 )
 
 type AwsSession struct {
-	sess     *session.Session
-	newrelic *newrelic.Application
+	Sess     *session.Session
+	Newrelic *newrelic.Application
 }
 
 func NewAwsSession(region string) (*AwsSession, error) {
@@ -27,7 +27,7 @@ func NewAwsSession(region string) (*AwsSession, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error creating aws session: %w", err)
 	}
-	return &AwsSession{sess: sess}, nil
+	return &AwsSession{Sess: sess}, nil
 }
 
 func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, bucket string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
@@ -73,11 +73,11 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 		})
 	}
 
-	txn := s.newrelic.StartTransaction("aws.GetRemunerations")
+	txn := s.Newrelic.StartTransaction("aws.GetRemunerations")
 	defer txn.End()
 	ctx := newrelic.NewContext(aws.BackgroundContext(), txn)
 	// Executando o download
-	downloader := s3manager.NewDownloader(s.sess)
+	downloader := s3manager.NewDownloader(s.Sess)
 	err := downloader.DownloadWithIterator(ctx, &s3manager.DownloadObjectsIterator{Objects: forDownload})
 	if err != nil {
 		return nil, 0, fmt.Errorf("error downloading files from S3: %q", err)

@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"context"
@@ -15,8 +15,8 @@ import (
 )
 
 type PostgresDB struct {
-	conn        *gorm.DB
-	newrelic    *newrelic.Application
+	Conn        *gorm.DB
+	Newrelic    *newrelic.Application
 	credentials PostgresCredentials
 }
 
@@ -30,31 +30,31 @@ type PostgresCredentials struct {
 }
 
 // Recebe os dados da conexão, verifica se está tudo certo e depois retorna a uri da conexão
-func NewPgCredentials(c config) (*PostgresCredentials, error) {
+func NewPgCredentials(user, password, dbName, host, port string) (*PostgresCredentials, error) {
 	for k, v := range map[string]string{
-		"postgres-user":     c.PgUser,
-		"postgres-password": c.PgPassword,
-		"postgres-database": c.PgDatabase,
-		"postgres-host":     c.PgHost,
-		"postgres-port":     c.PgPort,
+		"postgres-user":     user,
+		"postgres-password": password,
+		"postgres-database": dbName,
+		"postgres-host":     host,
+		"postgres-port":     port,
 	} {
 		if v == "" {
 			return nil, fmt.Errorf("%s is not set!", k)
 		}
 	}
 	return &PostgresCredentials{
-		c.PgUser,
-		c.PgPassword,
-		c.PgDatabase,
-		c.PgHost,
-		c.PgPort,
+		user,
+		password,
+		dbName,
+		host,
+		port,
 		fmt.Sprintf(
 			"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-			c.PgUser,
-			c.PgPassword,
-			c.PgHost,
-			c.PgPort,
-			c.PgDatabase),
+			user,
+			password,
+			host,
+			port,
+			dbName),
 	}, nil
 }
 
@@ -76,12 +76,12 @@ func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
 		return nil, fmt.Errorf("error initializing gorm: %q", err)
 	}
 	return &PostgresDB{
-		conn: db,
+		Conn: db,
 	}, nil
 }
 
 func (p *PostgresDB) Connect() error {
-	if p.conn != nil {
+	if p.Conn != nil {
 		return nil
 	} else {
 		conn, err := sql.Open("nrpostgres", p.credentials.uri)
@@ -99,13 +99,13 @@ func (p *PostgresDB) Connect() error {
 		if err != nil {
 			return fmt.Errorf("error initializing gorm: %q", err)
 		}
-		p.conn = db
+		p.Conn = db
 		return nil
 	}
 }
 
 func (p *PostgresDB) Disconnect() error {
-	db, err := p.conn.DB()
+	db, err := p.Conn.DB()
 	if err != nil {
 		return fmt.Errorf("error returning sql DB: %q", err)
 	}
@@ -119,13 +119,13 @@ func (p *PostgresDB) Disconnect() error {
 func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchDetails, error) {
 	results := []models.SearchDetails{}
 	var err error
-	txn := p.newrelic.StartTransaction("pg.LowCostFilter")
+	txn := p.Newrelic.StartTransaction("pg.LowCostFilter")
 	defer txn.End()
 	ctx := newrelic.NewContext(context.Background(), txn)
 	if len(arguments) > 0 {
-		err = p.conn.WithContext(ctx).Raw(query, arguments...).Scan(&results).Error
+		err = p.Conn.WithContext(ctx).Raw(query, arguments...).Scan(&results).Error
 	} else {
-		err = p.conn.WithContext(ctx).Raw(query).Scan(&results).Error
+		err = p.Conn.WithContext(ctx).Raw(query).Scan(&results).Error
 	}
 	if err != nil {
 		return nil, fmt.Errorf("erro ao fazer a seleção por filtro: %v", err)
