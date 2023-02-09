@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/dadosjusbr/api/handlers"
-	"github.com/dadosjusbr/api/services"
+	"github.com/dadosjusbr/api/papi"
+	"github.com/dadosjusbr/api/uiapi"
 	"github.com/dadosjusbr/storage"
 	"github.com/dadosjusbr/storage/repo/database"
 	"github.com/dadosjusbr/storage/repo/file_storage"
@@ -63,8 +63,6 @@ type config struct {
 var pgS3Client *storage.Client
 var loc *time.Location
 var conf config
-var postgresDb *services.PostgresDB
-var sess *services.AwsSession
 
 // newClient takes a config struct and creates a client to connect with DB and Cloud5
 func newClient(db database.Interface, cloud file_storage.Interface) (*storage.Client, error) {
@@ -117,25 +115,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	pgCredentials, err := services.NewPgCredentials(conf.PgUser, conf.PgPassword, conf.PgDatabase, conf.PgHost, conf.PgPort)
-	if err != nil {
-		log.Fatal("Error creating postgres credentials: %v", err)
-	}
-
-	postgresDb, err = services.NewPostgresDB(*pgCredentials)
+	conn, err := pgDB.GetConnection()
 	if err != nil {
 		log.Fatalf("Error connecting to postgres: %v", err)
-	}
-	defer postgresDb.Disconnect()
-
-	postgresDb.Conn, err = pgDB.GetConnection()
-	if err != nil {
-		log.Fatalf("Error connecting to postgres: %v", err)
-	}
-
-	sess, err = services.NewAwsSession(conf.AwsRegion)
-	if err != nil {
-		log.Fatalf("Error creating aws session: %v", err)
 	}
 
 	fmt.Printf("Going to start listening at port:%d\n", conf.Port)
@@ -155,11 +137,12 @@ func main() {
 
 	// Internal API configuration
 	uiAPIGroup := e.Group("/uiapi")
+	var nr *newrelic.Application
 	if os.Getenv("DADOSJUSBR_ENV") == "Prod" {
 		if conf.NewRelicApp == "" || conf.NewRelicLicense == "" {
 			log.Fatalf("Missing environment variables NEWRELIC_APP_NAME or NEWRELIC_LICENSE")
 		}
-		nr, err := newrelic.NewApplication(
+		nr, err = newrelic.NewApplication(
 			newrelic.ConfigAppName(conf.NewRelicApp),
 			newrelic.ConfigLicense(conf.NewRelicLicense),
 			newrelic.ConfigAppLogForwardingEnabled(true),
@@ -167,8 +150,6 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error bringin up new relic:%q", err)
 		}
-		postgresDb.Newrelic = nr
-		sess.Newrelic = nr
 		uiAPIGroup.Use(nrecho.Middleware(nr))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
@@ -181,15 +162,9 @@ func main() {
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength, echo.HeaderAccessControlAllowOrigin},
 		}))
 	}
-	uiApiHandler := handlers.UiApiHandler{
-		Client:           *pgS3Client,
-		PostgresDb:       *postgresDb,
-		Sess:             sess,
-		S3Bucket:         conf.AwsS3Bucket,
-		Loc:              loc,
-		EnvOmittedFields: conf.EnvOmittedFields,
-		SearchLimit:      conf.SearchLimit,
-		DownloadLimit:    conf.DownloadLimit,
+	uiApiHandler, err := uiapi.NewHandler(*pgS3Client, conn, nr, conf.AwsRegion, conf.AwsS3Bucket, loc, conf.EnvOmittedFields, conf.SearchLimit, conf.DownloadLimit)
+	if err != nil {
+		log.Fatalf("Error creating uiapi handler: %q", err)
 	}
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.GetSummaryOfAgency)
@@ -206,7 +181,7 @@ func main() {
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", uiApiHandler.DownloadByUrl)
 
-	apiHandler := handlers.ApiHandler{Client: *pgS3Client, DadosJusURL: conf.DadosJusURL, PackageRepoURL: conf.PackageRepoURL}
+	apiHandler := papi.NewHandler(*pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},

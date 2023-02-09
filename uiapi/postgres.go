@@ -1,4 +1,4 @@
-package services
+package uiapi
 
 import (
 	"context"
@@ -7,16 +7,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dadosjusbr/api/models"
 	_ "github.com/newrelic/go-agent/v3/integrations/nrpq"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type PostgresDB struct {
-	Conn        *gorm.DB
-	Newrelic    *newrelic.Application
+type postgresDB struct {
+	conn        *gorm.DB
+	newrelic    *newrelic.Application
 	credentials PostgresCredentials
 }
 
@@ -59,7 +58,7 @@ func NewPgCredentials(user, password, dbName, host, port string) (*PostgresCrede
 }
 
 // Retorna uma nova conexão com o postgres, através da uri passada como parâmetro
-func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
+func newPostgresDB(pgCredentials PostgresCredentials) (*postgresDB, error) {
 	conn, err := sql.Open("nrpostgres", pgCredentials.uri)
 	if err != nil {
 		panic(err)
@@ -75,13 +74,13 @@ func NewPostgresDB(pgCredentials PostgresCredentials) (*PostgresDB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error initializing gorm: %q", err)
 	}
-	return &PostgresDB{
-		Conn: db,
+	return &postgresDB{
+		conn: db,
 	}, nil
 }
 
-func (p *PostgresDB) Connect() error {
-	if p.Conn != nil {
+func (p *postgresDB) connect() error {
+	if p.conn != nil {
 		return nil
 	} else {
 		conn, err := sql.Open("nrpostgres", p.credentials.uri)
@@ -99,13 +98,13 @@ func (p *PostgresDB) Connect() error {
 		if err != nil {
 			return fmt.Errorf("error initializing gorm: %q", err)
 		}
-		p.Conn = db
+		p.conn = db
 		return nil
 	}
 }
 
-func (p *PostgresDB) Disconnect() error {
-	db, err := p.Conn.DB()
+func (p *postgresDB) disconnect() error {
+	db, err := p.conn.DB()
 	if err != nil {
 		return fmt.Errorf("error returning sql DB: %q", err)
 	}
@@ -116,16 +115,16 @@ func (p *PostgresDB) Disconnect() error {
 	return nil
 }
 
-func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.SearchDetails, error) {
-	results := []models.SearchDetails{}
+func (p postgresDB) filter(query string, arguments []interface{}) ([]searchDetails, error) {
+	results := []searchDetails{}
 	var err error
-	txn := p.Newrelic.StartTransaction("pg.LowCostFilter")
+	txn := p.newrelic.StartTransaction("pg.LowCostFilter")
 	defer txn.End()
 	ctx := newrelic.NewContext(context.Background(), txn)
 	if len(arguments) > 0 {
-		err = p.Conn.WithContext(ctx).Raw(query, arguments...).Scan(&results).Error
+		err = p.conn.WithContext(ctx).Raw(query, arguments...).Scan(&results).Error
 	} else {
-		err = p.Conn.WithContext(ctx).Raw(query).Scan(&results).Error
+		err = p.conn.WithContext(ctx).Raw(query).Scan(&results).Error
 	}
 	if err != nil {
 		return nil, fmt.Errorf("erro ao fazer a seleção por filtro: %v", err)
@@ -134,7 +133,7 @@ func (p PostgresDB) Filter(query string, arguments []interface{}) ([]models.Sear
 }
 
 // Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
-func (p PostgresDB) RemunerationQuery(filter *models.Filter) string {
+func (p postgresDB) remunerationQuery(filter *filter) string {
 	//A query padrão sem os filtros
 	query := `SELECT
 		id_orgao as orgao,
@@ -147,14 +146,14 @@ func (p PostgresDB) RemunerationQuery(filter *models.Filter) string {
 	FROM remuneracoes_zips 
 	`
 	if filter != nil {
-		p.AddFiltersInQuery(&query, filter)
+		p.addFiltersInQuery(&query, filter)
 	}
 
 	return query
 }
 
 // Função que insere os filtros na query
-func (p PostgresDB) AddFiltersInQuery(query *string, filter *models.Filter) {
+func (p postgresDB) addFiltersInQuery(query *string, filter *filter) {
 	*query = *query + " WHERE"
 
 	//Insere os filtros de ano caso existam
@@ -197,7 +196,7 @@ func (p PostgresDB) AddFiltersInQuery(query *string, filter *models.Filter) {
 }
 
 // Função que define os argumentos passados para a query
-func (p PostgresDB) Arguments(filter *models.Filter) []interface{} {
+func (p postgresDB) arguments(filter *filter) []interface{} {
 	var arguments []interface{}
 	if filter != nil {
 		if len(filter.Years) > 0 {

@@ -1,4 +1,4 @@
-package services
+package uiapi
 
 import (
 	"archive/zip"
@@ -10,27 +10,26 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/dadosjusbr/api/models"
 	"github.com/gocarina/gocsv"
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
-type AwsSession struct {
+type awsSession struct {
 	Sess     *session.Session
 	Newrelic *newrelic.Application
 }
 
-func NewAwsSession(region string) (*AwsSession, error) {
+func newAwsSession(awsRegion string) (*awsSession, error) {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region),
+		Region: aws.String(awsRegion),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("error creating aws session: %w", err)
 	}
-	return &AwsSession{Sess: sess}, nil
+	return &awsSession{Sess: sess}, nil
 }
 
-func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, bucket string, results []models.SearchDetails) ([]models.SearchResult, int, error) {
+func (s awsSession) getRemunerationsFromS3(limit, downloadLimit int, category, bucket string, results []searchDetails) ([]searchResult, int, error) {
 	forDownload := []s3manager.BatchDownloadObject{}
 	var buffer []aws.WriteAtBuffer
 	var paths []string
@@ -83,7 +82,7 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 		return nil, 0, fmt.Errorf("error downloading files from S3: %q", err)
 	}
 
-	var searchResults []models.SearchResult
+	var searchResults []searchResult
 	reachedLimit := false
 	for _, downloadObject := range forDownload {
 		// Queremos processar apenas os dados dentro dos limites definidos.
@@ -106,7 +105,7 @@ func (s AwsSession) GetRemunerationsFromS3(limit, downloadLimit int, category, b
 		}
 		defer fReader.Close()
 
-		var r []models.SearchResult
+		var r []searchResult
 		if err := gocsv.Unmarshal(fReader, &r); err != nil {
 			return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
 		}
