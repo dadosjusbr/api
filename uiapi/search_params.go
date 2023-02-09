@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type filter struct {
+type searchParams struct {
 	Years    []string
 	Months   []string
 	Agencies []string
@@ -14,7 +14,7 @@ type filter struct {
 	Types    string
 }
 
-func newFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*filter, error) {
+func newSearchParams(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*searchParams, error) {
 	var years []string
 	var months []string
 	var agencies []string
@@ -43,7 +43,7 @@ func newFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*fi
 		agencies = strings.Split(agenciesQp, ",")
 	}
 
-	return &filter{
+	return &searchParams{
 		Years:    years,
 		Months:   months,
 		Agencies: agencies,

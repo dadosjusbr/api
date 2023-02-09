@@ -133,7 +133,7 @@ func (p postgresDB) filter(query string, arguments []interface{}) ([]searchDetai
 }
 
 // Função que recebe os filtros e a partir deles estrutura a query SQL da pesquisa
-func (p postgresDB) remunerationQuery(filter *filter) string {
+func (p postgresDB) remunerationQuery(searchParams *searchParams) string {
 	//A query padrão sem os filtros
 	query := `SELECT
 		id_orgao as orgao,
@@ -145,50 +145,50 @@ func (p postgresDB) remunerationQuery(filter *filter) string {
 		zip_url as zip_url
 	FROM remuneracoes_zips 
 	`
-	if filter != nil {
-		p.addFiltersInQuery(&query, filter)
+	if searchParams != nil {
+		p.addFiltersInQuery(&query, searchParams)
 	}
 
 	return query
 }
 
 // Função que insere os filtros na query
-func (p postgresDB) addFiltersInQuery(query *string, filter *filter) {
+func (p postgresDB) addFiltersInQuery(query *string, searchParams *searchParams) {
 	*query = *query + " WHERE"
 
 	//Insere os filtros de ano caso existam
-	if len(filter.Years) > 0 {
+	if len(searchParams.Years) > 0 {
 		var years []string
-		years = append(years, filter.Years...)
-		for i := 0; i < len(filter.Years); i++ {
+		years = append(years, searchParams.Years...)
+		for i := 0; i < len(searchParams.Years); i++ {
 			years[i] = fmt.Sprintf("$%d", i+1)
 		}
 		*query = fmt.Sprintf("%s ano IN (%s)", *query, strings.Join(years, ","))
 	}
 
 	//Insere os filtros de mês
-	if len(filter.Months) > 0 {
-		lastIndex := len(filter.Years)
+	if len(searchParams.Months) > 0 {
+		lastIndex := len(searchParams.Years)
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
 		var months []string
-		months = append(months, filter.Months...)
-		for i := lastIndex; i < len(filter.Months)+lastIndex; i++ {
+		months = append(months, searchParams.Months...)
+		for i := lastIndex; i < len(searchParams.Months)+lastIndex; i++ {
 			months[i-lastIndex] = fmt.Sprintf("$%d", i+1)
 		}
 		*query = fmt.Sprintf("%s mes IN (%s)", *query, strings.Join(months, ","))
 	}
 
 	//Insere o filtro de órgãos
-	if len(filter.Agencies) > 0 {
-		lastIndex := len(filter.Years) + len(filter.Months)
+	if len(searchParams.Agencies) > 0 {
+		lastIndex := len(searchParams.Years) + len(searchParams.Months)
 		if lastIndex > 0 {
 			*query = fmt.Sprintf("%s AND", *query)
 		}
 		var agencies []string
-		agencies = append(agencies, filter.Agencies...)
-		for i := lastIndex; i < lastIndex+len(filter.Agencies); i++ {
+		agencies = append(agencies, searchParams.Agencies...)
+		for i := lastIndex; i < lastIndex+len(searchParams.Agencies); i++ {
 			agencies[i-lastIndex] = fmt.Sprintf("$%d", i+1)
 		}
 		*query = fmt.Sprintf("%s id_orgao IN (%s)", *query, strings.Join(agencies, ","))
@@ -196,21 +196,21 @@ func (p postgresDB) addFiltersInQuery(query *string, filter *filter) {
 }
 
 // Função que define os argumentos passados para a query
-func (p postgresDB) arguments(filter *filter) []interface{} {
+func (p postgresDB) arguments(searchParams *searchParams) []interface{} {
 	var arguments []interface{}
-	if filter != nil {
-		if len(filter.Years) > 0 {
-			for _, y := range filter.Years {
+	if searchParams != nil {
+		if len(searchParams.Years) > 0 {
+			for _, y := range searchParams.Years {
 				arguments = append(arguments, y)
 			}
 		}
-		if len(filter.Months) > 0 {
-			for _, m := range filter.Months {
+		if len(searchParams.Months) > 0 {
+			for _, m := range searchParams.Months {
 				arguments = append(arguments, m)
 			}
 		}
-		if len(filter.Agencies) > 0 {
-			for _, a := range filter.Agencies {
+		if len(searchParams.Agencies) > 0 {
+			for _, a := range searchParams.Agencies {
 				arguments = append(arguments, a)
 			}
 		}

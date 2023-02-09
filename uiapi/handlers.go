@@ -306,18 +306,18 @@ func (h handler) SearchByUrl(c echo.Context) error {
 	categories := c.QueryParam("categorias")
 	types := c.QueryParam("tipos")
 	//Criando os filtros a partir dos query params e validando eles
-	filter, err := newFilter(years, months, agencies, categories, types)
+	searchParams, err := newSearchParams(years, months, agencies, categories, types)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	var category string
-	if filter != nil {
-		category = filter.Category
+	if searchParams != nil {
+		category = searchParams.Category
 	}
 	// Pegando os resultados da pesquisa a partir dos filtros;
-	results, err := h.db.filter(h.db.remunerationQuery(filter), h.db.arguments(filter))
+	results, err := h.db.filter(h.db.remunerationQuery(searchParams), h.db.arguments(searchParams))
 	if err != nil {
-		log.Printf("Error querying BD (filter or counter):%q", err)
+		log.Printf("Error querying BD (searchParams or counter):%q", err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	remunerations, numRows, err := h.getSearchResults(h.searchLimit, category, results)
@@ -345,16 +345,16 @@ func (h handler) DownloadByUrl(c echo.Context) error {
 	types := c.QueryParam("tipos")
 
 	//Criando os filtros a partir dos query params e validando eles
-	filter, err := newFilter(years, months, agencies, categories, types)
+	searchParams, err := newSearchParams(years, months, agencies, categories, types)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	results, err := h.db.filter(h.db.remunerationQuery(filter), h.db.arguments(filter))
+	results, err := h.db.filter(h.db.remunerationQuery(searchParams), h.db.arguments(searchParams))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	searchResults, _, err := h.getSearchResults(h.downloadLimit, filter.Category, results)
+	searchResults, _, err := h.getSearchResults(h.downloadLimit, searchParams.Category, results)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
