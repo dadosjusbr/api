@@ -1,4 +1,4 @@
-package models
+package uiapi
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type Filter struct {
+type searchParams struct {
 	Years    []string
 	Months   []string
 	Agencies []string
@@ -14,7 +14,7 @@ type Filter struct {
 	Types    string
 }
 
-func NewFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*Filter, error) {
+func newSearchParams(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*searchParams, error) {
 	var years []string
 	var months []string
 	var agencies []string
@@ -43,7 +43,7 @@ func NewFilter(yearsQp, monthsQp, agenciesQp, categoriesQp, typesQp string) (*Fi
 		agencies = strings.Split(agenciesQp, ",")
 	}
 
-	return &Filter{
+	return &searchParams{
 		Years:    years,
 		Months:   months,
 		Agencies: agencies,

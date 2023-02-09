@@ -1,4 +1,4 @@
-package models
+package uiapi
 
 import (
 	"time"
@@ -8,23 +8,43 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+// dataForChartAtAgencyScreen - contains all necessary data to load chart
+type dataForChartAtAgencyScreen struct {
+	Members     map[int]int
+	Servers     map[int]int
+	MaxSalary   float64
+	PackageURL  string
+	PackageHash string
+	PackageSize int64
+}
+
+// generalTotals - contains the summary from all DadosJusBr data
+type generalTotals struct {
+	AgencyAmount             int
+	MonthlyTotalsAmount      int
+	StartDate                time.Time
+	EndDate                  time.Time
+	RemunerationRecordsCount int
+	GeneralRemunerationValue float64
+}
+
 // State - Struct cotains information of a state ans its agencies
-type State struct {
+type state struct {
 	Name      string
 	ShortName string
 	FlagURL   string
-	Agency    []AgencyBasic
+	Agency    []agencyBasic
 }
 
 // AgencyBasic - Basic information of a agency (name e category)
-type AgencyBasic struct {
+type agencyBasic struct {
 	Name           string
 	FullName       string
 	AgencyCategory string
 }
 
 // Employee - Represents an employee and his/her salary info
-type Employee struct {
+type employee struct {
 	Name   string
 	Wage   float64
 	Perks  float64
@@ -35,7 +55,7 @@ type Employee struct {
 }
 
 // AgencySummary - Summary of an agency
-type AgencySummary struct {
+type agencySummary struct {
 	FullName          string
 	TotalEmployees    int
 	TotalWage         float64
@@ -53,57 +73,37 @@ type AgencySummary struct {
 }
 
 // AgencyTotalsYear - Represents the totals of an year
-type AgencyTotalsYear struct {
+type agencyTotalsYear struct {
 	Year           int
 	Agency         *models.Agency
-	MonthTotals    []MonthTotals
+	MonthTotals    []monthTotals
 	AgencyFullName string
 	SummaryPackage *models.Package `json:"SummaryPackage,omitempty"`
 }
 
-type ProcError struct {
+type procError struct {
 	Stdout string `protobuf:"bytes,2,opt,name=stdout,proto3" json:"stdout,omitempty"` // String containing the standard output of the process.
 	Stderr string `protobuf:"bytes,3,opt,name=stderr,proto3" json:"stderr,omitempty"` // String containing the standard error of the process.
 }
 
 // MonthTotals - Detailed info of a month (wage, perks, other)
-type MonthTotals struct {
-	Error              *ProcError
+type monthTotals struct {
+	Error              *procError
 	Month              int
-	TotalMembers	   int
+	TotalMembers       int
 	BaseRemuneration   float64
 	OtherRemunerations float64
 	CrawlingTimestamp  *timestamppb.Timestamp
 }
 
-// DataForChartAtAgencyScreen - contains all necessary data to load chart
-type DataForChartAtAgencyScreen struct {
-	Members     map[int]int
-	Servers     map[int]int
-	MaxSalary   float64
-	PackageURL  string
-	PackageHash string
-	PackageSize int64
-}
-
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
-type ProcInfoResult struct {
+type procInfoResult struct {
 	ProcInfo          *coleta.ProcInfo
 	CrawlingTimestamp *timestamppb.Timestamp
 }
 
-// GeneralTotals - contains the summary from all DadosJusBr data
-type GeneralTotals struct {
-	AgencyAmount             int
-	MonthlyTotalsAmount      int
-	StartDate                time.Time
-	EndDate                  time.Time
-	RemunerationRecordsCount int
-	GeneralRemunerationValue float64
-}
-
-//Os campos que serão trazido pela query de pesquisa
-type SearchDetails struct {
+// Os campos que serão trazido pela query de pesquisa
+type searchDetails struct {
 	Descontos int    `db:"descontos" json:"descontos"`
 	Base      int    `db:"base" json:"base"`
 	Outras    int    `db:"outras" json:"outras"`
@@ -113,7 +113,7 @@ type SearchDetails struct {
 	ZipUrl    string `db:"zip_url" json:"zip_url"`
 }
 
-type SearchResult struct {
+type searchResult struct {
 	Orgao                    string  `db:"orgao" json:"orgao" csv:"orgao" tableheader:"orgao"`
 	Mes                      int     `db:"mes" json:"mes" csv:"mes" tableheader:"mes"`
 	Ano                      int     `db:"ano" json:"ano" csv:"ano" tableheader:"ano"`
@@ -126,11 +126,11 @@ type SearchResult struct {
 	Valor                    float64 `db:"valor" json:"valor" csv:"valor" tableheader:"valor"`
 }
 
-//A resposta que será enviada pela rota de pesquisa
-type SearchResponse struct {
+// A resposta que será enviada pela rota de pesquisa
+type searchResponse struct {
 	DownloadAvailable  bool           `json:"download_available"`
 	NumRowsIfAvailable int            `json:"num_rows_if_available"`
 	SearchLimit        int            `json:"search_limit"`
 	DownloadLimit      int            `json:"download_limit"`
-	Results            []SearchResult `json:"result"`
+	Results            []searchResult `json:"result"`
 }
