@@ -191,6 +191,8 @@ func main() {
 	apiGroup.GET("/orgao/:orgao", apiHandler.GetAgencyById)
 	// Return all agencies
 	apiGroup.GET("/orgaos", apiHandler.GetAllAgencies)
+	// Return Annual Summary of an agency
+	apiGroup.GET("/dados/:orgao", apiHandler.GetAnnualSummary)
 	// Return MIs by year
 	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
 	// Return MIs by month
