@@ -13,12 +13,12 @@ import (
 )
 
 type handler struct {
-	client         storage.Client
+	client         *storage.Client
 	dadosJusURL    string
 	packageRepoURL string
 }
 
-func NewHandler(client storage.Client, dadosJusURL, packageRepoURL string) *handler {
+func NewHandler(client *storage.Client, dadosJusURL, packageRepoURL string) *handler {
 	return &handler{
 		client:         client,
 		dadosJusURL:    dadosJusURL,
@@ -34,7 +34,7 @@ func (h handler) GetAgencyById(c echo.Context) error {
 	}
 	host := c.Request().Host
 	agency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, agency.ID)
-	return c.JSON(http.StatusFound, agency)
+	return c.JSON(http.StatusOK, agency)
 }
 
 func (h handler) GetAllAgencies(c echo.Context) error {

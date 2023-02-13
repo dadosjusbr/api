@@ -181,7 +181,7 @@ func main() {
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", uiApiHandler.DownloadByUrl)
 
-	apiHandler := papi.NewHandler(*pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
+	apiHandler := papi.NewHandler(pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
