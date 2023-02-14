@@ -163,29 +163,6 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
-func (h handler) GetAnnualSummary(c echo.Context) error {
-	agencyName := c.Param("orgao")
-	summaries, err := h.client.Db.GetAnnualSummary(agencyName)
-	if err != nil {
-		log.Printf("error getting annual data of '%s' :%q", agencyName, err)
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", agencyName))
-	}
-	if summaries == nil {
-		return c.NoContent(http.StatusNotFound)
-	}
-	var annualSum []annualSummary
-	for _, s := range summaries {
-		annualSum = append(annualSum, annualSummary{
-			AgencyID:           agencyName,
-			Year:               s.Year,
-			Count:              s.Count,
-			BaseRemuneration:   s.BaseRemuneration,
-			OtherRemunerations: s.OtherRemunerations,
-		})
-	}
-	return c.JSON(http.StatusOK, annualSum)
-}
-
 func (h handler) formatDownloadUrl(url string) string {
 	return strings.Replace(url, h.packageRepoURL, h.dadosJusURL, -1)
 }

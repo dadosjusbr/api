@@ -68,11 +68,3 @@ type summaryzedMI struct {
 	Collect  *collect   `json:"dados_coleta,omitempty"`
 	Error    *miError   `json:"error,omitempty"`
 }
-
-type annualSummary struct {
-	AgencyID           string  `json:"id_orgao,omitempty"`
-	Year               int     `json:"ano,omitempty"`
-	Count              int     `json:"num_membros,omitempty"`
-	BaseRemuneration   float64 `json:"remuneracao_base,omitempty"`
-	OtherRemunerations float64 `json:"outras_remuneracoes,omitempty"`
-}
