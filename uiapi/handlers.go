@@ -382,9 +382,6 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		log.Printf("error getting annual data of '%s' :%q", agencyName, err)
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Algo deu errado ao tentar coletar os dados anuais do orgao=%s", agencyName))
 	}
-	if summaries == nil {
-		return c.NoContent(http.StatusNotFound)
-	}
 	var annualData []annualSummaryData
 	for _, s := range summaries {
 		annualData = append(annualData, annualSummaryData{
