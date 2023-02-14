@@ -368,6 +368,57 @@ func (h handler) DownloadByUrl(c echo.Context) error {
 	return nil
 }
 
+func (h handler) GetAnnualSummary(c echo.Context) error {
+	agencyName := c.Param("orgao")
+	strAgency, err := h.client.Db.GetAgency(agencyName)
+	if err != nil {
+		log.Printf("error getting agency '%s' :%q", agencyName, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", agencyName))
+	}
+	host := c.Request().Host
+	strAgency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, strAgency.ID)
+	summaries, err := h.client.GetAnnualSummary(agencyName)
+	if err != nil {
+		log.Printf("error getting annual data of '%s' :%q", agencyName, err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Algo deu errado ao tentar coletar os dados anuais do orgao=%s", agencyName))
+	}
+	if summaries == nil {
+		return c.NoContent(http.StatusNotFound)
+	}
+	var annualData []annualSummaryData
+	for _, s := range summaries {
+		annualData = append(annualData, annualSummaryData{
+			Year:               s.Year,
+			Count:              s.Count,
+			BaseRemuneration:   s.BaseRemuneration,
+			OtherRemunerations: s.OtherRemunerations,
+			Package:            s.Package,
+		})
+	}
+	var collect []collecting
+	for _, c := range strAgency.Collecting {
+		collect = append(collect, collecting{
+			Timestamp:   c.Timestamp,
+			Description: c.Description,
+		})
+	}
+	annualSum := annualSummary{
+		Agency: &agency{
+			ID:            strAgency.ID,
+			Name:          strAgency.Name,
+			URL:           strAgency.URL,
+			Type:          strAgency.Type,
+			Entity:        strAgency.Entity,
+			UF:            strAgency.UF,
+			Collecting:    collect,
+			TwitterHandle: strAgency.TwitterHandle,
+			OmbudsmanURL:  strAgency.OmbudsmanURL,
+		},
+		Data: annualData,
+	}
+	return c.JSON(http.StatusOK, annualSum)
+}
+
 func (h handler) getSearchResults(limit int, category string, results []searchDetails) ([]searchResult, int, error) {
 	searchResults := []searchResult{}
 	numRows := 0

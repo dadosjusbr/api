@@ -36,7 +36,7 @@ func (g getAgencyById) testGetAgencyByIdWhenAgencyExists(t *testing.T) {
 		Entity:        "Tribunal",
 		UF:            "AL",
 		TwitterHandle: "TJALagoas",
-		OmbudsmanURL:  "TJALagoas",
+		OmbudsmanURL:  "TJALagoas.com.br",
 	}
 	agencyId := "tjal"
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -45,7 +45,7 @@ func (g getAgencyById) testGetAgencyByIdWhenAgencyExists(t *testing.T) {
 	e := echo.New()
 	request := httptest.NewRequest(
 		http.MethodGet,
-		"/v1/orgao/:orgao",
+		"/v2/orgao/:orgao",
 		nil,
 	)
 	recoder := httptest.NewRecorder()
@@ -55,20 +55,19 @@ func (g getAgencyById) testGetAgencyByIdWhenAgencyExists(t *testing.T) {
 
 	client, _ := storage.NewClient(dbMock, fsMock)
 	handler := NewHandler(client, "", "")
-	handler.GetAgencyById(ctx)
+	handler.V2GetAgencyById(ctx)
 
 	expectedHttpCode := 200
 	expectedJson := `
 		{
-			"aid": "tjal",
-			"name": "Tribunal de Justiça do Estado de Alagoas",
-			"type": "Estadual",
-			"entity": "Tribunal",
+			"id_orgao": "tjal",
+			"nome": "Tribunal de Justiça do Estado de Alagoas",
+			"jurisdicao": "Estadual",
+			"entidade": "Tribunal",
 			"uf": "AL",
-			"url": "example.com/v1/orgao/tjal",
-			"collecting": null,
+			"url": "example.com/v2/orgao/tjal",
 			"twitter_handle": "TJALagoas",
-			"ombudsman_url": "TJALagoas"
+			"ouvidoria": "TJALagoas.com.br"
 		}
 	`
 
@@ -88,7 +87,7 @@ func (g getAgencyById) testGetAgencyByIdWhenAgencyDoesNotExist(t *testing.T) {
 	e := echo.New()
 	request := httptest.NewRequest(
 		http.MethodGet,
-		"/v1/orgao/:orgao",
+		"/v2/orgao/:orgao",
 		nil,
 	)
 	recoder := httptest.NewRecorder()
@@ -98,7 +97,7 @@ func (g getAgencyById) testGetAgencyByIdWhenAgencyDoesNotExist(t *testing.T) {
 
 	client, _ := storage.NewClient(dbMock, fsMock)
 	handler := NewHandler(client, "", "")
-	handler.GetAgencyById(ctx)
+	handler.V2GetAgencyById(ctx)
 
 	expectedHttpCode := 404
 	expectedJson := `"Agency not found"`

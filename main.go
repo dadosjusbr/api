@@ -168,6 +168,7 @@ func main() {
 	}
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.GetSummaryOfAgency)
+	uiAPIGroup.GET("/v1/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", uiApiHandler.GetSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
@@ -188,13 +189,19 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	// Return agency
-	apiGroup.GET("/orgao/:orgao", apiHandler.GetAgencyById)
+	apiGroup.GET("/orgao/:orgao", apiHandler.V1GetAgencyById)
 	// Return all agencies
 	apiGroup.GET("/orgaos", apiHandler.GetAllAgencies)
 	// Return MIs by year
 	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
 	// Return MIs by month
 	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.GetMonthlyInfo)
+	// V2 public api, to be used by the new returned data
+	apiGroupV2 := e.Group("/v2", middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+	}))
+	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
