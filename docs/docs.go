@@ -21,25 +21,25 @@ const docTemplate = `{
     "paths": {
         "/v1/orgao/{orgao}": {
             "get": {
-                "description": "Busca um órgão específico utilizando sua Unidade Federativa.",
+                "description": "Busca um órgão específico utilizando seu ID.",
                 "produces": [
                     "application/json"
                 ],
-                "operationId": "getAgencyById",
+                "operationId": "GetAgencyById",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID do órgão. Exemplos: al, ba, df.",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
                         "name": "orgao",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "302": {
+                    "200": {
                         "description": "Requisição bem sucedida.",
                         "schema": {
-                            "$ref": "#/definitions/responses.Agency"
+                            "$ref": "#/definitions/papi.agency"
                         }
                     },
                     "404": {
@@ -53,25 +53,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "responses.Agency": {
+        "papi.agency": {
             "type": "object",
             "properties": {
-                "aid": {
-                    "type": "string"
-                },
-                "collecting": {
+                "coletando": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/responses.Collecting"
+                        "$ref": "#/definitions/papi.collecting"
                     }
                 },
-                "entity": {
+                "entidade": {
                     "type": "string"
                 },
-                "name": {
+                "id_orgao": {
                     "type": "string"
                 },
-                "type": {
+                "jurisdicao": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "ouvidoria": {
+                    "type": "string"
+                },
+                "twitter_handle": {
                     "type": "string"
                 },
                 "uf": {
@@ -82,10 +88,10 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.Collecting": {
+        "papi.collecting": {
             "type": "object",
             "properties": {
-                "description": {
+                "descricao": {
                     "type": "array",
                     "items": {
                         "type": "string"

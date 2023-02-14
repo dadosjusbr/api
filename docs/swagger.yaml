@@ -1,26 +1,30 @@
 definitions:
-  responses.Agency:
+  papi.agency:
     properties:
-      aid:
-        type: string
-      collecting:
+      coletando:
         items:
-          $ref: '#/definitions/responses.Collecting'
+          $ref: '#/definitions/papi.collecting'
         type: array
-      entity:
+      entidade:
         type: string
-      name:
+      id_orgao:
         type: string
-      type:
+      jurisdicao:
+        type: string
+      nome:
+        type: string
+      ouvidoria:
+        type: string
+      twitter_handle:
         type: string
       uf:
         type: string
       url:
         type: string
     type: object
-  responses.Collecting:
+  papi.collecting:
     properties:
-      description:
+      descricao:
         items:
           type: string
         type: array
@@ -36,10 +40,10 @@ info:
 paths:
   /v1/orgao/{orgao}:
     get:
-      description: Busca um órgão específico utilizando sua Unidade Federativa.
-      operationId: getAgencyById
+      description: Busca um órgão específico utilizando seu ID.
+      operationId: GetAgencyById
       parameters:
-      - description: 'ID do órgão. Exemplos: al, ba, df.'
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
         in: path
         name: orgao
         required: true
@@ -47,10 +51,10 @@ paths:
       produces:
       - application/json
       responses:
-        "302":
+        "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/responses.Agency'
+            $ref: '#/definitions/papi.agency'
         "404":
           description: Órgão não encontrado.
           schema:
