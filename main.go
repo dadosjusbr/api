@@ -191,7 +191,7 @@ func main() {
 	// Return agency
 	apiGroup.GET("/orgao/:orgao", apiHandler.V1GetAgencyById)
 	// Return all agencies
-	apiGroup.GET("/orgaos", apiHandler.GetAllAgencies)
+	apiGroup.GET("/orgaos", apiHandler.V1GetAllAgencies)
 	// Return MIs by year
 	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
 	// Return MIs by month
@@ -202,6 +202,7 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
+	apiGroupV2.GET("/orgaos", apiHandler.V2GetAllAgencies)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
