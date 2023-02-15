@@ -193,16 +193,20 @@ func main() {
 	// Return all agencies
 	apiGroup.GET("/orgaos", apiHandler.GetAllAgencies)
 	// Return MIs by year
-	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
+	apiGroup.GET("/dados/:orgao/:ano", apiHandler.V1GetMonthlyInfo)
 	// Return MIs by month
-	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.GetMonthlyInfo)
+	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.V1GetMonthlyInfo)
 	// V2 public api, to be used by the new returned data
 	apiGroupV2 := e.Group("/v2", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
-
+	apiGroupV2.GET("/orgaos", apiHandler.V2GetAllAgencies)
+	// Return MIs by year
+	apiGroupV2.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfosByYear)
+	// Return MIs by month
+	apiGroupV2.GET("/dados/:orgao/:ano/:mes", apiHandler.V2GetMonthlyInfo)
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
 		ReadTimeout:  5 * time.Minute,
