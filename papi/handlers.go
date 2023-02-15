@@ -13,12 +13,12 @@ import (
 )
 
 type handler struct {
-	client         storage.Client
+	client         *storage.Client
 	dadosJusURL    string
 	packageRepoURL string
 }
 
-func NewHandler(client storage.Client, dadosJusURL, packageRepoURL string) *handler {
+func NewHandler(client *storage.Client, dadosJusURL, packageRepoURL string) *handler {
 	return &handler{
 		client:         client,
 		dadosJusURL:    dadosJusURL,
@@ -26,7 +26,7 @@ func NewHandler(client storage.Client, dadosJusURL, packageRepoURL string) *hand
 	}
 }
 
-func (h handler) GetAgencyById(c echo.Context) error {
+func (h handler) V1GetAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	agency, err := h.client.Db.GetAgency(agencyName)
 	if err != nil {
@@ -34,7 +34,36 @@ func (h handler) GetAgencyById(c echo.Context) error {
 	}
 	host := c.Request().Host
 	agency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, agency.ID)
-	return c.JSON(http.StatusFound, agency)
+	return c.JSON(http.StatusOK, agency)
+}
+
+func (h handler) V2GetAgencyById(c echo.Context) error {
+	agencyName := c.Param("orgao")
+	strAgency, err := h.client.Db.GetAgency(agencyName)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, "Agency not found")
+	}
+	var collect []collecting
+	for _, c := range strAgency.Collecting {
+		collect = append(collect, collecting{
+			Timestamp:   c.Timestamp,
+			Description: c.Description,
+		})
+	}
+	host := c.Request().Host
+	url := fmt.Sprintf("%s/v2/orgao/%s", host, strAgency.ID)
+	agency := &agency{
+		ID:            strAgency.ID,
+		Name:          strAgency.Name,
+		Type:          strAgency.Type,
+		Entity:        strAgency.Entity,
+		UF:            strAgency.UF,
+		URL:           url,
+		Collecting:    collect,
+		TwitterHandle: strAgency.TwitterHandle,
+		OmbudsmanURL:  strAgency.OmbudsmanURL,
+	}
+	return c.JSON(http.StatusOK, agency)
 }
 
 func (h handler) GetAllAgencies(c echo.Context) error {
