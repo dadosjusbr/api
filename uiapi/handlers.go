@@ -18,7 +18,7 @@ import (
 )
 
 type handler struct {
-	client           storage.Client
+	client           *storage.Client
 	db               *postgresDB
 	sess             *awsSession
 	s3Bucket         string
@@ -28,7 +28,7 @@ type handler struct {
 	downloadLimit    int
 }
 
-func NewHandler(client storage.Client, conn *gorm.DB, newrelic *newrelic.Application, awsRegion string, s3Bucket string, loc *time.Location, envOmittedFields []string, searchLimit, downloadLimit int) (*handler, error) {
+func NewHandler(client *storage.Client, conn *gorm.DB, newrelic *newrelic.Application, awsRegion string, s3Bucket string, loc *time.Location, envOmittedFields []string, searchLimit, downloadLimit int) (*handler, error) {
 	db := &postgresDB{
 		conn:     conn,
 		newrelic: newrelic,
@@ -69,6 +69,36 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 		MaxWage:    agencyMonthlyInfo.Summary.BaseRemuneration.Max,
 		TotalPerks: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		MaxPerk:    agencyMonthlyInfo.Summary.OtherRemunerations.Max,
+		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
+			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+		TotalMembers: agencyMonthlyInfo.Summary.Count,
+		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
+		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
+		HasPrevious:  time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
+	}
+	return c.JSON(http.StatusOK, agencySummary)
+}
+
+func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%s inválido", c.Param("ano")))
+	}
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%s inválido", c.Param("mes")))
+	}
+	agencyName := c.Param("orgao")
+	agencyMonthlyInfo, agency, err := h.client.Db.GetOMA(month, year, agencyName)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
+	}
+	agencySummary := v2AgencySummary{
+		Agency:             agency.Name,
+		BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
+		MaxBase:            agencyMonthlyInfo.Summary.BaseRemuneration.Max,
+		OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+		MaxOther:           agencyMonthlyInfo.Summary.OtherRemunerations.Max,
 		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
 			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		TotalMembers: agencyMonthlyInfo.Summary.Count,
