@@ -30,14 +30,6 @@ type config struct {
 	AwsS3Bucket string `envconfig:"AWS_S3_BUCKET" required:"true"`
 	AwsRegion   string `envconfig:"AWS_REGION" required:"true"`
 
-	// StorageDB config
-	MongoURI    string `envconfig:"MONGODB_URI"`
-	MongoDBName string `envconfig:"MONGODB_NAME"`
-	MongoMICol  string `envconfig:"MONGODB_MICOL" required:"true"`
-	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
-	MongoPkgCol string `envconfig:"MONGODB_PKGCOL" required:"true"`
-	MongoRevCol string `envconfig:"MONGODB_REVCOL" required:"true"`
-
 	// Omited fields
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
 
@@ -90,10 +82,10 @@ func newS3Client(c config) (*file_storage.S3Client, error) {
 	return s3Client, nil
 }
 
-//	@title			API do dadosjusbr.org
-//	@version		1.0
-//	@contact.name	DadosJusBr
-//	@contact.url	https://dadosjusbr.org
+// @title			API do dadosjusbr.org
+// @version		1.0
+// @contact.name	DadosJusBr
+// @contact.url	https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
