@@ -37,13 +37,13 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 	return c.JSON(http.StatusOK, agency)
 }
 
-// @ID				GetAgencyById
-// @Description	Busca um órgão específico utilizando seu ID.
-// @Produce		json
-// @Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-// @Success		200					{object}	agency	"Requisição bem sucedida."
-// @Failure		404					{string}	string	"Órgão não encontrado."
-// @Router			/v1/orgao/{orgao} 	[get]
+//	@ID				GetAgencyById
+//	@Description	Busca um órgão específico utilizando seu ID.
+//	@Produce		json
+//	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Success		200					{object}	agency	"Requisição bem sucedida."
+//	@Failure		404					{string}	string	"Órgão não encontrado."
+//	@Router			/v1/orgao/{orgao} 	[get]
 func (h handler) V2GetAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
