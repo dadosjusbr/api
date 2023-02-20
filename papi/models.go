@@ -70,18 +70,19 @@ type summaryzedMI struct {
 }
 
 type agency struct {
-	ID            string       `json:"id_orgao,omitempty"`
-	Name          string       `json:"nome,omitempty"`
-	Type          string       `json:"jurisdicao,omitempty"`
-	Entity        string       `json:"entidade,omitempty"`
-	UF            string       `json:"uf,omitempty"`
-	FlagURL       string       `json:"url,omitempty"`
+	ID            string       `json:"id_orgao,omitempty"`   // 'trt13'
+	Name          string       `json:"nome,omitempty"`       // 'Tribunal Regional do Trabalho 13° Região'
+	Type          string       `json:"jurisdicao,omitempty"` // "R" for Regional, "M" for Municipal, "F" for Federal, "E" for State.
+	Entity        string       `json:"entidade,omitempty"`   // "J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias and "D" for Defensorias.
+	UF            string       `json:"uf,omitempty"`         // Short code for federative unity.
+	URL           string       `json:"url,omitempty"`        // Link for state url
 	Collecting    []collecting `json:"coletando,omitempty"`
-	TwitterHandle string       `json:"twitter_handle,omitempty"`
-	OmbudsmanURL  string       `json:"ouvidoria,omitempty"`
+	TwitterHandle string       `json:"twitter_handle,omitempty"` // Agency's twitter handle
+	OmbudsmanURL  string       `json:"ouvidoria,omitempty"`      //Agencys's ombudsman url
 }
 
+// Collecting A Struct containing the day we checked the status of the data and the reasons why we didn't collected it.
 type collecting struct {
-	Timestamp   *int64   `json:"timestamp,omitempty"`
-	Description []string `json:"descricao,omitempty"`
+	Timestamp   *int64   `json:"timestamp,omitempty"` // Day(unix) we checked the status of the data
+	Description []string `json:"descricao,omitempty"` // Reasons why we didn't collect the data
 }

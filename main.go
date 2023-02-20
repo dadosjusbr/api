@@ -90,10 +90,10 @@ func newS3Client(c config) (*file_storage.S3Client, error) {
 	return s3Client, nil
 }
 
-//	@title			API do dadosjusbr.org
-//	@version		1.0
-//	@contact.name	DadosJusBr
-//	@contact.url	https://dadosjusbr.org
+// @title			API do dadosjusbr.org
+// @version		1.0
+// @contact.name	DadosJusBr
+// @contact.url	https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
@@ -187,14 +187,14 @@ func main() {
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", uiApiHandler.DownloadByUrl)
 
-	apiHandler := papi.NewHandler(*pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
+	apiHandler := papi.NewHandler(pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
 	// Public API configuration
 	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	// Return agency
-	apiGroup.GET("/orgao/:orgao", apiHandler.GetAgencyById)
+	apiGroup.GET("/orgao/:orgao", apiHandler.V1GetAgencyById)
 	// Return all agencies
 	apiGroup.GET("/orgaos", apiHandler.GetAllAgencies)
 	// Return MIs by year
@@ -202,6 +202,12 @@ func main() {
 	// Return MIs by month
 	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.GetMonthlyInfo)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	// V2 public api, to be used by the new returned data
+	apiGroupV2 := e.Group("/v2", middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
+	}))
+	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),

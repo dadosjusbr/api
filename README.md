@@ -23,7 +23,7 @@ Esse projeto foi elaborado com o intuito de praticar a cidadania e tornar os dad
 
 ### Caso você não tenha [Docker](https://www.docker.com/get-started/) e o [Docker compose](https://docs.docker.com/compose/install/) instalados na sua máquina, é necessário as seguintes dependências:
 
-- [GoLang](https://golang.org/doc/install) Versão 1.17+
+- [GoLang](https://golang.org/doc/install) Versão 1.18+
 
 - [Postgresql](https://www.postgresql.org/download/) Versão 14.4+
 
