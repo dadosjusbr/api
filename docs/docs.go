@@ -19,11 +19,69 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes}": {
+            "get": {
+                "description": "Resume os dados de remuneração mensal de um órgão.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "uiapi"
+                ],
+                "operationId": "GetSummaryOfAgency",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano da remuneração. Exemplo: 2018.",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Mês da remuneração. Exemplo: 1.",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.v2AgencySummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro ano, mês ou nome do órgão são inválidos.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "public_api"
                 ],
                 "operationId": "GetAgencyById",
                 "parameters": [
@@ -63,27 +121,35 @@ const docTemplate = `{
                     }
                 },
                 "entidade": {
+                    "description": "\"J\" For Judiciário, \"M\" for Ministério Público, \"P\" for Procuradorias and \"D\" for Defensorias.",
                     "type": "string"
                 },
                 "id_orgao": {
+                    "description": "'trt13'",
                     "type": "string"
                 },
                 "jurisdicao": {
+                    "description": "\"R\" for Regional, \"M\" for Municipal, \"F\" for Federal, \"E\" for State.",
                     "type": "string"
                 },
                 "nome": {
+                    "description": "'Tribunal Regional do Trabalho 13° Região'",
                     "type": "string"
                 },
                 "ouvidoria": {
+                    "description": "Agencys's ombudsman url",
                     "type": "string"
                 },
                 "twitter_handle": {
+                    "description": "Agency's twitter handle",
                     "type": "string"
                 },
                 "uf": {
+                    "description": "Short code for federative unity.",
                     "type": "string"
                 },
                 "url": {
+                    "description": "Link for state url",
                     "type": "string"
                 }
             }
@@ -92,13 +158,61 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "descricao": {
+                    "description": "Reasons why we didn't collect the data",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "timestamp": {
+                    "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                }
+            }
+        },
+        "uiapi.timestamp": {
+            "type": "object",
+            "properties": {
+                "nanos": {
+                    "type": "integer"
+                },
+                "seconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "uiapi.v2AgencySummary": {
+            "type": "object",
+            "properties": {
+                "max_outras_remuneracoes": {
+                    "type": "number"
+                },
+                "max_remuneracao_base": {
+                    "type": "number"
+                },
+                "orgao": {
+                    "type": "string"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                },
+                "tem_anterior": {
+                    "type": "boolean"
+                },
+                "tem_proximo": {
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "$ref": "#/definitions/uiapi.timestamp"
+                },
+                "total_membros": {
+                    "type": "integer"
+                },
+                "total_remuneracao": {
+                    "type": "number"
                 }
             }
         }

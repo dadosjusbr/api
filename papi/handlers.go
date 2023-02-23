@@ -38,6 +38,7 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 }
 
 //	@ID				GetAgencyById
+//	@Tags			public_api
 //	@Description	Busca um órgão específico utilizando seu ID.
 //	@Produce		json
 //	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."

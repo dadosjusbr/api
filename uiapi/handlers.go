@@ -79,6 +79,17 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+//	@ID				GetSummaryOfAgency
+//	@Tags			ui_api
+//	@Description	Resume os dados de remuneração mensal de um órgão.
+//	@Produce		json
+//	@Param			orgao										path		string			true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			ano											path		int				true	"Ano da remuneração. Exemplo: 2018."
+//	@Param			mes											path		int				true	"Mês da remuneração. Exemplo: 1."
+//	@Success		200											{object}	v2AgencySummary	"Requisição bem sucedida."
+//	@Failure		404											{string}	string			"Órgão não encontrado."
+//	@Failure		400											{string}	string			"Parâmetro ano, mês ou nome do órgão são inválidos."
+//	@Router			/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
 func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -102,9 +113,12 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
 			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		TotalMembers: agencyMonthlyInfo.Summary.Count,
-		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
-		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
-		HasPrevious:  time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
+		CrawlingTime: timestamp{
+			Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
+			Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
+		},
+		HasNext:     time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
+		HasPrevious: time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
