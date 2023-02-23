@@ -161,7 +161,7 @@ type annualSummary struct {
 type annualSummaryData struct {
 	Year               int            `json:"ano,omitempty"`
 	Count              int            `json:"num_membros,omitempty"`
-	BaseRemuneration   float64        `json:"remuneracao_base,omitempty"`
-	OtherRemunerations float64        `json:"outras_remuneracoes,omitempty"`
+	BaseRemuneration   float64        `json:"remuneracao_base"`
+	OtherRemunerations float64        `json:"outras_remuneracoes"`
 	Package            *models.Backup `json:"package,omitempty"`
 }
