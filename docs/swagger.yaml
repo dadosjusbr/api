@@ -1,0 +1,62 @@
+definitions:
+  papi.agency:
+    properties:
+      coletando:
+        items:
+          $ref: '#/definitions/papi.collecting'
+        type: array
+      entidade:
+        type: string
+      id_orgao:
+        type: string
+      jurisdicao:
+        type: string
+      nome:
+        type: string
+      ouvidoria:
+        type: string
+      twitter_handle:
+        type: string
+      uf:
+        type: string
+      url:
+        type: string
+    type: object
+  papi.collecting:
+    properties:
+      descricao:
+        items:
+          type: string
+        type: array
+      timestamp:
+        type: integer
+    type: object
+info:
+  contact:
+    name: DadosJusBr
+    url: https://dadosjusbr.org
+  title: API do dadosjusbr.org
+  version: "1.0"
+paths:
+  /v1/orgao/{orgao}:
+    get:
+      description: Busca um órgão específico utilizando seu ID.
+      operationId: GetAgencyById
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/papi.agency'
+        "404":
+          description: Órgão não encontrado.
+          schema:
+            type: string
+swagger: "2.0"
