@@ -1,0 +1,96 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "API do dadosjusbr.org",
+        "contact": {
+            "name": "DadosJusBr",
+            "url": "https://dadosjusbr.org"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/v1/orgao/{orgao}": {
+            "get": {
+                "description": "Busca um órgão específico utilizando seu ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "GetAgencyById",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/papi.agency"
+                        }
+                    },
+                    "404": {
+                        "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "papi.agency": {
+            "type": "object",
+            "properties": {
+                "coletando": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.collecting"
+                    }
+                },
+                "entidade": {
+                    "type": "string"
+                },
+                "id_orgao": {
+                    "type": "string"
+                },
+                "jurisdicao": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "ouvidoria": {
+                    "type": "string"
+                },
+                "twitter_handle": {
+                    "type": "string"
+                },
+                "uf": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "papi.collecting": {
+            "type": "object",
+            "properties": {
+                "descricao": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
