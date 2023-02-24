@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dadosjusbr/proto/coleta"
 	"github.com/dadosjusbr/storage"
 	"github.com/dadosjusbr/storage/models"
 	"github.com/dadosjusbr/storage/repo/database"
@@ -199,6 +200,223 @@ func (g getSummaryOfAgency) testWhenMonthIsInvalid(t *testing.T) {
 	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
 }
 
+func TestGetSalaryOfAgencyMonthYear(t *testing.T) {
+	g := getSalaryOfAgencyMonthYear{}
+	t.Run("Test when data exists", g.testWhenDataExists)
+	t.Run("Test when data does not exist", g.testWhenDataDoesNotExist)
+	t.Run("Test when year is invalid", g.testWhenYearIsInvalid)
+	t.Run("Test when month is invalid", g.testWhenMonthIsInvalid)
+	t.Run("Test when procinfo is not null", g.testWhenProcInfoIsNotNull)
+}
+
+type getSalaryOfAgencyMonthYear struct{}
+
+func (g getSalaryOfAgencyMonthYear) testWhenDataExists(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agmi := agencyMonthlyInfos()
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOMA(1, 2020, "tjal").Return(&agmi[0], nil, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"max_salario": 35462.22,
+			"histograma": {
+				"-1": 0,
+				"10000": 1,
+				"20000": 0,
+				"30000": 3,
+				"40000": 210,
+				"50000": 0
+			},
+			"package": {
+				"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
+				"hash": "4d7ca8986101673aea060ac1d8e5a529",
+				"size": 30195
+			}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenDataDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOMA(1, 2020, "tjal").Return(nil, nil, fmt.Errorf("there is no data with this parameters"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020, mês=1 ou nome do orgão=tjal são inválidos"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenYearIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020a", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenMonthIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1a")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro mês=1a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenProcInfoIsNotNull(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agmi := agencyMonthlyInfos()
+	agmi[0].ProcInfo = &coleta.ProcInfo{
+		Stderr: "stderr",
+		Cmd:    "docker run ...",
+		CmdDir: "/tmp",
+		Status: 4,
+		Env:    []string{"VAR1=1", "VAR2=2"},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOMA(1, 2020, "tjal").Return(&agmi[0], nil, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusPartialContent
+	expectedJson := `
+		{
+			"proc_info": {
+				"stderr": "stderr",
+				"cmd": "docker run ...",
+				"cmd_dir": "/tmp",
+				"status": 4,
+				"env": [
+					"VAR1=1",
+					"VAR2=2"
+				]
+			},
+			"timestamp": {
+				"seconds": 1,
+				"nanos": 1
+			}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
 func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 	return []models.AgencyMonthlyInfo{
 		{
@@ -219,10 +437,12 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					Total:   1951586.5600000022,
 				},
 				IncomeHistogram: map[int]int{
-					1: 10,
-					2: 20,
-					3: 30,
-					4: 40,
+					-1:    0,
+					10000: 1,
+					20000: 0,
+					30000: 3,
+					40000: 210,
+					50000: 0,
 				},
 			},
 			CrawlerVersion:    "unspecified",
@@ -251,6 +471,7 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 				CompletenessScore: 0.5,
 				EasinessScore:     0.5,
 			},
+			ProcInfo: &coleta.ProcInfo{},
 		},
 	}
 }

@@ -6,30 +6,95 @@ definitions:
           $ref: '#/definitions/papi.collecting'
         type: array
       entidade:
+        description: '"J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias
+          and "D" for Defensorias.'
         type: string
       id_orgao:
+        description: '''trt13'''
         type: string
       jurisdicao:
+        description: '"R" for Regional, "M" for Municipal, "F" for Federal, "E" for
+          State.'
         type: string
       nome:
+        description: '''Tribunal Regional do Trabalho 13° Região'''
         type: string
       ouvidoria:
+        description: Agencys's ombudsman url
         type: string
       twitter_handle:
+        description: Agency's twitter handle
         type: string
       uf:
+        description: Short code for federative unity.
         type: string
       url:
+        description: Link for state url
         type: string
     type: object
   papi.collecting:
     properties:
       descricao:
+        description: Reasons why we didn't collect the data
         items:
           type: string
         type: array
       timestamp:
+        description: Day(unix) we checked the status of the data
         type: integer
+    type: object
+  uiapi.agencySalary:
+    properties:
+      histograma:
+        additionalProperties:
+          type: integer
+        type: object
+      max_salario:
+        type: number
+      package:
+        $ref: '#/definitions/uiapi.backup'
+    type: object
+  uiapi.backup:
+    properties:
+      hash:
+        type: string
+      size:
+        type: integer
+      url:
+        type: string
+    type: object
+  uiapi.procInfo:
+    properties:
+      cmd:
+        type: string
+      cmd_dir:
+        type: string
+      env:
+        items:
+          type: string
+        type: array
+      status:
+        type: integer
+      stderr:
+        type: string
+      stdin:
+        type: string
+      stdout:
+        type: string
+    type: object
+  uiapi.timestamp:
+    properties:
+      nanos:
+        type: integer
+      seconds:
+        type: integer
+    type: object
+  uiapi.v2ProcInfoResult:
+    properties:
+      proc_info:
+        $ref: '#/definitions/uiapi.procInfo'
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
     type: object
 info:
   contact:
@@ -38,6 +103,44 @@ info:
   title: API do dadosjusbr.org
   version: "1.0"
 paths:
+  /uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}:
+    get:
+      description: Busca dados das remunerações mensais de um órgão.
+      operationId: GetSalaryOfAgencyMonthYear
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: 'Mês da remuneração. Exemplos: 01, 02, 03...'
+        in: path
+        name: mes
+        required: true
+        type: string
+      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
+        in: path
+        name: ano
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.agencySalary'
+        "206":
+          description: Requisição bem sucedida, mas os dados do órgão não foram bem
+            processados
+          schema:
+            $ref: '#/definitions/uiapi.v2ProcInfoResult'
+        "400":
+          description: Parâmetros inválidos.
+          schema:
+            type: string
+      tags:
+      - uiapi
   /v1/orgao/{orgao}:
     get:
       description: Busca um órgão específico utilizando seu ID.

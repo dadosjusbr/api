@@ -19,6 +19,61 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}": {
+            "get": {
+                "description": "Busca dados das remunerações mensais de um órgão.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "uiapi"
+                ],
+                "operationId": "GetSalaryOfAgencyMonthYear",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Mês da remuneração. Exemplos: 01, 02, 03...",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ano da remuneração. Exemplos: 2018, 2019, 2020...",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.agencySalary"
+                        }
+                    },
+                    "206": {
+                        "description": "Requisição bem sucedida, mas os dados do órgão não foram bem processados",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.v2ProcInfoResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
@@ -63,27 +118,35 @@ const docTemplate = `{
                     }
                 },
                 "entidade": {
+                    "description": "\"J\" For Judiciário, \"M\" for Ministério Público, \"P\" for Procuradorias and \"D\" for Defensorias.",
                     "type": "string"
                 },
                 "id_orgao": {
+                    "description": "'trt13'",
                     "type": "string"
                 },
                 "jurisdicao": {
+                    "description": "\"R\" for Regional, \"M\" for Municipal, \"F\" for Federal, \"E\" for State.",
                     "type": "string"
                 },
                 "nome": {
+                    "description": "'Tribunal Regional do Trabalho 13° Região'",
                     "type": "string"
                 },
                 "ouvidoria": {
+                    "description": "Agencys's ombudsman url",
                     "type": "string"
                 },
                 "twitter_handle": {
+                    "description": "Agency's twitter handle",
                     "type": "string"
                 },
                 "uf": {
+                    "description": "Short code for federative unity.",
                     "type": "string"
                 },
                 "url": {
+                    "description": "Link for state url",
                     "type": "string"
                 }
             }
@@ -92,13 +155,97 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "descricao": {
+                    "description": "Reasons why we didn't collect the data",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "timestamp": {
+                    "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                }
+            }
+        },
+        "uiapi.agencySalary": {
+            "type": "object",
+            "properties": {
+                "histograma": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "max_salario": {
+                    "type": "number"
+                },
+                "package": {
+                    "$ref": "#/definitions/uiapi.backup"
+                }
+            }
+        },
+        "uiapi.backup": {
+            "type": "object",
+            "properties": {
+                "hash": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.procInfo": {
+            "type": "object",
+            "properties": {
+                "cmd": {
+                    "type": "string"
+                },
+                "cmd_dir": {
+                    "type": "string"
+                },
+                "env": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "stderr": {
+                    "type": "string"
+                },
+                "stdin": {
+                    "type": "string"
+                },
+                "stdout": {
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.timestamp": {
+            "type": "object",
+            "properties": {
+                "nanos": {
+                    "type": "integer"
+                },
+                "seconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "uiapi.v2ProcInfoResult": {
+            "type": "object",
+            "properties": {
+                "proc_info": {
+                    "$ref": "#/definitions/uiapi.procInfo"
+                },
+                "timestamp": {
+                    "$ref": "#/definitions/uiapi.timestamp"
                 }
             }
         }
