@@ -207,6 +207,101 @@ func (h handler) GetTotalsOfAgencyYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
+//	@ID				GetTotalsOfAgencyYear
+//	@Tags			uiapi
+//	@Description	Busca os dados de remuneração de um órgão em um ano específico.
+//	@Produce		json
+//	@Param			orgao									path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			ano										path		int					true	"Ano. Exemplo: 2018."
+//	@Success		200										{object}	v2AgencyTotalsYear	"Requisição bem sucedida."
+//	@Failure		400										{string}	string				"Parâmetro ano ou orgao inválido."
+//	@Router			/uiapi/v2/orgao/totais/{orgao}/{ano} 	[get]
+func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%s inválido", c.Param("ano")))
+	}
+	aID := c.Param("orgao")
+	agenciesMonthlyInfo, err := h.client.Db.GetMonthlyInfo([]strModels.Agency{{ID: aID}}, year)
+	if err != nil {
+		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, aID, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, aID))
+	}
+	var monthTotalsOfYear []v2MonthTotals
+	strAgency, err := h.client.Db.GetAgency(aID)
+	if err != nil {
+		log.Printf("[totals of agency year] error getting data for first screen(estado:%s):%q", aID, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
+	}
+	host := c.Request().Host
+	strAgency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, strAgency.ID)
+	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
+		if agencyMonthlyInfo.Summary != nil && agencyMonthlyInfo.Summary.BaseRemuneration.Total+agencyMonthlyInfo.Summary.OtherRemunerations.Total > 0 {
+			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
+				BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
+				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+				CrawlingTimestamp: timestamp{
+					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
+					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
+				},
+				TotalMembers: agencyMonthlyInfo.Summary.Count,
+			}
+			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+
+			// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
+		} else if agencyMonthlyInfo.ProcInfo.String() != "" && agencyMonthlyInfo.ProcInfo.Status != 4 {
+			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
+				BaseRemuneration:   0,
+				OtherRemunerations: 0,
+				CrawlingTimestamp: timestamp{
+					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
+					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
+				},
+				Error: &procError{Stdout: agencyMonthlyInfo.ProcInfo.Stdout, Stderr: agencyMonthlyInfo.ProcInfo.Stderr},
+			}
+			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
+		}
+	}
+	sort.Slice(monthTotalsOfYear, func(i, j int) bool {
+		return monthTotalsOfYear[i].Month < monthTotalsOfYear[j].Month
+	})
+	destKey := fmt.Sprintf("%s/datapackage/%s-%d.zip", aID, aID, year)
+	bkp, _ := h.client.Cloud.GetFile(destKey)
+	var pkg *backup
+	if bkp != nil {
+		pkg = &backup{
+			URL:  bkp.URL,
+			Hash: bkp.Hash,
+			Size: bkp.Size,
+		}
+	}
+
+	var collect []collecting
+	for _, c := range strAgency.Collecting {
+		collect = append(collect, collecting{
+			Timestamp:   c.Timestamp,
+			Description: c.Description,
+		})
+	}
+	agencyTotalsYear := v2AgencyTotalsYear{
+		Year: year,
+		Agency: &agency{
+			ID:            strAgency.ID,
+			Name:          strAgency.Name,
+			Type:          strAgency.Type,
+			Entity:        strAgency.Entity,
+			UF:            strAgency.UF,
+			URL:           strAgency.URL,
+			Collecting:    collect,
+			TwitterHandle: strAgency.TwitterHandle,
+			OmbudsmanURL:  strAgency.OmbudsmanURL,
+		},
+		MonthTotals:    monthTotalsOfYear,
+		SummaryPackage: pkg,
+	}
+	return c.JSON(http.StatusOK, agencyTotalsYear)
+}
+
 func (h handler) GetBasicInfoOfType(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	groupName := c.Param("grupo")

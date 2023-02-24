@@ -9,6 +9,48 @@
         "version": "1.0"
     },
     "paths": {
+        "/uiapi/v2/orgao/totais/{orgao}/{ano}": {
+            "get": {
+                "description": "Busca os dados de remuneração de um órgão em um ano específico.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "uiapi"
+                ],
+                "operationId": "GetTotalsOfAgencyYear",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano. Exemplo: 2018.",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.v2AgencyTotalsYear"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro ano ou orgao inválido.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
@@ -53,27 +95,35 @@
                     }
                 },
                 "entidade": {
+                    "description": "\"J\" For Judiciário, \"M\" for Ministério Público, \"P\" for Procuradorias and \"D\" for Defensorias.",
                     "type": "string"
                 },
                 "id_orgao": {
+                    "description": "'trt13'",
                     "type": "string"
                 },
                 "jurisdicao": {
+                    "description": "\"R\" for Regional, \"M\" for Municipal, \"F\" for Federal, \"E\" for State.",
                     "type": "string"
                 },
                 "nome": {
+                    "description": "'Tribunal Regional do Trabalho 13° Região'",
                     "type": "string"
                 },
                 "ouvidoria": {
+                    "description": "Agencys's ombudsman url",
                     "type": "string"
                 },
                 "twitter_handle": {
+                    "description": "Agency's twitter handle",
                     "type": "string"
                 },
                 "uf": {
+                    "description": "Short code for federative unity.",
                     "type": "string"
                 },
                 "url": {
+                    "description": "Link for state url",
                     "type": "string"
                 }
             }
@@ -82,12 +132,154 @@
             "type": "object",
             "properties": {
                 "descricao": {
+                    "description": "Reasons why we didn't collect the data",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "timestamp": {
+                    "description": "Day(unix) we checked the status of the data",
+                    "type": "integer"
+                }
+            }
+        },
+        "uiapi.agency": {
+            "type": "object",
+            "properties": {
+                "coletando": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/uiapi.collecting"
+                    }
+                },
+                "entidade": {
+                    "description": "\"J\" For Judiciário, \"M\" for Ministério Público, \"P\" for Procuradorias and \"D\" for Defensorias.",
+                    "type": "string"
+                },
+                "id_orgao": {
+                    "description": "'trt13'",
+                    "type": "string"
+                },
+                "jurisdicao": {
+                    "description": "\"R\" for Regional, \"M\" for Municipal, \"F\" for Federal, \"E\" for State.",
+                    "type": "string"
+                },
+                "nome": {
+                    "description": "'Tribunal Regional do Trabalho 13° Região'",
+                    "type": "string"
+                },
+                "ouvidoria": {
+                    "description": "Agencys's ombudsman url",
+                    "type": "string"
+                },
+                "twitter_handle": {
+                    "description": "Agency's twitter handle",
+                    "type": "string"
+                },
+                "uf": {
+                    "description": "Short code for federative unity.",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "Link for state url",
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.backup": {
+            "type": "object",
+            "properties": {
+                "hash": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.collecting": {
+            "type": "object",
+            "properties": {
+                "descricao": {
+                    "description": "Reasons why we didn't collect the data",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "timestamp": {
+                    "description": "Day(unix) we checked the status of the data",
+                    "type": "integer"
+                }
+            }
+        },
+        "uiapi.procError": {
+            "type": "object",
+            "properties": {
+                "stderr": {
+                    "description": "String containing the standard error of the process.",
+                    "type": "string"
+                },
+                "stdout": {
+                    "description": "String containing the standard output of the process.",
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.timestamp": {
+            "type": "object",
+            "properties": {
+                "nanos": {
+                    "type": "integer"
+                },
+                "seconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "uiapi.v2AgencyTotalsYear": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "meses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/uiapi.v2MonthTotals"
+                    }
+                },
+                "orgao": {
+                    "$ref": "#/definitions/uiapi.agency"
+                },
+                "package": {
+                    "$ref": "#/definitions/uiapi.backup"
+                }
+            }
+        },
+        "uiapi.v2MonthTotals": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/uiapi.procError"
+                },
+                "mes": {
+                    "type": "integer"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                },
+                "timestamp": {
+                    "$ref": "#/definitions/uiapi.timestamp"
+                },
+                "total_membros": {
                     "type": "integer"
                 }
             }
