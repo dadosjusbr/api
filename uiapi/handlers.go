@@ -153,12 +153,12 @@ func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 //	@Tags			uiapi
 //	@Description	Busca dados das remunerações mensais de um órgão.
 //	@Produce		json
-//	@Param			orgao											path		string			true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-//	@Param			mes												path		string			true	"Mês da remuneração. Exemplos: 01, 02, 03..."
-//	@Param			ano												path		string			true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
-//	@Success		200												{object}	agencySalary	"Requisição bem sucedida."
-//	@Success		206												{object}	procInfo		"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
-//	@Failure		400												{string}	string			"Parâmetros inválidos."
+//	@Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			mes												path		string				true	"Mês da remuneração. Exemplos: 01, 02, 03..."
+//	@Param			ano												path		string				true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+//	@Success		200												{object}	agencySalary		"Requisição bem sucedida."
+//	@Success		206												{object}	v2ProcInfoResult	"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
+//	@Failure		400												{string}	string				"Parâmetros inválidos."
 //	@Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} 	[get]
 func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))

@@ -81,8 +81,6 @@ definitions:
         type: string
       stdout:
         type: string
-      timestamp:
-        $ref: '#/definitions/uiapi.timestamp'
     type: object
   uiapi.timestamp:
     properties:
@@ -90,6 +88,13 @@ definitions:
         type: integer
       seconds:
         type: integer
+    type: object
+  uiapi.v2ProcInfoResult:
+    properties:
+      proc_info:
+        $ref: '#/definitions/uiapi.procInfo'
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
     type: object
 info:
   contact:
@@ -129,7 +134,7 @@ paths:
           description: Requisição bem sucedida, mas os dados do órgão não foram bem
             processados
           schema:
-            $ref: '#/definitions/uiapi.procInfo'
+            $ref: '#/definitions/uiapi.v2ProcInfoResult'
         "400":
           description: Parâmetros inválidos.
           schema:

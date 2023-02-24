@@ -62,7 +62,7 @@ const docTemplate = `{
                     "206": {
                         "description": "Requisição bem sucedida, mas os dados do órgão não foram bem processados",
                         "schema": {
-                            "$ref": "#/definitions/uiapi.procInfo"
+                            "$ref": "#/definitions/uiapi.v2ProcInfoResult"
                         }
                     },
                     "400": {
@@ -224,9 +224,6 @@ const docTemplate = `{
                 },
                 "stdout": {
                     "type": "string"
-                },
-                "timestamp": {
-                    "$ref": "#/definitions/uiapi.timestamp"
                 }
             }
         },
@@ -238,6 +235,17 @@ const docTemplate = `{
                 },
                 "seconds": {
                     "type": "integer"
+                }
+            }
+        },
+        "uiapi.v2ProcInfoResult": {
+            "type": "object",
+            "properties": {
+                "proc_info": {
+                    "$ref": "#/definitions/uiapi.procInfo"
+                },
+                "timestamp": {
+                    "$ref": "#/definitions/uiapi.timestamp"
                 }
             }
         }
