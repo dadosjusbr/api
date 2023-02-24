@@ -18,6 +18,18 @@ type dataForChartAtAgencyScreen struct {
 	PackageSize int64
 }
 
+type agencySalary struct {
+	MaxSalary float64     `json:"max_salario"`
+	Histogram map[int]int `json:"histograma"`
+	Package   *backup     `json:"package"`
+}
+
+type backup struct {
+	URL  string `json:"url"`
+	Hash string `json:"hash"`
+	Size int64  `json:"size"`
+}
+
 // generalTotals - contains the summary from all DadosJusBr data
 type generalTotals struct {
 	AgencyAmount             int
@@ -113,6 +125,22 @@ type monthTotals struct {
 type procInfoResult struct {
 	ProcInfo          *coleta.ProcInfo
 	CrawlingTimestamp *timestamppb.Timestamp
+}
+
+type procInfo struct {
+	Stdin     string    `json:"stdin,omitempty"`
+	Stdout    string    `json:"stdout,omitempty"`
+	Stderr    string    `json:"stderr,omitempty"`
+	Cmd       string    `json:"cmd,omitempty"`
+	CmdDir    string    `json:"cmd_dir,omitempty"`
+	Status    int32     `json:"status,omitempty"`
+	Env       []string  `json:"env,omitempty"`
+	Timestamp timestamp `json:"timestamp"`
+}
+
+type timestamp struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int32 `json:"nanos"`
 }
 
 // Os campos que serão trazido pela query de pesquisa
