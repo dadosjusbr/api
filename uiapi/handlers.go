@@ -483,6 +483,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 			Count:              s.Count,
 			BaseRemuneration:   s.BaseRemuneration,
 			OtherRemunerations: s.OtherRemunerations,
+			NumMonthsWithData:  s.NumMonthsWithData,
 			Package:            s.Package,
 		})
 	}
