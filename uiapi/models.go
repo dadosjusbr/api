@@ -127,15 +127,19 @@ type procInfoResult struct {
 	CrawlingTimestamp *timestamppb.Timestamp
 }
 
+type v2ProcInfoResult struct {
+	ProcInfo  *procInfo  `json:"proc_info"`
+	Timestamp *timestamp `json:"timestamp"`
+}
+
 type procInfo struct {
-	Stdin     string    `json:"stdin,omitempty"`
-	Stdout    string    `json:"stdout,omitempty"`
-	Stderr    string    `json:"stderr,omitempty"`
-	Cmd       string    `json:"cmd,omitempty"`
-	CmdDir    string    `json:"cmd_dir,omitempty"`
-	Status    int32     `json:"status,omitempty"`
-	Env       []string  `json:"env,omitempty"`
-	Timestamp timestamp `json:"timestamp"`
+	Stdin  string   `json:"stdin,omitempty"`
+	Stdout string   `json:"stdout,omitempty"`
+	Stderr string   `json:"stderr,omitempty"`
+	Cmd    string   `json:"cmd,omitempty"`
+	CmdDir string   `json:"cmd_dir,omitempty"`
+	Status int32    `json:"status,omitempty"`
+	Env    []string `json:"env,omitempty"`
 }
 
 type timestamp struct {

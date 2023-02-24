@@ -186,15 +186,17 @@ func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
 			}
 		}
 		agencyMonthlyInfo.ProcInfo.Env = newEnv
-		return c.JSON(http.StatusPartialContent, procInfo{
-			Stdin:  agencyMonthlyInfo.ProcInfo.Stdin,
-			Stdout: agencyMonthlyInfo.ProcInfo.Stdout,
-			Stderr: agencyMonthlyInfo.ProcInfo.Stderr,
-			Env:    agencyMonthlyInfo.ProcInfo.Env,
-			Cmd:    agencyMonthlyInfo.ProcInfo.Cmd,
-			CmdDir: agencyMonthlyInfo.ProcInfo.CmdDir,
-			Status: agencyMonthlyInfo.ProcInfo.Status,
-			Timestamp: timestamp{
+		return c.JSON(http.StatusPartialContent, v2ProcInfoResult{
+			ProcInfo: &procInfo{
+				Stdin:  agencyMonthlyInfo.ProcInfo.Stdin,
+				Stdout: agencyMonthlyInfo.ProcInfo.Stdout,
+				Stderr: agencyMonthlyInfo.ProcInfo.Stderr,
+				Env:    agencyMonthlyInfo.ProcInfo.Env,
+				Cmd:    agencyMonthlyInfo.ProcInfo.Cmd,
+				CmdDir: agencyMonthlyInfo.ProcInfo.CmdDir,
+				Status: agencyMonthlyInfo.ProcInfo.Status,
+			},
+			Timestamp: &timestamp{
 				Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 				Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
 			},
