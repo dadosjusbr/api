@@ -202,7 +202,7 @@ func (g getSummaryOfAgency) testWhenMonthIsInvalid(t *testing.T) {
 func TestGetTotalsOfAgencyYear(t *testing.T) {
 	tests := getTotalsOfAgencyYear{}
 	t.Run("test when data exists", tests.testWhenDataExists)
-	// t.Run("test when monthly info does not exist", getTotalsOfAgencyYear{}.testWhenMonthlyInfoDoesNotExist)
+	t.Run("test when monthly info does not exist", getTotalsOfAgencyYear{}.testWhenMonthlyInfoDoesNotExist)
 	t.Run("test when year is invalid", tests.testWhenYearIsInvalid)
 }
 
@@ -286,14 +286,63 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 	assert.JSONEq(t, expectedJson, recorder.Body.String())
 }
 
-// func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
-// 	mockCtrl := gomock.NewController(t)
-// 	dbMock := database.NewMockInterface(mockCtrl)
-// 	fsMock := file_storage.NewMockInterface(mockCtrl)
+func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
 
-// 	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	agency := models.Agency{
+		ID:            "tjal",
+		Name:          "Tribunal de Justiça do Estado de Alagoas",
+		Type:          "Estadual",
+		Entity:        "Tribunal",
+		UF:            "AL",
+		TwitterHandle: "tjaloficial",
+		OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgency("tjal").Return(&agency, nil).Times(1)
+	dbMock.EXPECT().GetMonthlyInfo([]models.Agency{{ID: "tjal"}}, 2020).Return(nil, nil).Times(1)
+	fsMock.EXPECT().GetFile("tjal/datapackage/tjal-2020.zip").Return(nil, nil).Times(1)
 
-// }
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/totais/:orgao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano")
+	ctx.SetParamValues("tjal", "2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetTotalsOfAgencyYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+				"ano": 2020,
+				"orgao": {
+					"id_orgao": "tjal",
+					"nome": "Tribunal de Justiça do Estado de Alagoas",
+					"jurisdicao": "Estadual",
+					"entidade": "Tribunal",
+					"uf": "AL",
+					"twitter_handle": "tjaloficial",
+					"ouvidoria": "http://www.tjal.jus.br/ombudsman",
+					"url": "example.com/v1/orgao/tjal"
+				}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
 
 func (g getTotalsOfAgencyYear) testWhenYearIsInvalid(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
