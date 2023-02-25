@@ -176,6 +176,7 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/:grupo", uiApiHandler.GetBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", uiApiHandler.GetGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", uiApiHandler.GeneralSummaryHandler)
+	uiAPIGroup.GET("/v2/geral/resumo", uiApiHandler.GetGeneralSummary)
 	// Retorna um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/pesquisar", uiApiHandler.SearchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params

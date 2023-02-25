@@ -406,6 +406,48 @@ func (h handler) GeneralSummaryHandler(c echo.Context) error {
 	})
 }
 
+//	@ID				GetGeneralSummary
+//	@Tags			ui_api
+//	@Description	Busca e resume os dados das remunerações de todos os anos
+//	@Produce		json
+//	@Success		200						{object}	generalSummary	"Requisição bem sucedida."
+//	@Failure		500						{string}	string			"Erro interno do servidor."
+//	@Router			/uiapi/v2/geral/resumo 	[get]
+func (h handler) GetGeneralSummary(c echo.Context) error {
+	agencies, err := h.client.Db.GetAgenciesCount()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar orgãos: %q", err))
+	}
+	collections, err := h.client.Db.GetNumberOfMonthsCollected()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar registros de meses coletados: %q", err))
+	}
+	fmonth, fyear, err := h.client.Db.GetFirstDateWithMonthlyInfo()
+	if err != nil {
+		log.Printf("Error buscando dados - GetFirstDateWithRemunerationRecords: %q", err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando primeiro registro de remuneração: %q", err))
+	}
+	fdate := time.Date(fyear, time.Month(fmonth), 2, 0, 0, 0, 0, time.UTC).In(h.loc)
+	lmonth, lyear, err := h.client.Db.GetLastDateWithMonthlyInfo()
+	if err != nil {
+		log.Printf("Error buscando dados - GetLastDateWithRemunerationRecords: %q", err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando último registro de remuneração: %q", err))
+	}
+	ldate := time.Date(lyear, time.Month(lmonth), 2, 0, 0, 0, 0, time.UTC).In(h.loc)
+	remuValue, err := h.client.Db.GetGeneralMonthlyInfo()
+	if err != nil {
+		log.Printf("Error buscando dados - GetGeneralRemunerationValue: %q", err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro buscando valor total de remuneração: %q", err))
+	}
+	return c.JSON(http.StatusOK, generalSummary{
+		Agencies:                 int(agencies),
+		MonthlyInfos:             int(collections),
+		StartDate:                fdate,
+		EndDate:                  ldate,
+		GeneralRemunerationValue: remuValue,
+	})
+}
+
 func (h handler) SearchByUrl(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")

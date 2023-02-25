@@ -40,6 +40,14 @@ type generalTotals struct {
 	GeneralRemunerationValue float64
 }
 
+type generalSummary struct {
+	Agencies                 int       `json:"num_orgaos"`
+	MonthlyInfos             int       `json:"num_meses_coletados"`
+	StartDate                time.Time `json:"data_inicio"`
+	EndDate                  time.Time `json:"data_fim"`
+	GeneralRemunerationValue float64   `json:"remuneracao_total"`
+}
+
 // State - Struct cotains information of a state ans its agencies
 type state struct {
 	Name      string
