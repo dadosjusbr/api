@@ -89,6 +89,29 @@ definitions:
       seconds:
         type: integer
     type: object
+  uiapi.v2AgencySummary:
+    properties:
+      max_outras_remuneracoes:
+        type: number
+      max_remuneracao_base:
+        type: number
+      orgao:
+        type: string
+      outras_remuneracoes:
+        type: number
+      remuneracao_base:
+        type: number
+      tem_anterior:
+        type: boolean
+      tem_proximo:
+        type: boolean
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
+      total_membros:
+        type: integer
+      total_remuneracao:
+        type: number
+    type: object
   uiapi.v2ProcInfoResult:
     properties:
       proc_info:
@@ -103,6 +126,43 @@ info:
   title: API do dadosjusbr.org
   version: "1.0"
 paths:
+  /uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes}:
+    get:
+      description: Resume os dados de remuneração mensal de um órgão.
+      operationId: GetSummaryOfAgency
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: 'Ano da remuneração. Exemplo: 2018.'
+        in: path
+        name: ano
+        required: true
+        type: integer
+      - description: 'Mês da remuneração. Exemplo: 1.'
+        in: path
+        name: mes
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.v2AgencySummary'
+        "400":
+          description: Parâmetro ano, mês ou nome do órgão são inválidos.
+          schema:
+            type: string
+        "404":
+          description: Órgão não encontrado.
+          schema:
+            type: string
+      tags:
+      - ui_api
   /uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}:
     get:
       description: Busca dados das remunerações mensais de um órgão.
@@ -162,4 +222,6 @@ paths:
           description: Órgão não encontrado.
           schema:
             type: string
+      tags:
+      - public_api
 swagger: "2.0"

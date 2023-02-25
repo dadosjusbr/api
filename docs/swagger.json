@@ -9,6 +9,61 @@
         "version": "1.0"
     },
     "paths": {
+        "/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes}": {
+            "get": {
+                "description": "Resume os dados de remuneração mensal de um órgão.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetSummaryOfAgency",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano da remuneração. Exemplo: 2018.",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Mês da remuneração. Exemplo: 1.",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.v2AgencySummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro ano, mês ou nome do órgão são inválidos.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Busca dados das remunerações mensais de um órgão.",
@@ -69,6 +124,9 @@
                 "description": "Busca um órgão específico utilizando seu ID.",
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "public_api"
                 ],
                 "operationId": "GetAgencyById",
                 "parameters": [
@@ -225,6 +283,41 @@
                 },
                 "seconds": {
                     "type": "integer"
+                }
+            }
+        },
+        "uiapi.v2AgencySummary": {
+            "type": "object",
+            "properties": {
+                "max_outras_remuneracoes": {
+                    "type": "number"
+                },
+                "max_remuneracao_base": {
+                    "type": "number"
+                },
+                "orgao": {
+                    "type": "string"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                },
+                "tem_anterior": {
+                    "type": "boolean"
+                },
+                "tem_proximo": {
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "$ref": "#/definitions/uiapi.timestamp"
+                },
+                "total_membros": {
+                    "type": "integer"
+                },
+                "total_remuneracao": {
+                    "type": "number"
                 }
             }
         },

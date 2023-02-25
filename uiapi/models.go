@@ -85,16 +85,21 @@ type agencySummary struct {
 }
 
 type v2AgencySummary struct {
-	Agency             string                 `json:"orgao"`
-	BaseRemuneration   float64                `json:"remuneracao_base"`
-	MaxBase            float64                `json:"max_remuneracao_base"`
-	OtherRemunerations float64                `json:"outras_remuneracoes"`
-	MaxOther           float64                `json:"max_outras_remuneracoes"`
-	CrawlingTime       *timestamppb.Timestamp `json:"timestamp"`
-	TotalMembers       int                    `json:"total_membros"`
-	TotalRemuneration  float64                `json:"total_remuneracao"`
-	HasNext            bool                   `json:"tem_proximo"`
-	HasPrevious        bool                   `json:"tem_anterior"`
+	Agency             string    `json:"orgao"`
+	BaseRemuneration   float64   `json:"remuneracao_base"`
+	MaxBase            float64   `json:"max_remuneracao_base"`
+	OtherRemunerations float64   `json:"outras_remuneracoes"`
+	MaxOther           float64   `json:"max_outras_remuneracoes"`
+	CrawlingTime       timestamp `json:"timestamp"`
+	TotalMembers       int       `json:"total_membros"`
+	TotalRemuneration  float64   `json:"total_remuneracao"`
+	HasNext            bool      `json:"tem_proximo"`
+	HasPrevious        bool      `json:"tem_anterior"`
+}
+
+type timestamp struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int32 `json:"nanos"`
 }
 
 // AgencyTotalsYear - Represents the totals of an year
