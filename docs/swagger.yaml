@@ -126,7 +126,7 @@ info:
   title: API do dadosjusbr.org
   version: "1.0"
 paths:
-  /uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes}:
+  /uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}:
     get:
       description: Resume os dados de remuneração mensal de um órgão.
       operationId: GetSummaryOfAgency
@@ -200,7 +200,7 @@ paths:
           schema:
             type: string
       tags:
-      - uiapi
+      - ui_api
   /v1/orgao/{orgao}:
     get:
       description: Busca um órgão específico utilizando seu ID.
