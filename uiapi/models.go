@@ -97,11 +97,6 @@ type v2AgencySummary struct {
 	HasPrevious        bool      `json:"tem_anterior"`
 }
 
-type timestamp struct {
-	Seconds int64 `json:"seconds"`
-	Nanos   int32 `json:"nanos"`
-}
-
 // AgencyTotalsYear - Represents the totals of an year
 type agencyTotalsYear struct {
 	Year           int

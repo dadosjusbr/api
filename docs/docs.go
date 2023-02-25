@@ -19,7 +19,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes}": {
+        "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Resume os dados de remuneração mensal de um órgão.",
                 "produces": [
@@ -81,7 +81,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "uiapi"
+                    "ui_api"
                 ],
                 "operationId": "GetSalaryOfAgencyMonthYear",
                 "parameters": [

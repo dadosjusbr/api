@@ -89,7 +89,7 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 //	@Success		200											{object}	v2AgencySummary	"Requisição bem sucedida."
 //	@Failure		404											{string}	string			"Órgão não encontrado."
 //	@Failure		400											{string}	string			"Parâmetro ano, mês ou nome do órgão são inválidos."
-//	@Router			/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
+//	@Router			/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
 func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -164,7 +164,7 @@ func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 }
 
 //	@ID				GetSalaryOfAgencyMonthYear
-//	@Tags			uiapi
+//	@Tags			ui_api
 //	@Description	Busca dados das remunerações mensais de um órgão.
 //	@Produce		json
 //	@Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."

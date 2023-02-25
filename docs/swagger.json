@@ -9,7 +9,7 @@
         "version": "1.0"
     },
     "paths": {
-        "/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes}": {
+        "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Resume os dados de remuneração mensal de um órgão.",
                 "produces": [
@@ -71,7 +71,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "uiapi"
+                    "ui_api"
                 ],
                 "operationId": "GetSalaryOfAgencyMonthYear",
                 "parameters": [
