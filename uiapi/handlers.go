@@ -370,6 +370,37 @@ func (h handler) GetGeneralRemunerationFromYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, data)
 }
 
+//	@ID				GetGeneralRemunerationFromYear
+//	@Tags			ui_api
+//	@Description	Busca os dados, das remunerações de um ano inteiro, agrupados por mês.
+//	@Produce		json
+//	@Param			ano									path		string					true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+//	@Success		200									{object}	[]mensalRemuneration	"Requisição bem sucedida."
+//	@Failure		400									{string}	string					"Parâmetro ano inválido."
+//	@Failure		500									{string}	string					"Erro interno."
+//	@Router			/uiapi/v2/geral/remuneracao/{ano} 	[get]
+func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%s inválido", c.Param("ano")))
+	}
+	data, err := h.client.Db.GetGeneralMonthlyInfosFromYear(year)
+	if err != nil {
+		fmt.Println("Error searching for monthly info from year: %w", err)
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+	}
+	annualRemu := []mensalRemuneration{}
+	for _, d := range data {
+		annualRemu = append(annualRemu, mensalRemuneration{
+			Month:              d.Month,
+			Members:            d.Count,
+			BaseRemuneration:   d.BaseRemuneration,
+			OtherRemunerations: d.OtherRemunerations,
+		})
+	}
+	return c.JSON(http.StatusOK, annualRemu)
+}
+
 func (h handler) GeneralSummaryHandler(c echo.Context) error {
 	agencies, err := h.client.GetAgenciesCount()
 	if err != nil {

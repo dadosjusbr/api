@@ -417,6 +417,142 @@ func (g getSalaryOfAgencyMonthYear) testWhenProcInfoIsNotNull(t *testing.T) {
 	assert.JSONEq(t, expectedJson, recorder.Body.String())
 }
 
+func TestGetGeneralRemunerationFromYear(t *testing.T) {
+	tests := getGenerealRemunerationFromYear{}
+	t.Run("Test GetGeneralRemunerationFromYear when data exists", tests.testWhenDataExists)
+	t.Run("Test GetGeneralRemunerationFromYear when data does not exist", tests.testWhenDataDoesNotExist)
+	t.Run("Test GetGeneralRemunerationFromYear when year is invalid", tests.testWhenYearIsInvalid)
+}
+
+type getGenerealRemunerationFromYear struct{}
+
+func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	mi := []models.GeneralMonthlyInfo{
+		{
+			Month:              1,
+			Count:              100,
+			BaseRemuneration:   10000,
+			OtherRemunerations: 1000,
+		},
+		{
+			Month:              2,
+			Count:              200,
+			BaseRemuneration:   20000,
+			OtherRemunerations: 2000,
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetGeneralMonthlyInfosFromYear(2020).Return(mi, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/geral/remuneracao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetGeneralRemunerationFromYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		[
+			{
+				"mes": 1,
+				"num_membros": 100,
+				"remuneracao_base": 10000,
+				"outras_remuneracoes": 1000
+			},
+			{
+				"mes": 2,
+				"num_membros": 200,
+				"remuneracao_base": 20000,
+				"outras_remuneracoes": 2000
+			}
+		]
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getGenerealRemunerationFromYear) testWhenDataDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetGeneralMonthlyInfosFromYear(2020).Return([]models.GeneralMonthlyInfo{}, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/geral/remuneracao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetGeneralRemunerationFromYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `[]`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getGenerealRemunerationFromYear) testWhenYearIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/geral/remuneracao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020a")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetGeneralRemunerationFromYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
 func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 	return []models.AgencyMonthlyInfo{
 		{

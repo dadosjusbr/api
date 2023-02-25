@@ -63,6 +63,17 @@ definitions:
       url:
         type: string
     type: object
+  uiapi.mensalRemuneration:
+    properties:
+      mes:
+        type: integer
+      num_membros:
+        type: integer
+      outras_remuneracoes:
+        type: number
+      remuneracao_base:
+        type: number
+    type: object
   uiapi.procInfo:
     properties:
       cmd:
@@ -126,6 +137,36 @@ info:
   title: API do dadosjusbr.org
   version: "1.0"
 paths:
+  /uiapi/v2/geral/remuneracao/{ano}:
+    get:
+      description: Busca os dados, das remunerações de um ano inteiro, agrupados por
+        mês.
+      operationId: GetGeneralRemunerationFromYear
+      parameters:
+      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
+        in: path
+        name: ano
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            items:
+              $ref: '#/definitions/uiapi.mensalRemuneration'
+            type: array
+        "400":
+          description: Parâmetro ano inválido.
+          schema:
+            type: string
+        "500":
+          description: Erro interno.
+          schema:
+            type: string
+      tags:
+      - ui_api
   /uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}:
     get:
       description: Resume os dados de remuneração mensal de um órgão.
