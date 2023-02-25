@@ -79,6 +79,17 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+//	@ID				GetSummaryOfAgency
+//	@Tags			ui_api
+//	@Description	Resume os dados de remuneração mensal de um órgão.
+//	@Produce		json
+//	@Param			orgao										path		string			true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			ano											path		int				true	"Ano da remuneração. Exemplo: 2018."
+//	@Param			mes											path		int				true	"Mês da remuneração. Exemplo: 1."
+//	@Success		200											{object}	v2AgencySummary	"Requisição bem sucedida."
+//	@Failure		404											{string}	string			"Órgão não encontrado."
+//	@Failure		400											{string}	string			"Parâmetro ano, mês ou nome do órgão são inválidos."
+//	@Router			/uiapi/v1/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
 func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -102,9 +113,12 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
 			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		TotalMembers: agencyMonthlyInfo.Summary.Count,
-		CrawlingTime: agencyMonthlyInfo.CrawlingTimestamp,
-		HasNext:      time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
-		HasPrevious:  time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
+		CrawlingTime: timestamp{
+			Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
+			Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
+		},
+		HasNext:     time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
+		HasPrevious: time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
@@ -146,6 +160,70 @@ func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 		PackageURL:  agencyMonthlyInfo.Package.URL,
 		PackageHash: agencyMonthlyInfo.Package.Hash,
 		PackageSize: agencyMonthlyInfo.Package.Size,
+	})
+}
+
+//	@ID				GetSalaryOfAgencyMonthYear
+//	@Tags			uiapi
+//	@Description	Busca dados das remunerações mensais de um órgão.
+//	@Produce		json
+//	@Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			mes												path		string				true	"Mês da remuneração. Exemplos: 01, 02, 03..."
+//	@Param			ano												path		string				true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+//	@Success		200												{object}	agencySalary		"Requisição bem sucedida."
+//	@Success		206												{object}	v2ProcInfoResult	"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
+//	@Failure		400												{string}	string				"Parâmetros inválidos."
+//	@Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} 	[get]
+func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mês=%s inválido", c.Param("mes")))
+	}
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%s inválido", c.Param("ano")))
+	}
+	agencyName := strings.ToLower(c.Param("orgao"))
+	agencyMonthlyInfo, _, err := h.client.Db.GetOMA(month, year, agencyName)
+	if err != nil {
+		log.Printf("[salary agency month year] error getting data for second screen(mes:%d ano:%d, orgao:%s):%q", month, year, agencyName, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d, mês=%d ou nome do orgão=%s são inválidos", year, month, agencyName))
+	}
+	if agencyMonthlyInfo.ProcInfo.String() != "" {
+		var newEnv = agencyMonthlyInfo.ProcInfo.Env
+		for _, omittedField := range h.envOmittedFields {
+			for i, field := range newEnv {
+				if strings.Contains(field, omittedField) {
+					newEnv[i] = omittedField + "= ##omitida##"
+					break
+				}
+			}
+		}
+		agencyMonthlyInfo.ProcInfo.Env = newEnv
+		return c.JSON(http.StatusPartialContent, v2ProcInfoResult{
+			ProcInfo: &procInfo{
+				Stdin:  agencyMonthlyInfo.ProcInfo.Stdin,
+				Stdout: agencyMonthlyInfo.ProcInfo.Stdout,
+				Stderr: agencyMonthlyInfo.ProcInfo.Stderr,
+				Env:    agencyMonthlyInfo.ProcInfo.Env,
+				Cmd:    agencyMonthlyInfo.ProcInfo.Cmd,
+				CmdDir: agencyMonthlyInfo.ProcInfo.CmdDir,
+				Status: agencyMonthlyInfo.ProcInfo.Status,
+			},
+			Timestamp: &timestamp{
+				Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
+				Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
+			},
+		})
+	}
+	return c.JSON(http.StatusOK, agencySalary{
+		MaxSalary: agencyMonthlyInfo.Summary.BaseRemuneration.Max,
+		Histogram: agencyMonthlyInfo.Summary.IncomeHistogram,
+		Package: &backup{
+			URL:  agencyMonthlyInfo.Package.URL,
+			Hash: agencyMonthlyInfo.Package.Hash,
+			Size: agencyMonthlyInfo.Package.Size,
+		},
 	})
 }
 

@@ -82,10 +82,10 @@ func newS3Client(c config) (*file_storage.S3Client, error) {
 	return s3Client, nil
 }
 
-// @title			API do dadosjusbr.org
-// @version		1.0
-// @contact.name	DadosJusBr
-// @contact.url	https://dadosjusbr.org
+//	@title			API do dadosjusbr.org
+//	@version		1.0
+//	@contact.name	DadosJusBr
+//	@contact.url	https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
@@ -169,6 +169,7 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", uiApiHandler.GetSalaryOfAgencyMonthYear)
+	uiAPIGroup.GET("/v2/orgao/salario/:orgao/:ano/:mes", uiApiHandler.V2GetSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", uiApiHandler.GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
