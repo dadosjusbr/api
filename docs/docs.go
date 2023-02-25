@@ -26,7 +26,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "uiapi"
+                    "ui_api"
                 ],
                 "operationId": "GetSummaryOfAgency",
                 "parameters": [
@@ -67,6 +67,61 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}": {
+            "get": {
+                "description": "Busca dados das remunerações mensais de um órgão.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "uiapi"
+                ],
+                "operationId": "GetSalaryOfAgencyMonthYear",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Mês da remuneração. Exemplos: 01, 02, 03...",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ano da remuneração. Exemplos: 2018, 2019, 2020...",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.agencySalary"
+                        }
+                    },
+                    "206": {
+                        "description": "Requisição bem sucedida, mas os dados do órgão não foram bem processados",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.v2ProcInfoResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos.",
                         "schema": {
                             "type": "string"
                         }
@@ -170,6 +225,66 @@ const docTemplate = `{
                 }
             }
         },
+        "uiapi.agencySalary": {
+            "type": "object",
+            "properties": {
+                "histograma": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "max_salario": {
+                    "type": "number"
+                },
+                "package": {
+                    "$ref": "#/definitions/uiapi.backup"
+                }
+            }
+        },
+        "uiapi.backup": {
+            "type": "object",
+            "properties": {
+                "hash": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.procInfo": {
+            "type": "object",
+            "properties": {
+                "cmd": {
+                    "type": "string"
+                },
+                "cmd_dir": {
+                    "type": "string"
+                },
+                "env": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "stderr": {
+                    "type": "string"
+                },
+                "stdin": {
+                    "type": "string"
+                },
+                "stdout": {
+                    "type": "string"
+                }
+            }
+        },
         "uiapi.timestamp": {
             "type": "object",
             "properties": {
@@ -213,6 +328,17 @@ const docTemplate = `{
                 },
                 "total_remuneracao": {
                     "type": "number"
+                }
+            }
+        },
+        "uiapi.v2ProcInfoResult": {
+            "type": "object",
+            "properties": {
+                "proc_info": {
+                    "$ref": "#/definitions/uiapi.procInfo"
+                },
+                "timestamp": {
+                    "$ref": "#/definitions/uiapi.timestamp"
                 }
             }
         }

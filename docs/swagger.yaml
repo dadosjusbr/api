@@ -43,6 +43,45 @@ definitions:
         description: Day(unix) we checked the status of the data
         type: integer
     type: object
+  uiapi.agencySalary:
+    properties:
+      histograma:
+        additionalProperties:
+          type: integer
+        type: object
+      max_salario:
+        type: number
+      package:
+        $ref: '#/definitions/uiapi.backup'
+    type: object
+  uiapi.backup:
+    properties:
+      hash:
+        type: string
+      size:
+        type: integer
+      url:
+        type: string
+    type: object
+  uiapi.procInfo:
+    properties:
+      cmd:
+        type: string
+      cmd_dir:
+        type: string
+      env:
+        items:
+          type: string
+        type: array
+      status:
+        type: integer
+      stderr:
+        type: string
+      stdin:
+        type: string
+      stdout:
+        type: string
+    type: object
   uiapi.timestamp:
     properties:
       nanos:
@@ -72,6 +111,13 @@ definitions:
         type: integer
       total_remuneracao:
         type: number
+    type: object
+  uiapi.v2ProcInfoResult:
+    properties:
+      proc_info:
+        $ref: '#/definitions/uiapi.procInfo'
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
     type: object
 info:
   contact:
@@ -113,6 +159,44 @@ paths:
             type: string
         "404":
           description: Órgão não encontrado.
+          schema:
+            type: string
+      tags:
+      - ui_api
+  /uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}:
+    get:
+      description: Busca dados das remunerações mensais de um órgão.
+      operationId: GetSalaryOfAgencyMonthYear
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: 'Mês da remuneração. Exemplos: 01, 02, 03...'
+        in: path
+        name: mes
+        required: true
+        type: string
+      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
+        in: path
+        name: ano
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.agencySalary'
+        "206":
+          description: Requisição bem sucedida, mas os dados do órgão não foram bem
+            processados
+          schema:
+            $ref: '#/definitions/uiapi.v2ProcInfoResult'
+        "400":
+          description: Parâmetros inválidos.
           schema:
             type: string
       tags:
