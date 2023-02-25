@@ -76,6 +76,17 @@ definitions:
         description: Link for state url
         type: string
     type: object
+  uiapi.agencySalary:
+    properties:
+      histograma:
+        additionalProperties:
+          type: integer
+        type: object
+      max_salario:
+        type: number
+      package:
+        $ref: '#/definitions/uiapi.backup'
+    type: object
   uiapi.backup:
     properties:
       hash:
@@ -105,12 +116,54 @@ definitions:
         description: String containing the standard output of the process.
         type: string
     type: object
+  uiapi.procInfo:
+    properties:
+      cmd:
+        type: string
+      cmd_dir:
+        type: string
+      env:
+        items:
+          type: string
+        type: array
+      status:
+        type: integer
+      stderr:
+        type: string
+      stdin:
+        type: string
+      stdout:
+        type: string
+    type: object
   uiapi.timestamp:
     properties:
       nanos:
         type: integer
       seconds:
         type: integer
+    type: object
+  uiapi.v2AgencySummary:
+    properties:
+      max_outras_remuneracoes:
+        type: number
+      max_remuneracao_base:
+        type: number
+      orgao:
+        type: string
+      outras_remuneracoes:
+        type: number
+      remuneracao_base:
+        type: number
+      tem_anterior:
+        type: boolean
+      tem_proximo:
+        type: boolean
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
+      total_membros:
+        type: integer
+      total_remuneracao:
+        type: number
     type: object
   uiapi.v2AgencyTotalsYear:
     properties:
@@ -140,6 +193,13 @@ definitions:
       total_membros:
         type: integer
     type: object
+  uiapi.v2ProcInfoResult:
+    properties:
+      proc_info:
+        $ref: '#/definitions/uiapi.procInfo'
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
+    type: object
 info:
   contact:
     name: DadosJusBr
@@ -147,6 +207,81 @@ info:
   title: API do dadosjusbr.org
   version: "1.0"
 paths:
+  /uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}:
+    get:
+      description: Resume os dados de remuneração mensal de um órgão.
+      operationId: GetSummaryOfAgency
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: 'Ano da remuneração. Exemplo: 2018.'
+        in: path
+        name: ano
+        required: true
+        type: integer
+      - description: 'Mês da remuneração. Exemplo: 1.'
+        in: path
+        name: mes
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.v2AgencySummary'
+        "400":
+          description: Parâmetro ano, mês ou nome do órgão são inválidos.
+          schema:
+            type: string
+        "404":
+          description: Órgão não encontrado.
+          schema:
+            type: string
+      tags:
+      - ui_api
+  /uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}:
+    get:
+      description: Busca dados das remunerações mensais de um órgão.
+      operationId: GetSalaryOfAgencyMonthYear
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: 'Mês da remuneração. Exemplos: 01, 02, 03...'
+        in: path
+        name: mes
+        required: true
+        type: string
+      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
+        in: path
+        name: ano
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.agencySalary'
+        "206":
+          description: Requisição bem sucedida, mas os dados do órgão não foram bem
+            processados
+          schema:
+            $ref: '#/definitions/uiapi.v2ProcInfoResult'
+        "400":
+          description: Parâmetros inválidos.
+          schema:
+            type: string
+      tags:
+      - ui_api
   /uiapi/v2/orgao/totais/{orgao}/{ano}:
     get:
       description: Busca os dados de remuneração de um órgão em um ano específico.
@@ -174,7 +309,7 @@ paths:
           schema:
             type: string
       tags:
-      - uiapi
+      - ui_api
   /v1/orgao/{orgao}:
     get:
       description: Busca um órgão específico utilizando seu ID.
@@ -196,4 +331,6 @@ paths:
           description: Órgão não encontrado.
           schema:
             type: string
+      tags:
+      - public_api
 swagger: "2.0"
