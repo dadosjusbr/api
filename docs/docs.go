@@ -129,6 +129,83 @@ const docTemplate = `{
                 }
             }
         },
+        "/uiapi/v2/orgao/{grupo}": {
+            "get": {
+                "description": "Busca os órgãos de um determinado grupo.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetBasicInfoOfType",
+                "parameters": [
+                    {
+                        "enum": [
+                            "justica-eleitoral",
+                            "ministerios-publicos",
+                            "justica-estadual",
+                            "justica-do-trabalho",
+                            "justica-federal",
+                            "justica-militar",
+                            "justica-superior",
+                            "conselhos-de-justica",
+                            "AC",
+                            "AL",
+                            "AP",
+                            "AM",
+                            "BA",
+                            "CE",
+                            "DF",
+                            "ES",
+                            "GO",
+                            "MA",
+                            "MT",
+                            "MS",
+                            "MG",
+                            "PA",
+                            "PB",
+                            "PR",
+                            "PE",
+                            "PI",
+                            "RJ",
+                            "RN",
+                            "RS",
+                            "RO",
+                            "RR",
+                            "SC",
+                            "SP",
+                            "SE",
+                            "TO"
+                        ],
+                        "type": "string",
+                        "description": "Grupo de órgãos",
+                        "name": "grupo",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Órgãos do grupo",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.state"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro inválido",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Grupo não encontrado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
@@ -225,6 +302,20 @@ const docTemplate = `{
                 }
             }
         },
+        "uiapi.agencyBasic": {
+            "type": "object",
+            "properties": {
+                "agencyCategory": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "uiapi.agencySalary": {
             "type": "object",
             "properties": {
@@ -281,6 +372,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stdout": {
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.state": {
+            "type": "object",
+            "properties": {
+                "agency": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/uiapi.agencyBasic"
+                    }
+                },
+                "flagURL": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "shortName": {
                     "type": "string"
                 }
             }

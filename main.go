@@ -174,6 +174,7 @@ func main() {
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", uiApiHandler.GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
 	uiAPIGroup.GET("/v1/orgao/:grupo", uiApiHandler.GetBasicInfoOfType)
+	uiAPIGroup.GET("/v2/orgao/:grupo", uiApiHandler.V2GetBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", uiApiHandler.GetGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", uiApiHandler.GeneralSummaryHandler)
 	// Retorna um conjunto de dados a partir de filtros informados por query params

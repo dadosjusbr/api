@@ -417,6 +417,293 @@ func (g getSalaryOfAgencyMonthYear) testWhenProcInfoIsNotNull(t *testing.T) {
 	assert.JSONEq(t, expectedJson, recorder.Body.String())
 }
 
+func TestGetBasicInfoOfType(t *testing.T) {
+	tests := getBasicInfoOfType{}
+	t.Run("Test GetBasicInfoOfType when group is a jurisdiction", tests.testWhenGroupIsAJurisdiction)
+	t.Run("Test GetBasicInfoOfType when group is an UF", tests.testWhenGroupIsAnUF)
+	t.Run("Test GetBasicInfoOfType when group does not exist", tests.testWhenGroupDoesNotExist)
+	t.Run("Test GetBasicInfoOfType when jurisdiction is in irregular case", tests.testWhenJurisdictionIsInIrregularCase)
+	t.Run("Test GetBasicInfoOfType when UF is in irregular case", tests.testWhenUFIsInIrregularCase)
+}
+
+type getBasicInfoOfType struct{}
+
+func (g getBasicInfoOfType) testWhenGroupIsAJurisdiction(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "tjpe",
+			Name:   "Tribunal de Justiça de Pernambuco",
+			Entity: "Tribunal",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOPJ("Estadual").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("justica-estadual")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "JUSTICA-ESTADUAL",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "tjpe",
+					"nome": "Tribunal de Justiça de Pernambuco",
+					"entidade": "Tribunal"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getBasicInfoOfType) testWhenGroupIsAnUF(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "mppb",
+			Name:   "Ministério Público da Paraíba",
+			Entity: "Ministério",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetStateAgencies("PB").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("PB")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "PB",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "mppb",
+					"nome": "Ministério Público da Paraíba",
+					"entidade": "Ministério"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getBasicInfoOfType) testWhenGroupDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("grupo-que-nao-existe")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusNotFound
+	expectedJson := `"Grupo não encontrado: 'grupo-que-nao-existe'"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getBasicInfoOfType) testWhenJurisdictionIsInIrregularCase(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "tjpe",
+			Name:   "Tribunal de Justiça de Pernambuco",
+			Entity: "Tribunal",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOPJ("Estadual").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("JuStiCa-esTaDuaL")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "JUSTICA-ESTADUAL",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "tjpe",
+					"nome": "Tribunal de Justiça de Pernambuco",
+					"entidade": "Tribunal"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getBasicInfoOfType) testWhenUFIsInIrregularCase(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "mppb",
+			Name:   "Ministério Público da Paraíba",
+			Entity: "Ministério",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetStateAgencies("PB").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("pB")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "PB",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "mppb",
+					"nome": "Ministério Público da Paraíba",
+					"entidade": "Ministério"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
 func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 	return []models.AgencyMonthlyInfo{
 		{
