@@ -129,7 +129,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/orgao/{orgao}": {
+        "/v2/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
                 "produces": [
@@ -157,6 +157,35 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/orgaos": {
+            "get": {
+                "description": "Busca todos os órgãos disponíveis.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAllAgencies",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.agency"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
                         "schema": {
                             "type": "string"
                         }

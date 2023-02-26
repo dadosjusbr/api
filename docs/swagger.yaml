@@ -201,7 +201,7 @@ paths:
             type: string
       tags:
       - ui_api
-  /v1/orgao/{orgao}:
+  /v2/orgao/{orgao}:
     get:
       description: Busca um órgão específico utilizando seu ID.
       operationId: GetAgencyById
@@ -220,6 +220,25 @@ paths:
             $ref: '#/definitions/papi.agency'
         "404":
           description: Órgão não encontrado.
+          schema:
+            type: string
+      tags:
+      - public_api
+  /v2/orgaos:
+    get:
+      description: Busca todos os órgãos disponíveis.
+      operationId: GetAllAgencies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            items:
+              $ref: '#/definitions/papi.agency'
+            type: array
+        "500":
+          description: Erro interno do servidor.
           schema:
             type: string
       tags:

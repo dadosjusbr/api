@@ -44,7 +44,7 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 //	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
 //	@Success		200					{object}	agency	"Requisição bem sucedida."
 //	@Failure		404					{string}	string	"Órgão não encontrado."
-//	@Router			/v1/orgao/{orgao} 	[get]
+//	@Router			/v2/orgao/{orgao} 	[get]
 func (h handler) V2GetAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
@@ -87,6 +87,13 @@ func (h handler) V1GetAllAgencies(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencies)
 }
 
+//	@ID				GetAllAgencies
+//	@Tags			public_api
+//	@Description	Busca todos os órgãos disponíveis.
+//	@Produce		json
+//	@Success		200			{object}	[]agency	"Requisição bem sucedida."
+//	@Failure		500			{string}	string		"Erro interno do servidor."
+//	@Router			/v2/orgaos 	[get]
 func (h handler) V2GetAllAgencies(c echo.Context) error {
 	strAgencies, err := h.client.Db.GetAllAgencies()
 	if err != nil {
