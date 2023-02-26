@@ -12,7 +12,7 @@ import (
 	"github.com/dadosjusbr/storage/repo/database"
 	"github.com/dadosjusbr/storage/repo/file_storage"
 	"github.com/golang/mock/gomock"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
 

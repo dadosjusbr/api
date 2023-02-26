@@ -18,6 +18,18 @@ type dataForChartAtAgencyScreen struct {
 	PackageSize int64
 }
 
+type agencySalary struct {
+	MaxSalary float64     `json:"max_salario"`
+	Histogram map[int]int `json:"histograma"`
+	Package   *backup     `json:"package"`
+}
+
+type backup struct {
+	URL  string `json:"url"`
+	Hash string `json:"hash"`
+	Size int64  `json:"size"`
+}
+
 // generalTotals - contains the summary from all DadosJusBr data
 type generalTotals struct {
 	AgencyAmount             int
@@ -72,6 +84,19 @@ type agencySummary struct {
 	HasPrevious       bool
 }
 
+type v2AgencySummary struct {
+	Agency             string    `json:"orgao"`
+	BaseRemuneration   float64   `json:"remuneracao_base"`
+	MaxBase            float64   `json:"max_remuneracao_base"`
+	OtherRemunerations float64   `json:"outras_remuneracoes"`
+	MaxOther           float64   `json:"max_outras_remuneracoes"`
+	CrawlingTime       timestamp `json:"timestamp"`
+	TotalMembers       int       `json:"total_membros"`
+	TotalRemuneration  float64   `json:"total_remuneracao"`
+	HasNext            bool      `json:"tem_proximo"`
+	HasPrevious        bool      `json:"tem_anterior"`
+}
+
 // AgencyTotalsYear - Represents the totals of an year
 type agencyTotalsYear struct {
 	Year           int
@@ -100,6 +125,26 @@ type monthTotals struct {
 type procInfoResult struct {
 	ProcInfo          *coleta.ProcInfo
 	CrawlingTimestamp *timestamppb.Timestamp
+}
+
+type v2ProcInfoResult struct {
+	ProcInfo  *procInfo  `json:"proc_info"`
+	Timestamp *timestamp `json:"timestamp"`
+}
+
+type procInfo struct {
+	Stdin  string   `json:"stdin,omitempty"`
+	Stdout string   `json:"stdout,omitempty"`
+	Stderr string   `json:"stderr,omitempty"`
+	Cmd    string   `json:"cmd,omitempty"`
+	CmdDir string   `json:"cmd_dir,omitempty"`
+	Status int32    `json:"status,omitempty"`
+	Env    []string `json:"env,omitempty"`
+}
+
+type timestamp struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int32 `json:"nanos"`
 }
 
 // Os campos que serão trazido pela query de pesquisa
@@ -161,7 +206,8 @@ type annualSummary struct {
 type annualSummaryData struct {
 	Year               int            `json:"ano,omitempty"`
 	Count              int            `json:"num_membros,omitempty"`
-	BaseRemuneration   float64        `json:"remuneracao_base,omitempty"`
-	OtherRemunerations float64        `json:"outras_remuneracoes,omitempty"`
+	BaseRemuneration   float64        `json:"remuneracao_base"`
+	OtherRemunerations float64        `json:"outras_remuneracoes"`
+	NumMonthsWithData  int            `json:"meses_com_dados"`
 	Package            *models.Backup `json:"package,omitempty"`
 }

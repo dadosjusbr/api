@@ -7,18 +7,19 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/dadosjusbr/api/docs"
 	"github.com/dadosjusbr/api/papi"
 	"github.com/dadosjusbr/api/uiapi"
 	"github.com/dadosjusbr/storage"
 	"github.com/dadosjusbr/storage/repo/database"
 	"github.com/dadosjusbr/storage/repo/file_storage"
 	"github.com/joho/godotenv"
-	"github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
-	"github.com/newrelic/go-agent/v3/newrelic"
-
 	"github.com/kelseyhightower/envconfig"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/newrelic/go-agent/v3/integrations/nrecho-v4"
+	"github.com/newrelic/go-agent/v3/newrelic"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 type config struct {
@@ -28,14 +29,6 @@ type config struct {
 
 	AwsS3Bucket string `envconfig:"AWS_S3_BUCKET" required:"true"`
 	AwsRegion   string `envconfig:"AWS_REGION" required:"true"`
-
-	// StorageDB config
-	MongoURI    string `envconfig:"MONGODB_URI"`
-	MongoDBName string `envconfig:"MONGODB_NAME"`
-	MongoMICol  string `envconfig:"MONGODB_MICOL" required:"true"`
-	MongoAgCol  string `envconfig:"MONGODB_AGCOL" required:"true"`
-	MongoPkgCol string `envconfig:"MONGODB_PKGCOL" required:"true"`
-	MongoRevCol string `envconfig:"MONGODB_REVCOL" required:"true"`
 
 	// Omited fields
 	EnvOmittedFields []string `envconfig:"ENV_OMITTED_FIELDS"`
@@ -89,6 +82,10 @@ func newS3Client(c config) (*file_storage.S3Client, error) {
 	return s3Client, nil
 }
 
+//	@title			API do dadosjusbr.org
+//	@version		1.0
+//	@contact.name	DadosJusBr
+//	@contact.url	https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
@@ -162,15 +159,17 @@ func main() {
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength, echo.HeaderAccessControlAllowOrigin},
 		}))
 	}
-	uiApiHandler, err := uiapi.NewHandler(*pgS3Client, conn, nr, conf.AwsRegion, conf.AwsS3Bucket, loc, conf.EnvOmittedFields, conf.SearchLimit, conf.DownloadLimit)
+	uiApiHandler, err := uiapi.NewHandler(pgS3Client, conn, nr, conf.AwsRegion, conf.AwsS3Bucket, loc, conf.EnvOmittedFields, conf.SearchLimit, conf.DownloadLimit)
 	if err != nil {
 		log.Fatalf("Error creating uiapi handler: %q", err)
 	}
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.GetSummaryOfAgency)
+	uiAPIGroup.GET("/v2/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.V2GetSummaryOfAgency)
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", uiApiHandler.GetSalaryOfAgencyMonthYear)
+	uiAPIGroup.GET("/v2/orgao/salario/:orgao/:ano/:mes", uiApiHandler.V2GetSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", uiApiHandler.GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
@@ -196,6 +195,7 @@ func main() {
 	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
 	// Return MIs by month
 	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.GetMonthlyInfo)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	// V2 public api, to be used by the new returned data
 	apiGroupV2 := e.Group("/v2", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},

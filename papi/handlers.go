@@ -9,7 +9,7 @@ import (
 
 	"github.com/dadosjusbr/storage"
 	"github.com/dadosjusbr/storage/models"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type handler struct {
@@ -37,6 +37,14 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 	return c.JSON(http.StatusOK, agency)
 }
 
+//	@ID				GetAgencyById
+//	@Tags			public_api
+//	@Description	Busca um órgão específico utilizando seu ID.
+//	@Produce		json
+//	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Success		200					{object}	agency	"Requisição bem sucedida."
+//	@Failure		404					{string}	string	"Órgão não encontrado."
+//	@Router			/v1/orgao/{orgao} 	[get]
 func (h handler) V2GetAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
