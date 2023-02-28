@@ -38,12 +38,13 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 }
 
 //	@ID				GetAgencyById
+//	@Tags			public_api
 //	@Description	Busca um órgão específico utilizando seu ID.
 //	@Produce		json
 //	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
 //	@Success		200					{object}	agency	"Requisição bem sucedida."
 //	@Failure		404					{string}	string	"Órgão não encontrado."
-//	@Router			/v1/orgao/{orgao} 	[get]
+//	@Router			/v2/orgao/{orgao} 	[get]
 func (h handler) V2GetAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
@@ -73,7 +74,7 @@ func (h handler) V2GetAgencyById(c echo.Context) error {
 	return c.JSON(http.StatusOK, agency)
 }
 
-func (h handler) GetAllAgencies(c echo.Context) error {
+func (h handler) V1GetAllAgencies(c echo.Context) error {
 	agencies, err := h.client.Db.GetAllAgencies()
 	if err != nil {
 		fmt.Println("Error while listing agencies: %w", err)
@@ -86,6 +87,13 @@ func (h handler) GetAllAgencies(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencies)
 }
 
+//	@ID				GetAllAgencies
+//	@Tags			public_api
+//	@Description	Busca todos os órgãos disponíveis.
+//	@Produce		json
+//	@Success		200			{object}	[]agency	"Requisição bem sucedida."
+//	@Failure		500			{string}	string		"Erro interno do servidor."
+//	@Router			/v2/orgaos 	[get]
 func (h handler) V2GetAllAgencies(c echo.Context) error {
 	strAgencies, err := h.client.Db.GetAllAgencies()
 	if err != nil {
@@ -119,7 +127,7 @@ func (h handler) V2GetAllAgencies(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencies)
 }
 
-func (h handler) V1GetMonthlyInfo(c echo.Context) error {
+func (h handler) GetMonthlyInfo(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))

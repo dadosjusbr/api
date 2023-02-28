@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dadosjusbr/proto/coleta"
 	"github.com/dadosjusbr/storage"
 	"github.com/dadosjusbr/storage/models"
 	"github.com/dadosjusbr/storage/repo/database"
@@ -199,6 +200,1043 @@ func (g getSummaryOfAgency) testWhenMonthIsInvalid(t *testing.T) {
 	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
 }
 
+func TestGetSalaryOfAgencyMonthYear(t *testing.T) {
+	g := getSalaryOfAgencyMonthYear{}
+	t.Run("Test when data exists", g.testWhenDataExists)
+	t.Run("Test when data does not exist", g.testWhenDataDoesNotExist)
+	t.Run("Test when year is invalid", g.testWhenYearIsInvalid)
+	t.Run("Test when month is invalid", g.testWhenMonthIsInvalid)
+	t.Run("Test when procinfo is not null", g.testWhenProcInfoIsNotNull)
+}
+
+type getSalaryOfAgencyMonthYear struct{}
+
+func (g getSalaryOfAgencyMonthYear) testWhenDataExists(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agmi := agencyMonthlyInfos()
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOMA(1, 2020, "tjal").Return(&agmi[0], nil, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"max_salario": 35462.22,
+			"histograma": {
+				"-1": 0,
+				"10000": 1,
+				"20000": 0,
+				"30000": 3,
+				"40000": 210,
+				"50000": 0
+			},
+			"package": {
+				"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
+				"hash": "4d7ca8986101673aea060ac1d8e5a529",
+				"size": 30195
+			}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenDataDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOMA(1, 2020, "tjal").Return(nil, nil, fmt.Errorf("there is no data with this parameters"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020, mês=1 ou nome do orgão=tjal são inválidos"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenYearIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020a", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenMonthIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1a")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro mês=1a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getSalaryOfAgencyMonthYear) testWhenProcInfoIsNotNull(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agmi := agencyMonthlyInfos()
+	agmi[0].ProcInfo = &coleta.ProcInfo{
+		Stderr: "stderr",
+		Cmd:    "docker run ...",
+		CmdDir: "/tmp",
+		Status: 4,
+		Env:    []string{"VAR1=1", "VAR2=2"},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOMA(1, 2020, "tjal").Return(&agmi[0], nil, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/salario/:orgao/:ano/:mes",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano", "mes")
+	ctx.SetParamValues("tjal", "2020", "1")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetSalaryOfAgencyMonthYear(ctx)
+
+	expectedCode := http.StatusPartialContent
+	expectedJson := `
+		{
+			"proc_info": {
+				"stderr": "stderr",
+				"cmd": "docker run ...",
+				"cmd_dir": "/tmp",
+				"status": 4,
+				"env": [
+					"VAR1=1",
+					"VAR2=2"
+				]
+			},
+			"timestamp": {
+				"seconds": 1,
+				"nanos": 1
+			}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func TestGetBasicInfoOfType(t *testing.T) {
+	tests := getBasicInfoOfType{}
+	t.Run("Test GetBasicInfoOfType when group is a jurisdiction", tests.testWhenGroupIsAJurisdiction)
+	t.Run("Test GetBasicInfoOfType when group is an UF", tests.testWhenGroupIsAnUF)
+	t.Run("Test GetBasicInfoOfType when group does not exist", tests.testWhenGroupDoesNotExist)
+	t.Run("Test GetBasicInfoOfType when jurisdiction is in irregular case", tests.testWhenJurisdictionIsInIrregularCase)
+	t.Run("Test GetBasicInfoOfType when UF is in irregular case", tests.testWhenUFIsInIrregularCase)
+}
+
+type getBasicInfoOfType struct{}
+
+func (g getBasicInfoOfType) testWhenGroupIsAJurisdiction(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "tjpe",
+			Name:   "Tribunal de Justiça de Pernambuco",
+			Entity: "Tribunal",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOPJ("Estadual").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("justica-estadual")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "JUSTICA-ESTADUAL",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "tjpe",
+					"nome": "Tribunal de Justiça de Pernambuco",
+					"entidade": "Tribunal"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getBasicInfoOfType) testWhenGroupIsAnUF(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "mppb",
+			Name:   "Ministério Público da Paraíba",
+			Entity: "Ministério",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetStateAgencies("PB").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("PB")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "PB",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "mppb",
+					"nome": "Ministério Público da Paraíba",
+					"entidade": "Ministério"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getBasicInfoOfType) testWhenGroupDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("grupo-que-nao-existe")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusNotFound
+	expectedJson := `"Grupo não encontrado: 'grupo-que-nao-existe'"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getBasicInfoOfType) testWhenJurisdictionIsInIrregularCase(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "tjpe",
+			Name:   "Tribunal de Justiça de Pernambuco",
+			Entity: "Tribunal",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetOPJ("Estadual").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("JuStiCa-esTaDuaL")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "JUSTICA-ESTADUAL",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "tjpe",
+					"nome": "Tribunal de Justiça de Pernambuco",
+					"entidade": "Tribunal"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getBasicInfoOfType) testWhenUFIsInIrregularCase(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agencies := []models.Agency{
+		{
+			ID:     "tjpb",
+			Name:   "Tribunal de Justiça da Paraíba",
+			Entity: "Tribunal",
+		},
+		{
+			ID:     "mppb",
+			Name:   "Ministério Público da Paraíba",
+			Entity: "Ministério",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetStateAgencies("PB").Return(agencies, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/orgao/:grupo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("grupo")
+	ctx.SetParamValues("pB")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetBasicInfoOfType(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"grupo": "PB",
+			"orgaos": [
+				{
+					"id_orgao": "tjpb",
+					"nome": "Tribunal de Justiça da Paraíba",
+					"entidade": "Tribunal"
+				},
+				{
+					"id_orgao": "mppb",
+					"nome": "Ministério Público da Paraíba",
+					"entidade": "Ministério"
+				}
+			]
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func TestGetGeneralSummary(t *testing.T) {
+	tests := getGeneralSummary{}
+	t.Run("Test GetGeneralSummary when all data are returned", tests.testWhenAllDataAreReturned)
+	t.Run("Test GetGeneralSummary when GetAgenciesCount() returns an error", tests.testWhenGetAgenciesCountReturnsAnError)
+	t.Run("Test GetGeneralSummary when GetNumberOfMonthsCollected() returns an error", tests.testWhenGetNumberOfMonthsCollectedReturnsAnError)
+	t.Run("Test GetGeneralSummary when GetFirstDateWithMonthlyInfo() returns an error", tests.testWhenGetFirstDateWithMonthlyInfoReturnsAnError)
+	t.Run("Test GetGeneralSummary when GetLastDateWithMonthlyInfo() returns an error", tests.testWhenGetLastDateWithMonthlyInfoReturnsAnError)
+	t.Run("Test GetGeneralSummary when GetGeneralMonthlyInfo() returns an error", tests.testWhenGetGeneralMonthlyInfoReturnsAnError)
+}
+
+type getGeneralSummary struct{}
+
+func (g getGeneralSummary) testWhenAllDataAreReturned(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
+	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(1, 2018, nil)
+	dbMock.EXPECT().GetLastDateWithMonthlyInfo().Return(1, 2023, nil)
+	dbMock.EXPECT().GetGeneralMonthlyInfo().Return(float64(1000), nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"num_orgaos": 5,
+			"num_meses_coletados": 10,
+			"data_inicio": "2018-01-01T22:00:00-02:00",
+			"data_fim": "2023-01-01T21:00:00-03:00",
+			"remuneracao_total": 1000
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getGeneralSummary) testWhenGetAgenciesCountReturnsAnError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(0, fmt.Errorf("error"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusInternalServerError
+	expectedJson := `"Erro ao contar orgãos: \"error\""`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getGeneralSummary) testWhenGetNumberOfMonthsCollectedReturnsAnError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
+	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(0, fmt.Errorf("error"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusInternalServerError
+	expectedJson := `"Erro ao contar registros de meses coletados: \"error\""`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getGeneralSummary) testWhenGetFirstDateWithMonthlyInfoReturnsAnError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
+	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(0, 0, fmt.Errorf("error"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusInternalServerError
+	expectedJson := `"Erro buscando primeiro registro de remuneração: \"error\""`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getGeneralSummary) testWhenGetLastDateWithMonthlyInfoReturnsAnError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
+	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(2020, 1, nil)
+	dbMock.EXPECT().GetLastDateWithMonthlyInfo().Return(0, 0, fmt.Errorf("error"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusInternalServerError
+	expectedJson := `"Erro buscando último registro de remuneração: \"error\""`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func (g getGeneralSummary) testWhenGetGeneralMonthlyInfoReturnsAnError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
+	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(2020, 1, nil)
+	dbMock.EXPECT().GetLastDateWithMonthlyInfo().Return(2020, 1, nil)
+	dbMock.EXPECT().GetGeneralMonthlyInfo().Return(float64(0), fmt.Errorf("error"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusInternalServerError
+	expectedJson := `"Erro buscando valor total de remuneração: \"error\""`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func TestGetGeneralRemunerationFromYear(t *testing.T) {
+	tests := getGenerealRemunerationFromYear{}
+	t.Run("Test GetGeneralRemunerationFromYear when data exists", tests.testWhenDataExists)
+	t.Run("Test GetGeneralRemunerationFromYear when data does not exist", tests.testWhenDataDoesNotExist)
+	t.Run("Test GetGeneralRemunerationFromYear when year is invalid", tests.testWhenYearIsInvalid)
+}
+
+type getGenerealRemunerationFromYear struct{}
+
+func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	mi := []models.GeneralMonthlyInfo{
+		{
+			Month:              1,
+			Count:              100,
+			BaseRemuneration:   10000,
+			OtherRemunerations: 1000,
+		},
+		{
+			Month:              2,
+			Count:              200,
+			BaseRemuneration:   20000,
+			OtherRemunerations: 2000,
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetGeneralMonthlyInfosFromYear(2020).Return(mi, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/geral/remuneracao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetGeneralRemunerationFromYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		[
+			{
+				"mes": 1,
+				"num_membros": 100,
+				"remuneracao_base": 10000,
+				"outras_remuneracoes": 1000
+			},
+			{
+				"mes": 2,
+				"num_membros": 200,
+				"remuneracao_base": 20000,
+				"outras_remuneracoes": 2000
+			}
+		]
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getGenerealRemunerationFromYear) testWhenDataDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetGeneralMonthlyInfosFromYear(2020).Return([]models.GeneralMonthlyInfo{}, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/geral/remuneracao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetGeneralRemunerationFromYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `[]`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getGenerealRemunerationFromYear) testWhenYearIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/v2/geral/remuneracao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020a")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetGeneralRemunerationFromYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
+func TestGetTotalsOfAgencyYear(t *testing.T) {
+	tests := getTotalsOfAgencyYear{}
+	t.Run("test when data exists", tests.testWhenDataExists)
+	t.Run("test when monthly info does not exist", getTotalsOfAgencyYear{}.testWhenMonthlyInfoDoesNotExist)
+	t.Run("test when year is invalid", tests.testWhenYearIsInvalid)
+}
+
+type getTotalsOfAgencyYear struct{}
+
+func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agmi := agencyMonthlyInfos()
+	agencies := []models.Agency{
+		{
+			ID:            "tjal",
+			Name:          "Tribunal de Justiça do Estado de Alagoas",
+			Type:          "Estadual",
+			Entity:        "Tribunal",
+			UF:            "AL",
+			TwitterHandle: "tjaloficial",
+			OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgency("tjal").Return(&agencies[0], nil).Times(1)
+	dbMock.EXPECT().GetMonthlyInfo([]models.Agency{{ID: "tjal"}}, 2020).Return(map[string][]models.AgencyMonthlyInfo{"tjal": agmi}, nil).Times(1)
+	fsMock.EXPECT().GetFile("tjal/datapackage/tjal-2020.zip").Return(agmi[0].Package, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/totais/:orgao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano")
+	ctx.SetParamValues("tjal", "2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetTotalsOfAgencyYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+			"ano": 2020,
+			"orgao": {
+				"id_orgao": "tjal",
+				"nome": "Tribunal de Justiça do Estado de Alagoas",
+				"jurisdicao": "Estadual",
+				"entidade": "Tribunal",
+				"uf": "AL",
+				"twitter_handle": "tjaloficial",
+				"ouvidoria": "http://www.tjal.jus.br/ombudsman",
+				"url": "example.com/v1/orgao/tjal"
+			},
+			"meses": [
+				{
+					"mes": 1,
+					"outras_remuneracoes":1.9515865600000022e+06,
+					"remuneracao_base":7.099024400000013e+06,
+					"timestamp": {
+						"seconds": 1,
+						"nanos": 1
+					},
+					"total_membros": 214
+				}
+			],
+			"package": {
+				"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
+				"hash": "4d7ca8986101673aea060ac1d8e5a529",
+				"size": 30195
+			}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	agency := models.Agency{
+		ID:            "tjal",
+		Name:          "Tribunal de Justiça do Estado de Alagoas",
+		Type:          "Estadual",
+		Entity:        "Tribunal",
+		UF:            "AL",
+		TwitterHandle: "tjaloficial",
+		OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgency("tjal").Return(&agency, nil).Times(1)
+	dbMock.EXPECT().GetMonthlyInfo([]models.Agency{{ID: "tjal"}}, 2020).Return(nil, nil).Times(1)
+	fsMock.EXPECT().GetFile("tjal/datapackage/tjal-2020.zip").Return(nil, nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/totais/:orgao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano")
+	ctx.SetParamValues("tjal", "2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetTotalsOfAgencyYear(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		{
+				"ano": 2020,
+				"orgao": {
+					"id_orgao": "tjal",
+					"nome": "Tribunal de Justiça do Estado de Alagoas",
+					"jurisdicao": "Estadual",
+					"entidade": "Tribunal",
+					"uf": "AL",
+					"twitter_handle": "tjaloficial",
+					"ouvidoria": "http://www.tjal.jus.br/ombudsman",
+					"url": "example.com/v1/orgao/tjal"
+				}
+		}
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getTotalsOfAgencyYear) testWhenYearIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/totais/:orgao/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("orgao", "ano")
+	ctx.SetParamValues("tjal", "2020a")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.V2GetTotalsOfAgencyYear(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ano=2020a inválido"`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
 func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 	return []models.AgencyMonthlyInfo{
 		{
@@ -219,10 +1257,12 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					Total:   1951586.5600000022,
 				},
 				IncomeHistogram: map[int]int{
-					1: 10,
-					2: 20,
-					3: 30,
-					4: 40,
+					-1:    0,
+					10000: 1,
+					20000: 0,
+					30000: 3,
+					40000: 210,
+					50000: 0,
 				},
 			},
 			CrawlerVersion:    "unspecified",
@@ -251,6 +1291,7 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 				CompletenessScore: 0.5,
 				EasinessScore:     0.5,
 			},
+			ProcInfo: &coleta.ProcInfo{},
 		},
 	}
 }

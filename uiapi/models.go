@@ -18,6 +18,12 @@ type dataForChartAtAgencyScreen struct {
 	PackageSize int64
 }
 
+type agencySalary struct {
+	MaxSalary float64     `json:"max_salario"`
+	Histogram map[int]int `json:"histograma"`
+	Package   *backup     `json:"package"`
+}
+
 // generalTotals - contains the summary from all DadosJusBr data
 type generalTotals struct {
 	AgencyAmount             int
@@ -28,6 +34,14 @@ type generalTotals struct {
 	GeneralRemunerationValue float64
 }
 
+type generalSummary struct {
+	Agencies                 int       `json:"num_orgaos"`
+	MonthlyInfos             int       `json:"num_meses_coletados"`
+	StartDate                time.Time `json:"data_inicio"`
+	EndDate                  time.Time `json:"data_fim"`
+	GeneralRemunerationValue float64   `json:"remuneracao_total"`
+}
+
 // State - Struct cotains information of a state ans its agencies
 type state struct {
 	Name      string
@@ -36,11 +50,22 @@ type state struct {
 	Agency    []agencyBasic
 }
 
+type group struct {
+	Name     string          `json:"grupo"`
+	Agencies []v2AgencyBasic `json:"orgaos"`
+}
+
 // AgencyBasic - Basic information of a agency (name e category)
 type agencyBasic struct {
 	Name           string
 	FullName       string
 	AgencyCategory string
+}
+
+type v2AgencyBasic struct {
+	Id     string `json:"id_orgao"`
+	Name   string `json:"nome"`
+	Entity string `json:"entidade"`
 }
 
 // Employee - Represents an employee and his/her salary info
@@ -73,16 +98,16 @@ type agencySummary struct {
 }
 
 type v2AgencySummary struct {
-	Agency             string                 `json:"orgao"`
-	BaseRemuneration   float64                `json:"remuneracao_base"`
-	MaxBase            float64                `json:"max_remuneracao_base"`
-	OtherRemunerations float64                `json:"outras_remuneracoes"`
-	MaxOther           float64                `json:"max_outras_remuneracoes"`
-	CrawlingTime       *timestamppb.Timestamp `json:"timestamp"`
-	TotalMembers       int                    `json:"total_membros"`
-	TotalRemuneration  float64                `json:"total_remuneracao"`
-	HasNext            bool                   `json:"tem_proximo"`
-	HasPrevious        bool                   `json:"tem_anterior"`
+	Agency             string    `json:"orgao"`
+	BaseRemuneration   float64   `json:"remuneracao_base"`
+	MaxBase            float64   `json:"max_remuneracao_base"`
+	OtherRemunerations float64   `json:"outras_remuneracoes"`
+	MaxOther           float64   `json:"max_outras_remuneracoes"`
+	CrawlingTime       timestamp `json:"timestamp"`
+	TotalMembers       int       `json:"total_membros"`
+	TotalRemuneration  float64   `json:"total_remuneracao"`
+	HasNext            bool      `json:"tem_proximo"`
+	HasPrevious        bool      `json:"tem_anterior"`
 }
 
 // AgencyTotalsYear - Represents the totals of an year
@@ -92,6 +117,19 @@ type agencyTotalsYear struct {
 	MonthTotals    []monthTotals
 	AgencyFullName string
 	SummaryPackage *models.Package `json:"SummaryPackage,omitempty"`
+}
+
+type v2AgencyTotalsYear struct {
+	Year           int             `json:"ano,omitempty"`
+	Agency         *agency         `json:"orgao,omitempty"`
+	MonthTotals    []v2MonthTotals `json:"meses,omitempty"`
+	SummaryPackage *backup         `json:"package,omitempty"`
+}
+
+type backup struct {
+	URL  string `json:"url"`
+	Hash string `json:"hash"`
+	Size int64  `json:"size"`
 }
 
 type procError struct {
@@ -109,10 +147,39 @@ type monthTotals struct {
 	CrawlingTimestamp  *timestamppb.Timestamp
 }
 
+type v2MonthTotals struct {
+	Error              *procError `json:"error,omitempty"`
+	Month              int        `json:"mes"`
+	TotalMembers       int        `json:"total_membros"`
+	BaseRemuneration   float64    `json:"remuneracao_base"`
+	OtherRemunerations float64    `json:"outras_remuneracoes"`
+	CrawlingTimestamp  timestamp  `json:"timestamp"`
+}
+
+type timestamp struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int32 `json:"nanos"`
+}
+
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
 type procInfoResult struct {
 	ProcInfo          *coleta.ProcInfo
 	CrawlingTimestamp *timestamppb.Timestamp
+}
+
+type v2ProcInfoResult struct {
+	ProcInfo  *procInfo  `json:"proc_info"`
+	Timestamp *timestamp `json:"timestamp"`
+}
+
+type procInfo struct {
+	Stdin  string   `json:"stdin,omitempty"`
+	Stdout string   `json:"stdout,omitempty"`
+	Stderr string   `json:"stderr,omitempty"`
+	Cmd    string   `json:"cmd,omitempty"`
+	CmdDir string   `json:"cmd_dir,omitempty"`
+	Status int32    `json:"status,omitempty"`
+	Env    []string `json:"env,omitempty"`
 }
 
 // Os campos que serão trazido pela query de pesquisa
@@ -176,5 +243,13 @@ type annualSummaryData struct {
 	Count              int            `json:"num_membros,omitempty"`
 	BaseRemuneration   float64        `json:"remuneracao_base"`
 	OtherRemunerations float64        `json:"outras_remuneracoes"`
+	NumMonthsWithData  int            `json:"meses_com_dados"`
 	Package            *models.Backup `json:"package,omitempty"`
+}
+
+type mensalRemuneration struct {
+	Month              int     `json:"mes,omitempty"`
+	Members            int     `json:"num_membros,omitempty"`
+	BaseRemuneration   float64 `json:"remuneracao_base"`
+	OtherRemunerations float64 `json:"outras_remuneracoes"`
 }
