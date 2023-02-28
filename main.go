@@ -159,6 +159,10 @@ func main() {
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength, echo.HeaderAccessControlAllowOrigin},
 		}))
 	}
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/doc", func(c echo.Context) error {
+		return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
 	uiApiHandler, err := uiapi.NewHandler(pgS3Client, conn, nr, conf.AwsRegion, conf.AwsS3Bucket, loc, conf.EnvOmittedFields, conf.SearchLimit, conf.DownloadLimit)
 	if err != nil {
 		log.Fatalf("Error creating uiapi handler: %q", err)
@@ -199,7 +203,6 @@ func main() {
 	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
 	// Return MIs by month
 	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.GetMonthlyInfo)
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	// V2 public api, to be used by the new returned data
 	apiGroupV2 := e.Group("/v2", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
