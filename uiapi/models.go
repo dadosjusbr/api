@@ -34,6 +34,14 @@ type generalTotals struct {
 	GeneralRemunerationValue float64
 }
 
+type generalSummary struct {
+	Agencies                 int       `json:"num_orgaos"`
+	MonthlyInfos             int       `json:"num_meses_coletados"`
+	StartDate                time.Time `json:"data_inicio"`
+	EndDate                  time.Time `json:"data_fim"`
+	GeneralRemunerationValue float64   `json:"remuneracao_total"`
+}
+
 // State - Struct cotains information of a state ans its agencies
 type state struct {
 	Name      string
@@ -42,11 +50,22 @@ type state struct {
 	Agency    []agencyBasic
 }
 
+type group struct {
+	Name     string          `json:"grupo"`
+	Agencies []v2AgencyBasic `json:"orgaos"`
+}
+
 // AgencyBasic - Basic information of a agency (name e category)
 type agencyBasic struct {
 	Name           string
 	FullName       string
 	AgencyCategory string
+}
+
+type v2AgencyBasic struct {
+	Id     string `json:"id_orgao"`
+	Name   string `json:"nome"`
+	Entity string `json:"entidade"`
 }
 
 // Employee - Represents an employee and his/her salary info
@@ -226,4 +245,11 @@ type annualSummaryData struct {
 	OtherRemunerations float64        `json:"outras_remuneracoes"`
 	NumMonthsWithData  int            `json:"meses_com_dados"`
 	Package            *models.Backup `json:"package,omitempty"`
+}
+
+type mensalRemuneration struct {
+	Month              int     `json:"mes,omitempty"`
+	Members            int     `json:"num_membros,omitempty"`
+	BaseRemuneration   float64 `json:"remuneracao_base"`
+	OtherRemunerations float64 `json:"outras_remuneracoes"`
 }

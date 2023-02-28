@@ -9,6 +9,76 @@
         "version": "1.0"
     },
     "paths": {
+        "/uiapi/v2/geral/remuneracao/{ano}": {
+            "get": {
+                "description": "Busca os dados, das remunerações de um ano inteiro, agrupados por mês.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetGeneralRemunerationFromYear",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ano da remuneração. Exemplos: 2018, 2019, 2020...",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/uiapi.mensalRemuneration"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro ano inválido.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/uiapi/v2/geral/resumo": {
+            "get": {
+                "description": "Busca e resume os dados das remunerações de todos os anos",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetGeneralSummary",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.generalSummary"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Resume os dados de remuneração mensal de um órgão.",
@@ -161,7 +231,84 @@
                 }
             }
         },
-        "/v1/orgao/{orgao}": {
+        "/uiapi/v2/orgao/{grupo}": {
+            "get": {
+                "description": "Busca os órgãos de um determinado grupo.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetBasicInfoOfType",
+                "parameters": [
+                    {
+                        "enum": [
+                            "justica-eleitoral",
+                            "ministerios-publicos",
+                            "justica-estadual",
+                            "justica-do-trabalho",
+                            "justica-federal",
+                            "justica-militar",
+                            "justica-superior",
+                            "conselhos-de-justica",
+                            "AC",
+                            "AL",
+                            "AP",
+                            "AM",
+                            "BA",
+                            "CE",
+                            "DF",
+                            "ES",
+                            "GO",
+                            "MA",
+                            "MT",
+                            "MS",
+                            "MG",
+                            "PA",
+                            "PB",
+                            "PR",
+                            "PE",
+                            "PI",
+                            "RJ",
+                            "RN",
+                            "RS",
+                            "RO",
+                            "RR",
+                            "SC",
+                            "SP",
+                            "SE",
+                            "TO"
+                        ],
+                        "type": "string",
+                        "description": "Grupo de órgãos",
+                        "name": "grupo",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Órgãos do grupo",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.state"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro inválido",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Grupo não encontrado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
                 "produces": [
@@ -189,6 +336,35 @@
                     },
                     "404": {
                         "description": "Órgão não encontrado.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/orgaos": {
+            "get": {
+                "description": "Busca todos os órgãos disponíveis.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAllAgencies",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.agency"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
                         "schema": {
                             "type": "string"
                         }
@@ -300,6 +476,20 @@
                 }
             }
         },
+        "uiapi.agencyBasic": {
+            "type": "object",
+            "properties": {
+                "agencyCategory": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "uiapi.agencySalary": {
             "type": "object",
             "properties": {
@@ -347,6 +537,43 @@
                 }
             }
         },
+        "uiapi.generalSummary": {
+            "type": "object",
+            "properties": {
+                "data_fim": {
+                    "type": "string"
+                },
+                "data_inicio": {
+                    "type": "string"
+                },
+                "num_meses_coletados": {
+                    "type": "integer"
+                },
+                "num_orgaos": {
+                    "type": "integer"
+                },
+                "remuneracao_total": {
+                    "type": "number"
+                }
+            }
+        },
+        "uiapi.mensalRemuneration": {
+            "type": "object",
+            "properties": {
+                "mes": {
+                    "type": "integer"
+                },
+                "num_membros": {
+                    "type": "integer"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                }
+            }
+        },
         "uiapi.procError": {
             "type": "object",
             "properties": {
@@ -385,6 +612,26 @@
                     "type": "string"
                 },
                 "stdout": {
+                    "type": "string"
+                }
+            }
+        },
+        "uiapi.state": {
+            "type": "object",
+            "properties": {
+                "agency": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/uiapi.agencyBasic"
+                    }
+                },
+                "flagURL": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "shortName": {
                     "type": "string"
                 }
             }

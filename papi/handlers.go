@@ -44,7 +44,7 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 //	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
 //	@Success		200					{object}	agency	"Requisição bem sucedida."
 //	@Failure		404					{string}	string	"Órgão não encontrado."
-//	@Router			/v1/orgao/{orgao} 	[get]
+//	@Router			/v2/orgao/{orgao} 	[get]
 func (h handler) V2GetAgencyById(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
@@ -74,7 +74,7 @@ func (h handler) V2GetAgencyById(c echo.Context) error {
 	return c.JSON(http.StatusOK, agency)
 }
 
-func (h handler) GetAllAgencies(c echo.Context) error {
+func (h handler) V1GetAllAgencies(c echo.Context) error {
 	agencies, err := h.client.Db.GetAllAgencies()
 	if err != nil {
 		fmt.Println("Error while listing agencies: %w", err)
@@ -83,6 +83,46 @@ func (h handler) GetAllAgencies(c echo.Context) error {
 	host := c.Request().Host
 	for i := range agencies {
 		agencies[i].URL = fmt.Sprintf("%s/v1/orgao/%s", host, agencies[i].ID)
+	}
+	return c.JSON(http.StatusOK, agencies)
+}
+
+//	@ID				GetAllAgencies
+//	@Tags			public_api
+//	@Description	Busca todos os órgãos disponíveis.
+//	@Produce		json
+//	@Success		200			{object}	[]agency	"Requisição bem sucedida."
+//	@Failure		500			{string}	string		"Erro interno do servidor."
+//	@Router			/v2/orgaos 	[get]
+func (h handler) V2GetAllAgencies(c echo.Context) error {
+	strAgencies, err := h.client.Db.GetAllAgencies()
+	if err != nil {
+		fmt.Println("Error while listing agencies: %w", err)
+		return c.JSON(http.StatusInternalServerError, "Error while listing agencies")
+	}
+	agencies := []agency{}
+	host := c.Request().Host
+	for _, a := range strAgencies {
+		var collect []collecting
+		for _, c := range a.Collecting {
+			collect = append(collect, collecting{
+				Timestamp:   c.Timestamp,
+				Description: c.Description,
+			})
+		}
+		url := fmt.Sprintf("%s/v2/orgao/%s", host, a.ID)
+		agency := agency{
+			ID:            a.ID,
+			Name:          a.Name,
+			Type:          a.Type,
+			Entity:        a.Entity,
+			UF:            a.UF,
+			URL:           url,
+			Collecting:    collect,
+			TwitterHandle: a.TwitterHandle,
+			OmbudsmanURL:  a.OmbudsmanURL,
+		}
+		agencies = append(agencies, agency)
 	}
 	return c.JSON(http.StatusOK, agencies)
 }

@@ -175,8 +175,11 @@ func main() {
 	uiAPIGroup.GET("/v2/orgao/totais/:orgao/:ano", uiApiHandler.V2GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
 	uiAPIGroup.GET("/v1/orgao/:grupo", uiApiHandler.GetBasicInfoOfType)
+	uiAPIGroup.GET("/v2/orgao/:grupo", uiApiHandler.V2GetBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", uiApiHandler.GetGeneralRemunerationFromYear)
+	uiAPIGroup.GET("/v2/geral/remuneracao/:ano", uiApiHandler.V2GetGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", uiApiHandler.GeneralSummaryHandler)
+	uiAPIGroup.GET("/v2/geral/resumo", uiApiHandler.GetGeneralSummary)
 	// Retorna um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/pesquisar", uiApiHandler.SearchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params
@@ -191,7 +194,7 @@ func main() {
 	// Return agency
 	apiGroup.GET("/orgao/:orgao", apiHandler.V1GetAgencyById)
 	// Return all agencies
-	apiGroup.GET("/orgaos", apiHandler.GetAllAgencies)
+	apiGroup.GET("/orgaos", apiHandler.V1GetAllAgencies)
 	// Return MIs by year
 	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
 	// Return MIs by month
@@ -203,6 +206,7 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
 	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
+	apiGroupV2.GET("/orgaos", apiHandler.V2GetAllAgencies)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
