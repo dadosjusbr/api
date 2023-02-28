@@ -24,12 +24,6 @@ type agencySalary struct {
 	Package   *backup     `json:"package"`
 }
 
-type backup struct {
-	URL  string `json:"url"`
-	Hash string `json:"hash"`
-	Size int64  `json:"size"`
-}
-
 // generalTotals - contains the summary from all DadosJusBr data
 type generalTotals struct {
 	AgencyAmount             int
@@ -106,6 +100,19 @@ type agencyTotalsYear struct {
 	SummaryPackage *models.Package `json:"SummaryPackage,omitempty"`
 }
 
+type v2AgencyTotalsYear struct {
+	Year           int             `json:"ano,omitempty"`
+	Agency         *agency         `json:"orgao,omitempty"`
+	MonthTotals    []v2MonthTotals `json:"meses,omitempty"`
+	SummaryPackage *backup         `json:"package,omitempty"`
+}
+
+type backup struct {
+	URL  string `json:"url"`
+	Hash string `json:"hash"`
+	Size int64  `json:"size"`
+}
+
 type procError struct {
 	Stdout string `protobuf:"bytes,2,opt,name=stdout,proto3" json:"stdout,omitempty"` // String containing the standard output of the process.
 	Stderr string `protobuf:"bytes,3,opt,name=stderr,proto3" json:"stderr,omitempty"` // String containing the standard error of the process.
@@ -119,6 +126,20 @@ type monthTotals struct {
 	BaseRemuneration   float64
 	OtherRemunerations float64
 	CrawlingTimestamp  *timestamppb.Timestamp
+}
+
+type v2MonthTotals struct {
+	Error              *procError `json:"error,omitempty"`
+	Month              int        `json:"mes"`
+	TotalMembers       int        `json:"total_membros"`
+	BaseRemuneration   float64    `json:"remuneracao_base"`
+	OtherRemunerations float64    `json:"outras_remuneracoes"`
+	CrawlingTimestamp  timestamp  `json:"timestamp"`
+}
+
+type timestamp struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int32 `json:"nanos"`
 }
 
 // ProcInfoResult - contains information of the result of the process if something went wrong during parsing or crawling process
@@ -140,11 +161,6 @@ type procInfo struct {
 	CmdDir string   `json:"cmd_dir,omitempty"`
 	Status int32    `json:"status,omitempty"`
 	Env    []string `json:"env,omitempty"`
-}
-
-type timestamp struct {
-	Seconds int64 `json:"seconds"`
-	Nanos   int32 `json:"nanos"`
 }
 
 // Os campos que serão trazido pela query de pesquisa

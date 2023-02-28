@@ -172,6 +172,7 @@ func main() {
 	uiAPIGroup.GET("/v2/orgao/salario/:orgao/:ano/:mes", uiApiHandler.V2GetSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
 	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", uiApiHandler.GetTotalsOfAgencyYear)
+	uiAPIGroup.GET("/v2/orgao/totais/:orgao/:ano", uiApiHandler.V2GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
 	uiAPIGroup.GET("/v1/orgao/:grupo", uiApiHandler.GetBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", uiApiHandler.GetGeneralRemunerationFromYear)
