@@ -49,6 +49,7 @@ func NewHandler(client *storage.Client, conn *gorm.DB, newrelic *newrelic.Applic
 	}, nil
 }
 
+// TODO: Remover quando o site tiver migrado para o novo endpoint
 func (h handler) GetSummaryOfAgency(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -123,6 +124,7 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
+// TODO: Remover quando o site tiver migrado para o novo endpoint
 func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))
 	if err != nil {
@@ -227,6 +229,7 @@ func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
 	})
 }
 
+// TODO: Remover quando o site tiver migrado para o novo endpoint
 func (h handler) GetTotalsOfAgencyYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -380,6 +383,7 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
+// TODO: Remover quando o site tiver migrado para o novo endpoint
 func (h handler) GetBasicInfoOfType(c echo.Context) error {
 	yearOfConsult := time.Now().Year()
 	groupName := c.Param("grupo")
@@ -531,6 +535,7 @@ func (h handler) V2GetBasicInfoOfType(c echo.Context) error {
 	return c.JSON(http.StatusOK, group)
 }
 
+// TODO: Remover quando o site tiver migrado para o novo endpoint
 func (h handler) GetGeneralRemunerationFromYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -575,6 +580,7 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, annualRemu)
 }
 
+// TODO: Remover quando o site tiver migrado para o novo endpoint
 func (h handler) GeneralSummaryHandler(c echo.Context) error {
 	agencies, err := h.client.GetAgenciesCount()
 	if err != nil {
@@ -653,6 +659,18 @@ func (h handler) GetGeneralSummary(c echo.Context) error {
 	})
 }
 
+//	@ID				SearchByUrl
+//	@Tags			ui_api
+//	@Description	Faz uma busca por remunerações a partir de filtros
+//	@Produce		json
+//	@Param			anos		query		string			false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+//	@Param			meses		query		string			false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+//	@Param			orgaos		query		string			false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
+//	@Param			categorias	query		string			false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
+//	@Success		200			{object}	searchResponse	"Requisição bem sucedida."
+//	@Failure		400			{string}	string			"Erro de validação dos parâmetros."
+//	@Failure		500			{string}	string			"Erro interno do servidor."
+//	@Router			/uiapi/v2/pesquisar [get]
 func (h handler) SearchByUrl(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")
@@ -691,6 +709,18 @@ func (h handler) SearchByUrl(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+//	@ID				DownloadByUrl
+//	@Tags			ui_api
+//	@Description	Baixa dados referentes a remunerações a partir de filtros
+//	@Produce		json
+//	@Param			anos		query		string	false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+//	@Param			meses		query		string	false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+//	@Param			orgaos		query		string	false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
+//	@Param			categorias	query		string	false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
+//	@Success		200			{file}		file	"Arquivo CSV com os dados."
+//	@Failure		400			{string}	string	"Erro de validação dos parâmetros."
+//	@Failure		500			{string}	string	"Erro interno do servidor."
+//	@Router			/uiapi/v2/download [get]
 func (h handler) DownloadByUrl(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")
@@ -723,6 +753,15 @@ func (h handler) DownloadByUrl(c echo.Context) error {
 	return nil
 }
 
+//	@ID				GetAnnualSummary
+//	@Tags			ui_api
+//	@Description	Retorna os dados anuais de um orgão
+//	@Produce		json
+//	@Param			orgao	path		string			true	"Nome do orgão"
+//	@Success		200		{object}	[]annualSummary	"Requisição bem sucedida."
+//	@Failure		400		{string}	string			"Parâmetro orgao inválido"
+//	@Failure		500		{string}	string			"Algo deu errado ao tentar coletar os dados anuais do orgao"
+//	@Router			/uiapi/v1/orgao/resumo/{orgao} [get]
 func (h handler) GetAnnualSummary(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
@@ -745,7 +784,11 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 			BaseRemuneration:   s.BaseRemuneration,
 			OtherRemunerations: s.OtherRemunerations,
 			NumMonthsWithData:  s.NumMonthsWithData,
-			Package:            s.Package,
+			Package: &backup{
+				URL:  s.Package.URL,
+				Hash: s.Package.Hash,
+				Size: s.Package.Size,
+			},
 		})
 	}
 	var collect []collecting
