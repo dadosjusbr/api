@@ -107,6 +107,19 @@ definitions:
         description: Day(unix) we checked the status of the data
         type: integer
     type: object
+  uiapi.generalSummary:
+    properties:
+      data_fim:
+        type: string
+      data_inicio:
+        type: string
+      num_meses_coletados:
+        type: integer
+      num_orgaos:
+        type: integer
+      remuneracao_total:
+        type: number
+    type: object
   uiapi.mensalRemuneration:
     properties:
       mes:
@@ -244,6 +257,23 @@ paths:
             type: string
         "500":
           description: Erro interno.
+          schema:
+            type: string
+      tags:
+      - ui_api
+  /uiapi/v2/geral/resumo:
+    get:
+      description: Busca e resume os dados das remunerações de todos os anos
+      operationId: GetGeneralSummary
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.generalSummary'
+        "500":
+          description: Erro interno do servidor.
           schema:
             type: string
       tags:

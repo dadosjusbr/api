@@ -63,6 +63,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/uiapi/v2/geral/resumo": {
+            "get": {
+                "description": "Busca e resume os dados das remunerações de todos os anos",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetGeneralSummary",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.generalSummary"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Resume os dados de remuneração mensal de um órgão.",
@@ -427,6 +453,26 @@ const docTemplate = `{
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                }
+            }
+        },
+        "uiapi.generalSummary": {
+            "type": "object",
+            "properties": {
+                "data_fim": {
+                    "type": "string"
+                },
+                "data_inicio": {
+                    "type": "string"
+                },
+                "num_meses_coletados": {
+                    "type": "integer"
+                },
+                "num_orgaos": {
+                    "type": "integer"
+                },
+                "remuneracao_total": {
+                    "type": "number"
                 }
             }
         },
