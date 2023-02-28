@@ -240,6 +240,17 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
+//	@ID				GetMonthlyInfo
+//	@Tags			public_api
+//	@Description	Busca um dado mensal de um órgão
+//	@Produce		json
+//	@Success		200		{object}	summaryzedMI	"Requisição bem sucedida"
+//	@Failure		400		{string}	string			"Parâmetros inválidos"
+//	@Failure		404		{string}	string			"Não existem dados para os parâmetros informados"
+//	@Param			ano		path		int				true	"Ano"
+//	@Param			orgao	path		string			true	"Órgão"
+//	@Param			mes		path		int				true	"Mês"
+//	@Router			/v2/dados/{orgao}/{ano}/{mes} [get]
 func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -338,6 +349,16 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
+//	@ID				GetMonthlyInfosByYear
+//	@Tags			public_api
+//	@Description	Busca os dados mensais de um órgão por ano
+//	@Produce		json
+//	@Success		200		{object}	[]summaryzedMI	"Requisição bem sucedida"
+//	@Failure		400		{string}	string			"Parâmetros inválidos"
+//	@Failure		404		{string}	string			"Não existem dados para os parâmetros informados"
+//	@Param			ano		path		int				true	"Ano"
+//	@Param			orgao	path		string			true	"Órgão"
+//	@Router			/v2/dados/{orgao}/{ano} [get]
 func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {

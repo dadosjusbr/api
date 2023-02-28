@@ -308,6 +308,112 @@
                 }
             }
         },
+        "/v2/dados/{orgao}/{ano}": {
+            "get": {
+                "description": "Busca os dados mensais de um órgão por ano",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetMonthlyInfosByYear",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Ano",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Órgão",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.summaryzedMI"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Não existem dados para os parâmetros informados",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/dados/{orgao}/{ano}/{mes}": {
+            "get": {
+                "description": "Busca um dado mensal de um órgão",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetMonthlyInfo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Ano",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Órgão",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Mês",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida",
+                        "schema": {
+                            "$ref": "#/definitions/papi.summaryzedMI"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Não existem dados para os parâmetros informados",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
@@ -417,6 +523,40 @@
                 }
             }
         },
+        "papi.backup": {
+            "type": "object",
+            "properties": {
+                "hash": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "papi.collect": {
+            "type": "object",
+            "properties": {
+                "duracao_segundos": {
+                    "type": "number"
+                },
+                "repositorio_coletor": {
+                    "type": "string"
+                },
+                "repositorio_parser": {
+                    "type": "string"
+                },
+                "versao_coletor": {
+                    "type": "string"
+                },
+                "versao_parser": {
+                    "type": "string"
+                }
+            }
+        },
         "papi.collecting": {
             "type": "object",
             "properties": {
@@ -430,6 +570,143 @@
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                }
+            }
+        },
+        "papi.dataSummary": {
+            "type": "object",
+            "properties": {
+                "max": {
+                    "type": "number"
+                },
+                "media": {
+                    "type": "number"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "total": {
+                    "type": "number"
+                }
+            }
+        },
+        "papi.metadata": {
+            "type": "object",
+            "properties": {
+                "acesso": {
+                    "type": "string"
+                },
+                "dados_estritamente_tabulares": {
+                    "type": "boolean"
+                },
+                "despesas": {
+                    "type": "string"
+                },
+                "extensao": {
+                    "type": "string"
+                },
+                "formato_aberto": {
+                    "type": "boolean"
+                },
+                "manteve_consistencia_no_formato": {
+                    "type": "boolean"
+                },
+                "outras_receitas": {
+                    "type": "string"
+                },
+                "remuneracao_basica": {
+                    "type": "string"
+                },
+                "tem_cargo": {
+                    "type": "boolean"
+                },
+                "tem_lotacao": {
+                    "type": "boolean"
+                },
+                "tem_matricula": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "papi.miError": {
+            "type": "object",
+            "properties": {
+                "cmd": {
+                    "type": "string"
+                },
+                "err_msg": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "papi.score": {
+            "type": "object",
+            "properties": {
+                "indice_completude": {
+                    "type": "number"
+                },
+                "indice_facilidade": {
+                    "type": "number"
+                },
+                "indice_transparencia": {
+                    "type": "number"
+                }
+            }
+        },
+        "papi.summaries": {
+            "type": "object",
+            "properties": {
+                "membros_ativos": {
+                    "$ref": "#/definitions/papi.summary"
+                }
+            }
+        },
+        "papi.summary": {
+            "type": "object",
+            "properties": {
+                "outras_remuneracoes": {
+                    "$ref": "#/definitions/papi.dataSummary"
+                },
+                "quantidade": {
+                    "type": "integer"
+                },
+                "remuneracao_base": {
+                    "$ref": "#/definitions/papi.dataSummary"
+                }
+            }
+        },
+        "papi.summaryzedMI": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "dados_coleta": {
+                    "$ref": "#/definitions/papi.collect"
+                },
+                "error": {
+                    "$ref": "#/definitions/papi.miError"
+                },
+                "id_orgao": {
+                    "type": "string"
+                },
+                "indice_transparencia": {
+                    "$ref": "#/definitions/papi.score"
+                },
+                "mes": {
+                    "type": "integer"
+                },
+                "metadados": {
+                    "$ref": "#/definitions/papi.metadata"
+                },
+                "pacote_de_dados": {
+                    "$ref": "#/definitions/papi.backup"
+                },
+                "sumarios": {
+                    "$ref": "#/definitions/papi.summaries"
                 }
             }
         },

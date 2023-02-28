@@ -32,6 +32,28 @@ definitions:
         description: Link for state url
         type: string
     type: object
+  papi.backup:
+    properties:
+      hash:
+        type: string
+      size:
+        type: integer
+      url:
+        type: string
+    type: object
+  papi.collect:
+    properties:
+      duracao_segundos:
+        type: number
+      repositorio_coletor:
+        type: string
+      repositorio_parser:
+        type: string
+      versao_coletor:
+        type: string
+      versao_parser:
+        type: string
+    type: object
   papi.collecting:
     properties:
       descricao:
@@ -42,6 +64,95 @@ definitions:
       timestamp:
         description: Day(unix) we checked the status of the data
         type: integer
+    type: object
+  papi.dataSummary:
+    properties:
+      max:
+        type: number
+      media:
+        type: number
+      min:
+        type: number
+      total:
+        type: number
+    type: object
+  papi.metadata:
+    properties:
+      acesso:
+        type: string
+      dados_estritamente_tabulares:
+        type: boolean
+      despesas:
+        type: string
+      extensao:
+        type: string
+      formato_aberto:
+        type: boolean
+      manteve_consistencia_no_formato:
+        type: boolean
+      outras_receitas:
+        type: string
+      remuneracao_basica:
+        type: string
+      tem_cargo:
+        type: boolean
+      tem_lotacao:
+        type: boolean
+      tem_matricula:
+        type: boolean
+    type: object
+  papi.miError:
+    properties:
+      cmd:
+        type: string
+      err_msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  papi.score:
+    properties:
+      indice_completude:
+        type: number
+      indice_facilidade:
+        type: number
+      indice_transparencia:
+        type: number
+    type: object
+  papi.summaries:
+    properties:
+      membros_ativos:
+        $ref: '#/definitions/papi.summary'
+    type: object
+  papi.summary:
+    properties:
+      outras_remuneracoes:
+        $ref: '#/definitions/papi.dataSummary'
+      quantidade:
+        type: integer
+      remuneracao_base:
+        $ref: '#/definitions/papi.dataSummary'
+    type: object
+  papi.summaryzedMI:
+    properties:
+      ano:
+        type: integer
+      dados_coleta:
+        $ref: '#/definitions/papi.collect'
+      error:
+        $ref: '#/definitions/papi.miError'
+      id_orgao:
+        type: string
+      indice_transparencia:
+        $ref: '#/definitions/papi.score'
+      mes:
+        type: integer
+      metadados:
+        $ref: '#/definitions/papi.metadata'
+      pacote_de_dados:
+        $ref: '#/definitions/papi.backup'
+      sumarios:
+        $ref: '#/definitions/papi.summaries'
     type: object
   uiapi.agency:
     properties:
@@ -465,6 +576,77 @@ paths:
             type: string
       tags:
       - ui_api
+  /v2/dados/{orgao}/{ano}:
+    get:
+      description: Busca os dados mensais de um órgão por ano
+      operationId: GetMonthlyInfosByYear
+      parameters:
+      - description: Ano
+        in: path
+        name: ano
+        required: true
+        type: integer
+      - description: Órgão
+        in: path
+        name: orgao
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida
+          schema:
+            items:
+              $ref: '#/definitions/papi.summaryzedMI'
+            type: array
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            type: string
+        "404":
+          description: Não existem dados para os parâmetros informados
+          schema:
+            type: string
+      tags:
+      - public_api
+  /v2/dados/{orgao}/{ano}/{mes}:
+    get:
+      description: Busca um dado mensal de um órgão
+      operationId: GetMonthlyInfo
+      parameters:
+      - description: Ano
+        in: path
+        name: ano
+        required: true
+        type: integer
+      - description: Órgão
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: Mês
+        in: path
+        name: mes
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida
+          schema:
+            $ref: '#/definitions/papi.summaryzedMI'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            type: string
+        "404":
+          description: Não existem dados para os parâmetros informados
+          schema:
+            type: string
+      tags:
+      - public_api
   /v2/orgao/{orgao}:
     get:
       description: Busca um órgão específico utilizando seu ID.
