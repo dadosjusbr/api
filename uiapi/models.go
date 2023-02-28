@@ -227,3 +227,10 @@ type annualSummaryData struct {
 	NumMonthsWithData  int            `json:"meses_com_dados"`
 	Package            *models.Backup `json:"package,omitempty"`
 }
+
+type mensalRemuneration struct {
+	Month              int     `json:"mes,omitempty"`
+	Members            int     `json:"num_membros,omitempty"`
+	BaseRemuneration   float64 `json:"remuneracao_base"`
+	OtherRemunerations float64 `json:"outras_remuneracoes"`
+}

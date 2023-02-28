@@ -19,6 +19,50 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/uiapi/v2/geral/remuneracao/{ano}": {
+            "get": {
+                "description": "Busca os dados, das remunerações de um ano inteiro, agrupados por mês.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetGeneralRemunerationFromYear",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ano da remuneração. Exemplos: 2018, 2019, 2020...",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/uiapi.mensalRemuneration"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro ano inválido.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Resume os dados de remuneração mensal de um órgão.",
@@ -383,6 +427,23 @@ const docTemplate = `{
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                }
+            }
+        },
+        "uiapi.mensalRemuneration": {
+            "type": "object",
+            "properties": {
+                "mes": {
+                    "type": "integer"
+                },
+                "num_membros": {
+                    "type": "integer"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
                 }
             }
         },
