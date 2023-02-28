@@ -207,6 +207,10 @@ func main() {
 	}))
 	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
 	apiGroupV2.GET("/orgaos", apiHandler.V2GetAllAgencies)
+	// Return MIs by year
+	apiGroupV2.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfosByYear)
+	// Return MIs by month
+	apiGroupV2.GET("/dados/:orgao/:ano/:mes", apiHandler.V2GetMonthlyInfo)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),

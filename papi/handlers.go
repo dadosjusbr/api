@@ -140,7 +140,7 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mes=%d inválido", m))
 		}
-		oma, _, err := h.client.GetOMA(m, year, agencyName)
+		oma, _, err := h.client.Db.GetOMA(m, year, agencyName)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, "Error getting OMA data")
 		}
@@ -219,6 +219,223 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 							ParserVersion:  mi.ParserVersion,
 						}})
 				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
+			} else if mi.ProcInfo.Status != 4 {
+				sumMI = append(
+					sumMI,
+					summaryzedMI{
+						AgencyID: mi.AgencyID,
+						Error: &miError{
+							ErrorMessage: mi.ProcInfo.Stderr,
+							Status:       mi.ProcInfo.Status,
+							Cmd:          mi.ProcInfo.Cmd,
+						},
+						Month:    mi.Month,
+						Year:     mi.Year,
+						Package:  nil,
+						Summary:  nil,
+						Metadata: nil})
+			}
+		}
+	}
+	return c.JSON(http.StatusOK, sumMI)
+}
+
+//	@ID				GetMonthlyInfo
+//	@Tags			public_api
+//	@Description	Busca um dado mensal de um órgão
+//	@Produce		json
+//	@Success		200		{object}	summaryzedMI	"Requisição bem sucedida"
+//	@Failure		400		{string}	string			"Parâmetros inválidos"
+//	@Failure		404		{string}	string			"Não existem dados para os parâmetros informados"
+//	@Param			ano		path		int				true	"Ano"
+//	@Param			orgao	path		string			true	"Órgão"
+//	@Param			mes		path		int				true	"Mês"
+//	@Router			/v2/dados/{orgao}/{ano}/{mes} [get]
+func (h handler) V2GetMonthlyInfo(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+
+	agencyName := strings.ToLower(c.Param("orgao"))
+	month, err := strconv.Atoi(c.Param("mes"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro mes=%d inválido", month))
+	}
+
+	var monthlyInfo *models.AgencyMonthlyInfo
+	monthlyInfo, _, err = h.client.Db.GetOMA(month, year, agencyName)
+	if err != nil {
+		if err.Error() == "there is no data with this parameters" {
+			return c.JSON(http.StatusNotFound, "Não existem dados para os parâmetros informados")
+		}
+		return c.JSON(http.StatusBadRequest, "Error getting OMA data")
+	}
+
+	var sumMI summaryzedMI
+	if monthlyInfo.ProcInfo.String() == "" {
+		sumMI =
+			summaryzedMI{
+				AgencyID: monthlyInfo.AgencyID,
+				Error:    nil,
+				Month:    monthlyInfo.Month,
+				Year:     monthlyInfo.Year,
+				Package: &backup{
+					URL:  h.formatDownloadUrl(monthlyInfo.Package.URL),
+					Hash: monthlyInfo.Package.Hash,
+					Size: monthlyInfo.Package.Size,
+				},
+				Summary: &summaries{
+					MemberActive: summary{
+						Count: monthlyInfo.Summary.Count,
+						BaseRemuneration: dataSummary{
+							Max:     monthlyInfo.Summary.BaseRemuneration.Max,
+							Min:     monthlyInfo.Summary.BaseRemuneration.Min,
+							Average: monthlyInfo.Summary.BaseRemuneration.Average,
+							Total:   monthlyInfo.Summary.BaseRemuneration.Total,
+						},
+						OtherRemunerations: dataSummary{
+							Max:     monthlyInfo.Summary.OtherRemunerations.Max,
+							Min:     monthlyInfo.Summary.OtherRemunerations.Min,
+							Average: monthlyInfo.Summary.OtherRemunerations.Average,
+							Total:   monthlyInfo.Summary.OtherRemunerations.Total,
+						},
+					},
+				},
+				Metadata: &metadata{
+					OpenFormat:       monthlyInfo.Meta.OpenFormat,
+					Access:           monthlyInfo.Meta.Access,
+					Extension:        monthlyInfo.Meta.Extension,
+					StrictlyTabular:  monthlyInfo.Meta.StrictlyTabular,
+					ConsistentFormat: monthlyInfo.Meta.ConsistentFormat,
+					HasEnrollment:    monthlyInfo.Meta.HaveEnrollment,
+					HasCapacity:      monthlyInfo.Meta.ThereIsACapacity,
+					HasPosition:      monthlyInfo.Meta.HasPosition,
+					BaseRevenue:      monthlyInfo.Meta.BaseRevenue,
+					OtherRecipes:     monthlyInfo.Meta.OtherRecipes,
+					Expenditure:      monthlyInfo.Meta.Expenditure,
+				},
+				Score: &score{
+					Score:             monthlyInfo.Score.Score,
+					CompletenessScore: monthlyInfo.Score.CompletenessScore,
+					EasinessScore:     monthlyInfo.Score.EasinessScore,
+				},
+				Collect: &collect{
+					Duration:       monthlyInfo.Duration,
+					CrawlerRepo:    monthlyInfo.CrawlerRepo,
+					CrawlerVersion: monthlyInfo.CrawlerVersion,
+					ParserRepo:     monthlyInfo.ParserRepo,
+					ParserVersion:  monthlyInfo.ParserVersion,
+				},
+			}
+		//O status 4 informa que os dados estão indisponíveis. Ao removê-los dos resultados da API, garantimos que eles sejam exibidos como se não houvesse dados.
+	} else if monthlyInfo.ProcInfo.Status != 4 {
+		sumMI = summaryzedMI{
+			AgencyID: monthlyInfo.AgencyID,
+			Error: &miError{
+				ErrorMessage: monthlyInfo.ProcInfo.Stderr,
+				Status:       monthlyInfo.ProcInfo.Status,
+				Cmd:          monthlyInfo.ProcInfo.Cmd,
+			},
+			Month:    monthlyInfo.Month,
+			Year:     monthlyInfo.Year,
+			Package:  nil,
+			Summary:  nil,
+			Metadata: nil,
+		}
+	} else {
+		return c.NoContent(http.StatusNoContent)
+	}
+	return c.JSON(http.StatusOK, sumMI)
+}
+
+//	@ID				GetMonthlyInfosByYear
+//	@Tags			public_api
+//	@Description	Busca os dados mensais de um órgão por ano
+//	@Produce		json
+//	@Success		200		{object}	[]summaryzedMI	"Requisição bem sucedida"
+//	@Failure		400		{string}	string			"Parâmetros inválidos"
+//	@Failure		404		{string}	string			"Não existem dados para os parâmetros informados"
+//	@Param			ano		path		int				true	"Ano"
+//	@Param			orgao	path		string			true	"Órgão"
+//	@Router			/v2/dados/{orgao}/{ano} [get]
+func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
+	year, err := strconv.Atoi(c.Param("ano"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d inválido", year))
+	}
+
+	agencyName := strings.ToLower(c.Param("orgao"))
+	var monthlyInfo map[string][]models.AgencyMonthlyInfo
+	monthlyInfo, err = h.client.Db.GetMonthlyInfo([]models.Agency{{ID: agencyName}}, year)
+	if err != nil {
+		log.Printf("[totals of agency year] error getting data for first screen(ano:%d, estado:%s):%q", year, agencyName, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ano=%d ou orgao=%s inválidos", year, agencyName))
+	}
+
+	if len(monthlyInfo[agencyName]) == 0 {
+		return c.JSON(http.StatusNotFound, "Não existem dados para os parâmetros informados")
+	}
+
+	var sumMI []summaryzedMI
+	for i := range monthlyInfo {
+		for _, mi := range monthlyInfo[i] {
+			if mi.ProcInfo.String() == "" {
+				sumMI = append(
+					sumMI,
+					summaryzedMI{
+						AgencyID: mi.AgencyID,
+						Error:    nil,
+						Month:    mi.Month,
+						Year:     mi.Year,
+						Package: &backup{
+							URL:  h.formatDownloadUrl(mi.Package.URL),
+							Hash: mi.Package.Hash,
+							Size: mi.Package.Size,
+						},
+						Summary: &summaries{
+							MemberActive: summary{
+								Count: mi.Summary.Count,
+								BaseRemuneration: dataSummary{
+									Max:     mi.Summary.BaseRemuneration.Max,
+									Min:     mi.Summary.BaseRemuneration.Min,
+									Average: mi.Summary.BaseRemuneration.Average,
+									Total:   mi.Summary.BaseRemuneration.Total,
+								},
+								OtherRemunerations: dataSummary{
+									Max:     mi.Summary.OtherRemunerations.Max,
+									Min:     mi.Summary.OtherRemunerations.Min,
+									Average: mi.Summary.OtherRemunerations.Average,
+									Total:   mi.Summary.OtherRemunerations.Total,
+								},
+							},
+						},
+						Metadata: &metadata{
+							OpenFormat:       mi.Meta.OpenFormat,
+							Access:           mi.Meta.Access,
+							Extension:        mi.Meta.Extension,
+							StrictlyTabular:  mi.Meta.StrictlyTabular,
+							ConsistentFormat: mi.Meta.ConsistentFormat,
+							HasEnrollment:    mi.Meta.HaveEnrollment,
+							HasCapacity:      mi.Meta.ThereIsACapacity,
+							HasPosition:      mi.Meta.HasPosition,
+							BaseRevenue:      mi.Meta.BaseRevenue,
+							OtherRecipes:     mi.Meta.OtherRecipes,
+							Expenditure:      mi.Meta.Expenditure,
+						},
+						Score: &score{
+							Score:             mi.Score.Score,
+							CompletenessScore: mi.Score.CompletenessScore,
+							EasinessScore:     mi.Score.EasinessScore,
+						},
+						Collect: &collect{
+							Duration:       mi.Duration,
+							CrawlerRepo:    mi.CrawlerRepo,
+							CrawlerVersion: mi.CrawlerVersion,
+							ParserRepo:     mi.ParserRepo,
+							ParserVersion:  mi.ParserVersion,
+						}})
+				//O status 4 informa que os dados estão indisponíveis. Ao removê-los dos resultados da API, garantimos que eles sejam exibidos como se não houvesse dados.
 			} else if mi.ProcInfo.Status != 4 {
 				sumMI = append(
 					sumMI,
