@@ -43,6 +43,39 @@ definitions:
         description: Day(unix) we checked the status of the data
         type: integer
     type: object
+  uiapi.agency:
+    properties:
+      coletando:
+        items:
+          $ref: '#/definitions/uiapi.collecting'
+        type: array
+      entidade:
+        description: '"J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias
+          and "D" for Defensorias.'
+        type: string
+      id_orgao:
+        description: '''trt13'''
+        type: string
+      jurisdicao:
+        description: '"R" for Regional, "M" for Municipal, "F" for Federal, "E" for
+          State.'
+        type: string
+      nome:
+        description: '''Tribunal Regional do Trabalho 13° Região'''
+        type: string
+      ouvidoria:
+        description: Agencys's ombudsman url
+        type: string
+      twitter_handle:
+        description: Agency's twitter handle
+        type: string
+      uf:
+        description: Short code for federative unity.
+        type: string
+      url:
+        description: Link for state url
+        type: string
+    type: object
   uiapi.agencySalary:
     properties:
       histograma:
@@ -61,6 +94,26 @@ definitions:
       size:
         type: integer
       url:
+        type: string
+    type: object
+  uiapi.collecting:
+    properties:
+      descricao:
+        description: Reasons why we didn't collect the data
+        items:
+          type: string
+        type: array
+      timestamp:
+        description: Day(unix) we checked the status of the data
+        type: integer
+    type: object
+  uiapi.procError:
+    properties:
+      stderr:
+        description: String containing the standard error of the process.
+        type: string
+      stdout:
+        description: String containing the standard output of the process.
         type: string
     type: object
   uiapi.procInfo:
@@ -111,6 +164,34 @@ definitions:
         type: integer
       total_remuneracao:
         type: number
+    type: object
+  uiapi.v2AgencyTotalsYear:
+    properties:
+      ano:
+        type: integer
+      meses:
+        items:
+          $ref: '#/definitions/uiapi.v2MonthTotals'
+        type: array
+      orgao:
+        $ref: '#/definitions/uiapi.agency'
+      package:
+        $ref: '#/definitions/uiapi.backup'
+    type: object
+  uiapi.v2MonthTotals:
+    properties:
+      error:
+        $ref: '#/definitions/uiapi.procError'
+      mes:
+        type: integer
+      outras_remuneracoes:
+        type: number
+      remuneracao_base:
+        type: number
+      timestamp:
+        $ref: '#/definitions/uiapi.timestamp'
+      total_membros:
+        type: integer
     type: object
   uiapi.v2ProcInfoResult:
     properties:
@@ -197,6 +278,34 @@ paths:
             $ref: '#/definitions/uiapi.v2ProcInfoResult'
         "400":
           description: Parâmetros inválidos.
+          schema:
+            type: string
+      tags:
+      - ui_api
+  /uiapi/v2/orgao/totais/{orgao}/{ano}:
+    get:
+      description: Busca os dados de remuneração de um órgão em um ano específico.
+      operationId: GetTotalsOfAgencyYear
+      parameters:
+      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+        in: path
+        name: orgao
+        required: true
+        type: string
+      - description: 'Ano. Exemplo: 2018.'
+        in: path
+        name: ano
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: '#/definitions/uiapi.v2AgencyTotalsYear'
+        "400":
+          description: Parâmetro ano ou orgao inválido.
           schema:
             type: string
       tags:
