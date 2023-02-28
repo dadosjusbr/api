@@ -76,6 +76,15 @@ definitions:
         description: Link for state url
         type: string
     type: object
+  uiapi.agencyBasic:
+    properties:
+      agencyCategory:
+        type: string
+      fullName:
+        type: string
+      name:
+        type: string
+    type: object
   uiapi.agencySalary:
     properties:
       histograma:
@@ -157,6 +166,19 @@ definitions:
       stdin:
         type: string
       stdout:
+        type: string
+    type: object
+  uiapi.state:
+    properties:
+      agency:
+        items:
+          $ref: '#/definitions/uiapi.agencyBasic'
+        type: array
+      flagURL:
+        type: string
+      name:
+        type: string
+      shortName:
         type: string
     type: object
   uiapi.timestamp:
@@ -274,6 +296,68 @@ paths:
             $ref: '#/definitions/uiapi.generalSummary'
         "500":
           description: Erro interno do servidor.
+          schema:
+            type: string
+      tags:
+      - ui_api
+  /uiapi/v2/orgao/{grupo}:
+    get:
+      description: Busca os órgãos de um determinado grupo.
+      operationId: GetBasicInfoOfType
+      parameters:
+      - description: Grupo de órgãos
+        enum:
+        - justica-eleitoral
+        - ministerios-publicos
+        - justica-estadual
+        - justica-do-trabalho
+        - justica-federal
+        - justica-militar
+        - justica-superior
+        - conselhos-de-justica
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+        in: path
+        name: grupo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Órgãos do grupo
+          schema:
+            $ref: '#/definitions/uiapi.state'
+        "400":
+          description: Parâmetro inválido
+          schema:
+            type: string
+        "404":
+          description: Grupo não encontrado
           schema:
             type: string
       tags:

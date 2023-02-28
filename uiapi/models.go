@@ -50,11 +50,22 @@ type state struct {
 	Agency    []agencyBasic
 }
 
+type group struct {
+	Name     string          `json:"grupo"`
+	Agencies []v2AgencyBasic `json:"orgaos"`
+}
+
 // AgencyBasic - Basic information of a agency (name e category)
 type agencyBasic struct {
 	Name           string
 	FullName       string
 	AgencyCategory string
+}
+
+type v2AgencyBasic struct {
+	Id     string `json:"id_orgao"`
+	Name   string `json:"nome"`
+	Entity string `json:"entidade"`
 }
 
 // Employee - Represents an employee and his/her salary info

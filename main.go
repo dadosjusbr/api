@@ -175,6 +175,7 @@ func main() {
 	uiAPIGroup.GET("/v2/orgao/totais/:orgao/:ano", uiApiHandler.V2GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
 	uiAPIGroup.GET("/v1/orgao/:grupo", uiApiHandler.GetBasicInfoOfType)
+	uiAPIGroup.GET("/v2/orgao/:grupo", uiApiHandler.V2GetBasicInfoOfType)
 	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", uiApiHandler.GetGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v2/geral/remuneracao/:ano", uiApiHandler.V2GetGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v1/geral/resumo", uiApiHandler.GeneralSummaryHandler)

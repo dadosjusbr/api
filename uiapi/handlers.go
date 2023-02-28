@@ -452,6 +452,85 @@ func (h handler) GetBasicInfoOfType(c echo.Context) error {
 	return c.JSON(http.StatusOK, state)
 }
 
+//	@ID				GetBasicInfoOfType
+//	@Tags			ui_api
+//	@Description	Busca os órgãos de um determinado grupo.
+//	@Produce		json
+//	@Param			grupo						path		string	false	"Grupo de órgãos"	Enums(justica-eleitoral, ministerios-publicos, justica-estadual, justica-do-trabalho, justica-federal, justica-militar, justica-superior, conselhos-de-justica, AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO)
+//	@Success		200							{object}	state	"Órgãos do grupo"
+//	@Failure		400							{object}	string	"Parâmetro inválido"
+//	@Failure		404							{object}	string	"Grupo não encontrado"
+//	@Router			/uiapi/v2/orgao/{grupo} 	[get]
+func (h handler) V2GetBasicInfoOfType(c echo.Context) error {
+	groupName := strings.ToLower(c.Param("grupo"))
+	var strAgencies []strModels.Agency
+	var err error
+	var estadual bool
+	var exists bool
+	jurisdicao := map[string]string{
+		"justica-eleitoral":    "Eleitoral",
+		"ministerios-publicos": "Ministério",
+		"justica-estadual":     "Estadual",
+		"justica-do-trabalho":  "Trabalho",
+		"justica-federal":      "Federal",
+		"justica-militar":      "Militar",
+		"justica-superior":     "Superior",
+		"conselhos-de-justica": "Conselho",
+	}
+
+	// Adaptando as URLs do site com o banco de dados
+	// Primeiro consultamos entre as chaves do mapa.
+	if jurisdicao[groupName] != "" {
+		groupName = jurisdicao[groupName]
+	} else {
+		// Caso não encontremos entre as chaves, verificamos entre os valores do mapa.
+		// Isso pois, até a consolidação ser finalizada, o front consulta a api com /Eleitoral, /Trabalho, etc.
+		for _, value := range jurisdicao {
+			if groupName == value {
+				exists = true
+				break
+			}
+		}
+		// Se a jurisdição não existir no mapa, verificamos se trata-se de um estado
+		if !exists {
+			values := map[string]struct{}{"AC": {}, "AL": {}, "AP": {}, "AM": {}, "BA": {}, "CE": {}, "DF": {}, "ES": {}, "GO": {}, "MA": {}, "MT": {}, "MS": {}, "MG": {}, "PA": {}, "PB": {}, "PR": {}, "PE": {}, "PI": {}, "RJ": {}, "RN": {}, "RS": {}, "RO": {}, "RR": {}, "SC": {}, "SP": {}, "SE": {}, "TO": {}}
+			if _, estadual = values[strings.ToUpper(groupName)]; estadual {
+				exists = true
+			}
+		}
+		// Se o parâmetro dado não for encontrado de forma alguma, retornamos um NOT FOUND (404)
+		if !exists {
+			return c.JSON(http.StatusNotFound, fmt.Sprintf("Grupo não encontrado: '%s'", c.Param("grupo")))
+		}
+	}
+
+	if estadual {
+		strAgencies, err = h.client.Db.GetStateAgencies(strings.ToUpper(groupName))
+	} else {
+		strAgencies, err = h.client.Db.GetOPJ(groupName)
+	}
+	if err != nil {
+		// That happens when there is no information on that year.
+		log.Printf("[basic info type] error getting agencies by type='%s': %q", c.Param("grupo"), err)
+
+		if estadual {
+			strAgencies, err = h.client.Db.GetStateAgencies(groupName)
+		} else {
+			strAgencies, err = h.client.Db.GetOPJ(groupName)
+		}
+		if err != nil {
+			log.Printf("[basic info type] error getting data by type='%s': %q", c.Param("grupo"), err)
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro grupo=%s inválido", c.Param("grupo")))
+		}
+	}
+	var agencies []v2AgencyBasic
+	for k := range strAgencies {
+		agencies = append(agencies, v2AgencyBasic{Id: strAgencies[k].ID, Name: strAgencies[k].Name, Entity: strAgencies[k].Entity})
+	}
+	group := group{Name: strings.ToUpper(c.Param("grupo")), Agencies: agencies}
+	return c.JSON(http.StatusOK, group)
+}
+
 func (h handler) GetGeneralRemunerationFromYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
