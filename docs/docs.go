@@ -19,6 +19,113 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/uiapi/v1/orgao/resumo/{orgao}": {
+            "get": {
+                "description": "Retorna os dados anuais de um orgão",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetAnnualSummary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nome do orgão",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/uiapi.annualSummary"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro orgao inválido",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Algo deu errado ao tentar coletar os dados anuais do orgao",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/uiapi/v2/download": {
+            "get": {
+                "description": "Baixa dados referentes a remunerações a partir de filtros",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "DownloadByUrl",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020",
+                        "name": "anos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3",
+                        "name": "meses",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb",
+                        "name": "orgaos",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "base",
+                            "outras",
+                            "descontos"
+                        ],
+                        "type": "string",
+                        "description": "Categorias a serem pesquisadas",
+                        "name": "categorias",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Arquivo CSV com os dados.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Erro de validação dos parâmetros.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/uiapi/v2/geral/remuneracao/{ano}": {
             "get": {
                 "description": "Busca os dados, das remunerações de um ano inteiro, agrupados por mês.",
@@ -311,6 +418,69 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Grupo não encontrado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/uiapi/v2/pesquisar": {
+            "get": {
+                "description": "Faz uma busca por remunerações a partir de filtros",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "SearchByUrl",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020",
+                        "name": "anos",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3",
+                        "name": "meses",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb",
+                        "name": "orgaos",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "base",
+                            "outras",
+                            "descontos"
+                        ],
+                        "type": "string",
+                        "description": "Categorias a serem pesquisadas",
+                        "name": "categorias",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/uiapi.searchResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Erro de validação dos parâmetros.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
                         "schema": {
                             "type": "string"
                         }
@@ -794,6 +964,43 @@ const docTemplate = `{
                 }
             }
         },
+        "uiapi.annualSummary": {
+            "type": "object",
+            "properties": {
+                "dados_anuais": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/uiapi.annualSummaryData"
+                    }
+                },
+                "orgao": {
+                    "$ref": "#/definitions/uiapi.agency"
+                }
+            }
+        },
+        "uiapi.annualSummaryData": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "meses_com_dados": {
+                    "type": "integer"
+                },
+                "num_membros": {
+                    "type": "integer"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "package": {
+                    "$ref": "#/definitions/uiapi.backup"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                }
+            }
+        },
         "uiapi.backup": {
             "type": "object",
             "properties": {
@@ -900,6 +1107,64 @@ const docTemplate = `{
                 },
                 "stdout": {
                     "type": "string"
+                }
+            }
+        },
+        "uiapi.searchResponse": {
+            "type": "object",
+            "properties": {
+                "download_available": {
+                    "type": "boolean"
+                },
+                "download_limit": {
+                    "type": "integer"
+                },
+                "num_rows_if_available": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/uiapi.searchResult"
+                    }
+                },
+                "search_limit": {
+                    "type": "integer"
+                }
+            }
+        },
+        "uiapi.searchResult": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "cargo": {
+                    "type": "string"
+                },
+                "categoria_contracheque": {
+                    "type": "string"
+                },
+                "detalhamento_contracheque": {
+                    "type": "string"
+                },
+                "lotacao": {
+                    "type": "string"
+                },
+                "matricula": {
+                    "type": "string"
+                },
+                "mes": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "orgao": {
+                    "type": "string"
+                },
+                "valor": {
+                    "type": "number"
                 }
             }
         },
