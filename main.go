@@ -170,7 +170,9 @@ func main() {
 	// Return a summary of an agency. This information will be used in the head of the agency page.
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.GetSummaryOfAgency)
 	uiAPIGroup.GET("/v2/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.V2GetSummaryOfAgency)
+	// TODO: Apagar essa rota (v1) quando o site migrar para a nova rota.
 	uiAPIGroup.GET("/v1/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
+	uiAPIGroup.GET("/v2/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
 	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", uiApiHandler.GetSalaryOfAgencyMonthYear)
 	uiAPIGroup.GET("/v2/orgao/salario/:orgao/:ano/:mes", uiApiHandler.V2GetSalaryOfAgencyMonthYear)
