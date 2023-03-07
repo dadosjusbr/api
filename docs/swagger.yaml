@@ -64,6 +64,9 @@ definitions:
       timestamp:
         description: Day(unix) we checked the status of the data
         type: integer
+      coletando:
+        description: If there is data from that agency
+        type: boolean
     type: object
   papi.dataSummary:
     properties:
@@ -250,6 +253,9 @@ definitions:
       timestamp:
         description: Day(unix) we checked the status of the data
         type: integer
+      coletando:
+        description: If there is data from that agency
+        type: boolean
     type: object
   uiapi.generalSummary:
     properties:

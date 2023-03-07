@@ -750,6 +750,10 @@ const docTemplate = `{
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                },
+                "coletando": {
+                    "description": "If there is data from that agency",
+                    "type": "boolean"
                 }
             }
         },
@@ -1028,6 +1032,10 @@ const docTemplate = `{
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
+                },
+                "coletando": {
+                    "description": "If there is data from that agency",
+                    "type": "boolean"
                 }
             }
         },

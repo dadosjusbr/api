@@ -362,6 +362,7 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 		collect = append(collect, collecting{
 			Timestamp:   c.Timestamp,
 			Description: c.Description,
+			Collecting:  c.Collecting,
 		})
 	}
 	agencyTotalsYear := v2AgencyTotalsYear{
@@ -796,6 +797,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		collect = append(collect, collecting{
 			Timestamp:   c.Timestamp,
 			Description: c.Description,
+			Collecting:  c.Collecting,
 		})
 	}
 	annualSum := annualSummary{

@@ -56,6 +56,7 @@ func (h handler) V2GetAgencyById(c echo.Context) error {
 		collect = append(collect, collecting{
 			Timestamp:   c.Timestamp,
 			Description: c.Description,
+			Collecting:  c.Collecting,
 		})
 	}
 	host := c.Request().Host
@@ -108,6 +109,7 @@ func (h handler) V2GetAllAgencies(c echo.Context) error {
 			collect = append(collect, collecting{
 				Timestamp:   c.Timestamp,
 				Description: c.Description,
+				Collecting:  c.Collecting,
 			})
 		}
 		url := fmt.Sprintf("%s/v2/orgao/%s", host, a.ID)

@@ -231,6 +231,7 @@ type agency struct {
 type collecting struct {
 	Timestamp   *int64   `json:"timestamp,omitempty"` // Day(unix) we checked the status of the data
 	Description []string `json:"descricao,omitempty"` // Reasons why we didn't collect the data
+	Collecting  bool     `json:"coletando,omitempty"` // If there is data from that agency
 }
 
 type annualSummary struct {
