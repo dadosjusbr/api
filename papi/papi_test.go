@@ -118,6 +118,7 @@ func (g getAllAgencies) testGetAllAgenciesWhenAgenciesExists(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	dbMock := database.NewMockInterface(mockCtrl)
 	fsMock := file_storage.NewMockInterface(mockCtrl)
+	timestamp := int64(1643724131)
 
 	agencies := []models.Agency{
 		{
@@ -137,6 +138,21 @@ func (g getAllAgencies) testGetAllAgenciesWhenAgenciesExists(t *testing.T) {
 			UF:            "BA",
 			TwitterHandle: "TJBA",
 			OmbudsmanURL:  "TJBA.com.br",
+		},
+		{
+			ID:            "mpal",
+			Name:          "Ministério Público do Estado de Alagoas",
+			Type:          "Ministério",
+			Entity:        "Ministério",
+			UF:            "AL",
+			TwitterHandle: "MPEAL",
+			OmbudsmanURL:  "https://www.mpal.mp.br/?page_id=1782",
+			Collecting: []models.Collecting{{
+				Description: []string{"URLs dos arquivos publicados não possuem padrão mínimo e lógico"},
+				Timestamp:   &timestamp,
+				Collecting:  true,
+			},
+			},
 		},
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -177,6 +193,21 @@ func (g getAllAgencies) testGetAllAgenciesWhenAgenciesExists(t *testing.T) {
 				"url": "example.com/v2/orgao/tjba",
 				"twitter_handle": "TJBA",
 				"ouvidoria": "TJBA.com.br"
+			},
+			{
+				"id_orgao":"mpal",
+				"nome":"Ministério Público do Estado de Alagoas",
+				"jurisdicao":"Ministério",
+				"entidade":"Ministério",
+				"uf":"AL",
+				"url":"example.com/v2/orgao/mpal",
+				"coletando":[{
+					"timestamp":1643724131,
+					"descricao":["URLs dos arquivos publicados não possuem padrão mínimo e lógico"]
+					}],
+				"twitter_handle":"MPEAL",
+				"ouvidoria":"https://www.mpal.mp.br/?page_id=1782",
+				"possui_dados":true
 			}
 		]
 	`

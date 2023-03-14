@@ -31,6 +31,9 @@ definitions:
       url:
         description: Link for state url
         type: string
+      possui_dados:
+        description: If there is data from that agency
+        type: boolean
     type: object
   papi.backup:
     properties:
@@ -239,6 +242,9 @@ definitions:
         type: integer
       url:
         type: string
+      possui_dados:
+        description: If there is data from that agency
+        type: boolean
     type: object
   uiapi.collecting:
     properties:

@@ -358,11 +358,13 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 	}
 
 	var collect []collecting
+	var hasData bool
 	for _, c := range strAgency.Collecting {
 		collect = append(collect, collecting{
 			Timestamp:   c.Timestamp,
 			Description: c.Description,
 		})
+		hasData = c.Collecting
 	}
 	agencyTotalsYear := v2AgencyTotalsYear{
 		Year: year,
@@ -376,6 +378,7 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 			Collecting:    collect,
 			TwitterHandle: strAgency.TwitterHandle,
 			OmbudsmanURL:  strAgency.OmbudsmanURL,
+			HasData:       hasData,
 		},
 		MonthTotals:    monthTotalsOfYear,
 		SummaryPackage: pkg,
@@ -792,11 +795,13 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		})
 	}
 	var collect []collecting
+	var hasData bool
 	for _, c := range strAgency.Collecting {
 		collect = append(collect, collecting{
 			Timestamp:   c.Timestamp,
 			Description: c.Description,
 		})
+		hasData = c.Collecting
 	}
 	annualSum := annualSummary{
 		Agency: &agency{
@@ -809,6 +814,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 			Collecting:    collect,
 			TwitterHandle: strAgency.TwitterHandle,
 			OmbudsmanURL:  strAgency.OmbudsmanURL,
+			HasData:       hasData,
 		},
 		Data: annualData,
 	}

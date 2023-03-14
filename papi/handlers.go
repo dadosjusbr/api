@@ -52,11 +52,13 @@ func (h handler) V2GetAgencyById(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, "Agency not found")
 	}
 	var collect []collecting
+	var hasData bool
 	for _, c := range strAgency.Collecting {
 		collect = append(collect, collecting{
 			Timestamp:   c.Timestamp,
 			Description: c.Description,
 		})
+		hasData = c.Collecting
 	}
 	host := c.Request().Host
 	url := fmt.Sprintf("%s/v2/orgao/%s", host, strAgency.ID)
@@ -70,6 +72,7 @@ func (h handler) V2GetAgencyById(c echo.Context) error {
 		Collecting:    collect,
 		TwitterHandle: strAgency.TwitterHandle,
 		OmbudsmanURL:  strAgency.OmbudsmanURL,
+		HasData:       hasData,
 	}
 	return c.JSON(http.StatusOK, agency)
 }
@@ -104,11 +107,13 @@ func (h handler) V2GetAllAgencies(c echo.Context) error {
 	host := c.Request().Host
 	for _, a := range strAgencies {
 		var collect []collecting
+		var hasData bool
 		for _, c := range a.Collecting {
 			collect = append(collect, collecting{
 				Timestamp:   c.Timestamp,
 				Description: c.Description,
 			})
+			hasData = c.Collecting
 		}
 		url := fmt.Sprintf("%s/v2/orgao/%s", host, a.ID)
 		agency := agency{
@@ -121,6 +126,7 @@ func (h handler) V2GetAllAgencies(c echo.Context) error {
 			Collecting:    collect,
 			TwitterHandle: a.TwitterHandle,
 			OmbudsmanURL:  a.OmbudsmanURL,
+			HasData:       hasData,
 		}
 		agencies = append(agencies, agency)
 	}
