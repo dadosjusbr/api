@@ -79,11 +79,11 @@ type agency struct {
 	Collecting    []collecting `json:"coletando,omitempty"`
 	TwitterHandle string       `json:"twitter_handle,omitempty"` // Agency's twitter handle
 	OmbudsmanURL  string       `json:"ouvidoria,omitempty"`      //Agencys's ombudsman url
+	HasData       bool         `json:"possui_dados,omitempty"`   // If there is data from that agency
 }
 
 // Collecting A Struct containing the day we checked the status of the data and the reasons why we didn't collected it.
 type collecting struct {
 	Timestamp   *int64   `json:"timestamp,omitempty"` // Day(unix) we checked the status of the data
 	Description []string `json:"descricao,omitempty"` // Reasons why we didn't collect the data
-	Collecting  bool     `json:"coletando,omitempty"` // If there is data from that agency
 }

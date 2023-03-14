@@ -203,11 +203,11 @@ func (g getAllAgencies) testGetAllAgenciesWhenAgenciesExists(t *testing.T) {
 				"url":"example.com/v2/orgao/mpal",
 				"coletando":[{
 					"timestamp":1643724131,
-					"descricao":["URLs dos arquivos publicados não possuem padrão mínimo e lógico"],
-					"coletando":true
+					"descricao":["URLs dos arquivos publicados não possuem padrão mínimo e lógico"]
 					}],
 				"twitter_handle":"MPEAL",
-				"ouvidoria":"https://www.mpal.mp.br/?page_id=1782"
+				"ouvidoria":"https://www.mpal.mp.br/?page_id=1782",
+				"possui_dados":true
 			}
 		]
 	`

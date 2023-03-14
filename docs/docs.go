@@ -700,6 +700,10 @@ const docTemplate = `{
                 "url": {
                     "description": "Link for state url",
                     "type": "string"
+                },
+                "possui_dados": {
+                    "description": "If there is data from that agency",
+                    "type": "boolean"
                 }
             }
         },
@@ -750,10 +754,6 @@ const docTemplate = `{
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
-                },
-                "coletando": {
-                    "description": "If there is data from that agency",
-                    "type": "boolean"
                 }
             }
         },
@@ -934,6 +934,10 @@ const docTemplate = `{
                 "url": {
                     "description": "Link for state url",
                     "type": "string"
+                },
+                "possui_dados": {
+                    "description": "If there is data from that agency",
+                    "type": "boolean"
                 }
             }
         },
@@ -1032,10 +1036,6 @@ const docTemplate = `{
                 "timestamp": {
                     "description": "Day(unix) we checked the status of the data",
                     "type": "integer"
-                },
-                "coletando": {
-                    "description": "If there is data from that agency",
-                    "type": "boolean"
                 }
             }
         },
