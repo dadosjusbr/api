@@ -463,6 +463,105 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
+func (h handler) V2GetAggregateIndexes(c echo.Context) error {
+	jurisdicao := c.QueryParam("jurisdicao")
+	orgao := c.QueryParam("orgao")
+	agregado := c.QueryParam("agregado")
+
+	groupMap := map[string]string{
+		"justica-eleitoral":    "Eleitoral",
+		"ministerios-publicos": "Ministério",
+		"justica-estadual":     "Estadual",
+		"justica-do-trabalho":  "Trabalho",
+		"justica-federal":      "Federal",
+		"justica-militar":      "Militar",
+		"justica-superior":     "Superior",
+		"conselhos-de-justica": "Conselho",
+	}
+
+	var indexes map[string][]models.IndexInformation
+	var err error
+
+	// Verificamos se a jurisdição foi informada e se é válida
+	if groupName, ok := groupMap[jurisdicao]; ok {
+		indexes, err = h.client.Db.GetIndexInformation(groupName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o grupo %s.", groupName))
+		}
+		// Verificamos se o órgão foi informado
+	} else if orgao != "" {
+		indexes, err = h.client.Db.GetIndexInformation(orgao)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão %s.", orgao))
+		}
+	} else {
+		indexes, err = h.client.Db.GetAllIndexInformation()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices de todos os órgãos."))
+		}
+	}
+	indexMap := make(map[string][]indexInformation)
+	aggregateScore := make(map[string]float64)
+	aggregateEasinessScore := make(map[string]float64)
+	aggregateCompletenessScore := make(map[string]float64)
+
+	for id, index := range indexes {
+		for _, a := range index {
+			indexMap[id] = append(indexMap[id], indexInformation{
+				Month: a.Month,
+				Year:  a.Year,
+				Score: &score{
+					Score:             a.Score.Score,
+					EasinessScore:     a.Score.EasinessScore,
+					CompletenessScore: a.Score.CompletenessScore,
+				},
+				Metadata: &metadata{
+					OpenFormat:       a.Meta.OpenFormat,
+					Access:           a.Meta.Access,
+					Extension:        a.Meta.Extension,
+					StrictlyTabular:  a.Meta.StrictlyTabular,
+					ConsistentFormat: a.Meta.ConsistentFormat,
+					HasEnrollment:    a.Meta.HaveEnrollment,
+					HasCapacity:      a.Meta.ThereIsACapacity,
+					HasPosition:      a.Meta.HasPosition,
+					BaseRevenue:      a.Meta.BaseRevenue,
+					OtherRecipes:     a.Meta.OtherRecipes,
+					Expenditure:      a.Meta.Expenditure,
+				},
+			})
+			aggregateScore[id] += a.Score.Score
+			aggregateCompletenessScore[id] += a.Score.CompletenessScore
+			aggregateEasinessScore[id] += a.Score.EasinessScore
+		}
+	}
+	var aggregate []aggregateIndexes
+	for id, index := range indexMap {
+		aggregateScore[id] = aggregateScore[id] / float64(len(index))
+		aggregateEasinessScore[id] = aggregateEasinessScore[id] / float64(len(index))
+		aggregateCompletenessScore[id] = aggregateCompletenessScore[id] / float64(len(index))
+
+		agg := aggregateIndexes{
+			ID: id,
+			Aggregate: &score{
+				Score:             aggregateScore[id],
+				EasinessScore:     aggregateEasinessScore[id],
+				CompletenessScore: aggregateCompletenessScore[id],
+			},
+		}
+		// Se "agregado=true" não estiver presente na URL, será listado também o detalhamento dos índices do órgão
+		if agregado != "true" {
+			agg.IndexInformation = index
+		}
+
+		aggregate = append(aggregate, agg)
+	}
+	return c.JSON(http.StatusOK, aggregate)
+}
+
+// else {
+// return c.JSON(http.StatusNotFound, fmt.Sprintf("Jurisdição inválida: %s.", jurisdicao))
+// }
+
 func (h handler) formatDownloadUrl(url string) string {
 	return strings.Replace(url, h.packageRepoURL, h.dadosJusURL, -1)
 }

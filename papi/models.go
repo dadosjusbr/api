@@ -87,3 +87,16 @@ type collecting struct {
 	Timestamp   *int64   `json:"timestamp,omitempty"` // Day(unix) we checked the status of the data
 	Description []string `json:"descricao,omitempty"` // Reasons why we didn't collect the data
 }
+
+type aggregateIndexes struct {
+	ID               string             `json:"id_orgao,omitempty"` // e.g. 'trt13'
+	Aggregate        *score             `json:"agregado,omitempty"` // Aggregate indices
+	IndexInformation []indexInformation `json:"detalhe,omitempty"`  // All agency indices
+}
+
+type indexInformation struct {
+	Month    int       `json:"mes,omitempty"`
+	Year     int       `json:"ano,omitempty"`
+	Score    *score    `json:"indice_transparencia,omitempty"`
+	Metadata *metadata `json:"metadados,omitempty"`
+}
