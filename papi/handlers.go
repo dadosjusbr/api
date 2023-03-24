@@ -464,7 +464,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 }
 
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
-	jurisdicao := c.QueryParam("jurisdicao")
+	jurisdicao := strings.ToLower(c.QueryParam("jurisdicao"))
 	orgao := c.QueryParam("orgao")
 	agregado := c.QueryParam("agregado")
 

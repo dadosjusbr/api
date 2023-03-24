@@ -657,6 +657,35 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v2/indice": {
+            "get": {
+                "description": "Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAggregateIndexes",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.aggregateIndexes"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -891,6 +920,37 @@ const docTemplate = `{
                 },
                 "sumarios": {
                     "$ref": "#/definitions/papi.summaries"
+                }
+            }
+        },
+        "papi.indexInformation": {
+            "type": "object",
+            "properties": {
+                "mes": {
+                    "type": "integer"
+                },
+                "ano": {
+                    "type": "integer"
+                },
+                "indice_transparencia": {
+                    "$ref": "#/definitions/papi.score"
+                },
+                "metadados": {
+                    "$ref": "#/definitions/papi.metadata"
+                }
+            }
+        },
+        "papi.aggregateIndexes": {
+            "type": "object",
+            "properties": {
+                "id_orgao": {
+                    "type": "string"
+                },
+                "agregado": {
+                    "$ref": "#/definitions/papi.score"
+                },
+                "detalhe": {
+                    "$ref": "#/definitions/papi.indexInformation"
                 }
             }
         },
