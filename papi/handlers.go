@@ -463,9 +463,19 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
+//	@ID				GetAggregateIndexes
+//	@Tags			public_api
+//	@Description	Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.
+//	@Produce		json
+//	@Success		200			{object}	[]aggregateIndexes	"Requisição bem sucedida."
+//	@Failure		400			{string}	string				"Requisição inválida."
+//	@Failure		500			{string}	string				"Erro interno do servidor."
+//	@Param			param		path		string				true	"'grupo' ou 'orgao'"
+//	@Param			valor		path		string				true	"Jurisdição ou ID do órgao"
+//	@Router			/v2/indice/{param}/{valor} 	[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
-	jurisdicao := strings.ToLower(c.QueryParam("jurisdicao"))
-	orgao := c.QueryParam("orgao")
+	param := c.Param("param")
+	valor := c.Param("valor")
 	agregado := c.QueryParam("agregado")
 
 	groupMap := map[string]string{
@@ -483,23 +493,30 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	var err error
 
 	// Verificamos se a jurisdição foi informada e se é válida
-	if groupName, ok := groupMap[jurisdicao]; ok {
-		indexes, err = h.client.Db.GetIndexInformation(groupName)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o grupo %s.", groupName))
+	if param == "grupo" {
+		if groupName, ok := groupMap[valor]; ok {
+			indexes, err = h.client.Db.GetIndexInformation(groupName)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o grupo %s.", groupName))
+			}
+		} else {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o grupo. Grupo/Jurisdição inválida: %s.", valor))
 		}
-		// Verificamos se o órgão foi informado
-	} else if orgao != "" {
-		indexes, err = h.client.Db.GetIndexInformation(orgao)
+
+	} else if param == "orgao" {
+		indexes, err = h.client.Db.GetIndexInformation(valor)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão %s.", orgao))
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o órgão: %s.", valor))
+		}
+		if valor != "" && indexes == nil {
+			return c.JSON(http.StatusNotFound, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão inválido: %s.", valor))
+		} else if indexes == nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão não informado."))
 		}
 	} else {
-		indexes, err = h.client.Db.GetAllIndexInformation()
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices de todos os órgãos."))
-		}
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro inválido."))
 	}
+
 	indexMap := make(map[string][]indexInformation)
 	aggregateScore := make(map[string]float64)
 	aggregateEasinessScore := make(map[string]float64)
@@ -534,6 +551,7 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 			aggregateEasinessScore[id] += a.Score.EasinessScore
 		}
 	}
+	// if agregado == "true" {
 	var aggregate []aggregateIndexes
 	for id, index := range indexMap {
 		aggregateScore[id] = aggregateScore[id] / float64(len(index))
@@ -557,10 +575,6 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, aggregate)
 }
-
-// else {
-// return c.JSON(http.StatusNotFound, fmt.Sprintf("Jurisdição inválida: %s.", jurisdicao))
-// }
 
 func (h handler) formatDownloadUrl(url string) string {
 	return strings.Replace(url, h.packageRepoURL, h.dadosJusURL, -1)

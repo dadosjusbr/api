@@ -157,6 +157,26 @@ definitions:
       sumarios:
         $ref: '#/definitions/papi.summaries'
     type: object
+  papi.indexInformation:
+    properties:
+      mes:
+        type: integer
+      ano:
+        type: integer
+      indice_transparencia:
+        $ref: '#/definitions/papi.score'
+      metadados:
+        $ref: '#/definitions/papi.metadata'
+    type: object
+  papi.aggregateIndexes:
+    properties:
+      id_orgao:
+        type: string
+      agregado:
+        $ref: '#/definitions/papi.score'
+      detalhe:
+        $ref: '#/definitions/papi.indexInformation'
+    type: object
   uiapi.agency:
     properties:
       coletando:

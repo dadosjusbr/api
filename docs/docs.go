@@ -658,6 +658,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/v2/indice/{param}/{valor}": {
+            "get": {
+                "description": "Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAggregateIndexes",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.aggregateIndexes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/indice": {
             "get": {
                 "description": "Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.",
@@ -676,6 +711,12 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/papi.aggregateIndexes"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "500": {
