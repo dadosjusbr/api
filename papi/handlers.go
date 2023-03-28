@@ -463,9 +463,9 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
-//	@ID				GetAggregateIndexes
+//	@ID				GetAggregateIndexesWithParam
 //	@Tags			public_api
-//	@Description	Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.
+//	@Description	Busca as informações de índices de um grupo ou órgão específico.
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexes	"Requisição bem sucedida."
 //	@Failure		400			{string}	string				"Requisição inválida."
@@ -473,10 +473,11 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 //	@Param			param		path		string				true	"'grupo' ou 'orgao'"
 //	@Param			valor		path		string				true	"Jurisdição ou ID do órgao"
 //	@Router			/v2/indice/{param}/{valor} 	[get]
-func (h handler) V2GetAggregateIndexes(c echo.Context) error {
+func (h handler) V2GetAggregateIndexesWithParam(c echo.Context) error {
 	param := c.Param("param")
 	valor := c.Param("valor")
 	agregado := c.QueryParam("agregado")
+	detalhe := c.QueryParam("detalhe")
 
 	groupMap := map[string]string{
 		"justica-eleitoral":    "Eleitoral",
@@ -508,13 +509,11 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o órgão: %s.", valor))
 		}
-		if valor != "" && indexes == nil {
-			return c.JSON(http.StatusNotFound, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão inválido: %s.", valor))
-		} else if indexes == nil {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão não informado."))
+		if _, ok := indexes[valor]; valor != "" && !ok {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão inválido: %s.", valor))
 		}
 	} else {
-		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro inválido."))
+		return c.JSON(http.StatusBadRequest, "Parâmetro inválido.")
 	}
 
 	indexMap := make(map[string][]indexInformation)
@@ -524,15 +523,10 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 
 	for id, index := range indexes {
 		for _, a := range index {
-			indexMap[id] = append(indexMap[id], indexInformation{
-				Month: a.Month,
-				Year:  a.Year,
-				Score: &score{
-					Score:             a.Score.Score,
-					EasinessScore:     a.Score.EasinessScore,
-					CompletenessScore: a.Score.CompletenessScore,
-				},
-				Metadata: &metadata{
+			var meta *metadata
+			// Se "detalhe=true" não for passada na URL, os metadados não serão passados
+			if detalhe == "true" {
+				meta = &metadata{
 					OpenFormat:       a.Meta.OpenFormat,
 					Access:           a.Meta.Access,
 					Extension:        a.Meta.Extension,
@@ -544,16 +538,27 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 					BaseRevenue:      a.Meta.BaseRevenue,
 					OtherRecipes:     a.Meta.OtherRecipes,
 					Expenditure:      a.Meta.Expenditure,
-				},
-			})
+				}
+			}
+			if agregado != "true" {
+				indexMap[id] = append(indexMap[id], indexInformation{
+					Month: a.Month,
+					Year:  a.Year,
+					Score: &score{
+						Score:             a.Score.Score,
+						EasinessScore:     a.Score.EasinessScore,
+						CompletenessScore: a.Score.CompletenessScore,
+					},
+					Metadata: meta,
+				})
+			}
 			aggregateScore[id] += a.Score.Score
 			aggregateCompletenessScore[id] += a.Score.CompletenessScore
 			aggregateEasinessScore[id] += a.Score.EasinessScore
 		}
 	}
-	// if agregado == "true" {
 	var aggregate []aggregateIndexes
-	for id, index := range indexMap {
+	for id, index := range indexes {
 		aggregateScore[id] = aggregateScore[id] / float64(len(index))
 		aggregateEasinessScore[id] = aggregateEasinessScore[id] / float64(len(index))
 		aggregateCompletenessScore[id] = aggregateCompletenessScore[id] / float64(len(index))
@@ -568,7 +573,86 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 		}
 		// Se "agregado=true" não estiver presente na URL, será listado também o detalhamento dos índices do órgão
 		if agregado != "true" {
-			agg.IndexInformation = index
+			agg.IndexInformation = indexMap[id]
+		}
+
+		aggregate = append(aggregate, agg)
+	}
+	return c.JSON(http.StatusOK, aggregate)
+}
+
+//	@ID				GetAggregateIndexes
+//	@Tags			public_api
+//	@Description	Busca as informações de índices de todos os órgãos.
+//	@Produce		json
+//	@Success		200			{object}	[]aggregateIndexes	"Requisição bem sucedida."
+//	@Failure		500			{string}	string				"Erro interno do servidor."
+//	@Router			/v2/indice 	[get]
+func (h handler) V2GetAggregateIndexes(c echo.Context) error {
+	agregado := c.QueryParam("agregado")
+	detalhe := c.QueryParam("detalhe")
+	indexes, err := h.client.Db.GetAllIndexInformation()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "Erro consultando os índices.")
+	}
+	indexMap := make(map[string][]indexInformation)
+	aggregateScore := make(map[string]float64)
+	aggregateEasinessScore := make(map[string]float64)
+	aggregateCompletenessScore := make(map[string]float64)
+
+	for id, index := range indexes {
+		for _, a := range index {
+			var meta *metadata
+			// Se "detalhe=true" não for passada na URL, os metadados não serão passados
+			if detalhe == "true" {
+				meta = &metadata{
+					OpenFormat:       a.Meta.OpenFormat,
+					Access:           a.Meta.Access,
+					Extension:        a.Meta.Extension,
+					StrictlyTabular:  a.Meta.StrictlyTabular,
+					ConsistentFormat: a.Meta.ConsistentFormat,
+					HasEnrollment:    a.Meta.HaveEnrollment,
+					HasCapacity:      a.Meta.ThereIsACapacity,
+					HasPosition:      a.Meta.HasPosition,
+					BaseRevenue:      a.Meta.BaseRevenue,
+					OtherRecipes:     a.Meta.OtherRecipes,
+					Expenditure:      a.Meta.Expenditure,
+				}
+			}
+			if agregado != "true" {
+				indexMap[id] = append(indexMap[id], indexInformation{
+					Month: a.Month,
+					Year:  a.Year,
+					Score: &score{
+						Score:             a.Score.Score,
+						EasinessScore:     a.Score.EasinessScore,
+						CompletenessScore: a.Score.CompletenessScore,
+					},
+					Metadata: meta,
+				})
+			}
+			aggregateScore[id] += a.Score.Score
+			aggregateCompletenessScore[id] += a.Score.CompletenessScore
+			aggregateEasinessScore[id] += a.Score.EasinessScore
+		}
+	}
+	var aggregate []aggregateIndexes
+	for id, index := range indexes {
+		aggregateScore[id] = aggregateScore[id] / float64(len(index))
+		aggregateEasinessScore[id] = aggregateEasinessScore[id] / float64(len(index))
+		aggregateCompletenessScore[id] = aggregateCompletenessScore[id] / float64(len(index))
+
+		agg := aggregateIndexes{
+			ID: id,
+			Aggregate: &score{
+				Score:             aggregateScore[id],
+				EasinessScore:     aggregateEasinessScore[id],
+				CompletenessScore: aggregateCompletenessScore[id],
+			},
+		}
+		// Se "agregado=true" não estiver presente na URL, será listado também o detalhamento dos índices do órgão
+		if agregado != "true" {
+			agg.IndexInformation = indexMap[id]
 		}
 
 		aggregate = append(aggregate, agg)

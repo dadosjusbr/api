@@ -660,14 +660,34 @@ const docTemplate = `{
         },
         "/v2/indice/{param}/{valor}": {
             "get": {
-                "description": "Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.",
+                "description": "Busca as informações de índices de um grupo ou órgão específico.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexes",
+                "operationId": "GetAggregateIndexesWithParam",
+                "parameters": [
+                    {
+                        "enum": [
+                            "grupo",
+                            "orgao"
+                        ],
+                        "type": "string",
+                        "description": "Tipo de parâmetro.",
+                        "name": "param",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "jurisdição ou ID do órgão",
+                        "name": "valor",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Requisição bem sucedida.",
@@ -695,7 +715,7 @@ const docTemplate = `{
         },
         "/v2/indice": {
             "get": {
-                "description": "Busca as informações de índices de todos os órgãos, de um grupo ou órgão específico.",
+                "description": "Busca as informações de índices de todos os órgãos",
                 "produces": [
                     "application/json"
                 ],
@@ -711,12 +731,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/papi.aggregateIndexes"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Requisição inválida.",
-                        "schema": {
-                            "type": "string"
                         }
                     },
                     "500": {
