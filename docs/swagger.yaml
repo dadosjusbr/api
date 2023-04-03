@@ -929,10 +929,154 @@ paths:
                     type: string
         tags: 
         - public_api
+  /v2/indice/{param}/{valor}/{ano}": 
+    get: 
+        description: Busca as informações de índices de um grupo ou órgão específico para o ano informado.
+        operationId: GetAggregateIndexesWithParam
+        parameters:
+        - description: Tipo de parâmetro.
+          enum: 
+          - grupo,
+          - orgao,
+          type: string,
+          name: param,
+          in: path,
+          required: true
+        - description: jurisdição ou ID do órgão,
+          type: string,
+          name: valor,
+          in: path,
+          required: true
+        - description: Ano,
+          type: integer,
+          name: ano,
+          in: path,
+          required: true
+        produces: 
+        - application/json
+        responses: 
+            "200": 
+                description: Requisição bem sucedida.,
+                schema: 
+                    type: array,
+                    items: 
+                        $ref: '#/definitions/papi.aggregateIndexes'
+            "400": 
+                description: Requisição inválida.,
+                schema: 
+                    type: string
+            "500": 
+                description: Erro interno do servidor.,
+                schema: 
+                    type: string
+        tags: 
+        - public_api
+  /v2/indice/{param}/{valor}/{ano}/{mes}": 
+    get: 
+        description: Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.
+        operationId: GetAggregateIndexesWithParam
+        parameters:
+        - description: Tipo de parâmetro.
+          enum: 
+          - grupo,
+          - orgao,
+          type: string,
+          name: param,
+          in: path,
+          required: true
+        - description: jurisdição ou ID do órgão,
+          type: string,
+          name: valor,
+          in: path,
+          required: true
+        - description: Ano,
+          type: integer,
+          name: ano,
+          in: path,
+          required: true
+        - description: Mês,
+          type: integer,
+          name: mes,
+          in: path,
+          required: true
+        produces: 
+        - application/json
+        responses: 
+            "200": 
+                description: Requisição bem sucedida.,
+                schema: 
+                    type: array,
+                    items: 
+                        $ref: '#/definitions/papi.aggregateIndexes'
+            "400": 
+                description: Requisição inválida.,
+                schema: 
+                    type: string
+            "500": 
+                description: Erro interno do servidor.,
+                schema: 
+                    type: string
+        tags: 
+        - public_api
   /v2/indice:
     get:
         description: Busca as informações de índices de todos os órgãos.
         operationId: GetAggregateIndexes
+        produces: 
+        - application/json
+        responses:
+            "200": 
+                description: Requisição bem sucedida.,
+                schema: 
+                    type: array,
+                    items: 
+                        $ref: '#/definitions/papi.aggregateIndexes'
+            "500": 
+                description: Erro interno do servidor.,
+                schema: 
+                    type: string
+        tags: 
+        - public_api
+  /v2/indice/{ano}:
+    get:
+        description: Busca as informações de índices de todos os órgãos para um ano específico.
+        operationId: GetAggregateIndexes
+        parameters:
+        - description: Ano.
+          type: string,
+          name: ano,
+          in: path,
+          required: true
+        produces: 
+        - application/json
+        responses:
+            "200": 
+                description: Requisição bem sucedida.,
+                schema: 
+                    type: array,
+                    items: 
+                        $ref: '#/definitions/papi.aggregateIndexes'
+            "500": 
+                description: Erro interno do servidor.,
+                schema: 
+                    type: string
+        tags: 
+        - public_api
+  /v2/indice/{ano}/{mes}:
+    get:
+        description: Busca as informações de índices de todos os órgãos para um ano e mês específicos.
+        operationId: GetAggregateIndexes
+        parameters:
+        - description: Ano.
+          type: string,
+          name: ano,
+          in: path,
+          required: true
+        - description: Mês.
+          type: string,
+          name: mes,
+          in: path,
+          required: true
         produces: 
         - application/json
         responses:

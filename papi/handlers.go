@@ -495,6 +495,7 @@ func (h handler) V2GetAggregateIndexesWithParam(c echo.Context) error {
 	var anoInt, mesInt int
 	var err error
 
+	// Verificamos se ano e mês foram informados e se são válidos (convertemos para inteiro)
 	if ano != "" {
 		anoInt, err = strconv.Atoi(ano)
 		if err != nil {
@@ -510,20 +511,24 @@ func (h handler) V2GetAggregateIndexesWithParam(c echo.Context) error {
 
 	var indexes map[string][]models.IndexInformation
 
-	// Verificamos se a jurisdição foi informada e se é válida
+	// Verificamos se o parâmetro informado é "grupo" ou "orgao"
 	if param == "grupo" {
+		// Verificamos se a jurisdição foi informada e se é válida
 		if groupName, ok := groupMap[valor]; ok {
 			if ano != "" && mes != "" {
+				// Caso o ano e o mês sejam informados
 				indexes, err = h.client.Db.GetIndexInformationByMonthAndYear(groupName, mesInt, anoInt)
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d/%d para o grupo %s.", mesInt, anoInt, groupName))
 				}
 			} else if ano != "" {
+				// Caso apenas o ano seja informado
 				indexes, err = h.client.Db.GetIndexInformationByYear(groupName, anoInt)
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d para o grupo %s.", anoInt, groupName))
 				}
 			} else {
+				// Caso nem ano ou mês tenham sido informados
 				indexes, err = h.client.Db.GetIndexInformation(groupName)
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o grupo %s.", groupName))
@@ -534,16 +539,19 @@ func (h handler) V2GetAggregateIndexesWithParam(c echo.Context) error {
 		}
 	} else if param == "orgao" {
 		if ano != "" && mes != "" {
+			// Caso o ano e mês sejam informados
 			indexes, err = h.client.Db.GetIndexInformationByMonthAndYear(valor, mesInt, anoInt)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d/%d para o grupo %s.", mesInt, anoInt, valor))
 			}
 		} else if ano != "" {
+			// Caso apenas o ano seja informado
 			indexes, err = h.client.Db.GetIndexInformationByYear(valor, anoInt)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d para o grupo %s.", anoInt, valor))
 			}
 		} else {
+			// Caso nem ano ou mês sejam informados
 			indexes, err = h.client.Db.GetIndexInformation(valor)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o órgão: %s.", valor))
@@ -637,6 +645,7 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	var anoInt, mesInt int
 	var err error
 
+	// Verificamos se ano e mês foram informados e se são válidos (convertemos para inteiro)
 	if ano != "" {
 		anoInt, err = strconv.Atoi(ano)
 		if err != nil {
@@ -653,16 +662,19 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	var indexes map[string][]models.IndexInformation
 
 	if ano != "" && mes != "" {
+		// Caso o ano e mês sejam informados
 		indexes, err = h.client.Db.GetAllIndexInformationByMonthAndYear(mesInt, anoInt)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para para %d/%d.", mesInt, anoInt))
 		}
 	} else if ano != "" {
+		// Caso apenas o ano seja informado
 		indexes, err = h.client.Db.GetAllIndexInformationByYear(anoInt)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para %d.", anoInt))
 		}
 	} else {
+		// Caso nem ano ou mês sejam informados
 		indexes, err = h.client.Db.GetAllIndexInformation()
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, "Erro consultando os índices.")
