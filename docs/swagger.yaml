@@ -1037,7 +1037,7 @@ paths:
                     type: string
         tags: 
         - public_api
-  /v2/indice/{ano}:
+  /v2/indices/{ano}:
     get:
         description: Busca as informações de índices de todos os órgãos para um ano específico.
         operationId: GetAggregateIndexes
@@ -1062,7 +1062,7 @@ paths:
                     type: string
         tags: 
         - public_api
-  /v2/indice/{ano}/{mes}:
+  /v2/indices/{ano}/{mes}:
     get:
         description: Busca as informações de índices de todos os órgãos para um ano e mês específicos.
         operationId: GetAggregateIndexes

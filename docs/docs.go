@@ -873,7 +873,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v2/indice/{ano}": {
+        "/v2/indices/{ano}": {
             "get": {
                 "description": "Busca as informações de índices de todos os órgãos para um ano específico",
                 "produces": [
@@ -911,7 +911,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v2/indice/{ano}/{mes}": {
+        "/v2/indices/{ano}/{mes}": {
             "get": {
                 "description": "Busca as informações de índices de todos os órgãos para um ano e um mês específicos",
                 "produces": [

@@ -221,8 +221,8 @@ func main() {
 	apiGroupV2.GET("/indice/:param/:valor/:ano", apiHandler.V2GetAggregateIndexesWithParam)
 	apiGroupV2.GET("/indice/:param/:valor/:ano/:mes", apiHandler.V2GetAggregateIndexesWithParam)
 	apiGroupV2.GET("/indice", apiHandler.V2GetAggregateIndexes)
-	apiGroupV2.GET("/indice/:ano", apiHandler.V2GetAggregateIndexes)
-	apiGroupV2.GET("/indice/:ano/:mes", apiHandler.V2GetAggregateIndexes)
+	apiGroupV2.GET("/indices/:ano", apiHandler.V2GetAggregateIndexes)
+	apiGroupV2.GET("/indices/:ano/:mes", apiHandler.V2GetAggregateIndexes)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
