@@ -217,9 +217,9 @@ func main() {
 	// Return MIs by month
 	apiGroupV2.GET("/dados/:orgao/:ano/:mes", apiHandler.V2GetMonthlyInfo)
 	// Return agency index information
-	apiGroupV2.GET("/indice/:param/:valor", apiHandler.V2GetAggregateIndexesWithParam)
-	apiGroupV2.GET("/indice/:param/:valor/:ano", apiHandler.V2GetAggregateIndexesWithParam)
-	apiGroupV2.GET("/indice/:param/:valor/:ano/:mes", apiHandler.V2GetAggregateIndexesWithParam)
+	apiGroupV2.GET("/indice/:param/:valor", apiHandler.V2GetAggregateIndexes)
+	apiGroupV2.GET("/indice/:param/:valor/:ano", apiHandler.V2GetAggregateIndexes)
+	apiGroupV2.GET("/indice/:param/:valor/:ano/:mes", apiHandler.V2GetAggregateIndexes)
 	apiGroupV2.GET("/indice", apiHandler.V2GetAggregateIndexes)
 	apiGroupV2.GET("/indices/:ano", apiHandler.V2GetAggregateIndexes)
 	apiGroupV2.GET("/indices/:ano/:mes", apiHandler.V2GetAggregateIndexes)

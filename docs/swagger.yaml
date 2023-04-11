@@ -895,7 +895,7 @@ paths:
   /v2/indice/{param}/{valor}": 
     get: 
         description: Busca as informações de índices de um grupo ou órgão específico.
-        operationId: GetAggregateIndexesWithParam
+        operationId: GetAggregateIndexes
         parameters:
         - description: Tipo de parâmetro.
           enum: 
@@ -932,7 +932,7 @@ paths:
   /v2/indice/{param}/{valor}/{ano}": 
     get: 
         description: Busca as informações de índices de um grupo ou órgão específico para o ano informado.
-        operationId: GetAggregateIndexesWithParam
+        operationId: GetAggregateIndexes
         parameters:
         - description: Tipo de parâmetro.
           enum: 
@@ -974,7 +974,7 @@ paths:
   /v2/indice/{param}/{valor}/{ano}/{mes}": 
     get: 
         description: Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.
-        operationId: GetAggregateIndexesWithParam
+        operationId: GetAggregateIndexes
         parameters:
         - description: Tipo de parâmetro.
           enum: 

@@ -667,7 +667,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexesWithParam",
+                "operationId": "GetAggregateIndexes",
                 "parameters": [
                     {
                         "enum": [
@@ -722,7 +722,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexesWithParam",
+                "operationId": "GetAggregateIndexes",
                 "parameters": [
                     {
                         "enum": [
@@ -784,7 +784,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexesWithParam",
+                "operationId": "GetAggregateIndexes",
                 "parameters": [
                     {
                         "enum": [

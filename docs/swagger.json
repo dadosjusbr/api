@@ -657,7 +657,7 @@
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexesWithParam",
+                "operationId": "GetAggregateIndexes",
                 "parameters": [
                     {
                         "enum": [
@@ -712,7 +712,7 @@
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexesWithParam",
+                "operationId": "GetAggregateIndexes",
                 "parameters": [
                     {
                         "enum": [
@@ -774,7 +774,7 @@
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexesWithParam",
+                "operationId": "GetAggregateIndexes",
                 "parameters": [
                     {
                         "enum": [
