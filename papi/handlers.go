@@ -492,6 +492,27 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 		"conselhos-de-justica": "Conselho",
 	}
 
+	// porJurisdicao tbm será usada para verificar a possibilidade de uma BadRequest
+	var porJurisdicao bool
+
+	// Verificamos se o parâmetro é válido.
+	if param == "grupo" {
+		if _, porJurisdicao = groupMap[valor]; porJurisdicao {
+			valor = groupMap[valor]
+		} else {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Jurisdição inválida: %s.", valor))
+		}
+	} else if param != "orgao" && param != "" {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro inválido: %s.", param))
+	}
+
+	// Personalizando a mensagem de saída de acordo com o parâmetro.
+	msg := map[string]string{
+		"grupo": fmt.Sprintf("para o grupo: %s.", valor),
+		"orgao": fmt.Sprintf("para o órgão: %s.", valor),
+		"":      "para todos os órgãos.",
+	}
+
 	var anoInt, mesInt int
 	var err error
 
@@ -501,91 +522,37 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ANO inválido: %s.", ano))
 		}
-	}
-	if mes != "" {
-		mesInt, err = strconv.Atoi(mes)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro MÊS inválido: %s.", mes))
+		if mes != "" {
+			mesInt, err = strconv.Atoi(mes)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro MÊS inválido: %s.", mes))
+			}
 		}
 	}
 
 	var indexes map[string][]models.IndexInformation
 
-	// Verificamos se o parâmetro foi informado e se é "grupo" ou "orgao"
-	if param != "" {
-		if param == "grupo" {
-			// Verificamos se a jurisdição foi informada e se é válida
-			if groupName, ok := groupMap[valor]; ok {
-				if ano != "" && mes != "" {
-					// Caso o ano e o mês sejam informados
-					indexes, err = h.client.Db.GetIndexInformation(groupName, mesInt, anoInt)
-					if err != nil {
-						return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d/%d para o grupo %s.", mesInt, anoInt, groupName))
-					}
-				} else if ano != "" {
-					// Caso apenas o ano seja informado
-					indexes, err = h.client.Db.GetIndexInformation(groupName, 0, anoInt)
-					if err != nil {
-						return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d para o grupo %s.", anoInt, groupName))
-					}
-				} else {
-					// Caso nem ano ou mês tenham sido informados
-					indexes, err = h.client.Db.GetIndexInformation(groupName, 0, 0)
-					if err != nil {
-						return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o grupo %s.", groupName))
-					}
-				}
-			} else {
-				return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o grupo. Grupo/Jurisdição inválida: %s.", valor))
-			}
-		} else if param == "orgao" {
-			if ano != "" && mes != "" {
-				// Caso o ano e mês sejam informados
-				indexes, err = h.client.Db.GetIndexInformation(valor, mesInt, anoInt)
-				if err != nil {
-					return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d/%d para o grupo %s.", mesInt, anoInt, valor))
-				}
-			} else if ano != "" {
-				// Caso apenas o ano seja informado
-				indexes, err = h.client.Db.GetIndexInformation(valor, 0, anoInt)
-				if err != nil {
-					return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d para o grupo %s.", anoInt, valor))
-				}
-			} else {
-				// Caso nem ano ou mês sejam informados
-				indexes, err = h.client.Db.GetIndexInformation(valor, 0, 0)
-				if err != nil {
-					return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o órgão: %s.", valor))
-				}
-			}
-			if _, ok := indexes[valor]; valor != "" && !ok {
-				return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão inválido: %s.", valor))
-			}
-		} else {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro inválido: %s.", param))
+	if ano != "" && mes != "" {
+		// Caso o ano e o mês sejam informados
+		indexes, err = h.client.Db.GetIndexInformation(valor, mesInt, anoInt)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d/%d %s", mesInt, anoInt, msg[param]))
+		}
+	} else if ano != "" {
+		// Caso apenas o ano seja informado
+		indexes, err = h.client.Db.GetIndexInformation(valor, 0, anoInt)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d %s", anoInt, msg[param]))
 		}
 	} else {
-		// Todos os órgãos
-		if ano != "" && mes != "" {
-			// Caso o ano e mês sejam informados
-			indexes, err = h.client.Db.GetIndexInformation("", mesInt, anoInt)
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para para %d/%d.", mesInt, anoInt))
-			}
-		} else if ano != "" {
-			// Caso apenas o ano seja informado
-			indexes, err = h.client.Db.GetIndexInformation("", 0, anoInt)
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para %d.", anoInt))
-			}
-		} else {
-			// Caso nem ano ou mês sejam informados
-			indexes, err = h.client.Db.GetIndexInformation("", 0, 0)
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, "Erro consultando os índices.")
-			}
+		// Caso nem ano ou mês tenham sido informados
+		indexes, err = h.client.Db.GetIndexInformation(valor, 0, 0)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices %s", msg[param]))
 		}
-
+	}
+	if _, ok := indexes[valor]; valor != "" && !ok && !porJurisdicao {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices. Órgão/grupo inválido: %s", valor))
 	}
 
 	indexMap := make(map[string][]indexInformation)
