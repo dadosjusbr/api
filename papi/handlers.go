@@ -463,7 +463,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
-//	@ID				GetAggregateIndexesWithParam
+//	@ID				GetAggregateIndexes
 //	@Tags			public_api
 //	@Description	Busca as informações de índices de um grupo ou órgão específico.
 //	@Produce		json
@@ -473,9 +473,11 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 //	@Param			param		path		string				true	"'grupo' ou 'orgao'"
 //	@Param			valor		path		string				true	"Jurisdição ou ID do órgao"
 //	@Router			/v2/indice/{param}/{valor} 	[get]
-func (h handler) V2GetAggregateIndexesWithParam(c echo.Context) error {
+func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	param := c.Param("param")
 	valor := c.Param("valor")
+	ano := c.Param("ano")
+	mes := c.Param("mes")
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
 
@@ -490,111 +492,69 @@ func (h handler) V2GetAggregateIndexesWithParam(c echo.Context) error {
 		"conselhos-de-justica": "Conselho",
 	}
 
-	var indexes map[string][]models.IndexInformation
+	// porJurisdicao tbm será usada para verificar a possibilidade de uma BadRequest
+	var porJurisdicao bool
+
+	// Verificamos se o parâmetro é válido.
+	if param == "grupo" {
+		if _, porJurisdicao = groupMap[valor]; porJurisdicao {
+			valor = groupMap[valor]
+		} else {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Jurisdição inválida: %s.", valor))
+		}
+	} else if param != "orgao" && param != "" {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro inválido: %s.", param))
+	}
+
+	// Personalizando a mensagem de saída de acordo com o parâmetro.
+	msg := map[string]string{
+		"grupo": fmt.Sprintf("para o grupo: %s.", valor),
+		"orgao": fmt.Sprintf("para o órgão: %s.", valor),
+		"":      "para todos os órgãos.",
+	}
+
+	var anoInt, mesInt int
 	var err error
 
-	// Verificamos se a jurisdição foi informada e se é válida
-	if param == "grupo" {
-		if groupName, ok := groupMap[valor]; ok {
-			indexes, err = h.client.Db.GetIndexInformation(groupName)
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o grupo %s.", groupName))
-			}
-		} else {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o grupo. Grupo/Jurisdição inválida: %s.", valor))
-		}
-
-	} else if param == "orgao" {
-		indexes, err = h.client.Db.GetIndexInformation(valor)
+	// Verificamos se ano e mês foram informados e se são válidos (convertemos para inteiro)
+	if ano != "" {
+		anoInt, err = strconv.Atoi(ano)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices para o órgão: %s.", valor))
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ANO inválido: %s.", ano))
 		}
-		if _, ok := indexes[valor]; valor != "" && !ok {
-			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices para o órgão. Órgão inválido: %s.", valor))
+		if mes != "" {
+			mesInt, err = strconv.Atoi(mes)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro MÊS inválido: %s.", mes))
+			}
+		}
+	}
+
+	var indexes map[string][]models.IndexInformation
+
+	if ano != "" && mes != "" {
+		// Caso o ano e o mês sejam informados
+		indexes, err = h.client.Db.GetIndexInformation(valor, mesInt, anoInt)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d/%d %s", mesInt, anoInt, msg[param]))
+		}
+	} else if ano != "" {
+		// Caso apenas o ano seja informado
+		indexes, err = h.client.Db.GetIndexInformation(valor, 0, anoInt)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices de %d %s", anoInt, msg[param]))
 		}
 	} else {
-		return c.JSON(http.StatusBadRequest, "Parâmetro inválido.")
-	}
-
-	indexMap := make(map[string][]indexInformation)
-	aggregateScore := make(map[string]float64)
-	aggregateEasinessScore := make(map[string]float64)
-	aggregateCompletenessScore := make(map[string]float64)
-
-	for id, index := range indexes {
-		for _, a := range index {
-			var meta *metadata
-			// Se "detalhe=true" não for passada na URL, os metadados não serão passados
-			if detalhe == "true" {
-				meta = &metadata{
-					OpenFormat:       a.Meta.OpenFormat,
-					Access:           a.Meta.Access,
-					Extension:        a.Meta.Extension,
-					StrictlyTabular:  a.Meta.StrictlyTabular,
-					ConsistentFormat: a.Meta.ConsistentFormat,
-					HasEnrollment:    a.Meta.HaveEnrollment,
-					HasCapacity:      a.Meta.ThereIsACapacity,
-					HasPosition:      a.Meta.HasPosition,
-					BaseRevenue:      a.Meta.BaseRevenue,
-					OtherRecipes:     a.Meta.OtherRecipes,
-					Expenditure:      a.Meta.Expenditure,
-				}
-			}
-			if agregado != "true" {
-				indexMap[id] = append(indexMap[id], indexInformation{
-					Month: a.Month,
-					Year:  a.Year,
-					Score: &score{
-						Score:             a.Score.Score,
-						EasinessScore:     a.Score.EasinessScore,
-						CompletenessScore: a.Score.CompletenessScore,
-					},
-					Metadata: meta,
-				})
-			}
-			aggregateScore[id] += a.Score.Score
-			aggregateCompletenessScore[id] += a.Score.CompletenessScore
-			aggregateEasinessScore[id] += a.Score.EasinessScore
+		// Caso nem ano ou mês tenham sido informados
+		indexes, err = h.client.Db.GetIndexInformation(valor, 0, 0)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro consultando os índices %s", msg[param]))
 		}
 	}
-	var aggregate []aggregateIndexes
-	for id, index := range indexes {
-		aggregateScore[id] = aggregateScore[id] / float64(len(index))
-		aggregateEasinessScore[id] = aggregateEasinessScore[id] / float64(len(index))
-		aggregateCompletenessScore[id] = aggregateCompletenessScore[id] / float64(len(index))
-
-		agg := aggregateIndexes{
-			ID: id,
-			Aggregate: &score{
-				Score:             aggregateScore[id],
-				EasinessScore:     aggregateEasinessScore[id],
-				CompletenessScore: aggregateCompletenessScore[id],
-			},
-		}
-		// Se "agregado=true" não estiver presente na URL, será listado também o detalhamento dos índices do órgão
-		if agregado != "true" {
-			agg.IndexInformation = indexMap[id]
-		}
-
-		aggregate = append(aggregate, agg)
+	if _, ok := indexes[valor]; valor != "" && !ok && !porJurisdicao {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Erro consultando os índices. Órgão/grupo inválido: %s", valor))
 	}
-	return c.JSON(http.StatusOK, aggregate)
-}
 
-//	@ID				GetAggregateIndexes
-//	@Tags			public_api
-//	@Description	Busca as informações de índices de todos os órgãos.
-//	@Produce		json
-//	@Success		200			{object}	[]aggregateIndexes	"Requisição bem sucedida."
-//	@Failure		500			{string}	string				"Erro interno do servidor."
-//	@Router			/v2/indice 	[get]
-func (h handler) V2GetAggregateIndexes(c echo.Context) error {
-	agregado := c.QueryParam("agregado")
-	detalhe := c.QueryParam("detalhe")
-	indexes, err := h.client.Db.GetAllIndexInformation()
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Erro consultando os índices.")
-	}
 	indexMap := make(map[string][]indexInformation)
 	aggregateScore := make(map[string]float64)
 	aggregateEasinessScore := make(map[string]float64)
