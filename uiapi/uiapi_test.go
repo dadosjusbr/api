@@ -1318,8 +1318,6 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				{
 					"ano": 2020,
 					"num_membros": 214,
-					"media_num_membros": 214,
-					"total_num_membros": 2568,
 					"remuneracao_base": 10000,
 					"remuneracao_base_por_membro": 3.8940809968847354, 
 					"remuneracao_base_por_mes": 833.3333333333334,

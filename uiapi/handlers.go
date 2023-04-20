@@ -789,9 +789,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		otherRemPerCapita := s.OtherRemunerations / float64(s.TotalCount)
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,
-			Count:                       s.AverageCount,
 			AverageCount:                s.AverageCount,
-			TotalCount:                  s.TotalCount,
 			BaseRemuneration:            s.BaseRemuneration,
 			BaseRemunerationPerMonth:    baseRemPerMonth,
 			BaseRemunerationPerCapita:   baseRemPerCapita,

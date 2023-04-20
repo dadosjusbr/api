@@ -243,9 +243,7 @@ type annualSummary struct {
 
 type annualSummaryData struct {
 	Year                        int     `json:"ano,omitempty"`
-	Count                       int     `json:"num_membros,omitempty"` // REMOVER POSTERIORMENTE
-	AverageCount                int     `json:"media_num_membros,omitempty"`
-	TotalCount                  int     `json:"total_num_membros,omitempty"`
+	AverageCount                int     `json:"num_membros,omitempty"`
 	BaseRemuneration            float64 `json:"remuneracao_base"`
 	BaseRemunerationPerMonth    float64 `json:"remuneracao_base_por_mes"`
 	BaseRemunerationPerCapita   float64 `json:"remuneracao_base_por_membro"`
