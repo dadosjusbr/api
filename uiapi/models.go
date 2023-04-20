@@ -148,12 +148,14 @@ type monthTotals struct {
 }
 
 type v2MonthTotals struct {
-	Error              *procError `json:"error,omitempty"`
-	Month              int        `json:"mes"`
-	TotalMembers       int        `json:"total_membros"`
-	BaseRemuneration   float64    `json:"remuneracao_base"`
-	OtherRemunerations float64    `json:"outras_remuneracoes"`
-	CrawlingTimestamp  timestamp  `json:"timestamp"`
+	Error                       *procError `json:"error,omitempty"`
+	Month                       int        `json:"mes"`
+	MemberCount                 int        `json:"total_membros"`
+	BaseRemuneration            float64    `json:"remuneracao_base"`
+	BaseRemunerationPerCapita   float64    `json:"remuneracao_base_por_membro"`
+	OtherRemunerations          float64    `json:"outras_remuneracoes"`
+	OtherRemunerationsPerCapita float64    `json:"outras_remuneracoes_por_membro"`
+	CrawlingTimestamp           timestamp  `json:"timestamp"`
 }
 
 type timestamp struct {
@@ -240,12 +242,16 @@ type annualSummary struct {
 }
 
 type annualSummaryData struct {
-	Year               int     `json:"ano,omitempty"`
-	Count              int     `json:"num_membros,omitempty"`
-	BaseRemuneration   float64 `json:"remuneracao_base"`
-	OtherRemunerations float64 `json:"outras_remuneracoes"`
-	NumMonthsWithData  int     `json:"meses_com_dados"`
-	Package            *backup `json:"package,omitempty"`
+	Year                        int     `json:"ano,omitempty"`
+	AverageMemberCount          int     `json:"num_membros,omitempty"`
+	BaseRemuneration            float64 `json:"remuneracao_base"`
+	BaseRemunerationPerMonth    float64 `json:"remuneracao_base_por_mes"`
+	BaseRemunerationPerCapita   float64 `json:"remuneracao_base_por_membro"`
+	OtherRemunerations          float64 `json:"outras_remuneracoes"`
+	OtherRemunerationsPerMonth  float64 `json:"outras_remuneracoes_por_mes"`
+	OtherRemunerationsPerCapita float64 `json:"outras_remuneracoes_por_membro"`
+	NumMonthsWithData           int     `json:"meses_com_dados"`
+	Package                     *backup `json:"package,omitempty"`
 }
 
 type mensalRemuneration struct {

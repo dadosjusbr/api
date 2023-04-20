@@ -1330,10 +1330,22 @@ const docTemplate = `{
                 "outras_remuneracoes": {
                     "type": "number"
                 },
+                "outras_remuneracoes_por_mes": {
+                    "type": "number"
+                },
+                "outras_remuneracoes_por_membro": {
+                    "type": "number"
+                },
                 "package": {
                     "$ref": "#/definitions/uiapi.backup"
                 },
                 "remuneracao_base": {
+                    "type": "number"
+                },
+                "remuneracao_base_por_mes": {
+                    "type": "number"
+                },
+                "remuneracao_base_por_membro": {
                     "type": "number"
                 }
             }
@@ -1603,7 +1615,13 @@ const docTemplate = `{
                 "outras_remuneracoes": {
                     "type": "number"
                 },
+                "outras_remuneracoes_por_membro": {
+                    "type": "number"
+                },
                 "remuneracao_base": {
+                    "type": "number"
+                },
+                "remuneracao_base_por_membro": {
                     "type": "number"
                 },
                 "timestamp": {
