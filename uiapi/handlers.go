@@ -329,7 +329,7 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
 				},
-				TotalMembers: agencyMonthlyInfo.Summary.Count,
+				MemberCount: agencyMonthlyInfo.Summary.Count,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
@@ -789,7 +789,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		otherRemPerCapita := s.OtherRemunerations / float64(s.TotalCount)
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,
-			AverageCount:                s.AverageCount,
+			AverageMemberCount:          s.AverageCount,
 			BaseRemuneration:            s.BaseRemuneration,
 			BaseRemunerationPerMonth:    baseRemPerMonth,
 			BaseRemunerationPerCapita:   baseRemPerCapita,

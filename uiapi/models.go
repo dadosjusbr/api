@@ -150,7 +150,7 @@ type monthTotals struct {
 type v2MonthTotals struct {
 	Error                       *procError `json:"error,omitempty"`
 	Month                       int        `json:"mes"`
-	TotalMembers                int        `json:"total_membros"`
+	MemberCount                 int        `json:"total_membros"`
 	BaseRemuneration            float64    `json:"remuneracao_base"`
 	BaseRemunerationPerCapita   float64    `json:"remuneracao_base_por_membro"`
 	OtherRemunerations          float64    `json:"outras_remuneracoes"`
@@ -243,7 +243,7 @@ type annualSummary struct {
 
 type annualSummaryData struct {
 	Year                        int     `json:"ano,omitempty"`
-	AverageCount                int     `json:"num_membros,omitempty"`
+	AverageMemberCount          int     `json:"num_membros,omitempty"`
 	BaseRemuneration            float64 `json:"remuneracao_base"`
 	BaseRemunerationPerMonth    float64 `json:"remuneracao_base_por_mes"`
 	BaseRemunerationPerCapita   float64 `json:"remuneracao_base_por_membro"`
