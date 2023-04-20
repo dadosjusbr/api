@@ -336,10 +336,6 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 			// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 		} else if agencyMonthlyInfo.ProcInfo.String() != "" && agencyMonthlyInfo.ProcInfo.Status != 4 {
 			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
-				BaseRemuneration:            0,
-				OtherRemunerations:          0,
-				BaseRemunerationPerCapita:   0,
-				OtherRemunerationsPerCapita: 0,
 				CrawlingTimestamp: timestamp{
 					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
@@ -788,12 +784,14 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 	var annualData []annualSummaryData
 	for _, s := range summaries {
 		baseRemPerMonth := s.BaseRemuneration / float64(s.NumMonthsWithData)
-		baseRemPerCapita := s.BaseRemuneration / float64(s.NumMonthsWithData) / float64(s.Count)
+		baseRemPerCapita := s.BaseRemuneration / float64(s.TotalCount)
 		otherRemPerMonth := s.OtherRemunerations / float64(s.NumMonthsWithData)
-		otherRemPerCapita := s.OtherRemunerations / float64(s.NumMonthsWithData) / float64(s.Count)
+		otherRemPerCapita := s.OtherRemunerations / float64(s.TotalCount)
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,
-			Count:                       s.Count,
+			Count:                       s.AverageCount,
+			AverageCount:                s.AverageCount,
+			TotalCount:                  s.TotalCount,
 			BaseRemuneration:            s.BaseRemuneration,
 			BaseRemunerationPerMonth:    baseRemPerMonth,
 			BaseRemunerationPerCapita:   baseRemPerCapita,
