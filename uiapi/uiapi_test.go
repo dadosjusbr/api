@@ -1121,13 +1121,15 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 				"uf": "AL",
 				"twitter_handle": "tjaloficial",
 				"ouvidoria": "http://www.tjal.jus.br/ombudsman",
-				"url": "example.com/v1/orgao/tjal"
+				"url": "example.com/v2/orgao/tjal"
 			},
 			"meses": [
 				{
 					"mes": 1,
 					"outras_remuneracoes":1.9515865600000022e+06,
+					"outras_remuneracoes_por_membro":9119.563364485992,
 					"remuneracao_base":7.099024400000013e+06,
+					"remuneracao_base_por_membro":33173.01121495333,
 					"timestamp": {
 						"seconds": 1,
 						"nanos": 1
@@ -1196,7 +1198,7 @@ func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
 					"uf": "AL",
 					"twitter_handle": "tjaloficial",
 					"ouvidoria": "http://www.tjal.jus.br/ombudsman",
-					"url": "example.com/v1/orgao/tjal"
+					"url": "example.com/v2/orgao/tjal"
 				}
 		}
 	`
@@ -1283,7 +1285,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 	e := echo.New()
 	request := httptest.NewRequest(
 		http.MethodGet,
-		"/uiapi/v1/orgao/resumo/:orgao",
+		"/uiapi/v2/orgao/resumo/:orgao",
 		nil,
 	)
 	recorder := httptest.NewRecorder()
@@ -1309,14 +1311,18 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				"uf": "AL",
 				"twitter_handle": "tjaloficial",
 				"ouvidoria": "http://www.tjal.jus.br/ombudsman",
-				"url": "example.com/v1/orgao/tjal"
+				"url": "example.com/v2/orgao/tjal"
 			},
 			"dados_anuais": [
 				{
 					"ano": 2020,
 					"num_membros": 214,
 					"remuneracao_base": 10000,
+					"remuneracao_base_por_membro": 46.728971962616825, 
+					"remuneracao_base_por_mes": 833.3333333333334,
 					"outras_remuneracoes": 1000,
+					"outras_remuneracoes_por_membro": 4.672897196261682, 
+					"outras_remuneracoes_por_mes": 83.33333333333333,
 					"meses_com_dados": 12,
 					"package": {
 						"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
@@ -1343,7 +1349,7 @@ func (g getAnnualSummary) testWhenAgencyDoesNotExist(t *testing.T) {
 	e := echo.New()
 	request := httptest.NewRequest(
 		http.MethodGet,
-		"/uiapi/v1/orgao/resumo/:orgao",
+		"/uiapi/v2/orgao/resumo/:orgao",
 		nil,
 	)
 	recorder := httptest.NewRecorder()
@@ -1377,7 +1383,7 @@ func (g getAnnualSummary) testWhenGetAnnualSummaryReturnsError(t *testing.T) {
 		UF:            "AL",
 		TwitterHandle: "tjaloficial",
 		Type:          "Estadual",
-		URL:           "example.com/v1/orgao/tjal",
+		URL:           "example.com/v2/orgao/tjal",
 		OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -1387,7 +1393,7 @@ func (g getAnnualSummary) testWhenGetAnnualSummaryReturnsError(t *testing.T) {
 	e := echo.New()
 	request := httptest.NewRequest(
 		http.MethodGet,
-		"/uiapi/v1/orgao/resumo/:orgao",
+		"/uiapi/v2/orgao/resumo/:orgao",
 		nil,
 	)
 	recorder := httptest.NewRecorder()
@@ -1421,7 +1427,7 @@ func (g getAnnualSummary) testWhenAgencyDoesNotHaveData(t *testing.T) {
 		UF:            "AL",
 		TwitterHandle: "tjaloficial",
 		Type:          "Estadual",
-		URL:           "example.com/v1/orgao/tjal",
+		URL:           "example.com/v2/orgao/tjal",
 		OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -1457,7 +1463,7 @@ func (g getAnnualSummary) testWhenAgencyDoesNotHaveData(t *testing.T) {
 				"uf": "AL",
 				"twitter_handle": "tjaloficial",
 				"ouvidoria": "http://www.tjal.jus.br/ombudsman",
-				"url": "example.com/v1/orgao/tjal"
+				"url": "example.com/v2/orgao/tjal"
 			}
 		}
 	`

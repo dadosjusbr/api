@@ -315,12 +315,16 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
 	}
 	host := c.Request().Host
-	strAgency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, strAgency.ID)
+	strAgency.URL = fmt.Sprintf("%s/v2/orgao/%s", host, strAgency.ID)
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
 		if agencyMonthlyInfo.Summary != nil && agencyMonthlyInfo.Summary.BaseRemuneration.Total+agencyMonthlyInfo.Summary.OtherRemunerations.Total > 0 {
+			baseRemPerCapita := agencyMonthlyInfo.Summary.BaseRemuneration.Total / float64(agencyMonthlyInfo.Summary.Count)
+			otherRemPerCapita := agencyMonthlyInfo.Summary.OtherRemunerations.Total / float64(agencyMonthlyInfo.Summary.Count)
 			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
-				BaseRemuneration:   agencyMonthlyInfo.Summary.BaseRemuneration.Total,
-				OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+				BaseRemuneration:            agencyMonthlyInfo.Summary.BaseRemuneration.Total,
+				OtherRemunerations:          agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+				BaseRemunerationPerCapita:   baseRemPerCapita,
+				OtherRemunerationsPerCapita: otherRemPerCapita,
 				CrawlingTimestamp: timestamp{
 					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
@@ -332,8 +336,10 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 			// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 		} else if agencyMonthlyInfo.ProcInfo.String() != "" && agencyMonthlyInfo.ProcInfo.Status != 4 {
 			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
-				BaseRemuneration:   0,
-				OtherRemunerations: 0,
+				BaseRemuneration:            0,
+				OtherRemunerations:          0,
+				BaseRemunerationPerCapita:   0,
+				OtherRemunerationsPerCapita: 0,
 				CrawlingTimestamp: timestamp{
 					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
@@ -773,7 +779,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", agencyName))
 	}
 	host := c.Request().Host
-	strAgency.URL = fmt.Sprintf("%s/v1/orgao/%s", host, strAgency.ID)
+	strAgency.URL = fmt.Sprintf("%s/v2/orgao/%s", host, strAgency.ID)
 	summaries, err := h.client.GetAnnualSummary(agencyName)
 	if err != nil {
 		log.Printf("error getting annual data of '%s' :%q", agencyName, err)
@@ -781,12 +787,20 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 	}
 	var annualData []annualSummaryData
 	for _, s := range summaries {
+		baseRemPerMonth := s.BaseRemuneration / float64(s.NumMonthsWithData)
+		baseRemPerCapita := s.BaseRemuneration / float64(s.NumMonthsWithData) / float64(s.Count)
+		otherRemPerMonth := s.OtherRemunerations / float64(s.NumMonthsWithData)
+		otherRemPerCapita := s.OtherRemunerations / float64(s.NumMonthsWithData) / float64(s.Count)
 		annualData = append(annualData, annualSummaryData{
-			Year:               s.Year,
-			Count:              s.Count,
-			BaseRemuneration:   s.BaseRemuneration,
-			OtherRemunerations: s.OtherRemunerations,
-			NumMonthsWithData:  s.NumMonthsWithData,
+			Year:                        s.Year,
+			Count:                       s.Count,
+			BaseRemuneration:            s.BaseRemuneration,
+			BaseRemunerationPerMonth:    baseRemPerMonth,
+			BaseRemunerationPerCapita:   baseRemPerCapita,
+			OtherRemunerations:          s.OtherRemunerations,
+			OtherRemunerationsPerMonth:  otherRemPerMonth,
+			OtherRemunerationsPerCapita: otherRemPerCapita,
+			NumMonthsWithData:           s.NumMonthsWithData,
 			Package: &backup{
 				URL:  s.Package.URL,
 				Hash: s.Package.Hash,
