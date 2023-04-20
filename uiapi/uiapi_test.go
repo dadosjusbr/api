@@ -1318,10 +1318,10 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 					"ano": 2020,
 					"num_membros": 214,
 					"remuneracao_base": 10000,
-					"remuneracao_base_por_membro": 46.728971962616825, 
+					"remuneracao_base_por_membro": 3.8940809968847354, 
 					"remuneracao_base_por_mes": 833.3333333333334,
 					"outras_remuneracoes": 1000,
-					"outras_remuneracoes_por_membro": 4.672897196261682, 
+					"outras_remuneracoes_por_membro": 0.3894080996884735, 
 					"outras_remuneracoes_por_mes": 83.33333333333333,
 					"meses_com_dados": 12,
 					"package": {
