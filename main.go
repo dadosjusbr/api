@@ -168,23 +168,16 @@ func main() {
 		log.Fatalf("Error creating uiapi handler: %q", err)
 	}
 	// Return a summary of an agency. This information will be used in the head of the agency page.
-	uiAPIGroup.GET("/v1/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.GetSummaryOfAgency)
 	uiAPIGroup.GET("/v2/orgao/resumo/:orgao/:ano/:mes", uiApiHandler.V2GetSummaryOfAgency)
 	// TODO: Apagar essa rota (v1) quando o site migrar para a nova rota.
-	uiAPIGroup.GET("/v1/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
 	uiAPIGroup.GET("/v2/orgao/resumo/:orgao", uiApiHandler.GetAnnualSummary)
 	// Return all the salary of a month and year. This will be used in the point chart at the entity page.
-	uiAPIGroup.GET("/v1/orgao/salario/:orgao/:ano/:mes", uiApiHandler.GetSalaryOfAgencyMonthYear)
 	uiAPIGroup.GET("/v2/orgao/salario/:orgao/:ano/:mes", uiApiHandler.V2GetSalaryOfAgencyMonthYear)
 	// Return the total of salary of every month of a year of a agency. The salary is divided in Wage, Perks and Others. This will be used to plot the bars chart at the state page.
-	uiAPIGroup.GET("/v1/orgao/totais/:orgao/:ano", uiApiHandler.GetTotalsOfAgencyYear)
 	uiAPIGroup.GET("/v2/orgao/totais/:orgao/:ano", uiApiHandler.V2GetTotalsOfAgencyYear)
 	// Return basic information of a type or state
-	uiAPIGroup.GET("/v1/orgao/:grupo", uiApiHandler.GetBasicInfoOfType)
 	uiAPIGroup.GET("/v2/orgao/:grupo", uiApiHandler.V2GetBasicInfoOfType)
-	uiAPIGroup.GET("/v1/geral/remuneracao/:ano", uiApiHandler.GetGeneralRemunerationFromYear)
 	uiAPIGroup.GET("/v2/geral/remuneracao/:ano", uiApiHandler.V2GetGeneralRemunerationFromYear)
-	uiAPIGroup.GET("/v1/geral/resumo", uiApiHandler.GeneralSummaryHandler)
 	uiAPIGroup.GET("/v2/geral/resumo", uiApiHandler.GetGeneralSummary)
 	// Retorna um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/pesquisar", uiApiHandler.SearchByUrl)
@@ -192,25 +185,15 @@ func main() {
 	uiAPIGroup.GET("/v2/download", uiApiHandler.DownloadByUrl)
 
 	apiHandler := papi.NewHandler(pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
-	// Public API configuration
-	apiGroup := e.Group("/v1", middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
-	}))
-	// Return agency
-	apiGroup.GET("/orgao/:orgao", apiHandler.V1GetAgencyById)
-	// Return all agencies
-	apiGroup.GET("/orgaos", apiHandler.V1GetAllAgencies)
-	// Return MIs by year
-	apiGroup.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfo)
-	// Return MIs by month
-	apiGroup.GET("/dados/:orgao/:ano/:mes", apiHandler.GetMonthlyInfo)
+
 	// V2 public api, to be used by the new returned data
 	apiGroupV2 := e.Group("/v2", middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 	}))
+	// Return agency
 	apiGroupV2.GET("/orgao/:orgao", apiHandler.V2GetAgencyById)
+	// Return all agencies
 	apiGroupV2.GET("/orgaos", apiHandler.V2GetAllAgencies)
 	// Return MIs by year
 	apiGroupV2.GET("/dados/:orgao/:ano", apiHandler.GetMonthlyInfosByYear)
