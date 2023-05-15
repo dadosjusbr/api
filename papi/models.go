@@ -100,3 +100,19 @@ type indexInformation struct {
 	Score    *score    `json:"indice_transparencia,omitempty"`
 	Metadata *metadata `json:"metadados,omitempty"`
 }
+
+type allAgencyInformation struct {
+	ID                string         `json:"id_orgao,omitempty"`   // 'trt13'
+	Name              string         `json:"nome,omitempty"`       // 'Tribunal Regional do Trabalho 13° Região'
+	Type              string         `json:"jurisdicao,omitempty"` // "R" for Regional, "M" for Municipal, "F" for Federal, "E" for State.
+	Entity            string         `json:"entidade,omitempty"`   // "J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias and "D" for Defensorias.
+	UF                string         `json:"uf,omitempty"`         // Short code for federative unity.
+	URL               string         `json:"url,omitempty"`        // Link for state url
+	Collecting        []collecting   `json:"coletando,omitempty"`
+	TwitterHandle     string         `json:"twitter_handle,omitempty"` // Agency's twitter handle
+	OmbudsmanURL      string         `json:"ouvidoria,omitempty"`      //Agencys's ombudsman url
+	TotalCollections  int            `json:"total_coletas_realizadas,omitempty"`
+	NumMonthsWithData int            `json:"meses_com_dados"`
+	Score             *score         `json:"indice_transparencia,omitempty"`
+	Collections       []summaryzedMI `json:"coletas"`
+}

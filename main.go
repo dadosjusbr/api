@@ -223,6 +223,7 @@ func main() {
 	apiGroupV2.GET("/indice", apiHandler.V2GetAggregateIndexes)
 	apiGroupV2.GET("/indices/:ano", apiHandler.V2GetAggregateIndexes)
 	apiGroupV2.GET("/indices/:ano/:mes", apiHandler.V2GetAggregateIndexes)
+	apiGroupV2.GET("/dados/:orgao", apiHandler.V2GetAllAgencyInformation)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.Port),
