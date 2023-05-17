@@ -478,6 +478,41 @@
                 }
             }
         },
+        "/v2/dados/{orgao}": {
+            "get": {
+                "description": "Busca todas as informações de um órgão específico.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAllAgencyInformation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "órgão",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/papi.allAgencyInformation"
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/dados/{orgao}/{ano}": {
             "get": {
                 "description": "Busca os dados mensais de um órgão por ano",
@@ -992,6 +1027,64 @@
                 "possui_dados": {
                     "description": "If there is data from that agency",
                     "type": "boolean"
+                }
+            }
+        },
+        "papi.allAgencyInformation": {
+            "type": "object",
+            "properties": {
+                "id_orgao": {
+                    "description": "'trt13'",
+                    "type": "string"
+                },
+                "nome": {
+                    "description": "'Tribunal Regional do Trabalho 13° Região'",
+                    "type": "string"
+                },
+                "jurisdicao": {
+                    "description": "'Estadual', 'Eleitroral', 'Militar', etc.",
+                    "type": "string"
+                },
+                "entidade": {
+                    "description": "'Tribunal', 'Ministério' or 'Conselho'.",
+                    "type": "string"
+                },
+                "uf": {
+                    "description": "Short code for federative unity.",
+                    "type": "string"
+                },
+                "coletando": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.collecting"
+                    }
+                },
+                "url": {
+                    "description": "Link for state url",
+                    "type": "string"
+                },
+                "twitter_handle": {
+                    "description": "Agency's twitter handle",
+                    "type": "string"
+                },
+                "ouvidoria": {
+                    "description": "Agencys's ombudsman url",
+                    "type": "string"
+                },
+                "total_coletas_realizadas": {
+                    "type": "integer"
+                },
+                "meses_com_dados": {
+                    "type": "integer"
+                },
+                "indice_transparencia": {
+                    "$ref": "#/definitions/papi.score"
+                },
+                "coletas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.summaryzedMI"
+                    }
                 }
             }
         },
