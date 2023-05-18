@@ -330,11 +330,11 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 //	@Tags			public_api
 //	@Description	Busca as informações de índices de um grupo ou órgão específico.
 //	@Produce		json
-//	@Success		200			{object}	[]aggregateIndexes	"Requisição bem sucedida."
-//	@Failure		400			{string}	string				"Requisição inválida."
-//	@Failure		500			{string}	string				"Erro interno do servidor."
-//	@Param			param		path		string				true	"'grupo' ou 'orgao'"
-//	@Param			valor		path		string				true	"Jurisdição ou ID do órgao"
+//	@Success		200							{object}	[]aggregateIndexes	"Requisição bem sucedida."
+//	@Failure		400							{string}	string				"Requisição inválida."
+//	@Failure		500							{string}	string				"Erro interno do servidor."
+//	@Param			param						path		string				true	"'grupo' ou 'orgao'"
+//	@Param			valor						path		string				true	"Jurisdição ou ID do órgao"
 //	@Router			/v2/indice/{param}/{valor} 	[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	param := c.Param("param")
@@ -481,6 +481,110 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 		aggregate = append(aggregate, agg)
 	}
 	return c.JSON(http.StatusOK, aggregate)
+}
+
+//	@ID				GetAllAgencyInformation
+//	@Tags			public_api
+//	@Description	Busca todas as informações de um órgão específico.
+//	@Produce		json
+//	@Success		200					{object}	allAgencyInformation	"Requisição bem sucedida."
+//	@Failure		400					{string}	string					"Requisição inválida."
+//	@Param			orgao				path		string					true	"órgão"
+//	@Router			/v2/dados/{orgao} 	[get]
+func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
+	agency := strings.ToLower(c.Param("orgao"))
+
+	ag, err := h.client.Db.GetAgency(agency)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("Órgão não encontrado: %s", strings.ToUpper(agency)))
+	}
+	collections, err := h.client.Db.GetAllAgencyCollection(agency)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("Não encontramos dados para o órgão %s", strings.ToUpper(agency)))
+	}
+
+	aggregateScore := 0.0
+	aggregateEasinessScore := 0.0
+	aggregateCompletenessScore := 0.0
+	numMonthsWithData := 0
+	var result []summaryzedMI
+
+	for _, c := range collections {
+		if c.ProcInfo == nil || c.ProcInfo.String() == "" {
+			result = append(result, summaryzedMI{
+				Error: nil,
+				Month: c.Month,
+				Year:  c.Year,
+				Summary: &summaries{
+					MemberActive: summary{
+						Count: c.Summary.Count,
+						BaseRemuneration: dataSummary{
+							Max:     c.Summary.BaseRemuneration.Max,
+							Min:     c.Summary.BaseRemuneration.Min,
+							Average: c.Summary.BaseRemuneration.Average,
+							Total:   c.Summary.BaseRemuneration.Total,
+						},
+						OtherRemunerations: dataSummary{
+							Max:     c.Summary.OtherRemunerations.Max,
+							Min:     c.Summary.OtherRemunerations.Min,
+							Average: c.Summary.OtherRemunerations.Average,
+							Total:   c.Summary.OtherRemunerations.Total,
+						},
+					},
+				},
+				Metadata: &metadata{
+					OpenFormat:       c.Meta.OpenFormat,
+					Access:           c.Meta.Access,
+					Extension:        c.Meta.Extension,
+					StrictlyTabular:  c.Meta.StrictlyTabular,
+					ConsistentFormat: c.Meta.ConsistentFormat,
+					HasEnrollment:    c.Meta.HaveEnrollment,
+					HasCapacity:      c.Meta.ThereIsACapacity,
+					HasPosition:      c.Meta.HasPosition,
+					BaseRevenue:      c.Meta.BaseRevenue,
+					OtherRecipes:     c.Meta.OtherRecipes,
+					Expenditure:      c.Meta.Expenditure,
+				},
+				Score: &score{
+					Score:             c.Score.Score,
+					CompletenessScore: c.Score.CompletenessScore,
+					EasinessScore:     c.Score.EasinessScore,
+				}})
+			numMonthsWithData++
+		}
+		aggregateScore += c.Score.Score
+		aggregateCompletenessScore += c.Score.CompletenessScore
+		aggregateEasinessScore += c.Score.EasinessScore
+	}
+
+	var collect []collecting
+	for _, c := range ag.Collecting {
+		collect = append(collect, collecting{
+			Timestamp:   c.Timestamp,
+			Description: c.Description,
+		})
+	}
+
+	agencyInfo := allAgencyInformation{
+		ID:                ag.ID,
+		Name:              ag.Name,
+		Type:              ag.Type,
+		Entity:            ag.Entity,
+		UF:                ag.UF,
+		URL:               ag.URL,
+		Collecting:        collect,
+		TwitterHandle:     ag.TwitterHandle,
+		OmbudsmanURL:      ag.OmbudsmanURL,
+		TotalCollections:  len(collections),
+		NumMonthsWithData: numMonthsWithData,
+		Score: &score{
+			Score:             aggregateScore / float64(len(collections)),
+			EasinessScore:     aggregateEasinessScore / float64(len(collections)),
+			CompletenessScore: aggregateCompletenessScore / float64(len(collections)),
+		},
+		Collections: result,
+	}
+	return c.JSON(http.StatusOK, agencyInfo)
 }
 
 func (h handler) formatDownloadUrl(url string) string {

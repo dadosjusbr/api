@@ -3,21 +3,23 @@ definitions:
     properties:
       coletando:
         items:
-          $ref: '#/definitions/papi.collecting'
+          $ref: "#/definitions/papi.collecting"
         type: array
       entidade:
-        description: '"J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias
+        description:
+          '"J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias
           and "D" for Defensorias.'
         type: string
       id_orgao:
-        description: '''trt13'''
+        description: "'trt13'"
         type: string
       jurisdicao:
-        description: '"R" for Regional, "M" for Municipal, "F" for Federal, "E" for
+        description:
+          '"R" for Regional, "M" for Municipal, "F" for Federal, "E" for
           State.'
         type: string
       nome:
-        description: '''Tribunal Regional do Trabalho 13° Região'''
+        description: "'Tribunal Regional do Trabalho 13° Região'"
         type: string
       ouvidoria:
         description: Agencys's ombudsman url
@@ -34,6 +36,47 @@ definitions:
       possui_dados:
         description: If there is data from that agency
         type: boolean
+    type: object
+  papi.allAgencyInformation:
+    properties:
+      coletando:
+        items:
+          $ref: "#/definitions/papi.collecting"
+        type: array
+      coletas:
+        items:
+          $ref: "#/definitions/papi.summaryzedMI"
+        type: array
+      entidade:
+        description: '"Tribunal", "Ministério" or "Conselho".'
+        type: string
+      id_orgao:
+        description: "'trt13'"
+        type: string
+      indice_transparencia:
+        $ref: "#/definitions/papi.score"
+      jurisdicao:
+        description: '"Estadual", "Eleitroral", "Militar", etc.'
+        type: string
+      meses_com_dados:
+        type: integer
+      nome:
+        description: 'ex.: "Tribunal Regional do Trabalho 13° Região".'
+        type: string
+      ouvidoria:
+        description: Agencys's ombudsman url
+        type: string
+      total_coletas_realizadas:
+        type: integer
+      twitter_handle:
+        description: Agency's twitter handle
+        type: string
+      uf:
+        description: Short code for federative unity.
+        type: string
+      url:
+        description: Link for state url
+        type: string
     type: object
   papi.backup:
     properties:
@@ -125,37 +168,37 @@ definitions:
   papi.summaries:
     properties:
       membros_ativos:
-        $ref: '#/definitions/papi.summary'
+        $ref: "#/definitions/papi.summary"
     type: object
   papi.summary:
     properties:
       outras_remuneracoes:
-        $ref: '#/definitions/papi.dataSummary'
+        $ref: "#/definitions/papi.dataSummary"
       quantidade:
         type: integer
       remuneracao_base:
-        $ref: '#/definitions/papi.dataSummary'
+        $ref: "#/definitions/papi.dataSummary"
     type: object
   papi.summaryzedMI:
     properties:
       ano:
         type: integer
       dados_coleta:
-        $ref: '#/definitions/papi.collect'
+        $ref: "#/definitions/papi.collect"
       error:
-        $ref: '#/definitions/papi.miError'
+        $ref: "#/definitions/papi.miError"
       id_orgao:
         type: string
       indice_transparencia:
-        $ref: '#/definitions/papi.score'
+        $ref: "#/definitions/papi.score"
       mes:
         type: integer
       metadados:
-        $ref: '#/definitions/papi.metadata'
+        $ref: "#/definitions/papi.metadata"
       pacote_de_dados:
-        $ref: '#/definitions/papi.backup'
+        $ref: "#/definitions/papi.backup"
       sumarios:
-        $ref: '#/definitions/papi.summaries'
+        $ref: "#/definitions/papi.summaries"
     type: object
   papi.indexInformation:
     properties:
@@ -164,38 +207,40 @@ definitions:
       ano:
         type: integer
       indice_transparencia:
-        $ref: '#/definitions/papi.score'
+        $ref: "#/definitions/papi.score"
       metadados:
-        $ref: '#/definitions/papi.metadata'
+        $ref: "#/definitions/papi.metadata"
     type: object
   papi.aggregateIndexes:
     properties:
       id_orgao:
         type: string
       agregado:
-        $ref: '#/definitions/papi.score'
+        $ref: "#/definitions/papi.score"
       detalhe:
-        $ref: '#/definitions/papi.indexInformation'
+        $ref: "#/definitions/papi.indexInformation"
     type: object
   uiapi.agency:
     properties:
       coletando:
         items:
-          $ref: '#/definitions/uiapi.collecting'
+          $ref: "#/definitions/uiapi.collecting"
         type: array
       entidade:
-        description: '"J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias
+        description:
+          '"J" For Judiciário, "M" for Ministério Público, "P" for Procuradorias
           and "D" for Defensorias.'
         type: string
       id_orgao:
-        description: '''trt13'''
+        description: "'trt13'"
         type: string
       jurisdicao:
-        description: '"R" for Regional, "M" for Municipal, "F" for Federal, "E" for
+        description:
+          '"R" for Regional, "M" for Municipal, "F" for Federal, "E" for
           State.'
         type: string
       nome:
-        description: '''Tribunal Regional do Trabalho 13° Região'''
+        description: "'Tribunal Regional do Trabalho 13° Região'"
         type: string
       ouvidoria:
         description: Agencys's ombudsman url
@@ -228,16 +273,16 @@ definitions:
       max_salario:
         type: number
       package:
-        $ref: '#/definitions/uiapi.backup'
+        $ref: "#/definitions/uiapi.backup"
     type: object
   uiapi.annualSummary:
     properties:
       dados_anuais:
         items:
-          $ref: '#/definitions/uiapi.annualSummaryData'
+          $ref: "#/definitions/uiapi.annualSummaryData"
         type: array
       orgao:
-        $ref: '#/definitions/uiapi.agency'
+        $ref: "#/definitions/uiapi.agency"
     type: object
   uiapi.annualSummaryData:
     properties:
@@ -254,7 +299,7 @@ definitions:
       outras_remuneracoes_por_membro:
         type: number
       package:
-        $ref: '#/definitions/uiapi.backup'
+        $ref: "#/definitions/uiapi.backup"
       remuneracao_base:
         type: number
       remuneracao_base_por_mes:
@@ -347,7 +392,7 @@ definitions:
         type: integer
       result:
         items:
-          $ref: '#/definitions/uiapi.searchResult'
+          $ref: "#/definitions/uiapi.searchResult"
         type: array
       search_limit:
         type: integer
@@ -379,7 +424,7 @@ definitions:
     properties:
       agency:
         items:
-          $ref: '#/definitions/uiapi.agencyBasic'
+          $ref: "#/definitions/uiapi.agencyBasic"
         type: array
       flagURL:
         type: string
@@ -412,7 +457,7 @@ definitions:
       tem_proximo:
         type: boolean
       timestamp:
-        $ref: '#/definitions/uiapi.timestamp'
+        $ref: "#/definitions/uiapi.timestamp"
       total_membros:
         type: integer
       total_remuneracao:
@@ -424,17 +469,17 @@ definitions:
         type: integer
       meses:
         items:
-          $ref: '#/definitions/uiapi.v2MonthTotals'
+          $ref: "#/definitions/uiapi.v2MonthTotals"
         type: array
       orgao:
-        $ref: '#/definitions/uiapi.agency'
+        $ref: "#/definitions/uiapi.agency"
       package:
-        $ref: '#/definitions/uiapi.backup'
+        $ref: "#/definitions/uiapi.backup"
     type: object
   uiapi.v2MonthTotals:
     properties:
       error:
-        $ref: '#/definitions/uiapi.procError'
+        $ref: "#/definitions/uiapi.procError"
       mes:
         type: integer
       outras_remuneracoes:
@@ -446,16 +491,16 @@ definitions:
       remuneracao_base_por_membro:
         type: number
       timestamp:
-        $ref: '#/definitions/uiapi.timestamp'
+        $ref: "#/definitions/uiapi.timestamp"
       total_membros:
         type: integer
     type: object
   uiapi.v2ProcInfoResult:
     properties:
       proc_info:
-        $ref: '#/definitions/uiapi.procInfo'
+        $ref: "#/definitions/uiapi.procInfo"
       timestamp:
-        $ref: '#/definitions/uiapi.timestamp'
+        $ref: "#/definitions/uiapi.timestamp"
     type: object
 info:
   contact:
@@ -469,19 +514,19 @@ paths:
       description: Retorna os dados anuais de um orgão
       operationId: GetAnnualSummary
       parameters:
-      - description: Nome do orgão
-        in: path
-        name: orgao
-        required: true
-        type: string
+        - description: Nome do orgão
+          in: path
+          name: orgao
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
             items:
-              $ref: '#/definitions/uiapi.annualSummary'
+              $ref: "#/definitions/uiapi.annualSummary"
             type: array
         "400":
           description: Parâmetro orgao inválido
@@ -492,35 +537,36 @@ paths:
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/download:
     get:
       description: Baixa dados referentes a remunerações a partir de filtros
       operationId: DownloadByUrl
       parameters:
-      - description: 'Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020'
-        in: query
-        name: anos
-        type: string
-      - description: 'Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3'
-        in: query
-        name: meses
-        type: string
-      - description: 'Orgãos a serem pesquisados, separados por virgula. Exemplo:
-          tjal,mpal,mppb'
-        in: query
-        name: orgaos
-        type: string
-      - description: Categorias a serem pesquisadas
-        enum:
-        - base
-        - outras
-        - descontos
-        in: query
-        name: categorias
-        type: string
+        - description: "Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+          in: query
+          name: anos
+          type: string
+        - description: "Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+          in: query
+          name: meses
+          type: string
+        - description:
+            "Orgãos a serem pesquisados, separados por virgula. Exemplo:
+            tjal,mpal,mppb"
+          in: query
+          name: orgaos
+          type: string
+        - description: Categorias a serem pesquisadas
+          enum:
+            - base
+            - outras
+            - descontos
+          in: query
+          name: categorias
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Arquivo CSV com os dados.
@@ -535,26 +581,27 @@ paths:
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/geral/remuneracao/{ano}:
     get:
-      description: Busca os dados, das remunerações de um ano inteiro, agrupados por
+      description:
+        Busca os dados, das remunerações de um ano inteiro, agrupados por
         mês.
       operationId: GetGeneralRemunerationFromYear
       parameters:
-      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
-        in: path
-        name: ano
-        required: true
-        type: string
+        - description: "Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+          in: path
+          name: ano
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
             items:
-              $ref: '#/definitions/uiapi.mensalRemuneration'
+              $ref: "#/definitions/uiapi.mensalRemuneration"
             type: array
         "400":
           description: Parâmetro ano inválido.
@@ -565,76 +612,76 @@ paths:
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/geral/resumo:
     get:
       description: Busca e resume os dados das remunerações de todos os anos
       operationId: GetGeneralSummary
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/uiapi.generalSummary'
+            $ref: "#/definitions/uiapi.generalSummary"
         "500":
           description: Erro interno do servidor.
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/orgao/{grupo}:
     get:
       description: Busca os órgãos de um determinado grupo.
       operationId: GetBasicInfoOfType
       parameters:
-      - description: Grupo de órgãos
-        enum:
-        - justica-eleitoral
-        - ministerios-publicos
-        - justica-estadual
-        - justica-do-trabalho
-        - justica-federal
-        - justica-militar
-        - justica-superior
-        - conselhos-de-justica
-        - AC
-        - AL
-        - AP
-        - AM
-        - BA
-        - CE
-        - DF
-        - ES
-        - GO
-        - MA
-        - MT
-        - MS
-        - MG
-        - PA
-        - PB
-        - PR
-        - PE
-        - PI
-        - RJ
-        - RN
-        - RS
-        - RO
-        - RR
-        - SC
-        - SP
-        - SE
-        - TO
-        in: path
-        name: grupo
-        type: string
+        - description: Grupo de órgãos
+          enum:
+            - justica-eleitoral
+            - ministerios-publicos
+            - justica-estadual
+            - justica-do-trabalho
+            - justica-federal
+            - justica-militar
+            - justica-superior
+            - conselhos-de-justica
+            - AC
+            - AL
+            - AP
+            - AM
+            - BA
+            - CE
+            - DF
+            - ES
+            - GO
+            - MA
+            - MT
+            - MS
+            - MG
+            - PA
+            - PB
+            - PR
+            - PE
+            - PI
+            - RJ
+            - RN
+            - RS
+            - RO
+            - RR
+            - SC
+            - SP
+            - SE
+            - TO
+          in: path
+          name: grupo
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Órgãos do grupo
           schema:
-            $ref: '#/definitions/uiapi.state'
+            $ref: "#/definitions/uiapi.state"
         "400":
           description: Parâmetro inválido
           schema:
@@ -644,34 +691,34 @@ paths:
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}:
     get:
       description: Resume os dados de remuneração mensal de um órgão.
       operationId: GetSummaryOfAgency
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
-        in: path
-        name: orgao
-        required: true
-        type: string
-      - description: 'Ano da remuneração. Exemplo: 2018.'
-        in: path
-        name: ano
-        required: true
-        type: integer
-      - description: 'Mês da remuneração. Exemplo: 1.'
-        in: path
-        name: mes
-        required: true
-        type: integer
+        - description: "ID do órgão. Exemplos: tjal, tjba, mppb."
+          in: path
+          name: orgao
+          required: true
+          type: string
+        - description: "Ano da remuneração. Exemplo: 2018."
+          in: path
+          name: ano
+          required: true
+          type: integer
+        - description: "Mês da remuneração. Exemplo: 1."
+          in: path
+          name: mes
+          required: true
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/uiapi.v2AgencySummary'
+            $ref: "#/definitions/uiapi.v2AgencySummary"
         "400":
           description: Parâmetro ano, mês ou nome do órgão são inválidos.
           schema:
@@ -681,106 +728,108 @@ paths:
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}:
     get:
       description: Busca dados das remunerações mensais de um órgão.
       operationId: GetSalaryOfAgencyMonthYear
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
-        in: path
-        name: orgao
-        required: true
-        type: string
-      - description: 'Mês da remuneração. Exemplos: 01, 02, 03...'
-        in: path
-        name: mes
-        required: true
-        type: string
-      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
-        in: path
-        name: ano
-        required: true
-        type: string
+        - description: "ID do órgão. Exemplos: tjal, tjba, mppb."
+          in: path
+          name: orgao
+          required: true
+          type: string
+        - description: "Mês da remuneração. Exemplos: 01, 02, 03..."
+          in: path
+          name: mes
+          required: true
+          type: string
+        - description: "Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+          in: path
+          name: ano
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/uiapi.agencySalary'
+            $ref: "#/definitions/uiapi.agencySalary"
         "206":
-          description: Requisição bem sucedida, mas os dados do órgão não foram bem
+          description:
+            Requisição bem sucedida, mas os dados do órgão não foram bem
             processados
           schema:
-            $ref: '#/definitions/uiapi.v2ProcInfoResult'
+            $ref: "#/definitions/uiapi.v2ProcInfoResult"
         "400":
           description: Parâmetros inválidos.
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/orgao/totais/{orgao}/{ano}:
     get:
       description: Busca os dados de remuneração de um órgão em um ano específico.
       operationId: GetTotalsOfAgencyYear
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
-        in: path
-        name: orgao
-        required: true
-        type: string
-      - description: 'Ano. Exemplo: 2018.'
-        in: path
-        name: ano
-        required: true
-        type: integer
+        - description: "ID do órgão. Exemplos: tjal, tjba, mppb."
+          in: path
+          name: orgao
+          required: true
+          type: string
+        - description: "Ano. Exemplo: 2018."
+          in: path
+          name: ano
+          required: true
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/uiapi.v2AgencyTotalsYear'
+            $ref: "#/definitions/uiapi.v2AgencyTotalsYear"
         "400":
           description: Parâmetro ano ou orgao inválido.
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
   /uiapi/v2/pesquisar:
     get:
       description: Faz uma busca por remunerações a partir de filtros
       operationId: SearchByUrl
       parameters:
-      - description: 'Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020'
-        in: query
-        name: anos
-        type: string
-      - description: 'Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3'
-        in: query
-        name: meses
-        type: string
-      - description: 'Orgãos a serem pesquisados, separados por virgula. Exemplo:
-          tjal,mpal,mppb'
-        in: query
-        name: orgaos
-        type: string
-      - description: Categorias a serem pesquisadas
-        enum:
-        - base
-        - outras
-        - descontos
-        in: query
-        name: categorias
-        type: string
+        - description: "Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+          in: query
+          name: anos
+          type: string
+        - description: "Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+          in: query
+          name: meses
+          type: string
+        - description:
+            "Orgãos a serem pesquisados, separados por virgula. Exemplo:
+            tjal,mpal,mppb"
+          in: query
+          name: orgaos
+          type: string
+        - description: Categorias a serem pesquisadas
+          enum:
+            - base
+            - outras
+            - descontos
+          in: query
+          name: categorias
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/uiapi.searchResponse'
+            $ref: "#/definitions/uiapi.searchResponse"
         "400":
           description: Erro de validação dos parâmetros.
           schema:
@@ -790,30 +839,53 @@ paths:
           schema:
             type: string
       tags:
-      - ui_api
+        - ui_api
+  /v2/dados/{orgao}:
+    get:
+      description: Busca todas as informações de um órgão específico.
+      operationId: GetAllAgencyInformation
+      parameters:
+        - description: órgão
+          in: path
+          name: orgao
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            $ref: "#/definitions/papi.allAgencyInformation"
+        "400":
+          description: Requisição inválida.
+          schema:
+            type: string
+      tags:
+        - public_api
   /v2/dados/{orgao}/{ano}:
     get:
       description: Busca os dados mensais de um órgão por ano
       operationId: GetMonthlyInfosByYear
       parameters:
-      - description: Ano
-        in: path
-        name: ano
-        required: true
-        type: integer
-      - description: Órgão
-        in: path
-        name: orgao
-        required: true
-        type: string
+        - description: Ano
+          in: path
+          name: ano
+          required: true
+          type: integer
+        - description: Órgão
+          in: path
+          name: orgao
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida
           schema:
             items:
-              $ref: '#/definitions/papi.summaryzedMI'
+              $ref: "#/definitions/papi.summaryzedMI"
             type: array
         "400":
           description: Parâmetros inválidos
@@ -824,34 +896,34 @@ paths:
           schema:
             type: string
       tags:
-      - public_api
+        - public_api
   /v2/dados/{orgao}/{ano}/{mes}:
     get:
       description: Busca um dado mensal de um órgão
       operationId: GetMonthlyInfo
       parameters:
-      - description: Ano
-        in: path
-        name: ano
-        required: true
-        type: integer
-      - description: Órgão
-        in: path
-        name: orgao
-        required: true
-        type: string
-      - description: Mês
-        in: path
-        name: mes
-        required: true
-        type: integer
+        - description: Ano
+          in: path
+          name: ano
+          required: true
+          type: integer
+        - description: Órgão
+          in: path
+          name: orgao
+          required: true
+          type: string
+        - description: Mês
+          in: path
+          name: mes
+          required: true
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida
           schema:
-            $ref: '#/definitions/papi.summaryzedMI'
+            $ref: "#/definitions/papi.summaryzedMI"
         "400":
           description: Parâmetros inválidos
           schema:
@@ -861,58 +933,58 @@ paths:
           schema:
             type: string
       tags:
-      - public_api
+        - public_api
   /v2/orgao/{orgao}:
     get:
       description: Busca um órgão específico utilizando seu ID.
       operationId: GetAgencyById
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
-        in: path
-        name: orgao
-        required: true
-        type: string
+        - description: "ID do órgão. Exemplos: tjal, tjba, mppb."
+          in: path
+          name: orgao
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
-            $ref: '#/definitions/papi.agency'
+            $ref: "#/definitions/papi.agency"
         "404":
           description: Órgão não encontrado.
           schema:
             type: string
       tags:
-      - public_api
+        - public_api
   /v2/orgaos:
     get:
       description: Busca todos os órgãos disponíveis.
       operationId: GetAllAgencies
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Requisição bem sucedida.
           schema:
             items:
-              $ref: '#/definitions/papi.agency'
+              $ref: "#/definitions/papi.agency"
             type: array
         "500":
           description: Erro interno do servidor.
           schema:
             type: string
       tags:
-      - public_api
-  /v2/indice/{param}/{valor}": 
-    get: 
-        description: Busca as informações de índices de um grupo ou órgão específico.
-        operationId: GetAggregateIndexes
-        parameters:
+        - public_api
+  /v2/indice/{param}/{valor}":
+    get:
+      description: Busca as informações de índices de um grupo ou órgão específico.
+      operationId: GetAggregateIndexes
+      parameters:
         - description: Tipo de parâmetro.
-          enum: 
-          - grupo,
-          - orgao,
+          enum:
+            - grupo,
+            - orgao,
           type: string,
           name: param,
           in: path,
@@ -922,34 +994,34 @@ paths:
           name: valor,
           in: path,
           required: true
-        produces: 
+      produces:
         - application/json
-        responses: 
-            "200": 
-                description: Requisição bem sucedida.,
-                schema: 
-                    type: array,
-                    items: 
-                        $ref: '#/definitions/papi.aggregateIndexes'
-            "400": 
-                description: Requisição inválida.,
-                schema: 
-                    type: string
-            "500": 
-                description: Erro interno do servidor.,
-                schema: 
-                    type: string
-        tags: 
+      responses:
+        "200":
+          description: Requisição bem sucedida.,
+          schema:
+            type: array,
+            items:
+              $ref: "#/definitions/papi.aggregateIndexes"
+        "400":
+          description: Requisição inválida.,
+          schema:
+            type: string
+        "500":
+          description: Erro interno do servidor.,
+          schema:
+            type: string
+      tags:
         - public_api
-  /v2/indice/{param}/{valor}/{ano}": 
-    get: 
-        description: Busca as informações de índices de um grupo ou órgão específico para o ano informado.
-        operationId: GetAggregateIndexes
-        parameters:
+  /v2/indice/{param}/{valor}/{ano}":
+    get:
+      description: Busca as informações de índices de um grupo ou órgão específico para o ano informado.
+      operationId: GetAggregateIndexes
+      parameters:
         - description: Tipo de parâmetro.
-          enum: 
-          - grupo,
-          - orgao,
+          enum:
+            - grupo,
+            - orgao,
           type: string,
           name: param,
           in: path,
@@ -964,34 +1036,34 @@ paths:
           name: ano,
           in: path,
           required: true
-        produces: 
+      produces:
         - application/json
-        responses: 
-            "200": 
-                description: Requisição bem sucedida.,
-                schema: 
-                    type: array,
-                    items: 
-                        $ref: '#/definitions/papi.aggregateIndexes'
-            "400": 
-                description: Requisição inválida.,
-                schema: 
-                    type: string
-            "500": 
-                description: Erro interno do servidor.,
-                schema: 
-                    type: string
-        tags: 
+      responses:
+        "200":
+          description: Requisição bem sucedida.,
+          schema:
+            type: array,
+            items:
+              $ref: "#/definitions/papi.aggregateIndexes"
+        "400":
+          description: Requisição inválida.,
+          schema:
+            type: string
+        "500":
+          description: Erro interno do servidor.,
+          schema:
+            type: string
+      tags:
         - public_api
-  /v2/indice/{param}/{valor}/{ano}/{mes}": 
-    get: 
-        description: Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.
-        operationId: GetAggregateIndexes
-        parameters:
+  /v2/indice/{param}/{valor}/{ano}/{mes}":
+    get:
+      description: Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.
+      operationId: GetAggregateIndexes
+      parameters:
         - description: Tipo de parâmetro.
-          enum: 
-          - grupo,
-          - orgao,
+          enum:
+            - grupo,
+            - orgao,
           type: string,
           name: param,
           in: path,
@@ -1011,74 +1083,74 @@ paths:
           name: mes,
           in: path,
           required: true
-        produces: 
+      produces:
         - application/json
-        responses: 
-            "200": 
-                description: Requisição bem sucedida.,
-                schema: 
-                    type: array,
-                    items: 
-                        $ref: '#/definitions/papi.aggregateIndexes'
-            "400": 
-                description: Requisição inválida.,
-                schema: 
-                    type: string
-            "500": 
-                description: Erro interno do servidor.,
-                schema: 
-                    type: string
-        tags: 
+      responses:
+        "200":
+          description: Requisição bem sucedida.,
+          schema:
+            type: array,
+            items:
+              $ref: "#/definitions/papi.aggregateIndexes"
+        "400":
+          description: Requisição inválida.,
+          schema:
+            type: string
+        "500":
+          description: Erro interno do servidor.,
+          schema:
+            type: string
+      tags:
         - public_api
   /v2/indice:
     get:
-        description: Busca as informações de índices de todos os órgãos.
-        operationId: GetAggregateIndexes
-        produces: 
+      description: Busca as informações de índices de todos os órgãos.
+      operationId: GetAggregateIndexes
+      produces:
         - application/json
-        responses:
-            "200": 
-                description: Requisição bem sucedida.,
-                schema: 
-                    type: array,
-                    items: 
-                        $ref: '#/definitions/papi.aggregateIndexes'
-            "500": 
-                description: Erro interno do servidor.,
-                schema: 
-                    type: string
-        tags: 
+      responses:
+        "200":
+          description: Requisição bem sucedida.,
+          schema:
+            type: array,
+            items:
+              $ref: "#/definitions/papi.aggregateIndexes"
+        "500":
+          description: Erro interno do servidor.,
+          schema:
+            type: string
+      tags:
         - public_api
   /v2/indices/{ano}:
     get:
-        description: Busca as informações de índices de todos os órgãos para um ano específico.
-        operationId: GetAggregateIndexes
-        parameters:
+      description: Busca as informações de índices de todos os órgãos para um ano específico.
+      operationId: GetAggregateIndexes
+      parameters:
         - description: Ano.
           type: string,
           name: ano,
           in: path,
           required: true
-        produces: 
+      produces:
         - application/json
-        responses:
-            "200": 
-                description: Requisição bem sucedida.,
-                schema: 
-                    type: array,
-                    items: 
-                        $ref: '#/definitions/papi.aggregateIndexes'
-            "500": 
-                description: Erro interno do servidor.,
-                schema: 
-                    type: string
-        tags: 
+      responses:
+        "200":
+          description: Requisição bem sucedida.,
+          schema:
+            type: array,
+            items:
+              $ref: "#/definitions/papi.aggregateIndexes"
+        "500":
+          description: Erro interno do servidor.,
+          schema:
+            type: string
+      tags:
         - public_api
   /v2/indices/{ano}/{mes}:
     get:
-        description: Busca as informações de índices de todos os órgãos para um ano e mês específicos.
-        operationId: GetAggregateIndexes
-        parameters:
+      description: Busca as informações de índices de todos os órgãos para um ano e mês específicos.
+      operationId: GetAggregateIndexes
+      parameters:
         - description: Ano.
           type: string,
           name: ano,
@@ -1089,19 +1161,19 @@ paths:
           name: mes,
           in: path,
           required: true
-        produces: 
+      produces:
         - application/json
-        responses:
-            "200": 
-                description: Requisição bem sucedida.,
-                schema: 
-                    type: array,
-                    items: 
-                        $ref: '#/definitions/papi.aggregateIndexes'
-            "500": 
-                description: Erro interno do servidor.,
-                schema: 
-                    type: string
-        tags: 
+      responses:
+        "200":
+          description: Requisição bem sucedida.,
+          schema:
+            type: array,
+            items:
+              $ref: "#/definitions/papi.aggregateIndexes"
+        "500":
+          description: Erro interno do servidor.,
+          schema:
+            type: string
+      tags:
         - public_api
 swagger: "2.0"
