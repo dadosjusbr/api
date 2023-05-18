@@ -1438,7 +1438,7 @@ func (g getAnnualSummary) testWhenAgencyDoesNotHaveData(t *testing.T) {
 	e := echo.New()
 	request := httptest.NewRequest(
 		http.MethodGet,
-		"/uiapi/v1/orgao/resumo/:orgao",
+		"/uiapi/v2/orgao/resumo/:orgao",
 		nil,
 	)
 	recorder := httptest.NewRecorder()

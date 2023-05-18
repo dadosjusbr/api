@@ -19,7 +19,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/uiapi/v1/orgao/resumo/{orgao}": {
+        "/uiapi/v2/orgao/resumo/{orgao}": {
             "get": {
                 "description": "Retorna os dados anuais de um orgão",
                 "produces": [

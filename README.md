@@ -122,7 +122,7 @@ eb local run
 
 ## Testando servidor
 
-Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://{HOST}:{PORT}/v1/orgaos
+Caso a execução tenha sido realizada com sucesso, você pode utilizar o seu cliente de api REST para acessar o servidor local, que está localizado em http://{HOST}:{PORT}/v2/orgaos
 
 ## Documentando as rotas da API utilizando o swagger
 
@@ -136,7 +136,7 @@ $ go install github.com/swaggo/swag/cmd/swag@latest
 
 Com o binário instalado, podemos iniciar a criação da documentação.
 
-Como exemplo iremos documentar a rota da api `/v1/orgao/:orgao`. Os passos são:
+Como exemplo iremos documentar a rota da api `/v2/orgao/:orgao`. Os passos são:
 
 ### 1 - Ir até o método chamado pela rota(nesse caso será o `GetAgencyById`)
 
@@ -155,7 +155,7 @@ func (h handler) GetAgencyById(c echo.Context) error {
 //	@Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
 //	@Success		200					{object}	agency	"Requisição bem sucedida."
 //	@Failure		404					{string}	string	"Órgão não encontrado."
-//	@Router			/v1/orgao/{orgao} 	[get]
+//	@Router			/v2/orgao/{orgao} 	[get]
 func (h handler) GetAgencyById(c echo.Context) error {
 ...
 }
