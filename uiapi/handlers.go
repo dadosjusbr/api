@@ -111,6 +111,8 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		MaxBase:            agencyMonthlyInfo.Summary.BaseRemuneration.Max,
 		OtherRemunerations: agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		MaxOther:           agencyMonthlyInfo.Summary.OtherRemunerations.Max,
+		Discounts:          agencyMonthlyInfo.Summary.Discounts.Total,
+		MaxDiscounts:       agencyMonthlyInfo.Summary.Discounts.Max,
 		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
 			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
 		TotalMembers: agencyMonthlyInfo.Summary.Count,
@@ -318,13 +320,13 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 	strAgency.URL = fmt.Sprintf("%s/v2/orgao/%s", host, strAgency.ID)
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
 		if agencyMonthlyInfo.Summary != nil && agencyMonthlyInfo.Summary.BaseRemuneration.Total+agencyMonthlyInfo.Summary.OtherRemunerations.Total > 0 {
-			baseRemPerCapita := agencyMonthlyInfo.Summary.BaseRemuneration.Total / float64(agencyMonthlyInfo.Summary.Count)
-			otherRemPerCapita := agencyMonthlyInfo.Summary.OtherRemunerations.Total / float64(agencyMonthlyInfo.Summary.Count)
 			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:            agencyMonthlyInfo.Summary.BaseRemuneration.Total,
 				OtherRemunerations:          agencyMonthlyInfo.Summary.OtherRemunerations.Total,
-				BaseRemunerationPerCapita:   baseRemPerCapita,
-				OtherRemunerationsPerCapita: otherRemPerCapita,
+				Discounts:                   agencyMonthlyInfo.Summary.Discounts.Total,
+				BaseRemunerationPerCapita:   agencyMonthlyInfo.Summary.BaseRemuneration.Average,
+				OtherRemunerationsPerCapita: agencyMonthlyInfo.Summary.OtherRemunerations.Average,
+				DiscountsPerCapita:          agencyMonthlyInfo.Summary.Discounts.Average,
 				CrawlingTimestamp: timestamp{
 					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
@@ -580,6 +582,7 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 			Members:            d.Count,
 			BaseRemuneration:   d.BaseRemuneration,
 			OtherRemunerations: d.OtherRemunerations,
+			Discounts:          d.Discounts,
 		})
 	}
 	return c.JSON(http.StatusOK, annualRemu)
@@ -787,6 +790,8 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		baseRemPerCapita := s.BaseRemuneration / float64(s.TotalCount)
 		otherRemPerMonth := s.OtherRemunerations / float64(s.NumMonthsWithData)
 		otherRemPerCapita := s.OtherRemunerations / float64(s.TotalCount)
+		discountsRemPerMonth := s.Discounts / float64(s.NumMonthsWithData)
+		discountsRemPerCapita := s.Discounts / float64(s.TotalCount)
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,
 			AverageMemberCount:          s.AverageCount,
@@ -796,6 +801,9 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 			OtherRemunerations:          s.OtherRemunerations,
 			OtherRemunerationsPerMonth:  otherRemPerMonth,
 			OtherRemunerationsPerCapita: otherRemPerCapita,
+			Discounts:                   s.Discounts,
+			DiscountsPerMonth:           discountsRemPerMonth,
+			DiscountsPerCapita:          discountsRemPerCapita,
 			NumMonthsWithData:           s.NumMonthsWithData,
 			Package: &backup{
 				URL:  s.Package.URL,

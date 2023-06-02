@@ -1240,6 +1240,9 @@
                 },
                 "remuneracao_base": {
                     "$ref": "#/definitions/papi.dataSummary"
+                },
+                "descontos": {
+                    "$ref": "#/definitions/papi.dataSummary"
                 }
             }
         },
@@ -1285,7 +1288,7 @@
                     "type": "integer"
                 },
                 "indice_transparencia": {
-                    "$ref": "#/definitions/papi.dataSummary"
+                    "$ref": "#/definitions/papi.score"
                 },
                 "metadados": {
                     "$ref": "#/definitions/papi.metadata"
@@ -1430,6 +1433,15 @@
                 },
                 "remuneracao_base_por_membro": {
                     "type": "number"
+                },
+                "descontos": {
+                    "type": "number"
+                },
+                "descontos_por_mes": {
+                    "type": "number"
+                },
+                "descontos_por_membro": {
+                    "type": "number"
                 }
             }
         },
@@ -1496,6 +1508,9 @@
                     "type": "number"
                 },
                 "remuneracao_base": {
+                    "type": "number"
+                },
+                "descontos": {
                     "type": "number"
                 }
             }
@@ -1640,6 +1655,9 @@
                 "max_remuneracao_base": {
                     "type": "number"
                 },
+                "max_descontos": {
+                    "type": "number"
+                },
                 "orgao": {
                     "type": "string"
                 },
@@ -1647,6 +1665,9 @@
                     "type": "number"
                 },
                 "remuneracao_base": {
+                    "type": "number"
+                },
+                "descontos": {
                     "type": "number"
                 },
                 "tem_anterior": {
@@ -1705,6 +1726,12 @@
                     "type": "number"
                 },
                 "remuneracao_base_por_membro": {
+                    "type": "number"
+                },
+                "descontos": {
+                    "type": "number"
+                },
+                "descontos_por_membro": {
                     "type": "number"
                 },
                 "timestamp": {

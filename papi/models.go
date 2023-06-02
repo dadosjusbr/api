@@ -17,6 +17,7 @@ type summary struct {
 	Count              int         `json:"quantidade,omitempty"`
 	BaseRemuneration   dataSummary `json:"remuneracao_base,omitempty"`
 	OtherRemunerations dataSummary `json:"outras_remuneracoes,omitempty"`
+	Discounts          dataSummary `json:"descontos,omitempty"`
 }
 
 type summaries struct {

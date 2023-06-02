@@ -103,6 +103,8 @@ type v2AgencySummary struct {
 	MaxBase            float64   `json:"max_remuneracao_base"`
 	OtherRemunerations float64   `json:"outras_remuneracoes"`
 	MaxOther           float64   `json:"max_outras_remuneracoes"`
+	Discounts          float64   `json:"descontos"`
+	MaxDiscounts       float64   `json:"max_descontos"`
 	CrawlingTime       timestamp `json:"timestamp"`
 	TotalMembers       int       `json:"total_membros"`
 	TotalRemuneration  float64   `json:"total_remuneracao"`
@@ -155,6 +157,8 @@ type v2MonthTotals struct {
 	BaseRemunerationPerCapita   float64    `json:"remuneracao_base_por_membro"`
 	OtherRemunerations          float64    `json:"outras_remuneracoes"`
 	OtherRemunerationsPerCapita float64    `json:"outras_remuneracoes_por_membro"`
+	Discounts                   float64    `json:"descontos"`
+	DiscountsPerCapita          float64    `json:"descontos_por_membro"`
 	CrawlingTimestamp           timestamp  `json:"timestamp"`
 }
 
@@ -250,6 +254,9 @@ type annualSummaryData struct {
 	OtherRemunerations          float64 `json:"outras_remuneracoes"`
 	OtherRemunerationsPerMonth  float64 `json:"outras_remuneracoes_por_mes"`
 	OtherRemunerationsPerCapita float64 `json:"outras_remuneracoes_por_membro"`
+	Discounts                   float64 `json:"descontos"`
+	DiscountsPerMonth           float64 `json:"descontos_por_mes"`
+	DiscountsPerCapita          float64 `json:"descontos_por_membro"`
 	NumMonthsWithData           int     `json:"meses_com_dados"`
 	Package                     *backup `json:"package,omitempty"`
 }
@@ -259,4 +266,5 @@ type mensalRemuneration struct {
 	Members            int     `json:"num_membros,omitempty"`
 	BaseRemuneration   float64 `json:"remuneracao_base"`
 	OtherRemunerations float64 `json:"outras_remuneracoes"`
+	Discounts          float64 `json:"descontos"`
 }

@@ -178,6 +178,8 @@ definitions:
         type: integer
       remuneracao_base:
         $ref: "#/definitions/papi.dataSummary"
+      descontos:
+        $ref: "#/definitions/papi.dataSummary"
     type: object
   papi.summaryzedMI:
     properties:
@@ -306,6 +308,12 @@ definitions:
         type: number
       remuneracao_base_por_membro:
         type: number
+      descontos:
+        type: number
+      descontos_por_mes:
+        type: number
+      descontos_por_membro:
+        type: number
     type: object
   uiapi.backup:
     properties:
@@ -352,6 +360,8 @@ definitions:
       outras_remuneracoes:
         type: number
       remuneracao_base:
+        type: number
+      descontos:
         type: number
     type: object
   uiapi.procError:
@@ -446,11 +456,15 @@ definitions:
         type: number
       max_remuneracao_base:
         type: number
+      max_descontos:
+        type: number
       orgao:
         type: string
       outras_remuneracoes:
         type: number
       remuneracao_base:
+        type: number
+      descontos:
         type: number
       tem_anterior:
         type: boolean
@@ -489,6 +503,10 @@ definitions:
       remuneracao_base:
         type: number
       remuneracao_base_por_membro:
+        type: number
+      descontos:
+        type: number
+      descontos_por_membro:
         type: number
       timestamp:
         $ref: "#/definitions/uiapi.timestamp"

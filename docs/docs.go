@@ -522,7 +522,7 @@ const docTemplate = `{
                     }
                 }
             }
-        }, 
+        },
         "/v2/dados/{orgao}/{ano}": {
             "get": {
                 "description": "Busca os dados mensais de um órgão por ano",
@@ -812,7 +812,7 @@ const docTemplate = `{
         },
         "/v2/indice/{param}/{valor}/{ano}/{mes}": {
             "get": {
-                "description": "Busca as informações de índices de um grupo ou órgão específico para o ano informado.",
+                "description": "Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.",
                 "produces": [
                     "application/json"
                 ],
@@ -1097,7 +1097,7 @@ const docTemplate = `{
                     }
                 }
             }
-        }, 
+        },
         "papi.backup": {
             "type": "object",
             "properties": {
@@ -1249,6 +1249,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "remuneracao_base": {
+                    "$ref": "#/definitions/papi.dataSummary"
+                },
+                "descontos": {
                     "$ref": "#/definitions/papi.dataSummary"
                 }
             }
@@ -1440,6 +1443,15 @@ const docTemplate = `{
                 },
                 "remuneracao_base_por_membro": {
                     "type": "number"
+                },
+                "descontos": {
+                    "type": "number"
+                },
+                "descontos_por_mes": {
+                    "type": "number"
+                },
+                "descontos_por_membro": {
+                    "type": "number"
                 }
             }
         },
@@ -1506,6 +1518,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "remuneracao_base": {
+                    "type": "number"
+                },
+                "descontos": {
                     "type": "number"
                 }
             }
@@ -1650,6 +1665,9 @@ const docTemplate = `{
                 "max_remuneracao_base": {
                     "type": "number"
                 },
+                "max_descontos": {
+                    "type": "number"
+                },
                 "orgao": {
                     "type": "string"
                 },
@@ -1657,6 +1675,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "remuneracao_base": {
+                    "type": "number"
+                },
+                "descontos": {
                     "type": "number"
                 },
                 "tem_anterior": {
@@ -1715,6 +1736,12 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "remuneracao_base_por_membro": {
+                    "type": "number"
+                },
+                "descontos": {
+                    "type": "number"
+                },
+                "descontos_por_membro": {
                     "type": "number"
                 },
                 "timestamp": {
