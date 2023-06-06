@@ -88,6 +88,8 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 			"max_remuneracao_base": 35462.22,
 			"outras_remuneracoes": 1.9515865600000022e+06,
 			"max_outras_remuneracoes": 45200.05,
+			"descontos": 2221879.66,
+  			"max_descontos": 23118.190000000002,
 			"timestamp": {
 				"seconds": 1,
 				"nanos": 1
@@ -944,12 +946,14 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			Count:              100,
 			BaseRemuneration:   10000,
 			OtherRemunerations: 1000,
+			Discounts:          1000,
 		},
 		{
 			Month:              2,
 			Count:              200,
 			BaseRemuneration:   20000,
 			OtherRemunerations: 2000,
+			Discounts:          1000,
 		},
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -980,13 +984,15 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"mes": 1,
 				"num_membros": 100,
 				"remuneracao_base": 10000,
-				"outras_remuneracoes": 1000
+				"outras_remuneracoes": 1000,
+				"descontos": 1000
 			},
 			{
 				"mes": 2,
 				"num_membros": 200,
 				"remuneracao_base": 20000,
-				"outras_remuneracoes": 2000
+				"outras_remuneracoes": 2000,
+				"descontos": 1000
 			}
 		]
 	`
@@ -1130,6 +1136,8 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 					"outras_remuneracoes_por_membro":9119.563364485992,
 					"remuneracao_base":7.099024400000013e+06,
 					"remuneracao_base_por_membro":33173.01121495333,
+					"descontos": 2221879.66,
+      				"descontos_por_membro": 10382.615233644861,
 					"timestamp": {
 						"seconds": 1,
 						"nanos": 1
@@ -1270,6 +1278,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 			TotalCount:         2568,
 			BaseRemuneration:   10000,
 			OtherRemunerations: 1000,
+			Discounts:          1000,
 			NumMonthsWithData:  12,
 			Package: &models.Backup{
 				URL:  "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
@@ -1324,6 +1333,9 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 					"outras_remuneracoes": 1000,
 					"outras_remuneracoes_por_membro": 0.3894080996884735, 
 					"outras_remuneracoes_por_mes": 83.33333333333333,
+					"descontos": 1000,
+					"descontos_por_membro": 0.3894080996884735, 
+					"descontos_por_mes": 83.33333333333333,
 					"meses_com_dados": 12,
 					"package": {
 						"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
@@ -1491,6 +1503,11 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					Max:     45200.05,
 					Average: 9119.563364485992,
 					Total:   1951586.5600000022,
+				},
+				Discounts: models.DataSummary{
+					Max:     23118.190000000002,
+					Average: 10382.615233644861,
+					Total:   2221879.66,
 				},
 				IncomeHistogram: map[int]int{
 					-1:    0,
