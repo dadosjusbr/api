@@ -85,6 +85,7 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 		{
 			"orgao": "Tribunal de Justiça do Estado de Alagoas",
 			"remuneracao_base": 7.099024400000013e+06,
+			"max_remuneracao": 35462.22,
 			"max_remuneracao_base": 35462.22,
 			"outras_remuneracoes": 1.9515865600000022e+06,
 			"max_outras_remuneracoes": 45200.05,
@@ -95,7 +96,7 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 				"nanos": 1
 			},
 			"total_membros": 214,
-			"total_remuneracao": 9.050610960000016e+06,
+			"total_remuneracao": 7.099024400000013e+06,
 			"tem_proximo": true,
 			"tem_anterior": true
 		}
@@ -947,6 +948,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			BaseRemuneration:   10000,
 			OtherRemunerations: 1000,
 			Discounts:          1000,
+			Remunerations:      10000,
 		},
 		{
 			Month:              2,
@@ -954,6 +956,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			BaseRemuneration:   20000,
 			OtherRemunerations: 2000,
 			Discounts:          1000,
+			Remunerations:      21000,
 		},
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -985,14 +988,16 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"num_membros": 100,
 				"remuneracao_base": 10000,
 				"outras_remuneracoes": 1000,
-				"descontos": 1000
+				"descontos": 1000,
+				"remuneracoes": 10000
 			},
 			{
 				"mes": 2,
 				"num_membros": 200,
 				"remuneracao_base": 20000,
 				"outras_remuneracoes": 2000,
-				"descontos": 1000
+				"descontos": 1000,
+				"remuneracoes": 21000
 			}
 		]
 	`
@@ -1138,6 +1143,8 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 					"remuneracao_base_por_membro":33173.01121495333,
 					"descontos": 2221879.66,
       				"descontos_por_membro": 10382.615233644861,
+					"remuneracoes": 7.099024400000013e+06,
+					"remuneracoes_por_membro": 33173.01121495333,
 					"timestamp": {
 						"seconds": 1,
 						"nanos": 1
@@ -1279,6 +1286,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 			BaseRemuneration:   10000,
 			OtherRemunerations: 1000,
 			Discounts:          1000,
+			Remunerations:      10000,
 			NumMonthsWithData:  12,
 			Package: &models.Backup{
 				URL:  "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
@@ -1336,6 +1344,9 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 					"descontos": 1000,
 					"descontos_por_membro": 0.3894080996884735, 
 					"descontos_por_mes": 83.33333333333333,
+					"remuneracoes": 10000,
+					"remuneracoes_por_membro": 3.8940809968847354,
+					"remuneracoes_por_mes": 833.3333333333334,
 					"meses_com_dados": 12,
 					"package": {
 						"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
@@ -1508,6 +1519,12 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					Max:     23118.190000000002,
 					Average: 10382.615233644861,
 					Total:   2221879.66,
+				},
+				Remunerations: models.DataSummary{
+					Max:     35462.22,
+					Min:     7473.09,
+					Average: 33173.01121495333,
+					Total:   7099024.400000013,
 				},
 				IncomeHistogram: map[int]int{
 					-1:    0,

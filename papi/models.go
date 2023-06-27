@@ -18,6 +18,7 @@ type summary struct {
 	BaseRemuneration   dataSummary `json:"remuneracao_base,omitempty"`
 	OtherRemunerations dataSummary `json:"outras_remuneracoes,omitempty"`
 	Discounts          dataSummary `json:"descontos,omitempty"`
+	Remunerations      dataSummary `json:"remuneracoes,omitempty"`
 }
 
 type summaries struct {

@@ -113,9 +113,9 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		MaxOther:           agencyMonthlyInfo.Summary.OtherRemunerations.Max,
 		Discounts:          agencyMonthlyInfo.Summary.Discounts.Total,
 		MaxDiscounts:       agencyMonthlyInfo.Summary.Discounts.Max,
-		TotalRemuneration: agencyMonthlyInfo.Summary.BaseRemuneration.Total +
-			agencyMonthlyInfo.Summary.OtherRemunerations.Total,
-		TotalMembers: agencyMonthlyInfo.Summary.Count,
+		MaxRemuneration:    agencyMonthlyInfo.Summary.Remunerations.Max,
+		TotalRemuneration:  agencyMonthlyInfo.Summary.Remunerations.Total,
+		TotalMembers:       agencyMonthlyInfo.Summary.Count,
 		CrawlingTime: timestamp{
 			Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
 			Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
@@ -220,9 +220,9 @@ func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
 			},
 		})
 	}
-	return c.JSON(http.StatusOK, agencySalary{
-		MaxSalary: agencyMonthlyInfo.Summary.BaseRemuneration.Max,
-		Histogram: agencyMonthlyInfo.Summary.IncomeHistogram,
+	return c.JSON(http.StatusOK, agencyRemuneration{
+		MaxRemuneration: agencyMonthlyInfo.Summary.Remunerations.Max,
+		Histogram:       agencyMonthlyInfo.Summary.IncomeHistogram,
 		Package: &backup{
 			URL:  agencyMonthlyInfo.Package.URL,
 			Hash: agencyMonthlyInfo.Package.Hash,
@@ -323,9 +323,11 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 			monthTotals := v2MonthTotals{Month: agencyMonthlyInfo.Month,
 				BaseRemuneration:            agencyMonthlyInfo.Summary.BaseRemuneration.Total,
 				OtherRemunerations:          agencyMonthlyInfo.Summary.OtherRemunerations.Total,
+				Remunerations:               agencyMonthlyInfo.Summary.Remunerations.Total,
 				Discounts:                   agencyMonthlyInfo.Summary.Discounts.Total,
 				BaseRemunerationPerCapita:   agencyMonthlyInfo.Summary.BaseRemuneration.Average,
 				OtherRemunerationsPerCapita: agencyMonthlyInfo.Summary.OtherRemunerations.Average,
+				RemunerationsPerCapita:      agencyMonthlyInfo.Summary.Remunerations.Average,
 				DiscountsPerCapita:          agencyMonthlyInfo.Summary.Discounts.Average,
 				CrawlingTimestamp: timestamp{
 					Seconds: agencyMonthlyInfo.CrawlingTimestamp.GetSeconds(),
@@ -583,6 +585,7 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 			BaseRemuneration:   d.BaseRemuneration,
 			OtherRemunerations: d.OtherRemunerations,
 			Discounts:          d.Discounts,
+			Remunerations:      d.Remunerations,
 		})
 	}
 	return c.JSON(http.StatusOK, annualRemu)
@@ -790,6 +793,8 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		baseRemPerCapita := s.BaseRemuneration / float64(s.TotalCount)
 		otherRemPerMonth := s.OtherRemunerations / float64(s.NumMonthsWithData)
 		otherRemPerCapita := s.OtherRemunerations / float64(s.TotalCount)
+		remPerMonth := s.Remunerations / float64(s.NumMonthsWithData)
+		remPerCapita := s.Remunerations / float64(s.TotalCount)
 		discountsRemPerMonth := s.Discounts / float64(s.NumMonthsWithData)
 		discountsRemPerCapita := s.Discounts / float64(s.TotalCount)
 		annualData = append(annualData, annualSummaryData{
@@ -804,6 +809,9 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 			Discounts:                   s.Discounts,
 			DiscountsPerMonth:           discountsRemPerMonth,
 			DiscountsPerCapita:          discountsRemPerCapita,
+			Remunerations:               s.Remunerations,
+			RemunerationsPerMonth:       remPerMonth,
+			RemunerationsPerCapita:      remPerCapita,
 			NumMonthsWithData:           s.NumMonthsWithData,
 			Package: &backup{
 				URL:  s.Package.URL,

@@ -18,10 +18,10 @@ type dataForChartAtAgencyScreen struct {
 	PackageSize int64
 }
 
-type agencySalary struct {
-	MaxSalary float64     `json:"max_salario"`
-	Histogram map[int]int `json:"histograma"`
-	Package   *backup     `json:"package"`
+type agencyRemuneration struct {
+	MaxRemuneration float64     `json:"max_salario"`
+	Histogram       map[int]int `json:"histograma"`
+	Package         *backup     `json:"package"`
 }
 
 // generalTotals - contains the summary from all DadosJusBr data
@@ -105,6 +105,7 @@ type v2AgencySummary struct {
 	MaxOther           float64   `json:"max_outras_remuneracoes"`
 	Discounts          float64   `json:"descontos"`
 	MaxDiscounts       float64   `json:"max_descontos"`
+	MaxRemuneration    float64   `json:"max_remuneracao"`
 	CrawlingTime       timestamp `json:"timestamp"`
 	TotalMembers       int       `json:"total_membros"`
 	TotalRemuneration  float64   `json:"total_remuneracao"`
@@ -146,6 +147,8 @@ type monthTotals struct {
 	TotalMembers       int
 	BaseRemuneration   float64
 	OtherRemunerations float64
+	Discounts          float64
+	Remunerations      float64
 	CrawlingTimestamp  *timestamppb.Timestamp
 }
 
@@ -159,6 +162,8 @@ type v2MonthTotals struct {
 	OtherRemunerationsPerCapita float64    `json:"outras_remuneracoes_por_membro"`
 	Discounts                   float64    `json:"descontos"`
 	DiscountsPerCapita          float64    `json:"descontos_por_membro"`
+	Remunerations               float64    `json:"remuneracoes"`
+	RemunerationsPerCapita      float64    `json:"remuneracoes_por_membro"`
 	CrawlingTimestamp           timestamp  `json:"timestamp"`
 }
 
@@ -257,6 +262,9 @@ type annualSummaryData struct {
 	Discounts                   float64 `json:"descontos"`
 	DiscountsPerMonth           float64 `json:"descontos_por_mes"`
 	DiscountsPerCapita          float64 `json:"descontos_por_membro"`
+	Remunerations               float64 `json:"remuneracoes"`
+	RemunerationsPerMonth       float64 `json:"remuneracoes_por_mes"`
+	RemunerationsPerCapita      float64 `json:"remuneracoes_por_membro"`
 	NumMonthsWithData           int     `json:"meses_com_dados"`
 	Package                     *backup `json:"package,omitempty"`
 }
@@ -267,4 +275,5 @@ type mensalRemuneration struct {
 	BaseRemuneration   float64 `json:"remuneracao_base"`
 	OtherRemunerations float64 `json:"outras_remuneracoes"`
 	Discounts          float64 `json:"descontos"`
+	Remunerations      float64 `json:"remuneracoes"`
 }
