@@ -203,6 +203,12 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 									Average: mi.Summary.Discounts.Average,
 									Total:   mi.Summary.Discounts.Total,
 								},
+								Remunerations: dataSummary{
+									Max:     mi.Summary.Remunerations.Max,
+									Min:     mi.Summary.Remunerations.Min,
+									Average: mi.Summary.Remunerations.Average,
+									Total:   mi.Summary.Remunerations.Total,
+								},
 							},
 						},
 						Metadata: &metadata{
@@ -318,6 +324,12 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 							Average: monthlyInfo.Summary.Discounts.Average,
 							Total:   monthlyInfo.Summary.Discounts.Total,
 						},
+						Remunerations: dataSummary{
+							Max:     monthlyInfo.Summary.Remunerations.Max,
+							Min:     monthlyInfo.Summary.Remunerations.Min,
+							Average: monthlyInfo.Summary.Remunerations.Average,
+							Total:   monthlyInfo.Summary.Remunerations.Total,
+						},
 					},
 				},
 				Metadata: &metadata{
@@ -431,6 +443,12 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 									Min:     mi.Summary.Discounts.Min,
 									Average: mi.Summary.Discounts.Average,
 									Total:   mi.Summary.Discounts.Total,
+								},
+								Remunerations: dataSummary{
+									Max:     mi.Summary.Remunerations.Max,
+									Min:     mi.Summary.Remunerations.Min,
+									Average: mi.Summary.Remunerations.Average,
+									Total:   mi.Summary.Remunerations.Total,
 								},
 							},
 						},
@@ -690,6 +708,12 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 							Min:     c.Summary.Discounts.Min,
 							Average: c.Summary.Discounts.Average,
 							Total:   c.Summary.Discounts.Total,
+						},
+						Remunerations: dataSummary{
+							Max:     c.Summary.Remunerations.Max,
+							Min:     c.Summary.Remunerations.Min,
+							Average: c.Summary.Remunerations.Average,
+							Total:   c.Summary.Remunerations.Total,
 						},
 					},
 				},
