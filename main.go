@@ -121,7 +121,9 @@ func main() {
 
 	e := echo.New()
 
-	e.GET("/", func(ctx echo.Context) error { return nil }) // necessário para checagem do beanstalk.
+	e.GET("/", func(ctx echo.Context) error { 
+		return ctx.Redirect(http.StatusMovedPermanently, "/doc") 
+		}) // necessário para checagem do beanstalk.
 
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:   "ui/dist/",
