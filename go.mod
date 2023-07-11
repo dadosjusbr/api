@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12
-	github.com/dadosjusbr/storage v0.0.0-20230627121230-1ddd9005aa6a
+	github.com/dadosjusbr/storage v0.0.0-20230711162749-e2d2c0a916f0
 	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/golang/mock v1.6.0
 	github.com/joho/godotenv v1.4.0
