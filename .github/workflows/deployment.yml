@@ -30,7 +30,7 @@ jobs:
       - name: Install Dependencies
         run: go mod download
 
-      - name: Install Dependencies
+      - name: Build application
         run: go build -o api
 
       - name: Install EB CLI using pip
