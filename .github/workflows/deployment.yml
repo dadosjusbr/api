@@ -1,9 +1,6 @@
 name: Continuous Delivery
 
 on:
-  push:
-    branches:
-      - continuous-delivery
   schedule:
     - cron: "45 2 * * 2"
 jobs:
