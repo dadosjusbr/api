@@ -2,7 +2,7 @@ name: Continuous Delivery
 
 on:
   schedule:
-    - cron: "40 2 * * 3"
+    - cron: "45 2 * * 2"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -23,6 +23,12 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18.0
+
+      - name: Install Dependencies
+        run: go mod download
+
+      - name: Install Dependencies
+        run: go build -o api
 
       - name: Install EB CLI using pip
         run: |
