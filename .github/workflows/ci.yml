@@ -1,11 +1,9 @@
 name: Continuous Integration
 
 on:
-  push:
-    branches:
-      - continuous-delivery
+  pull_request:
 jobs:
-  deploy:
+  testing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
