@@ -2,7 +2,8 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [continuous-delivery]
+    branches:
+      - continuous-delivery
 jobs:
   deploy:
     runs-on: ubuntu-latest
