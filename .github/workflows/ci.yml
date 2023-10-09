@@ -1,0 +1,26 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.0
+
+      - name: Install Dependencies
+        run: go mod download
+
+      - name: Testing code
+        run: |
+          if go test ./...; then
+            echo "All tests have passed✅"
+          else
+            echo "Test failed❌"
+            exit 1
+          fi
