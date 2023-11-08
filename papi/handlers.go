@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/dadosjusbr/storage"
 	"github.com/dadosjusbr/storage/models"
 	"github.com/labstack/echo/v4"
@@ -499,7 +501,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
-//	@ID				GetAggregateIndexes
+//	@ID				GetAggregateIndexesWithParams
 //	@Tags			public_api
 //	@Description	Busca as informações de índices de um grupo ou órgão específico.
 //	@Produce		json
@@ -509,7 +511,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 //	@Param			param						path		string				true	"'grupo' ou 'orgao'"
 //	@Param			valor						path		string				true	"Jurisdição ou ID do órgao"
 //	@Router			/v2/indice/{param}/{valor} 	[get]
-func (h handler) V2GetAggregateIndexes(c echo.Context) error {
+func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 	param := c.Param("param")
 	valor := c.Param("valor")
 	ano := c.Param("ano")
@@ -654,6 +656,116 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 		aggregate = append(aggregate, agg)
 	}
 	return c.JSON(http.StatusOK, aggregate)
+}
+
+//	@ID				GetAggregateIndexes
+//	@Tags			public_api
+//	@Description	Busca as informações de índices de todos os órgãos.
+//	@Produce		json
+//	@Success		200							{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
+//	@Failure		500							{string}	string				"Erro interno do servidor."
+//	@Router			/v2/indice 					[get]
+func (h handler) V2GetAggregateIndexes(c echo.Context) error {
+	agregado := c.QueryParam("agregado")
+	detalhe := c.QueryParam("detalhe")
+
+	indexes, err := h.client.Db.GetIndexInformation("", 0, 0)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "Erro consultando os índices para todos os órgãos.")
+	}
+
+	indexMap := make(map[string][]indexInformation)
+	aggregateScore := make(map[string]float64)
+	aggregateEasinessScore := make(map[string]float64)
+	aggregateCompletenessScore := make(map[string]float64)
+
+	// Mapearemos jurisdição e respectivos orgãos
+	grupos := make(map[string][]string)
+
+	for id, index := range indexes {
+		for _, a := range index {
+			var meta *metadata
+			// Se "detalhe=true" não for passada na URL, os metadados não serão passados
+			if detalhe == "true" {
+				meta = &metadata{
+					OpenFormat:       a.Meta.OpenFormat,
+					Access:           a.Meta.Access,
+					Extension:        a.Meta.Extension,
+					StrictlyTabular:  a.Meta.StrictlyTabular,
+					ConsistentFormat: a.Meta.ConsistentFormat,
+					HasEnrollment:    a.Meta.HaveEnrollment,
+					HasCapacity:      a.Meta.ThereIsACapacity,
+					HasPosition:      a.Meta.HasPosition,
+					BaseRevenue:      a.Meta.BaseRevenue,
+					OtherRecipes:     a.Meta.OtherRecipes,
+					Expenditure:      a.Meta.Expenditure,
+				}
+			}
+			if agregado != "true" {
+				indexMap[id] = append(indexMap[id], indexInformation{
+					Month: a.Month,
+					Year:  a.Year,
+					Score: &score{
+						Score:             a.Score.Score,
+						EasinessScore:     a.Score.EasinessScore,
+						CompletenessScore: a.Score.CompletenessScore,
+					},
+					Metadata: meta,
+				})
+			}
+
+			aggregateScore[id] += a.Score.Score
+			aggregateCompletenessScore[id] += a.Score.CompletenessScore
+			aggregateEasinessScore[id] += a.Score.EasinessScore
+
+			// Criando a lista de órgãos por jurisdição para filtrar posteriormente
+			if !slices.Contains(grupos[a.Type], id) {
+				grupos[a.Type] = append(grupos[a.Type], id)
+			}
+		}
+	}
+	aggregate := make(map[string]aggregateIndexes)
+	for id, index := range indexes {
+		aggregateScore[id] = aggregateScore[id] / float64(len(index))
+		aggregateEasinessScore[id] = aggregateEasinessScore[id] / float64(len(index))
+		aggregateCompletenessScore[id] = aggregateCompletenessScore[id] / float64(len(index))
+
+		agg := aggregateIndexes{
+			ID: id,
+			Aggregate: &score{
+				Score:             aggregateScore[id],
+				EasinessScore:     aggregateEasinessScore[id],
+				CompletenessScore: aggregateCompletenessScore[id],
+			},
+		}
+		// Se "agregado=true" não estiver presente na URL, será listado também o detalhamento dos índices do órgão
+		if agregado != "true" {
+			agg.IndexInformation = indexMap[id]
+		}
+
+		aggregate[id] = agg
+	}
+
+	// Aqui realizamos o filtro, adicionando o agregado de cada órgão ao seu respectivo grupo.
+	dadosGrupo := make(map[string][]aggregateIndexes)
+	for grupo, orgaos := range grupos {
+		for _, orgao := range orgaos {
+			dadosGrupo[grupo] = append(dadosGrupo[grupo], aggregate[orgao])
+		}
+	}
+
+	dados := aggregateIndexesByGroup{
+		JusticaEstadual:  dadosGrupo["Estadual"],
+		JusticaMilitar:   dadosGrupo["Militar"],
+		JusticaFederal:   dadosGrupo["Federal"],
+		JusticaEleitoral: dadosGrupo["Eleitoral"],
+		JusticaSuperior:  dadosGrupo["Superior"],
+		Ministerios:      dadosGrupo["Ministério"],
+		Conselhos:        dadosGrupo["Conselho"],
+		JusticaTrabalho:  dadosGrupo["Trabalho"],
+	}
+
+	return c.JSON(http.StatusOK, dados)
 }
 
 //	@ID				GetAllAgencyInformation

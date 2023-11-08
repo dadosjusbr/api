@@ -121,9 +121,9 @@ func main() {
 
 	e := echo.New()
 
-	e.GET("/", func(ctx echo.Context) error { 
-		return ctx.Redirect(http.StatusMovedPermanently, "/doc") 
-		}) // necessário para checagem do beanstalk.
+	e.GET("/", func(ctx echo.Context) error {
+		return ctx.Redirect(http.StatusMovedPermanently, "/doc")
+	}) // necessário para checagem do beanstalk.
 
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:   "ui/dist/",
@@ -219,12 +219,12 @@ func main() {
 	// Return MIs by month
 	apiGroupV2.GET("/dados/:orgao/:ano/:mes", apiHandler.V2GetMonthlyInfo)
 	// Return agency index information
-	apiGroupV2.GET("/indice/:param/:valor", apiHandler.V2GetAggregateIndexes)
-	apiGroupV2.GET("/indice/:param/:valor/:ano", apiHandler.V2GetAggregateIndexes)
-	apiGroupV2.GET("/indice/:param/:valor/:ano/:mes", apiHandler.V2GetAggregateIndexes)
 	apiGroupV2.GET("/indice", apiHandler.V2GetAggregateIndexes)
-	apiGroupV2.GET("/indices/:ano", apiHandler.V2GetAggregateIndexes)
-	apiGroupV2.GET("/indices/:ano/:mes", apiHandler.V2GetAggregateIndexes)
+	apiGroupV2.GET("/indice/:param/:valor", apiHandler.V2GetAggregateIndexesWithParams)
+	apiGroupV2.GET("/indice/:param/:valor/:ano", apiHandler.V2GetAggregateIndexesWithParams)
+	apiGroupV2.GET("/indice/:param/:valor/:ano/:mes", apiHandler.V2GetAggregateIndexesWithParams)
+	apiGroupV2.GET("/indices/:ano", apiHandler.V2GetAggregateIndexesWithParams)
+	apiGroupV2.GET("/indices/:ano/:mes", apiHandler.V2GetAggregateIndexesWithParams)
 	apiGroupV2.GET("/dados/:orgao", apiHandler.V2GetAllAgencyInformation)
 
 	s := &http.Server{

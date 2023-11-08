@@ -702,7 +702,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexes",
+                "operationId": "GetAggregateIndexesWithParams",
                 "parameters": [
                     {
                         "enum": [
@@ -757,7 +757,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexes",
+                "operationId": "GetAggregateIndexesWithParams",
                 "parameters": [
                     {
                         "enum": [
@@ -819,7 +819,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexes",
+                "operationId": "GetAggregateIndexesWithParams",
                 "parameters": [
                     {
                         "enum": [
@@ -895,7 +895,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexes"
+                                "$ref": "#/definitions/papi.aggregateIndexesByGroup"
                             }
                         }
                     },
@@ -917,7 +917,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexes",
+                "operationId": "GetAggregateIndexesWithParams",
                 "parameters": [
                     {
                         "type": "integer",
@@ -955,7 +955,7 @@ const docTemplate = `{
                 "tags": [
                     "public_api"
                 ],
-                "operationId": "GetAggregateIndexes",
+                "operationId": "GetAggregateIndexesWithParams",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1316,6 +1316,35 @@ const docTemplate = `{
                 },
                 "detalhe": {
                     "$ref": "#/definitions/papi.indexInformation"
+                }
+            }
+        },
+        "papi.aggregateIndexesByGroup": {
+            "type": "object",
+            "properties": {
+                "justica-estadual": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "justica-federal": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "justica-militar": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "justica-do-trabalho": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "justica-superior": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "justica-eleitoral": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "ministerios-publicos": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
+                },
+                "conselhos-de-justica": {
+                    "$ref": "#/definitions/papi.aggregateIndexes"
                 }
             }
         },

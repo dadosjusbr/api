@@ -96,6 +96,17 @@ type aggregateIndexes struct {
 	IndexInformation []indexInformation `json:"detalhe,omitempty"`  // All agency indices
 }
 
+type aggregateIndexesByGroup struct {
+	JusticaEstadual  []aggregateIndexes `json:"justica-estadual,omitempty"`
+	JusticaTrabalho  []aggregateIndexes `json:"justica-do-trabalho,omitempty"`
+	JusticaMilitar   []aggregateIndexes `json:"justica-militar,omitempty"`
+	JusticaFederal   []aggregateIndexes `json:"justica-federal,omitempty"`
+	JusticaEleitoral []aggregateIndexes `json:"justica-eleitoral,omitempty"`
+	JusticaSuperior  []aggregateIndexes `json:"justica-superior,omitempty"`
+	Ministerios      []aggregateIndexes `json:"ministerios-publicos,omitempty"`
+	Conselhos        []aggregateIndexes `json:"conselhos-de-justica,omitempty"`
+}
+
 type indexInformation struct {
 	Month    int       `json:"mes,omitempty"`
 	Year     int       `json:"ano,omitempty"`

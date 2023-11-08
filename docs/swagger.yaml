@@ -222,6 +222,25 @@ definitions:
       detalhe:
         $ref: "#/definitions/papi.indexInformation"
     type: object
+  papi.aggregateIndexesByGroup:
+    properties:
+      justica-estadual:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      justica-federal:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      justica-militar:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      justica-do-trabalho:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      justica-superior:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      justica-eleitoral:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      ministerios-publicos:
+        $ref: "#/definitions/papi.aggregateIndexes"
+      conselhos-de-justica:
+        $ref: "#/definitions/papi.aggregateIndexes"
+    type: object
   uiapi.agency:
     properties:
       coletando:
@@ -997,7 +1016,7 @@ paths:
   /v2/indice/{param}/{valor}":
     get:
       description: Busca as informações de índices de um grupo ou órgão específico.
-      operationId: GetAggregateIndexes
+      operationId: GetAggregateIndexesWithParams
       parameters:
         - description: Tipo de parâmetro.
           enum:
@@ -1034,7 +1053,7 @@ paths:
   /v2/indice/{param}/{valor}/{ano}":
     get:
       description: Busca as informações de índices de um grupo ou órgão específico para o ano informado.
-      operationId: GetAggregateIndexes
+      operationId: GetAggregateIndexesWithParams
       parameters:
         - description: Tipo de parâmetro.
           enum:
@@ -1076,7 +1095,7 @@ paths:
   /v2/indice/{param}/{valor}/{ano}/{mes}":
     get:
       description: Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.
-      operationId: GetAggregateIndexes
+      operationId: GetAggregateIndexesWithParams
       parameters:
         - description: Tipo de parâmetro.
           enum:
@@ -1142,7 +1161,7 @@ paths:
   /v2/indices/{ano}:
     get:
       description: Busca as informações de índices de todos os órgãos para um ano específico.
-      operationId: GetAggregateIndexes
+      operationId: GetAggregateIndexesWithParams
       parameters:
         - description: Ano.
           type: string,
@@ -1167,7 +1186,7 @@ paths:
   /v2/indices/{ano}/{mes}:
     get:
       description: Busca as informações de índices de todos os órgãos para um ano e mês específicos.
-      operationId: GetAggregateIndexes
+      operationId: GetAggregateIndexesWithParams
       parameters:
         - description: Ano.
           type: string,
