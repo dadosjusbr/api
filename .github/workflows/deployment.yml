@@ -2,7 +2,7 @@ name: Continuous Delivery
 
 on:
   schedule:
-    - cron: "45 2 * * 2"
+    - cron: "0 3 * * 2,4"
 jobs:
   deploy:
     runs-on: ubuntu-latest

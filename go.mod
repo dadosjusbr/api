@@ -55,7 +55,7 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go v1.45.23
-	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
