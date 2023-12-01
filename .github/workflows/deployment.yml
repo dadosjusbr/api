@@ -36,7 +36,7 @@ jobs:
           pip install awsebcli
 
       - name: Initialize EB Environment
-        run: (echo "1"; echo "n") | eb init -r ${{ env.AWS_DEFAULT_REGION }} ${{ env.AWS_APPLICATION_NAME }}
+        run: (echo "2"; echo "n") | eb init -r ${{ env.AWS_DEFAULT_REGION }} ${{ env.AWS_APPLICATION_NAME }}
 
       - name: Set EB Environment
         run: eb use ${{ env.AWS_ENVIRONMENT_NAME }} -r ${{ env.AWS_DEFAULT_REGION }}
