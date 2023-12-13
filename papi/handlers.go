@@ -332,6 +332,10 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 							Average: monthlyInfo.Summary.Remunerations.Average,
 							Total:   monthlyInfo.Summary.Remunerations.Total,
 						},
+						ItemSummary: itemSummary{
+							FoodAllowance: monthlyInfo.Summary.ItemSummary.FoodAllowance,
+							Others:        monthlyInfo.Summary.ItemSummary.Others,
+						},
 					},
 				},
 				Metadata: &metadata{
@@ -451,6 +455,10 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 									Min:     mi.Summary.Remunerations.Min,
 									Average: mi.Summary.Remunerations.Average,
 									Total:   mi.Summary.Remunerations.Total,
+								},
+								ItemSummary: itemSummary{
+									FoodAllowance: mi.Summary.ItemSummary.FoodAllowance,
+									Others:        mi.Summary.ItemSummary.Others,
 								},
 							},
 						},
@@ -662,9 +670,9 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Tags			public_api
 //	@Description	Busca as informações de índices de todos os órgãos.
 //	@Produce		json
-//	@Success		200							{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
-//	@Failure		500							{string}	string				"Erro interno do servidor."
-//	@Router			/v2/indice 					[get]
+//	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
+//	@Failure		500			{string}	string						"Erro interno do servidor."
+//	@Router			/v2/indice 																													[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -826,6 +834,10 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 							Min:     c.Summary.Remunerations.Min,
 							Average: c.Summary.Remunerations.Average,
 							Total:   c.Summary.Remunerations.Total,
+						},
+						ItemSummary: itemSummary{
+							FoodAllowance: c.Summary.ItemSummary.FoodAllowance,
+							Others:        c.Summary.ItemSummary.Others,
 						},
 					},
 				},

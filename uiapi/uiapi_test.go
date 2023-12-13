@@ -98,7 +98,8 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 			"total_membros": 214,
 			"total_remuneracao": 7.099024400000013e+06,
 			"tem_proximo": true,
-			"tem_anterior": true
+			"tem_anterior": true,
+			"resumo_rubricas": {}
 		}
 	`
 
@@ -949,6 +950,10 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			OtherRemunerations: 1000,
 			Discounts:          1000,
 			Remunerations:      10000,
+			ItemSummary: models.ItemSummary{
+				FoodAllowance: 100,
+				Others:        200,
+			},
 		},
 		{
 			Month:              2,
@@ -957,6 +962,10 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			OtherRemunerations: 2000,
 			Discounts:          1000,
 			Remunerations:      21000,
+			ItemSummary: models.ItemSummary{
+				FoodAllowance: 100,
+				Others:        200,
+			},
 		},
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -989,7 +998,11 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"remuneracao_base": 10000,
 				"outras_remuneracoes": 1000,
 				"descontos": 1000,
-				"remuneracoes": 10000
+				"remuneracoes": 10000,
+				"resumo_rubricas": {
+					"auxilio_alimentacao": 100,
+					"outras": 200
+				  }
 			},
 			{
 				"mes": 2,
@@ -997,7 +1010,11 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"remuneracao_base": 20000,
 				"outras_remuneracoes": 2000,
 				"descontos": 1000,
-				"remuneracoes": 21000
+				"remuneracoes": 21000,
+				"resumo_rubricas": {
+					"auxilio_alimentacao": 100,
+					"outras": 200
+				  }
 			}
 		]
 	`
@@ -1149,7 +1166,8 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 						"seconds": 1,
 						"nanos": 1
 					},
-					"total_membros": 214
+					"total_membros": 214,
+					"resumo_rubricas": {}
 				}
 			],
 			"package": {
@@ -1293,6 +1311,10 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				Hash: "4d7ca8986101673aea060ac1d8e5a529",
 				Size: 30195,
 			},
+			ItemSummary: models.ItemSummary{
+				FoodAllowance: 100,
+				Others:        200,
+			},
 		},
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -1352,7 +1374,11 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 						"url": "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
 						"hash": "4d7ca8986101673aea060ac1d8e5a529",
 						"size": 30195
-					}
+					},
+					"resumo_rubricas": {
+						"auxilio_alimentacao": 100,
+						"outras": 200
+					  }
 				}
 			]
 		}

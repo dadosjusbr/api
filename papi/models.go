@@ -19,6 +19,12 @@ type summary struct {
 	OtherRemunerations dataSummary `json:"outras_remuneracoes,omitempty"`
 	Discounts          dataSummary `json:"descontos,omitempty"`
 	Remunerations      dataSummary `json:"remuneracoes,omitempty"`
+	ItemSummary        itemSummary `json:"resumo_rubricas,omitempty"`
+}
+
+type itemSummary struct {
+	FoodAllowance float64 `json:"auxilio_alimentacao,omitempty"`
+	Others        float64 `json:"outras,omitempty"` // valor agregado de outras rubricas não identificadas
 }
 
 type summaries struct {

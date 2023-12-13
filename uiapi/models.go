@@ -98,19 +98,20 @@ type agencySummary struct {
 }
 
 type v2AgencySummary struct {
-	Agency             string    `json:"orgao"`
-	BaseRemuneration   float64   `json:"remuneracao_base"`
-	MaxBase            float64   `json:"max_remuneracao_base"`
-	OtherRemunerations float64   `json:"outras_remuneracoes"`
-	MaxOther           float64   `json:"max_outras_remuneracoes"`
-	Discounts          float64   `json:"descontos"`
-	MaxDiscounts       float64   `json:"max_descontos"`
-	MaxRemuneration    float64   `json:"max_remuneracao"`
-	CrawlingTime       timestamp `json:"timestamp"`
-	TotalMembers       int       `json:"total_membros"`
-	TotalRemuneration  float64   `json:"total_remuneracao"`
-	HasNext            bool      `json:"tem_proximo"`
-	HasPrevious        bool      `json:"tem_anterior"`
+	Agency             string      `json:"orgao"`
+	BaseRemuneration   float64     `json:"remuneracao_base"`
+	MaxBase            float64     `json:"max_remuneracao_base"`
+	OtherRemunerations float64     `json:"outras_remuneracoes"`
+	MaxOther           float64     `json:"max_outras_remuneracoes"`
+	Discounts          float64     `json:"descontos"`
+	MaxDiscounts       float64     `json:"max_descontos"`
+	MaxRemuneration    float64     `json:"max_remuneracao"`
+	CrawlingTime       timestamp   `json:"timestamp"`
+	TotalMembers       int         `json:"total_membros"`
+	TotalRemuneration  float64     `json:"total_remuneracao"`
+	HasNext            bool        `json:"tem_proximo"`
+	HasPrevious        bool        `json:"tem_anterior"`
+	ItemSummary        itemSummary `json:"resumo_rubricas"`
 }
 
 // AgencyTotalsYear - Represents the totals of an year
@@ -153,18 +154,19 @@ type monthTotals struct {
 }
 
 type v2MonthTotals struct {
-	Error                       *procError `json:"error,omitempty"`
-	Month                       int        `json:"mes"`
-	MemberCount                 int        `json:"total_membros"`
-	BaseRemuneration            float64    `json:"remuneracao_base"`
-	BaseRemunerationPerCapita   float64    `json:"remuneracao_base_por_membro"`
-	OtherRemunerations          float64    `json:"outras_remuneracoes"`
-	OtherRemunerationsPerCapita float64    `json:"outras_remuneracoes_por_membro"`
-	Discounts                   float64    `json:"descontos"`
-	DiscountsPerCapita          float64    `json:"descontos_por_membro"`
-	Remunerations               float64    `json:"remuneracoes"`
-	RemunerationsPerCapita      float64    `json:"remuneracoes_por_membro"`
-	CrawlingTimestamp           timestamp  `json:"timestamp"`
+	Error                       *procError  `json:"error,omitempty"`
+	Month                       int         `json:"mes"`
+	MemberCount                 int         `json:"total_membros"`
+	BaseRemuneration            float64     `json:"remuneracao_base"`
+	BaseRemunerationPerCapita   float64     `json:"remuneracao_base_por_membro"`
+	OtherRemunerations          float64     `json:"outras_remuneracoes"`
+	OtherRemunerationsPerCapita float64     `json:"outras_remuneracoes_por_membro"`
+	Discounts                   float64     `json:"descontos"`
+	DiscountsPerCapita          float64     `json:"descontos_por_membro"`
+	Remunerations               float64     `json:"remuneracoes"`
+	RemunerationsPerCapita      float64     `json:"remuneracoes_por_membro"`
+	CrawlingTimestamp           timestamp   `json:"timestamp"`
+	ItemSummary                 itemSummary `json:"resumo_rubricas"`
 }
 
 type timestamp struct {
@@ -251,29 +253,36 @@ type annualSummary struct {
 }
 
 type annualSummaryData struct {
-	Year                        int     `json:"ano,omitempty"`
-	AverageMemberCount          int     `json:"num_membros,omitempty"`
-	BaseRemuneration            float64 `json:"remuneracao_base"`
-	BaseRemunerationPerMonth    float64 `json:"remuneracao_base_por_mes"`
-	BaseRemunerationPerCapita   float64 `json:"remuneracao_base_por_membro"`
-	OtherRemunerations          float64 `json:"outras_remuneracoes"`
-	OtherRemunerationsPerMonth  float64 `json:"outras_remuneracoes_por_mes"`
-	OtherRemunerationsPerCapita float64 `json:"outras_remuneracoes_por_membro"`
-	Discounts                   float64 `json:"descontos"`
-	DiscountsPerMonth           float64 `json:"descontos_por_mes"`
-	DiscountsPerCapita          float64 `json:"descontos_por_membro"`
-	Remunerations               float64 `json:"remuneracoes"`
-	RemunerationsPerMonth       float64 `json:"remuneracoes_por_mes"`
-	RemunerationsPerCapita      float64 `json:"remuneracoes_por_membro"`
-	NumMonthsWithData           int     `json:"meses_com_dados"`
-	Package                     *backup `json:"package,omitempty"`
+	Year                        int         `json:"ano,omitempty"`
+	AverageMemberCount          int         `json:"num_membros,omitempty"`
+	BaseRemuneration            float64     `json:"remuneracao_base"`
+	BaseRemunerationPerMonth    float64     `json:"remuneracao_base_por_mes"`
+	BaseRemunerationPerCapita   float64     `json:"remuneracao_base_por_membro"`
+	OtherRemunerations          float64     `json:"outras_remuneracoes"`
+	OtherRemunerationsPerMonth  float64     `json:"outras_remuneracoes_por_mes"`
+	OtherRemunerationsPerCapita float64     `json:"outras_remuneracoes_por_membro"`
+	Discounts                   float64     `json:"descontos"`
+	DiscountsPerMonth           float64     `json:"descontos_por_mes"`
+	DiscountsPerCapita          float64     `json:"descontos_por_membro"`
+	Remunerations               float64     `json:"remuneracoes"`
+	RemunerationsPerMonth       float64     `json:"remuneracoes_por_mes"`
+	RemunerationsPerCapita      float64     `json:"remuneracoes_por_membro"`
+	NumMonthsWithData           int         `json:"meses_com_dados"`
+	Package                     *backup     `json:"package,omitempty"`
+	ItemSummary                 itemSummary `json:"resumo_rubricas"`
+}
+
+type itemSummary struct {
+	FoodAllowance float64 `json:"auxilio_alimentacao,omitempty"`
+	Others        float64 `json:"outras,omitempty"` // valor agregado de outras rubricas não identificadas
 }
 
 type mensalRemuneration struct {
-	Month              int     `json:"mes,omitempty"`
-	Members            int     `json:"num_membros,omitempty"`
-	BaseRemuneration   float64 `json:"remuneracao_base"`
-	OtherRemunerations float64 `json:"outras_remuneracoes"`
-	Discounts          float64 `json:"descontos"`
-	Remunerations      float64 `json:"remuneracoes"`
+	Month              int         `json:"mes,omitempty"`
+	Members            int         `json:"num_membros,omitempty"`
+	BaseRemuneration   float64     `json:"remuneracao_base"`
+	OtherRemunerations float64     `json:"outras_remuneracoes"`
+	Discounts          float64     `json:"descontos"`
+	Remunerations      float64     `json:"remuneracoes"`
+	ItemSummary        itemSummary `json:"resumo_rubricas"`
 }

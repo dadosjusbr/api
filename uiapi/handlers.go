@@ -122,6 +122,10 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		},
 		HasNext:     time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
 		HasPrevious: time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
+		ItemSummary: itemSummary{
+			FoodAllowance: agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
+			Others:        agencyMonthlyInfo.Summary.ItemSummary.Others,
+		},
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
@@ -174,7 +178,7 @@ func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 //	@Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
 //	@Param			mes												path		string				true	"Mês da remuneração. Exemplos: 01, 02, 03..."
 //	@Param			ano												path		string				true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
-//	@Success		200												{object}	agencySalary		"Requisição bem sucedida."
+//	@Success		200												{object}	agencyRemuneration	"Requisição bem sucedida."
 //	@Success		206												{object}	v2ProcInfoResult	"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
 //	@Failure		400												{string}	string				"Parâmetros inválidos."
 //	@Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} 	[get]
@@ -334,6 +338,10 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
 				},
 				MemberCount: agencyMonthlyInfo.Summary.Count,
+				ItemSummary: itemSummary{
+					FoodAllowance: agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
+					Others:        agencyMonthlyInfo.Summary.ItemSummary.Others,
+				},
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
@@ -575,7 +583,7 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 	data, err := h.client.Db.GetGeneralMonthlyInfosFromYear(year)
 	if err != nil {
 		fmt.Println("Error searching for monthly info from year: %w", err)
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error buscando dados"))
+		return c.JSON(http.StatusInternalServerError, "error buscando dados")
 	}
 	annualRemu := []mensalRemuneration{}
 	for _, d := range data {
@@ -586,6 +594,10 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 			OtherRemunerations: d.OtherRemunerations,
 			Discounts:          d.Discounts,
 			Remunerations:      d.Remunerations,
+			ItemSummary: itemSummary{
+				FoodAllowance: d.ItemSummary.FoodAllowance,
+				Others:        d.ItemSummary.Others,
+			},
 		})
 	}
 	return c.JSON(http.StatusOK, annualRemu)
@@ -797,6 +809,10 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		remPerCapita := s.Remunerations / float64(s.TotalCount)
 		discountsRemPerMonth := s.Discounts / float64(s.NumMonthsWithData)
 		discountsRemPerCapita := s.Discounts / float64(s.TotalCount)
+		itemSummary := itemSummary{
+			FoodAllowance: s.ItemSummary.FoodAllowance,
+			Others:        s.ItemSummary.Others,
+		}
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,
 			AverageMemberCount:          s.AverageCount,
@@ -818,6 +834,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 				Hash: s.Package.Hash,
 				Size: s.Package.Size,
 			},
+			ItemSummary: itemSummary,
 		})
 	}
 	var collect []collecting

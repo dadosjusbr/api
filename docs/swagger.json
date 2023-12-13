@@ -278,7 +278,7 @@
                     "200": {
                         "description": "Requisição bem sucedida.",
                         "schema": {
-                            "$ref": "#/definitions/uiapi.agencySalary"
+                            "$ref": "#/definitions/uiapi.agencyRemuneration"
                         }
                     },
                     "206": {
@@ -619,6 +619,86 @@
                 }
             }
         },
+        "/v2/indice": {
+            "get": {
+                "description": "Busca as informações de índices de todos os órgãos.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAggregateIndexes",
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.aggregateIndexesByGroup"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/indice/{param}/{valor}": {
+            "get": {
+                "description": "Busca as informações de índices de um grupo ou órgão específico.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAggregateIndexesWithParams",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "'grupo' ou 'orgao'",
+                        "name": "param",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Jurisdição ou ID do órgao",
+                        "name": "valor",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.aggregateIndexes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/orgao/{orgao}": {
             "get": {
                 "description": "Busca um órgão específico utilizando seu ID.",
@@ -682,304 +762,6 @@
                     }
                 }
             }
-        },
-        "/v2/indice/{param}/{valor}": {
-            "get": {
-                "description": "Busca as informações de índices de um grupo ou órgão específico.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "public_api"
-                ],
-                "operationId": "GetAggregateIndexesWithParams",
-                "parameters": [
-                    {
-                        "enum": [
-                            "grupo",
-                            "orgao"
-                        ],
-                        "type": "string",
-                        "description": "Tipo de parâmetro.",
-                        "name": "param",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "jurisdição ou ID do órgão",
-                        "name": "valor",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Requisição bem sucedida.",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexes"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Requisição inválida.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/indice/{param}/{valor}/{ano}": {
-            "get": {
-                "description": "Busca as informações de índices de um grupo ou órgão específico para o ano informado.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "public_api"
-                ],
-                "operationId": "GetAggregateIndexesWithParams",
-                "parameters": [
-                    {
-                        "enum": [
-                            "grupo",
-                            "orgao"
-                        ],
-                        "type": "string",
-                        "description": "Tipo de parâmetro.",
-                        "name": "param",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "jurisdição ou ID do órgão",
-                        "name": "valor",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Ano",
-                        "name": "ano",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Requisição bem sucedida.",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexes"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Requisição inválida.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/indice/{param}/{valor}/{ano}/{mes}": {
-            "get": {
-                "description": "Busca as informações de índices de um grupo ou órgão específico para o ano e mês informados.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "public_api"
-                ],
-                "operationId": "GetAggregateIndexesWithParams",
-                "parameters": [
-                    {
-                        "enum": [
-                            "grupo",
-                            "orgao"
-                        ],
-                        "type": "string",
-                        "description": "Tipo de parâmetro.",
-                        "name": "param",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "jurisdição ou ID do órgão",
-                        "name": "valor",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Ano",
-                        "name": "ano",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Mês",
-                        "name": "mes",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Requisição bem sucedida.",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexes"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Requisição inválida.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/indice": {
-            "get": {
-                "description": "Busca as informações de índices de todos os órgãos",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "public_api"
-                ],
-                "operationId": "GetAggregateIndexes",
-                "responses": {
-                    "200": {
-                        "description": "Requisição bem sucedida.",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexesByGroup"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/indices/{ano}": {
-            "get": {
-                "description": "Busca as informações de índices de todos os órgãos para um ano específico",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "public_api"
-                ],
-                "operationId": "GetAggregateIndexesWithParams",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Ano.",
-                        "name": "ano",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Requisição bem sucedida.",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexes"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/indices/{ano}/{mes}": {
-            "get": {
-                "description": "Busca as informações de índices de todos os órgãos para um ano e um mês específicos",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "public_api"
-                ],
-                "operationId": "GetAggregateIndexesWithParams",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Ano.",
-                        "name": "ano",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Mês.",
-                        "name": "mes",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Requisição bem sucedida.",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/papi.aggregateIndexes"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -1012,6 +794,10 @@
                     "description": "Agencys's ombudsman url",
                     "type": "string"
                 },
+                "possui_dados": {
+                    "description": "If there is data from that agency",
+                    "type": "boolean"
+                },
                 "twitter_handle": {
                     "description": "Agency's twitter handle",
                     "type": "string"
@@ -1023,48 +809,121 @@
                 "url": {
                     "description": "Link for state url",
                     "type": "string"
+                }
+            }
+        },
+        "papi.aggregateIndexes": {
+            "type": "object",
+            "properties": {
+                "agregado": {
+                    "description": "Aggregate indices",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/papi.score"
+                        }
+                    ]
                 },
-                "possui_dados": {
-                    "description": "If there is data from that agency",
-                    "type": "boolean"
+                "detalhe": {
+                    "description": "All agency indices",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.indexInformation"
+                    }
+                },
+                "id_orgao": {
+                    "description": "e.g. 'trt13'",
+                    "type": "string"
+                }
+            }
+        },
+        "papi.aggregateIndexesByGroup": {
+            "type": "object",
+            "properties": {
+                "conselhos-de-justica": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "justica-do-trabalho": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "justica-eleitoral": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "justica-estadual": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "justica-federal": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "justica-militar": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "justica-superior": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
+                },
+                "ministerios-publicos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.aggregateIndexes"
+                    }
                 }
             }
         },
         "papi.allAgencyInformation": {
             "type": "object",
             "properties": {
-                "id_orgao": {
-                    "description": "'trt13'",
-                    "type": "string"
-                },
-                "nome": {
-                    "description": "'Tribunal Regional do Trabalho 13° Região'",
-                    "type": "string"
-                },
-                "jurisdicao": {
-                    "description": "'Estadual', 'Eleitroral', 'Militar', etc.",
-                    "type": "string"
-                },
-                "entidade": {
-                    "description": "'Tribunal', 'Ministério' or 'Conselho'.",
-                    "type": "string"
-                },
-                "uf": {
-                    "description": "Short code for federative unity.",
-                    "type": "string"
-                },
                 "coletando": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/papi.collecting"
                     }
                 },
-                "url": {
-                    "description": "Link for state url",
+                "coletas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/papi.summaryzedMI"
+                    }
+                },
+                "entidade": {
+                    "description": "\"J\" For Judiciário, \"M\" for Ministério Público, \"P\" for Procuradorias and \"D\" for Defensorias.",
                     "type": "string"
                 },
-                "twitter_handle": {
-                    "description": "Agency's twitter handle",
+                "id_orgao": {
+                    "description": "'trt13'",
+                    "type": "string"
+                },
+                "indice_transparencia": {
+                    "$ref": "#/definitions/papi.score"
+                },
+                "jurisdicao": {
+                    "description": "\"R\" for Regional, \"M\" for Municipal, \"F\" for Federal, \"E\" for State.",
+                    "type": "string"
+                },
+                "meses_com_dados": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "description": "'Tribunal Regional do Trabalho 13° Região'",
                     "type": "string"
                 },
                 "ouvidoria": {
@@ -1074,17 +933,17 @@
                 "total_coletas_realizadas": {
                     "type": "integer"
                 },
-                "meses_com_dados": {
-                    "type": "integer"
+                "twitter_handle": {
+                    "description": "Agency's twitter handle",
+                    "type": "string"
                 },
-                "indice_transparencia": {
-                    "$ref": "#/definitions/papi.score"
+                "uf": {
+                    "description": "Short code for federative unity.",
+                    "type": "string"
                 },
-                "coletas": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/papi.summaryzedMI"
-                    }
+                "url": {
+                    "description": "Link for state url",
+                    "type": "string"
                 }
             }
         },
@@ -1151,6 +1010,35 @@
                     "type": "number"
                 },
                 "total": {
+                    "type": "number"
+                }
+            }
+        },
+        "papi.indexInformation": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "indice_transparencia": {
+                    "$ref": "#/definitions/papi.score"
+                },
+                "mes": {
+                    "type": "integer"
+                },
+                "metadados": {
+                    "$ref": "#/definitions/papi.metadata"
+                }
+            }
+        },
+        "papi.itemSummary": {
+            "type": "object",
+            "properties": {
+                "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "outras": {
+                    "description": "valor agregado de outras rubricas não identificadas",
                     "type": "number"
                 }
             }
@@ -1232,6 +1120,9 @@
         "papi.summary": {
             "type": "object",
             "properties": {
+                "descontos": {
+                    "$ref": "#/definitions/papi.dataSummary"
+                },
                 "outras_remuneracoes": {
                     "$ref": "#/definitions/papi.dataSummary"
                 },
@@ -1241,8 +1132,11 @@
                 "remuneracao_base": {
                     "$ref": "#/definitions/papi.dataSummary"
                 },
-                "descontos": {
+                "remuneracoes": {
                     "$ref": "#/definitions/papi.dataSummary"
+                },
+                "resumo_rubricas": {
+                    "$ref": "#/definitions/papi.itemSummary"
                 }
             }
         },
@@ -1278,66 +1172,6 @@
                 }
             }
         },
-        "papi.indexInformation": {
-            "type": "object",
-            "properties": {
-                "mes": {
-                    "type": "integer"
-                },
-                "ano": {
-                    "type": "integer"
-                },
-                "indice_transparencia": {
-                    "$ref": "#/definitions/papi.score"
-                },
-                "metadados": {
-                    "$ref": "#/definitions/papi.metadata"
-                }
-            }
-        },
-        "papi.aggregateIndexes": {
-            "type": "object",
-            "properties": {
-                "id_orgao": {
-                    "type": "string"
-                },
-                "agregado": {
-                    "$ref": "#/definitions/papi.score"
-                },
-                "detalhe": {
-                    "$ref": "#/definitions/papi.indexInformation"
-                }
-            }
-        },
-        "papi.aggregateIndexesByGroup": {
-            "type": "object",
-            "properties": {
-                "justica-estadual": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "justica-federal": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "justica-militar": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "justica-do-trabalho": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "justica-superior": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "justica-eleitoral": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "ministerios-publicos": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                },
-                "conselhos-de-justica": {
-                    "$ref": "#/definitions/papi.aggregateIndexes"
-                }
-            }
-        },
         "uiapi.agency": {
             "type": "object",
             "properties": {
@@ -1367,6 +1201,10 @@
                     "description": "Agencys's ombudsman url",
                     "type": "string"
                 },
+                "possui_dados": {
+                    "description": "If there is data from that agency",
+                    "type": "boolean"
+                },
                 "twitter_handle": {
                     "description": "Agency's twitter handle",
                     "type": "string"
@@ -1378,10 +1216,6 @@
                 "url": {
                     "description": "Link for state url",
                     "type": "string"
-                },
-                "possui_dados": {
-                    "description": "If there is data from that agency",
-                    "type": "boolean"
                 }
             }
         },
@@ -1399,7 +1233,7 @@
                 }
             }
         },
-        "uiapi.agencySalary": {
+        "uiapi.agencyRemuneration": {
             "type": "object",
             "properties": {
                 "histograma": {
@@ -1436,6 +1270,15 @@
                 "ano": {
                     "type": "integer"
                 },
+                "descontos": {
+                    "type": "number"
+                },
+                "descontos_por_membro": {
+                    "type": "number"
+                },
+                "descontos_por_mes": {
+                    "type": "number"
+                },
                 "meses_com_dados": {
                     "type": "integer"
                 },
@@ -1445,10 +1288,10 @@
                 "outras_remuneracoes": {
                     "type": "number"
                 },
-                "outras_remuneracoes_por_mes": {
+                "outras_remuneracoes_por_membro": {
                     "type": "number"
                 },
-                "outras_remuneracoes_por_membro": {
+                "outras_remuneracoes_por_mes": {
                     "type": "number"
                 },
                 "package": {
@@ -1457,20 +1300,23 @@
                 "remuneracao_base": {
                     "type": "number"
                 },
-                "remuneracao_base_por_mes": {
-                    "type": "number"
-                },
                 "remuneracao_base_por_membro": {
                     "type": "number"
                 },
-                "descontos": {
+                "remuneracao_base_por_mes": {
                     "type": "number"
                 },
-                "descontos_por_mes": {
+                "remuneracoes": {
                     "type": "number"
                 },
-                "descontos_por_membro": {
+                "remuneracoes_por_membro": {
                     "type": "number"
+                },
+                "remuneracoes_por_mes": {
+                    "type": "number"
+                },
+                "resumo_rubricas": {
+                    "$ref": "#/definitions/uiapi.itemSummary"
                 }
             }
         },
@@ -1524,9 +1370,24 @@
                 }
             }
         },
+        "uiapi.itemSummary": {
+            "type": "object",
+            "properties": {
+                "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "outras": {
+                    "description": "valor agregado de outras rubricas não identificadas",
+                    "type": "number"
+                }
+            }
+        },
         "uiapi.mensalRemuneration": {
             "type": "object",
             "properties": {
+                "descontos": {
+                    "type": "number"
+                },
                 "mes": {
                     "type": "integer"
                 },
@@ -1539,8 +1400,11 @@
                 "remuneracao_base": {
                     "type": "number"
                 },
-                "descontos": {
+                "remuneracoes": {
                     "type": "number"
+                },
+                "resumo_rubricas": {
+                    "$ref": "#/definitions/uiapi.itemSummary"
                 }
             }
         },
@@ -1678,13 +1542,19 @@
         "uiapi.v2AgencySummary": {
             "type": "object",
             "properties": {
-                "max_outras_remuneracoes": {
-                    "type": "number"
-                },
-                "max_remuneracao_base": {
+                "descontos": {
                     "type": "number"
                 },
                 "max_descontos": {
+                    "type": "number"
+                },
+                "max_outras_remuneracoes": {
+                    "type": "number"
+                },
+                "max_remuneracao": {
+                    "type": "number"
+                },
+                "max_remuneracao_base": {
                     "type": "number"
                 },
                 "orgao": {
@@ -1696,8 +1566,8 @@
                 "remuneracao_base": {
                     "type": "number"
                 },
-                "descontos": {
-                    "type": "number"
+                "resumo_rubricas": {
+                    "$ref": "#/definitions/uiapi.itemSummary"
                 },
                 "tem_anterior": {
                     "type": "boolean"
@@ -1739,6 +1609,12 @@
         "uiapi.v2MonthTotals": {
             "type": "object",
             "properties": {
+                "descontos": {
+                    "type": "number"
+                },
+                "descontos_por_membro": {
+                    "type": "number"
+                },
                 "error": {
                     "$ref": "#/definitions/uiapi.procError"
                 },
@@ -1757,11 +1633,14 @@
                 "remuneracao_base_por_membro": {
                     "type": "number"
                 },
-                "descontos": {
+                "remuneracoes": {
                     "type": "number"
                 },
-                "descontos_por_membro": {
+                "remuneracoes_por_membro": {
                     "type": "number"
+                },
+                "resumo_rubricas": {
+                    "$ref": "#/definitions/uiapi.itemSummary"
                 },
                 "timestamp": {
                     "$ref": "#/definitions/uiapi.timestamp"
