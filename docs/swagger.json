@@ -1037,6 +1037,9 @@
                 "auxilio_alimentacao": {
                     "type": "number"
                 },
+                "licenca_premio": {
+                    "type": "number"
+                },
                 "outras": {
                     "description": "valor agregado de outras rubricas não identificadas",
                     "type": "number"
@@ -1374,6 +1377,9 @@
             "type": "object",
             "properties": {
                 "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "licenca_premio": {
                     "type": "number"
                 },
                 "outras": {

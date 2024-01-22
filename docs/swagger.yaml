@@ -187,6 +187,8 @@ definitions:
     properties:
       auxilio_alimentacao:
         type: number
+      licenca_premio:
+        type: number
       outras:
         description: valor agregado de outras rubricas não identificadas
         type: number
@@ -413,6 +415,8 @@ definitions:
   uiapi.itemSummary:
     properties:
       auxilio_alimentacao:
+        type: number
+      licenca_premio:
         type: number
       outras:
         description: valor agregado de outras rubricas não identificadas
