@@ -952,7 +952,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			Remunerations:      10000,
 			ItemSummary: models.ItemSummary{
 				FoodAllowance: 100,
-				BonusLicence:  150,
+				BonusLicense:  150,
 				Others:        200,
 			},
 		},
@@ -1315,7 +1315,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 			},
 			ItemSummary: models.ItemSummary{
 				FoodAllowance: 100,
-				BonusLicence:  150,
+				BonusLicense:  150,
 				Others:        200,
 			},
 		},
