@@ -334,6 +334,7 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 						},
 						ItemSummary: itemSummary{
 							FoodAllowance: monthlyInfo.Summary.ItemSummary.FoodAllowance,
+							BonusLicence:  monthlyInfo.Summary.ItemSummary.BonusLicence,
 							Others:        monthlyInfo.Summary.ItemSummary.Others,
 						},
 					},
@@ -458,6 +459,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 								},
 								ItemSummary: itemSummary{
 									FoodAllowance: mi.Summary.ItemSummary.FoodAllowance,
+									BonusLicence:  mi.Summary.ItemSummary.BonusLicence,
 									Others:        mi.Summary.ItemSummary.Others,
 								},
 							},
@@ -837,6 +839,7 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 						},
 						ItemSummary: itemSummary{
 							FoodAllowance: c.Summary.ItemSummary.FoodAllowance,
+							BonusLicence:  c.Summary.ItemSummary.BonusLicence,
 							Others:        c.Summary.ItemSummary.Others,
 						},
 					},
