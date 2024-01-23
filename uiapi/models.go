@@ -274,6 +274,7 @@ type annualSummaryData struct {
 
 type itemSummary struct {
 	FoodAllowance float64 `json:"auxilio_alimentacao,omitempty"`
+	BonusLicense  float64 `json:"licenca_premio,omitempty"`
 	Others        float64 `json:"outras,omitempty"` // valor agregado de outras rubricas não identificadas
 }
 

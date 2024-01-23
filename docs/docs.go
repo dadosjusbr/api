@@ -1046,6 +1046,9 @@ const docTemplate = `{
                 "auxilio_alimentacao": {
                     "type": "number"
                 },
+                "licenca_premio": {
+                    "type": "number"
+                },
                 "outras": {
                     "description": "valor agregado de outras rubricas não identificadas",
                     "type": "number"
@@ -1383,6 +1386,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "licenca_premio": {
                     "type": "number"
                 },
                 "outras": {
