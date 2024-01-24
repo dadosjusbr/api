@@ -99,7 +99,11 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 			"total_remuneracao": 7.099024400000013e+06,
 			"tem_proximo": true,
 			"tem_anterior": true,
-			"resumo_rubricas": {}
+			"resumo_rubricas": {
+				"auxilio_alimentacao": 100,
+        		"licenca_premio": 150,
+        		"outras": 200
+			}
 		}
 	`
 
@@ -1015,6 +1019,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"remuneracoes": 21000,
 				"resumo_rubricas": {
 					"auxilio_alimentacao": 100,
+					"licenca_premio": 0,
 					"outras": 200
 				  }
 			}
@@ -1169,7 +1174,11 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 						"nanos": 1
 					},
 					"total_membros": 214,
-					"resumo_rubricas": {}
+					"resumo_rubricas": {
+						"auxilio_alimentacao": 100,
+        	            "licenca_premio": 150,
+        	            "outras": 200
+					}
 				}
 			],
 			"package": {
@@ -1563,6 +1572,11 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					30000: 3,
 					40000: 210,
 					50000: 0,
+				},
+				ItemSummary: models.ItemSummary{
+					FoodAllowance: 100,
+					BonusLicense:  150,
+					Others:        200,
 				},
 			},
 			CrawlerVersion:    "unspecified",
