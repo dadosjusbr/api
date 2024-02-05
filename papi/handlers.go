@@ -333,9 +333,10 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 							Total:   monthlyInfo.Summary.Remunerations.Total,
 						},
 						ItemSummary: itemSummary{
-							FoodAllowance: monthlyInfo.Summary.ItemSummary.FoodAllowance,
-							BonusLicense:  monthlyInfo.Summary.ItemSummary.BonusLicense,
-							Others:        monthlyInfo.Summary.ItemSummary.Others,
+							FoodAllowance:        monthlyInfo.Summary.ItemSummary.FoodAllowance,
+							BonusLicense:         monthlyInfo.Summary.ItemSummary.BonusLicense,
+							VacationCompensation: monthlyInfo.Summary.ItemSummary.VacationCompensation,
+							Others:               monthlyInfo.Summary.ItemSummary.Others,
 						},
 					},
 				},
@@ -458,9 +459,10 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 									Total:   mi.Summary.Remunerations.Total,
 								},
 								ItemSummary: itemSummary{
-									FoodAllowance: mi.Summary.ItemSummary.FoodAllowance,
-									BonusLicense:  mi.Summary.ItemSummary.BonusLicense,
-									Others:        mi.Summary.ItemSummary.Others,
+									FoodAllowance:        mi.Summary.ItemSummary.FoodAllowance,
+									BonusLicense:         mi.Summary.ItemSummary.BonusLicense,
+									VacationCompensation: mi.Summary.ItemSummary.VacationCompensation,
+									Others:               mi.Summary.ItemSummary.Others,
 								},
 							},
 						},
@@ -674,7 +676,7 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																					[get]
+//	@Router			/v2/indice 																																													[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -838,9 +840,10 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 							Total:   c.Summary.Remunerations.Total,
 						},
 						ItemSummary: itemSummary{
-							FoodAllowance: c.Summary.ItemSummary.FoodAllowance,
-							BonusLicense:  c.Summary.ItemSummary.BonusLicense,
-							Others:        c.Summary.ItemSummary.Others,
+							FoodAllowance:        c.Summary.ItemSummary.FoodAllowance,
+							BonusLicense:         c.Summary.ItemSummary.BonusLicense,
+							VacationCompensation: c.Summary.ItemSummary.VacationCompensation,
+							Others:               c.Summary.ItemSummary.Others,
 						},
 					},
 				},

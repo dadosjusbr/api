@@ -123,9 +123,10 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		HasNext:     time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
 		HasPrevious: time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
 		ItemSummary: itemSummary{
-			FoodAllowance: agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
-			BonusLicense:  agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
-			Others:        agencyMonthlyInfo.Summary.ItemSummary.Others,
+			FoodAllowance:        agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
+			BonusLicense:         agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
+			VacationCompensation: agencyMonthlyInfo.Summary.ItemSummary.VacationCompensation,
+			Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
 		},
 	}
 	return c.JSON(http.StatusOK, agencySummary)
@@ -340,9 +341,10 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 				},
 				MemberCount: agencyMonthlyInfo.Summary.Count,
 				ItemSummary: itemSummary{
-					FoodAllowance: agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
-					BonusLicense:  agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
-					Others:        agencyMonthlyInfo.Summary.ItemSummary.Others,
+					FoodAllowance:        agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
+					BonusLicense:         agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
+					VacationCompensation: agencyMonthlyInfo.Summary.ItemSummary.VacationCompensation,
+					Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
 				},
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
@@ -597,9 +599,10 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 			Discounts:          d.Discounts,
 			Remunerations:      d.Remunerations,
 			ItemSummary: itemSummary{
-				FoodAllowance: d.ItemSummary.FoodAllowance,
-				BonusLicense:  d.ItemSummary.BonusLicense,
-				Others:        d.ItemSummary.Others,
+				FoodAllowance:        d.ItemSummary.FoodAllowance,
+				BonusLicense:         d.ItemSummary.BonusLicense,
+				VacationCompensation: d.ItemSummary.VacationCompensation,
+				Others:               d.ItemSummary.Others,
 			},
 		})
 	}
@@ -813,9 +816,10 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		discountsRemPerMonth := s.Discounts / float64(s.NumMonthsWithData)
 		discountsRemPerCapita := s.Discounts / float64(s.TotalCount)
 		itemSummary := itemSummary{
-			FoodAllowance: s.ItemSummary.FoodAllowance,
-			BonusLicense:  s.ItemSummary.BonusLicense,
-			Others:        s.ItemSummary.Others,
+			FoodAllowance:        s.ItemSummary.FoodAllowance,
+			BonusLicense:         s.ItemSummary.BonusLicense,
+			VacationCompensation: s.ItemSummary.VacationCompensation,
+			Others:               s.ItemSummary.Others,
 		}
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,

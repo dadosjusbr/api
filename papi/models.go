@@ -23,9 +23,10 @@ type summary struct {
 }
 
 type itemSummary struct {
-	FoodAllowance float64 `json:"auxilio_alimentacao"`
-	BonusLicense  float64 `json:"licenca_premio"`
-	Others        float64 `json:"outras"` // valor agregado de outras rubricas não identificadas
+	FoodAllowance        float64 `json:"auxilio_alimentacao"`
+	BonusLicense         float64 `json:"licenca_premio"`
+	VacationCompensation float64 `json:"indenizacao_de_ferias"`
+	Others               float64 `json:"outras"` // valor agregado de outras rubricas não identificadas
 }
 
 type summaries struct {
