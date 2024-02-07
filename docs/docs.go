@@ -1046,6 +1046,9 @@ const docTemplate = `{
                 "auxilio_alimentacao": {
                     "type": "number"
                 },
+                "indenizacao_de_ferias": {
+                    "type": "number"
+                },
                 "licenca_premio": {
                     "type": "number"
                 },
@@ -1386,6 +1389,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "indenizacao_de_ferias": {
                     "type": "number"
                 },
                 "licenca_premio": {

@@ -1037,6 +1037,9 @@
                 "auxilio_alimentacao": {
                     "type": "number"
                 },
+                "indenizacao_de_ferias": {
+                    "type": "number"
+                },
                 "licenca_premio": {
                     "type": "number"
                 },
@@ -1377,6 +1380,9 @@
             "type": "object",
             "properties": {
                 "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "indenizacao_de_ferias": {
                     "type": "number"
                 },
                 "licenca_premio": {

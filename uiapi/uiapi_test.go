@@ -102,6 +102,7 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 			"resumo_rubricas": {
 				"auxilio_alimentacao": 100,
         		"licenca_premio": 150,
+				"indenizacao_de_ferias": 130,
         		"outras": 200
 			}
 		}
@@ -955,9 +956,10 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 			Discounts:          1000,
 			Remunerations:      10000,
 			ItemSummary: models.ItemSummary{
-				FoodAllowance: 100,
-				BonusLicense:  150,
-				Others:        200,
+				FoodAllowance:        100,
+				BonusLicense:         150,
+				VacationCompensation: 125,
+				Others:               200,
 			},
 		},
 		{
@@ -1007,6 +1009,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"resumo_rubricas": {
 					"auxilio_alimentacao": 100,
 					"licenca_premio": 150,
+					"indenizacao_de_ferias": 125,
 					"outras": 200
 				  }
 			},
@@ -1020,6 +1023,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				"resumo_rubricas": {
 					"auxilio_alimentacao": 100,
 					"licenca_premio": 0,
+					"indenizacao_de_ferias": 0,
 					"outras": 200
 				  }
 			}
@@ -1177,6 +1181,7 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 					"resumo_rubricas": {
 						"auxilio_alimentacao": 100,
         	            "licenca_premio": 150,
+						"indenizacao_de_ferias": 130,
         	            "outras": 200
 					}
 				}
@@ -1323,9 +1328,10 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				Size: 30195,
 			},
 			ItemSummary: models.ItemSummary{
-				FoodAllowance: 100,
-				BonusLicense:  150,
-				Others:        200,
+				FoodAllowance:        100,
+				BonusLicense:         150,
+				VacationCompensation: 130,
+				Others:               200,
 			},
 		},
 	}
@@ -1390,6 +1396,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 					"resumo_rubricas": {
 						"auxilio_alimentacao": 100,
 						"licenca_premio": 150,
+						"indenizacao_de_ferias": 130,
 						"outras": 200
 					  }
 				}
@@ -1574,9 +1581,10 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					50000: 0,
 				},
 				ItemSummary: models.ItemSummary{
-					FoodAllowance: 100,
-					BonusLicense:  150,
-					Others:        200,
+					FoodAllowance:        100,
+					BonusLicense:         150,
+					VacationCompensation: 130,
+					Others:               200,
 				},
 			},
 			CrawlerVersion:    "unspecified",
