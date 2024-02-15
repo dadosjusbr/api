@@ -1046,6 +1046,9 @@ const docTemplate = `{
                 "auxilio_alimentacao": {
                     "type": "number"
                 },
+                "gratificacao_natalina": {
+                    "type": "number"
+                },
                 "indenizacao_de_ferias": {
                     "type": "number"
                 },
@@ -1389,6 +1392,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "gratificacao_natalina": {
                     "type": "number"
                 },
                 "indenizacao_de_ferias": {
