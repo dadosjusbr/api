@@ -103,6 +103,7 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 				"auxilio_alimentacao": 100,
         		"licenca_premio": 150,
 				"indenizacao_de_ferias": 130,
+				"gratificacao_natalina": 120,
         		"outras": 200
 			}
 		}
@@ -959,6 +960,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				FoodAllowance:        100,
 				BonusLicense:         150,
 				VacationCompensation: 125,
+				ChristmasBonus:       175,
 				Others:               200,
 			},
 		},
@@ -1010,6 +1012,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 					"auxilio_alimentacao": 100,
 					"licenca_premio": 150,
 					"indenizacao_de_ferias": 125,
+					"gratificacao_natalina": 175,
 					"outras": 200
 				  }
 			},
@@ -1024,6 +1027,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 					"auxilio_alimentacao": 100,
 					"licenca_premio": 0,
 					"indenizacao_de_ferias": 0,
+					"gratificacao_natalina": 0,
 					"outras": 200
 				  }
 			}
@@ -1182,6 +1186,7 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 						"auxilio_alimentacao": 100,
         	            "licenca_premio": 150,
 						"indenizacao_de_ferias": 130,
+						"gratificacao_natalina": 120,
         	            "outras": 200
 					}
 				}
@@ -1331,6 +1336,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				FoodAllowance:        100,
 				BonusLicense:         150,
 				VacationCompensation: 130,
+				ChristmasBonus:       170,
 				Others:               200,
 			},
 		},
@@ -1397,6 +1403,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 						"auxilio_alimentacao": 100,
 						"licenca_premio": 150,
 						"indenizacao_de_ferias": 130,
+						"gratificacao_natalina": 170,
 						"outras": 200
 					  }
 				}
@@ -1584,6 +1591,7 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					FoodAllowance:        100,
 					BonusLicense:         150,
 					VacationCompensation: 130,
+					ChristmasBonus:       120,
 					Others:               200,
 				},
 			},
