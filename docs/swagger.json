@@ -1043,6 +1043,9 @@
                 "indenizacao_de_ferias": {
                     "type": "number"
                 },
+                "licenca_compensatoria": {
+                    "type": "number"
+                },
                 "licenca_premio": {
                     "type": "number"
                 },
@@ -1389,6 +1392,9 @@
                     "type": "number"
                 },
                 "indenizacao_de_ferias": {
+                    "type": "number"
+                },
+                "licenca_compensatoria": {
                     "type": "number"
                 },
                 "licenca_premio": {

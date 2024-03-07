@@ -127,6 +127,7 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 			BonusLicense:         agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
 			VacationCompensation: agencyMonthlyInfo.Summary.ItemSummary.VacationCompensation,
 			ChristmasBonus:       agencyMonthlyInfo.Summary.ItemSummary.ChristmasBonus,
+			CompensatoryLicense:  agencyMonthlyInfo.Summary.ItemSummary.CompensatoryLicense,
 			Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
 		},
 	}
@@ -346,6 +347,7 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 					BonusLicense:         agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
 					VacationCompensation: agencyMonthlyInfo.Summary.ItemSummary.VacationCompensation,
 					ChristmasBonus:       agencyMonthlyInfo.Summary.ItemSummary.ChristmasBonus,
+					CompensatoryLicense:  agencyMonthlyInfo.Summary.ItemSummary.CompensatoryLicense,
 					Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
 				},
 			}
@@ -605,6 +607,7 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 				BonusLicense:         d.ItemSummary.BonusLicense,
 				VacationCompensation: d.ItemSummary.VacationCompensation,
 				ChristmasBonus:       d.ItemSummary.ChristmasBonus,
+				CompensatoryLicense:  d.ItemSummary.CompensatoryLicense,
 				Others:               d.ItemSummary.Others,
 			},
 		})
@@ -823,6 +826,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 			BonusLicense:         s.ItemSummary.BonusLicense,
 			VacationCompensation: s.ItemSummary.VacationCompensation,
 			ChristmasBonus:       s.ItemSummary.ChristmasBonus,
+			CompensatoryLicense:  s.ItemSummary.CompensatoryLicense,
 			Others:               s.ItemSummary.Others,
 		}
 		annualData = append(annualData, annualSummaryData{
