@@ -1052,6 +1052,9 @@ const docTemplate = `{
                 "indenizacao_de_ferias": {
                     "type": "number"
                 },
+                "licenca_compensatoria": {
+                    "type": "number"
+                },
                 "licenca_premio": {
                     "type": "number"
                 },
@@ -1398,6 +1401,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "indenizacao_de_ferias": {
+                    "type": "number"
+                },
+                "licenca_compensatoria": {
                     "type": "number"
                 },
                 "licenca_premio": {
