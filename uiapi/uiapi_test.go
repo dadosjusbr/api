@@ -105,6 +105,7 @@ func (g getSummaryOfAgency) testWhenDataExists(t *testing.T) {
 				"indenizacao_de_ferias": 130,
 				"gratificacao_natalina": 120,
 				"licenca_compensatoria": 120,
+				"auxilio_saude": 300,
         		"outras": 200
 			}
 		}
@@ -963,6 +964,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 				VacationCompensation: 125,
 				ChristmasBonus:       175,
 				CompensatoryLicense:  120,
+				HealthAllowance:      300,
 				Others:               200,
 			},
 		},
@@ -1016,6 +1018,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 					"indenizacao_de_ferias": 125,
 					"gratificacao_natalina": 175,
 					"licenca_compensatoria": 120,
+					"auxilio_saude": 300,
 					"outras": 200
 				  }
 			},
@@ -1032,6 +1035,7 @@ func (g getGenerealRemunerationFromYear) testWhenDataExists(t *testing.T) {
 					"indenizacao_de_ferias": 0,
 					"gratificacao_natalina": 0,
 					"licenca_compensatoria": 0,
+					"auxilio_saude": 0,
 					"outras": 200
 				  }
 			}
@@ -1192,6 +1196,7 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 						"indenizacao_de_ferias": 130,
 						"gratificacao_natalina": 120,
 						"licenca_compensatoria": 120,
+						"auxilio_saude": 300,
         	            "outras": 200
 					}
 				}
@@ -1343,6 +1348,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				VacationCompensation: 130,
 				ChristmasBonus:       170,
 				CompensatoryLicense:  120,
+				HealthAllowance:      300,
 				Others:               200,
 			},
 		},
@@ -1411,6 +1417,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 						"indenizacao_de_ferias": 130,
 						"gratificacao_natalina": 170,
 						"licenca_compensatoria": 120,
+						"auxilio_saude": 300,
 						"outras": 200
 					  }
 				}
@@ -1600,6 +1607,7 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 					VacationCompensation: 130,
 					ChristmasBonus:       120,
 					CompensatoryLicense:  120,
+					HealthAllowance:      300,
 					Others:               200,
 				},
 			},
