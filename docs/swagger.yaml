@@ -187,6 +187,8 @@ definitions:
     properties:
       auxilio_alimentacao:
         type: number
+      auxilio_saude:
+        type: number
       gratificacao_natalina:
         type: number
       indenizacao_de_ferias:
@@ -421,6 +423,8 @@ definitions:
   uiapi.itemSummary:
     properties:
       auxilio_alimentacao:
+        type: number
+      auxilio_saude:
         type: number
       gratificacao_natalina:
         type: number

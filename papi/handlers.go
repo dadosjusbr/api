@@ -338,6 +338,7 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 							VacationCompensation: monthlyInfo.Summary.ItemSummary.VacationCompensation,
 							ChristmasBonus:       monthlyInfo.Summary.ItemSummary.ChristmasBonus,
 							CompensatoryLicense:  monthlyInfo.Summary.ItemSummary.CompensatoryLicense,
+							HealthAllowance:      monthlyInfo.Summary.ItemSummary.HealthAllowance,
 							Others:               monthlyInfo.Summary.ItemSummary.Others,
 						},
 					},
@@ -466,6 +467,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 									VacationCompensation: mi.Summary.ItemSummary.VacationCompensation,
 									ChristmasBonus:       mi.Summary.ItemSummary.ChristmasBonus,
 									CompensatoryLicense:  mi.Summary.ItemSummary.CompensatoryLicense,
+									HealthAllowance:      mi.Summary.ItemSummary.HealthAllowance,
 									Others:               mi.Summary.ItemSummary.Others,
 								},
 							},
@@ -680,7 +682,7 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																																													[get]
+//	@Router			/v2/indice 																																																																					[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -849,6 +851,7 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 							VacationCompensation: c.Summary.ItemSummary.VacationCompensation,
 							ChristmasBonus:       c.Summary.ItemSummary.ChristmasBonus,
 							CompensatoryLicense:  c.Summary.ItemSummary.CompensatoryLicense,
+							HealthAllowance:      c.Summary.ItemSummary.HealthAllowance,
 							Others:               c.Summary.ItemSummary.Others,
 						},
 					},

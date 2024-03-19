@@ -1046,6 +1046,9 @@ const docTemplate = `{
                 "auxilio_alimentacao": {
                     "type": "number"
                 },
+                "auxilio_saude": {
+                    "type": "number"
+                },
                 "gratificacao_natalina": {
                     "type": "number"
                 },
@@ -1395,6 +1398,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "auxilio_alimentacao": {
+                    "type": "number"
+                },
+                "auxilio_saude": {
                     "type": "number"
                 },
                 "gratificacao_natalina": {
