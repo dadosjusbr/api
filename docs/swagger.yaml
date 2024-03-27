@@ -519,7 +519,7 @@ definitions:
       orgao:
         type: string
       valor:
-        type: number
+        type: string
     type: object
   uiapi.state:
     properties:

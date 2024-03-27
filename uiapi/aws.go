@@ -3,6 +3,7 @@ package uiapi
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/csv"
 	"fmt"
 	"strings"
 
@@ -103,12 +104,35 @@ func (s awsSession) getRemunerationsFromS3(limit, downloadLimit int, category, b
 		if err != nil {
 			return nil, 0, fmt.Errorf("error opening zip file (%s): %w", *downloadObject.Object.Key, err)
 		}
+
 		defer fReader.Close()
 
 		var r []searchResult
+
+		// Durante a transição de pacotes, precisamos que a api seja capaz de ler os CSVs:
+		// - com ',' como separador de colunas e '.' como separador de decimal
+		// - com ';' como separador de colunas e ',' como separador de decimal
+		// ESSA MODIFICAÇÃO É TEMPORÁRIA ATÉ PADRONIZARMOS TODOS OS PACOTES!!!
 		if err := gocsv.Unmarshal(fReader, &r); err != nil {
-			return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
+			// Caso a leitura padrão falhe (significando que o pacote já está na nova versão),
+			// Faz-se necessário a releitura do arquivo (a variável fReader é corrompida após o erro).
+			fReader, err := zipReader.File[0].Open()
+			if err != nil {
+				return nil, 0, fmt.Errorf("error opening zip file (%s): %w", *downloadObject.Object.Key, err)
+			}
+
+			defer fReader.Close()
+
+			// Definimos o separador de colunas personalizado
+			csvReader := csv.NewReader(fReader)
+			csvReader.Comma = ';'
+
+			// Tentamos novamente a leitura do arquivo
+			if err := gocsv.UnmarshalCSV(csvReader, &r); err != nil {
+				return nil, 0, fmt.Errorf("error unmarshaling remuneracoes.csv: %w", err)
+			}
 		}
+
 		/* Queremos guardar na memória apenas os resultados da categoria que o
 		usuário pediu.*/
 		for _, rem := range r {
