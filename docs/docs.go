@@ -1543,7 +1543,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "valor": {
-                    "type": "number"
+                    "type": "string"
                 }
             }
         },
