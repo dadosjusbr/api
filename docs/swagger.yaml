@@ -189,6 +189,8 @@ definitions:
         type: number
       auxilio_saude:
         type: number
+      ferias:
+        type: number
       gratificacao_natalina:
         type: number
       indenizacao_de_ferias:
@@ -425,6 +427,8 @@ definitions:
       auxilio_alimentacao:
         type: number
       auxilio_saude:
+        type: number
+      ferias:
         type: number
       gratificacao_natalina:
         type: number

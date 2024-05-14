@@ -26,6 +26,7 @@ type itemSummary struct {
 	FoodAllowance        float64 `json:"auxilio_alimentacao"`
 	BonusLicense         float64 `json:"licenca_premio"`
 	VacationCompensation float64 `json:"indenizacao_de_ferias"`
+	Vacation             float64 `json:"ferias"`
 	ChristmasBonus       float64 `json:"gratificacao_natalina"`
 	CompensatoryLicense  float64 `json:"licenca_compensatoria"`
 	HealthAllowance      float64 `json:"auxilio_saude"`
