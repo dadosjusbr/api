@@ -1049,6 +1049,9 @@ const docTemplate = `{
                 "auxilio_saude": {
                     "type": "number"
                 },
+                "ferias": {
+                    "type": "number"
+                },
                 "gratificacao_natalina": {
                     "type": "number"
                 },
@@ -1401,6 +1404,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "auxilio_saude": {
+                    "type": "number"
+                },
+                "ferias": {
                     "type": "number"
                 },
                 "gratificacao_natalina": {
