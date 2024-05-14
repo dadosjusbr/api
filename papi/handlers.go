@@ -336,6 +336,7 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 							FoodAllowance:        monthlyInfo.Summary.ItemSummary.FoodAllowance,
 							BonusLicense:         monthlyInfo.Summary.ItemSummary.BonusLicense,
 							VacationCompensation: monthlyInfo.Summary.ItemSummary.VacationCompensation,
+							Vacation:             monthlyInfo.Summary.ItemSummary.Vacation,
 							ChristmasBonus:       monthlyInfo.Summary.ItemSummary.ChristmasBonus,
 							CompensatoryLicense:  monthlyInfo.Summary.ItemSummary.CompensatoryLicense,
 							HealthAllowance:      monthlyInfo.Summary.ItemSummary.HealthAllowance,
@@ -465,6 +466,7 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 									FoodAllowance:        mi.Summary.ItemSummary.FoodAllowance,
 									BonusLicense:         mi.Summary.ItemSummary.BonusLicense,
 									VacationCompensation: mi.Summary.ItemSummary.VacationCompensation,
+									Vacation:             mi.Summary.ItemSummary.Vacation,
 									ChristmasBonus:       mi.Summary.ItemSummary.ChristmasBonus,
 									CompensatoryLicense:  mi.Summary.ItemSummary.CompensatoryLicense,
 									HealthAllowance:      mi.Summary.ItemSummary.HealthAllowance,
@@ -682,7 +684,7 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																																																					[get]
+//	@Router			/v2/indice 																																																																													[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -849,6 +851,7 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 							FoodAllowance:        c.Summary.ItemSummary.FoodAllowance,
 							BonusLicense:         c.Summary.ItemSummary.BonusLicense,
 							VacationCompensation: c.Summary.ItemSummary.VacationCompensation,
+							Vacation:             c.Summary.ItemSummary.Vacation,
 							ChristmasBonus:       c.Summary.ItemSummary.ChristmasBonus,
 							CompensatoryLicense:  c.Summary.ItemSummary.CompensatoryLicense,
 							HealthAllowance:      c.Summary.ItemSummary.HealthAllowance,
