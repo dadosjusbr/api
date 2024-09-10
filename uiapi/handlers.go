@@ -326,6 +326,11 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 		log.Printf("[totals of agency year] error getting data for first screen(estado:%s):%q", aID, err)
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
 	}
+	strAveragePerCapita, err := h.client.Db.GetAveragePerCapita(aID, year)
+	if err != nil {
+		log.Printf("[totals of agency year] error getting average per capita (estado:%s):%q", aID, err)
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro orgao=%s inválido", aID))
+	}
 	host := c.Request().Host
 	strAgency.URL = fmt.Sprintf("%s/v2/orgao/%s", host, strAgency.ID)
 	for _, agencyMonthlyInfo := range agenciesMonthlyInfo[aID] {
@@ -408,6 +413,12 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 		},
 		MonthTotals:    monthTotalsOfYear,
 		SummaryPackage: pkg,
+		AveragePerCapita: &averagePerCapita{
+			BaseRemunerationPerCapita:   strAveragePerCapita.BaseRemunerationPerCapita,
+			OtherRemunerationsPerCapita: strAveragePerCapita.OtherRemunerationsPerCapita,
+			DiscountsPerCapita:          strAveragePerCapita.DiscountsPerCapita,
+			RemunerationsPerCapita:      strAveragePerCapita.RemunerationsPerCapita,
+		},
 	}
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
@@ -820,13 +831,13 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 	var annualData []annualSummaryData
 	for _, s := range summaries {
 		baseRemPerMonth := s.BaseRemuneration / float64(s.NumMonthsWithData)
-		baseRemPerCapita := s.BaseRemuneration / float64(s.TotalCount)
+		baseRemPerCapita := s.BaseRemunerationPerCapita
 		otherRemPerMonth := s.OtherRemunerations / float64(s.NumMonthsWithData)
-		otherRemPerCapita := s.OtherRemunerations / float64(s.TotalCount)
+		otherRemPerCapita := s.OtherRemunerationsPerCapita
 		remPerMonth := s.Remunerations / float64(s.NumMonthsWithData)
-		remPerCapita := s.Remunerations / float64(s.TotalCount)
+		remPerCapita := s.RemunerationsPerCapita
 		discountsRemPerMonth := s.Discounts / float64(s.NumMonthsWithData)
-		discountsRemPerCapita := s.Discounts / float64(s.TotalCount)
+		discountsRemPerCapita := s.DiscountsPerCapita
 		itemSummary := itemSummary{
 			FoodAllowance:        s.ItemSummary.FoodAllowance,
 			BonusLicense:         s.ItemSummary.BonusLicense,

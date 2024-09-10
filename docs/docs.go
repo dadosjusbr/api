@@ -1347,6 +1347,23 @@ const docTemplate = `{
                 }
             }
         },
+        "uiapi.averagePerCapita": {
+            "type": "object",
+            "properties": {
+                "descontos": {
+                    "type": "number"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                },
+                "remuneracoes": {
+                    "type": "number"
+                }
+            }
+        },
         "uiapi.backup": {
             "type": "object",
             "properties": {
@@ -1636,6 +1653,9 @@ const docTemplate = `{
             "properties": {
                 "ano": {
                     "type": "integer"
+                },
+                "media_por_membro": {
+                    "$ref": "#/definitions/uiapi.averagePerCapita"
                 },
                 "meses": {
                     "type": "array",

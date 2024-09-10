@@ -124,10 +124,11 @@ type agencyTotalsYear struct {
 }
 
 type v2AgencyTotalsYear struct {
-	Year           int             `json:"ano,omitempty"`
-	Agency         *agency         `json:"orgao,omitempty"`
-	MonthTotals    []v2MonthTotals `json:"meses,omitempty"`
-	SummaryPackage *backup         `json:"package,omitempty"`
+	Year             int               `json:"ano,omitempty"`
+	Agency           *agency           `json:"orgao,omitempty"`
+	AveragePerCapita *averagePerCapita `json:"media_por_membro,omitempty"`
+	MonthTotals      []v2MonthTotals   `json:"meses,omitempty"`
+	SummaryPackage   *backup           `json:"package,omitempty"`
 }
 
 type backup struct {
@@ -291,4 +292,11 @@ type mensalRemuneration struct {
 	Discounts          float64     `json:"descontos"`
 	Remunerations      float64     `json:"remuneracoes"`
 	ItemSummary        itemSummary `json:"resumo_rubricas"`
+}
+
+type averagePerCapita struct {
+	BaseRemunerationPerCapita   float64 `json:"remuneracao_base"`
+	OtherRemunerationsPerCapita float64 `json:"outras_remuneracoes"`
+	DiscountsPerCapita          float64 `json:"descontos"`
+	RemunerationsPerCapita      float64 `json:"remuneracoes"`
 }

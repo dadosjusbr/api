@@ -1141,10 +1141,20 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 			OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
 		},
 	}
+	avg := models.AveragePerCapita{
+		ID:                          "tjal",
+		Year:                        2020,
+		BaseRemunerationPerCapita:   33173.01121495333,
+		OtherRemunerationsPerCapita: 9119.563364485992,
+		DiscountsPerCapita:          10382.615233644861,
+		RemunerationsPerCapita:      33173.01121495333,
+	}
+
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
 	dbMock.EXPECT().GetAgency("tjal").Return(&agencies[0], nil).Times(1)
 	dbMock.EXPECT().GetMonthlyInfo([]models.Agency{{ID: "tjal"}}, 2020).Return(map[string][]models.AgencyMonthlyInfo{"tjal": agmi}, nil).Times(1)
 	fsMock.EXPECT().GetFile("tjal/datapackage/tjal-2020.zip").Return(agmi[0].Package, nil)
+	dbMock.EXPECT().GetAveragePerCapita("tjal", 2020).Return(&avg, nil).Times(1)
 
 	e := echo.New()
 	request := httptest.NewRequest(
@@ -1178,6 +1188,12 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 				"ouvidoria": "http://www.tjal.jus.br/ombudsman",
 				"url": "example.com/v2/orgao/tjal"
 			},
+			"media_por_membro": {
+				"remuneracao_base": 33173.01121495333,
+				"outras_remuneracoes": 9119.563364485992,
+				"descontos": 10382.615233644861,
+				"remuneracoes": 33173.01121495333
+			  },
 			"meses": [
 				{
 					"mes": 1,
@@ -1232,10 +1248,20 @@ func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
 		TwitterHandle: "tjaloficial",
 		OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
 	}
+	avg := models.AveragePerCapita{
+		ID:                          "tjal",
+		Year:                        2020,
+		BaseRemunerationPerCapita:   0,
+		OtherRemunerationsPerCapita: 0,
+		DiscountsPerCapita:          0,
+		RemunerationsPerCapita:      0,
+	}
+
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
 	dbMock.EXPECT().GetAgency("tjal").Return(&agency, nil).Times(1)
 	dbMock.EXPECT().GetMonthlyInfo([]models.Agency{{ID: "tjal"}}, 2020).Return(nil, nil).Times(1)
 	fsMock.EXPECT().GetFile("tjal/datapackage/tjal-2020.zip").Return(nil, nil).Times(1)
+	dbMock.EXPECT().GetAveragePerCapita("tjal", 2020).Return(&avg, nil).Times(1)
 
 	e := echo.New()
 	request := httptest.NewRequest(
@@ -1268,6 +1294,12 @@ func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
 					"twitter_handle": "tjaloficial",
 					"ouvidoria": "http://www.tjal.jus.br/ombudsman",
 					"url": "example.com/v2/orgao/tjal"
+				},
+				"media_por_membro": {
+					"remuneracao_base": 0,
+					"outras_remuneracoes": 0,
+					"descontos": 0,
+					"remuneracoes": 0
 				}
 		}
 	`
@@ -1334,14 +1366,18 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 	}
 	agmi := []models.AnnualSummary{
 		{
-			Year:               2020,
-			AverageCount:       214,
-			TotalCount:         2568,
-			BaseRemuneration:   10000,
-			OtherRemunerations: 1000,
-			Discounts:          1000,
-			Remunerations:      10000,
-			NumMonthsWithData:  12,
+			Year:                        2020,
+			AverageCount:                214,
+			TotalCount:                  2568,
+			BaseRemuneration:            10000,
+			BaseRemunerationPerCapita:   3.8940809968847354,
+			OtherRemunerations:          1000,
+			OtherRemunerationsPerCapita: 0.3894080996884735,
+			Discounts:                   1000,
+			DiscountsPerCapita:          0.3894080996884735,
+			Remunerations:               10000,
+			RemunerationsPerCapita:      3.8940809968847354,
+			NumMonthsWithData:           12,
 			Package: &models.Backup{
 				URL:  "https://dadosjusbr.org/download/tjal/datapackage/tjal-2020-1.zip",
 				Hash: "4d7ca8986101673aea060ac1d8e5a529",

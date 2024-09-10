@@ -684,7 +684,7 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																																																													[get]
+//	@Router			/v2/indice 																																																																																					[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
