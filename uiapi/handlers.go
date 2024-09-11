@@ -413,11 +413,11 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 		},
 		MonthTotals:    monthTotalsOfYear,
 		SummaryPackage: pkg,
-		AveragePerCapita: &averagePerCapita{
-			BaseRemunerationPerCapita:   strAveragePerCapita.BaseRemunerationPerCapita,
-			OtherRemunerationsPerCapita: strAveragePerCapita.OtherRemunerationsPerCapita,
-			DiscountsPerCapita:          strAveragePerCapita.DiscountsPerCapita,
-			RemunerationsPerCapita:      strAveragePerCapita.RemunerationsPerCapita,
+		AveragePerCapita: &perCapitaData{
+			BaseRemuneration:   strAveragePerCapita.BaseRemuneration,
+			OtherRemunerations: strAveragePerCapita.OtherRemunerations,
+			Discounts:          strAveragePerCapita.Discounts,
+			Remunerations:      strAveragePerCapita.Remunerations,
 		},
 	}
 	return c.JSON(http.StatusOK, agencyTotalsYear)

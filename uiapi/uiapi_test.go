@@ -1141,13 +1141,13 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 			OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
 		},
 	}
-	avg := models.AveragePerCapita{
-		ID:                          "tjal",
-		Year:                        2020,
-		BaseRemunerationPerCapita:   33173.01121495333,
-		OtherRemunerationsPerCapita: 9119.563364485992,
-		DiscountsPerCapita:          10382.615233644861,
-		RemunerationsPerCapita:      33173.01121495333,
+	avg := models.PerCapitaData{
+		AgencyID:           "tjal",
+		Year:               2020,
+		BaseRemuneration:   33173.01121495333,
+		OtherRemunerations: 9119.563364485992,
+		Discounts:          10382.615233644861,
+		Remunerations:      33173.01121495333,
 	}
 
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -1248,13 +1248,13 @@ func (g getTotalsOfAgencyYear) testWhenMonthlyInfoDoesNotExist(t *testing.T) {
 		TwitterHandle: "tjaloficial",
 		OmbudsmanURL:  "http://www.tjal.jus.br/ombudsman",
 	}
-	avg := models.AveragePerCapita{
-		ID:                          "tjal",
-		Year:                        2020,
-		BaseRemunerationPerCapita:   0,
-		OtherRemunerationsPerCapita: 0,
-		DiscountsPerCapita:          0,
-		RemunerationsPerCapita:      0,
+	avg := models.PerCapitaData{
+		AgencyID:           "tjal",
+		Year:               2020,
+		BaseRemuneration:   0,
+		OtherRemunerations: 0,
+		Discounts:          0,
+		Remunerations:      0,
 	}
 
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
