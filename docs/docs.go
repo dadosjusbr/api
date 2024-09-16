@@ -1347,23 +1347,6 @@ const docTemplate = `{
                 }
             }
         },
-        "uiapi.averagePerCapita": {
-            "type": "object",
-            "properties": {
-                "descontos": {
-                    "type": "number"
-                },
-                "outras_remuneracoes": {
-                    "type": "number"
-                },
-                "remuneracao_base": {
-                    "type": "number"
-                },
-                "remuneracoes": {
-                    "type": "number"
-                }
-            }
-        },
         "uiapi.backup": {
             "type": "object",
             "properties": {
@@ -1467,6 +1450,23 @@ const docTemplate = `{
                 },
                 "resumo_rubricas": {
                     "$ref": "#/definitions/uiapi.itemSummary"
+                }
+            }
+        },
+        "uiapi.perCapitaData": {
+            "type": "object",
+            "properties": {
+                "descontos": {
+                    "type": "number"
+                },
+                "outras_remuneracoes": {
+                    "type": "number"
+                },
+                "remuneracao_base": {
+                    "type": "number"
+                },
+                "remuneracoes": {
+                    "type": "number"
                 }
             }
         },
@@ -1655,7 +1655,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "media_por_membro": {
-                    "$ref": "#/definitions/uiapi.averagePerCapita"
+                    "$ref": "#/definitions/uiapi.perCapitaData"
                 },
                 "meses": {
                     "type": "array",

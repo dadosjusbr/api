@@ -389,17 +389,6 @@ definitions:
       resumo_rubricas:
         $ref: '#/definitions/uiapi.itemSummary'
     type: object
-  uiapi.averagePerCapita:
-    properties:
-      descontos:
-        type: number
-      outras_remuneracoes:
-        type: number
-      remuneracao_base:
-        type: number
-      remuneracoes:
-        type: number
-    type: object
   uiapi.backup:
     properties:
       hash:
@@ -469,6 +458,17 @@ definitions:
         type: number
       resumo_rubricas:
         $ref: '#/definitions/uiapi.itemSummary'
+    type: object
+  uiapi.perCapitaData:
+    properties:
+      descontos:
+        type: number
+      outras_remuneracoes:
+        type: number
+      remuneracao_base:
+        type: number
+      remuneracoes:
+        type: number
     type: object
   uiapi.procError:
     properties:
@@ -592,7 +592,7 @@ definitions:
       ano:
         type: integer
       media_por_membro:
-        $ref: '#/definitions/uiapi.averagePerCapita'
+        $ref: '#/definitions/uiapi.perCapitaData'
       meses:
         items:
           $ref: '#/definitions/uiapi.v2MonthTotals'
