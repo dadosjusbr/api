@@ -72,15 +72,16 @@ type miError struct {
 }
 
 type summaryzedMI struct {
-	AgencyID string     `json:"id_orgao,omitempty"`
-	Month    int        `json:"mes,omitempty"`
-	Year     int        `json:"ano,omitempty"`
-	Summary  *summaries `json:"sumarios,omitempty"`
-	Package  *backup    `json:"pacote_de_dados,omitempty"`
-	Metadata *metadata  `json:"metadados,omitempty"`
-	Score    *score     `json:"indice_transparencia,omitempty"`
-	Collect  *collect   `json:"dados_coleta,omitempty"`
-	Error    *miError   `json:"error,omitempty"`
+	AgencyID         string     `json:"id_orgao,omitempty"`
+	Month            int        `json:"mes,omitempty"`
+	Year             int        `json:"ano,omitempty"`
+	Summary          *summaries `json:"sumarios,omitempty"`
+	Package          *backup    `json:"pacote_de_dados,omitempty"`
+	Metadata         *metadata  `json:"metadados,omitempty"`
+	Score            *score     `json:"indice_transparencia,omitempty"`
+	Collect          *collect   `json:"dados_coleta,omitempty"`
+	ManualCollection bool       `json:"coleta_manual"`
+	Error            *miError   `json:"error,omitempty"`
 }
 
 type agency struct {

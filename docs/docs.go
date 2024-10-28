@@ -1173,6 +1173,9 @@ const docTemplate = `{
                 "ano": {
                     "type": "integer"
                 },
+                "coleta_manual": {
+                    "type": "boolean"
+                },
                 "dados_coleta": {
                     "$ref": "#/definitions/papi.collect"
                 },

@@ -237,7 +237,9 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 							CrawlerVersion: mi.CrawlerVersion,
 							ParserRepo:     mi.ParserRepo,
 							ParserVersion:  mi.ParserVersion,
-						}})
+						},
+						ManualCollection: mi.ManualCollection,
+					})
 				// The status 4 is a report from crawlers that data is unavailable or malformed. By removing them from the API results, we make sure they are displayed as if there is no data.
 			} else if mi.ProcInfo.Status != 4 {
 				sumMI = append(
@@ -249,11 +251,13 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 							Status:       mi.ProcInfo.Status,
 							Cmd:          mi.ProcInfo.Cmd,
 						},
-						Month:    mi.Month,
-						Year:     mi.Year,
-						Package:  nil,
-						Summary:  nil,
-						Metadata: nil})
+						Month:            mi.Month,
+						Year:             mi.Year,
+						Package:          nil,
+						Summary:          nil,
+						Metadata:         nil,
+						ManualCollection: mi.ManualCollection,
+					})
 			}
 		}
 	}
@@ -369,6 +373,7 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 					ParserRepo:     monthlyInfo.ParserRepo,
 					ParserVersion:  monthlyInfo.ParserVersion,
 				},
+				ManualCollection: monthlyInfo.ManualCollection,
 			}
 		//O status 4 informa que os dados estão indisponíveis. Ao removê-los dos resultados da API, garantimos que eles sejam exibidos como se não houvesse dados.
 	} else if monthlyInfo.ProcInfo.Status != 4 {
@@ -379,11 +384,12 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 				Status:       monthlyInfo.ProcInfo.Status,
 				Cmd:          monthlyInfo.ProcInfo.Cmd,
 			},
-			Month:    monthlyInfo.Month,
-			Year:     monthlyInfo.Year,
-			Package:  nil,
-			Summary:  nil,
-			Metadata: nil,
+			Month:            monthlyInfo.Month,
+			Year:             monthlyInfo.Year,
+			Package:          nil,
+			Summary:          nil,
+			Metadata:         nil,
+			ManualCollection: monthlyInfo.ManualCollection,
 		}
 	} else {
 		return c.NoContent(http.StatusNoContent)
@@ -498,7 +504,9 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 							CrawlerVersion: mi.CrawlerVersion,
 							ParserRepo:     mi.ParserRepo,
 							ParserVersion:  mi.ParserVersion,
-						}})
+						},
+						ManualCollection: mi.ManualCollection,
+					})
 				//O status 4 informa que os dados estão indisponíveis. Ao removê-los dos resultados da API, garantimos que eles sejam exibidos como se não houvesse dados.
 			} else if mi.ProcInfo.Status != 4 {
 				sumMI = append(
@@ -510,11 +518,13 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 							Status:       mi.ProcInfo.Status,
 							Cmd:          mi.ProcInfo.Cmd,
 						},
-						Month:    mi.Month,
-						Year:     mi.Year,
-						Package:  nil,
-						Summary:  nil,
-						Metadata: nil})
+						Month:            mi.Month,
+						Year:             mi.Year,
+						Package:          nil,
+						Summary:          nil,
+						Metadata:         nil,
+						ManualCollection: mi.ManualCollection,
+					})
 			}
 		}
 	}
@@ -684,7 +694,7 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																																																																													[get]
+//	@Router			/v2/indice 																																																																																																					[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -876,7 +886,9 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 					Score:             c.Score.Score,
 					CompletenessScore: c.Score.CompletenessScore,
 					EasinessScore:     c.Score.EasinessScore,
-				}})
+				},
+				ManualCollection: c.ManualCollection,
+			})
 			numMonthsWithData++
 		}
 		aggregateScore += c.Score.Score
