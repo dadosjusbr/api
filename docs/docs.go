@@ -1185,6 +1185,9 @@ const docTemplate = `{
                 "id_orgao": {
                     "type": "string"
                 },
+                "inconsistente": {
+                    "type": "boolean"
+                },
                 "indice_transparencia": {
                     "$ref": "#/definitions/papi.score"
                 },
@@ -1308,6 +1311,9 @@ const docTemplate = `{
                 },
                 "descontos_por_mes": {
                     "type": "number"
+                },
+                "inconsistente": {
+                    "type": "boolean"
                 },
                 "meses_com_dados": {
                     "type": "integer"
@@ -1685,6 +1691,9 @@ const docTemplate = `{
                 },
                 "error": {
                     "$ref": "#/definitions/uiapi.procError"
+                },
+                "inconsistente": {
+                    "type": "boolean"
                 },
                 "mes": {
                     "type": "integer"
