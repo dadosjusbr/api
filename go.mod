@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12
-	// github.com/dadosjusbr/storage v0.0.0-20240923172949-d3b675a3e292
+	github.com/dadosjusbr/storage v0.0.0-20241220002941-04adcca6c05e
 	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/golang/mock v1.6.0
 	github.com/joho/godotenv v1.4.0
@@ -31,8 +31,6 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 )
-
-require github.com/dadosjusbr/storage v0.0.0-00010101000000-000000000000
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -72,5 +70,3 @@ require (
 	google.golang.org/genproto v0.0.0-20230127162408-596548ed4efa // indirect
 	google.golang.org/grpc v1.53.0 // indirect
 )
-
-replace github.com/dadosjusbr/storage => ../storage
