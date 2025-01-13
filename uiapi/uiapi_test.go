@@ -1219,7 +1219,8 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 						"licenca_compensatoria": 120,
 						"auxilio_saude": 300,
         	            "outras": 200
-					}
+					},
+					"inconsistente": false
 				}
 			],
 			"package": {
@@ -1393,6 +1394,7 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 				HealthAllowance:      300,
 				Others:               200,
 			},
+			Inconsistent: true,
 		},
 	}
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
@@ -1462,8 +1464,9 @@ func (g getAnnualSummary) testWhenDataExists(t *testing.T) {
 						"licenca_compensatoria": 120,
 						"auxilio_saude": 300,
 						"outras": 200
-					  }
-				}
+					  },
+					"inconsistente": true
+				}	
 			]
 		}
 	`
