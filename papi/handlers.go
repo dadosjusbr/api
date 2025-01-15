@@ -374,7 +374,6 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 					ParserVersion:  monthlyInfo.ParserVersion,
 				},
 				ManualCollection: monthlyInfo.ManualCollection,
-				Inconsistent:     monthlyInfo.Inconsistent,
 			}
 		//O status 4 informa que os dados estão indisponíveis. Ao removê-los dos resultados da API, garantimos que eles sejam exibidos como se não houvesse dados.
 	} else if monthlyInfo.ProcInfo.Status != 4 {
@@ -695,7 +694,7 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 //	@Produce		json
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																																																																																													[get]
+//	@Router			/v2/indice 																																																																																																					[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
