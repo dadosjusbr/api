@@ -80,17 +80,17 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencySummary)
 }
 
-// @ID				GetSummaryOfAgency
-// @Tags			ui_api
-// @Description	Resume os dados de remuneração mensal de um órgão.
-// @Produce		json
-// @Param			orgao										path		string			true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-// @Param			ano											path		int				true	"Ano da remuneração. Exemplo: 2018."
-// @Param			mes											path		int				true	"Mês da remuneração. Exemplo: 1."
-// @Success		200											{object}	v2AgencySummary	"Requisição bem sucedida."
-// @Failure		404											{string}	string			"Órgão não encontrado."
-// @Failure		400											{string}	string			"Parâmetro ano, mês ou nome do órgão são inválidos."
-// @Router			/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
+//	@ID				GetSummaryOfAgency
+//	@Tags			ui_api
+//	@Description	Resume os dados de remuneração mensal de um órgão.
+//	@Produce		json
+//	@Param			orgao										path		string			true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			ano											path		int				true	"Ano da remuneração. Exemplo: 2018."
+//	@Param			mes											path		int				true	"Mês da remuneração. Exemplo: 1."
+//	@Success		200											{object}	v2AgencySummary	"Requisição bem sucedida."
+//	@Failure		404											{string}	string			"Órgão não encontrado."
+//	@Failure		400											{string}	string			"Parâmetro ano, mês ou nome do órgão são inválidos."
+//	@Router			/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
 func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -177,17 +177,17 @@ func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 	})
 }
 
-// @ID				GetSalaryOfAgencyMonthYear
-// @Tags			ui_api
-// @Description	Busca dados das remunerações mensais de um órgão.
-// @Produce		json
-// @Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-// @Param			mes												path		string				true	"Mês da remuneração. Exemplos: 01, 02, 03..."
-// @Param			ano												path		string				true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
-// @Success		200												{object}	agencyRemuneration	"Requisição bem sucedida."
-// @Success		206												{object}	v2ProcInfoResult	"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
-// @Failure		400												{string}	string				"Parâmetros inválidos."
-// @Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} 	[get]
+//	@ID				GetSalaryOfAgencyMonthYear
+//	@Tags			ui_api
+//	@Description	Busca dados das remunerações mensais de um órgão.
+//	@Produce		json
+//	@Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			mes												path		string				true	"Mês da remuneração. Exemplos: 01, 02, 03..."
+//	@Param			ano												path		string				true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+//	@Success		200												{object}	agencyRemuneration	"Requisição bem sucedida."
+//	@Success		206												{object}	v2ProcInfoResult	"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
+//	@Failure		400												{string}	string				"Parâmetros inválidos."
+//	@Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} 	[get]
 func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))
 	if err != nil {
@@ -300,15 +300,15 @@ func (h handler) GetTotalsOfAgencyYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, agencyTotalsYear)
 }
 
-// @ID				GetTotalsOfAgencyYear
-// @Tags			ui_api
-// @Description	Busca os dados de remuneração de um órgão em um ano específico.
-// @Produce		json
-// @Param			orgao									path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-// @Param			ano										path		int					true	"Ano. Exemplo: 2018."
-// @Success		200										{object}	v2AgencyTotalsYear	"Requisição bem sucedida."
-// @Failure		400										{string}	string				"Parâmetro ano ou orgao inválido."
-// @Router			/uiapi/v2/orgao/totais/{orgao}/{ano} 	[get]
+//	@ID				GetTotalsOfAgencyYear
+//	@Tags			ui_api
+//	@Description	Busca os dados de remuneração de um órgão em um ano específico.
+//	@Produce		json
+//	@Param			orgao									path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+//	@Param			ano										path		int					true	"Ano. Exemplo: 2018."
+//	@Success		200										{object}	v2AgencyTotalsYear	"Requisição bem sucedida."
+//	@Failure		400										{string}	string				"Parâmetro ano ou orgao inválido."
+//	@Router			/uiapi/v2/orgao/totais/{orgao}/{ano} 	[get]
 func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -359,7 +359,6 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 					HealthAllowance:      agencyMonthlyInfo.Summary.ItemSummary.HealthAllowance,
 					Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
 				},
-				Inconsistent: agencyMonthlyInfo.Inconsistent,
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
@@ -497,15 +496,15 @@ func (h handler) GetBasicInfoOfType(c echo.Context) error {
 	return c.JSON(http.StatusOK, state)
 }
 
-// @ID				GetBasicInfoOfType
-// @Tags			ui_api
-// @Description	Busca os órgãos de um determinado grupo.
-// @Produce		json
-// @Param			grupo						path		string	false	"Grupo de órgãos"	Enums(justica-eleitoral, ministerios-publicos, justica-estadual, justica-do-trabalho, justica-federal, justica-militar, justica-superior, conselhos-de-justica, AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO)
-// @Success		200							{object}	state	"Órgãos do grupo"
-// @Failure		400							{object}	string	"Parâmetro inválido"
-// @Failure		404							{object}	string	"Grupo não encontrado"
-// @Router			/uiapi/v2/orgao/{grupo} 	[get]
+//	@ID				GetBasicInfoOfType
+//	@Tags			ui_api
+//	@Description	Busca os órgãos de um determinado grupo.
+//	@Produce		json
+//	@Param			grupo						path		string	false	"Grupo de órgãos"	Enums(justica-eleitoral, ministerios-publicos, justica-estadual, justica-do-trabalho, justica-federal, justica-militar, justica-superior, conselhos-de-justica, AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO)
+//	@Success		200							{object}	state	"Órgãos do grupo"
+//	@Failure		400							{object}	string	"Parâmetro inválido"
+//	@Failure		404							{object}	string	"Grupo não encontrado"
+//	@Router			/uiapi/v2/orgao/{grupo} 	[get]
 func (h handler) V2GetBasicInfoOfType(c echo.Context) error {
 	groupName := strings.ToLower(c.Param("grupo"))
 	var strAgencies []strModels.Agency
@@ -590,15 +589,15 @@ func (h handler) GetGeneralRemunerationFromYear(c echo.Context) error {
 	return c.JSON(http.StatusOK, data)
 }
 
-// @ID				GetGeneralRemunerationFromYear
-// @Tags			ui_api
-// @Description	Busca os dados, das remunerações de um ano inteiro, agrupados por mês.
-// @Produce		json
-// @Param			ano									path		string					true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
-// @Success		200									{object}	[]mensalRemuneration	"Requisição bem sucedida."
-// @Failure		400									{string}	string					"Parâmetro ano inválido."
-// @Failure		500									{string}	string					"Erro interno."
-// @Router			/uiapi/v2/geral/remuneracao/{ano} 	[get]
+//	@ID				GetGeneralRemunerationFromYear
+//	@Tags			ui_api
+//	@Description	Busca os dados, das remunerações de um ano inteiro, agrupados por mês.
+//	@Produce		json
+//	@Param			ano									path		string					true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+//	@Success		200									{object}	[]mensalRemuneration	"Requisição bem sucedida."
+//	@Failure		400									{string}	string					"Parâmetro ano inválido."
+//	@Failure		500									{string}	string					"Erro interno."
+//	@Router			/uiapi/v2/geral/remuneracao/{ano} 	[get]
 func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -670,13 +669,13 @@ func (h handler) GeneralSummaryHandler(c echo.Context) error {
 	})
 }
 
-// @ID				GetGeneralSummary
-// @Tags			ui_api
-// @Description	Busca e resume os dados das remunerações de todos os anos
-// @Produce		json
-// @Success		200						{object}	generalSummary	"Requisição bem sucedida."
-// @Failure		500						{string}	string			"Erro interno do servidor."
-// @Router			/uiapi/v2/geral/resumo 	[get]
+//	@ID				GetGeneralSummary
+//	@Tags			ui_api
+//	@Description	Busca e resume os dados das remunerações de todos os anos
+//	@Produce		json
+//	@Success		200						{object}	generalSummary	"Requisição bem sucedida."
+//	@Failure		500						{string}	string			"Erro interno do servidor."
+//	@Router			/uiapi/v2/geral/resumo 	[get]
 func (h handler) GetGeneralSummary(c echo.Context) error {
 	agencies, err := h.client.Db.GetAgenciesCount()
 	if err != nil {
@@ -712,18 +711,18 @@ func (h handler) GetGeneralSummary(c echo.Context) error {
 	})
 }
 
-// @ID				SearchByUrl
-// @Tags			ui_api
-// @Description	Faz uma busca por remunerações a partir de filtros
-// @Produce		json
-// @Param			anos		query		string			false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
-// @Param			meses		query		string			false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
-// @Param			orgaos		query		string			false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
-// @Param			categorias	query		string			false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
-// @Success		200			{object}	searchResponse	"Requisição bem sucedida."
-// @Failure		400			{string}	string			"Erro de validação dos parâmetros."
-// @Failure		500			{string}	string			"Erro interno do servidor."
-// @Router			/uiapi/v2/pesquisar [get]
+//	@ID				SearchByUrl
+//	@Tags			ui_api
+//	@Description	Faz uma busca por remunerações a partir de filtros
+//	@Produce		json
+//	@Param			anos		query		string			false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+//	@Param			meses		query		string			false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+//	@Param			orgaos		query		string			false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
+//	@Param			categorias	query		string			false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
+//	@Success		200			{object}	searchResponse	"Requisição bem sucedida."
+//	@Failure		400			{string}	string			"Erro de validação dos parâmetros."
+//	@Failure		500			{string}	string			"Erro interno do servidor."
+//	@Router			/uiapi/v2/pesquisar [get]
 func (h handler) SearchByUrl(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")
@@ -762,18 +761,18 @@ func (h handler) SearchByUrl(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-// @ID				DownloadByUrl
-// @Tags			ui_api
-// @Description	Baixa dados referentes a remunerações a partir de filtros
-// @Produce		json
-// @Param			anos		query		string	false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
-// @Param			meses		query		string	false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
-// @Param			orgaos		query		string	false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
-// @Param			categorias	query		string	false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
-// @Success		200			{file}		file	"Arquivo CSV com os dados."
-// @Failure		400			{string}	string	"Erro de validação dos parâmetros."
-// @Failure		500			{string}	string	"Erro interno do servidor."
-// @Router			/uiapi/v2/download [get]
+//	@ID				DownloadByUrl
+//	@Tags			ui_api
+//	@Description	Baixa dados referentes a remunerações a partir de filtros
+//	@Produce		json
+//	@Param			anos		query		string	false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+//	@Param			meses		query		string	false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+//	@Param			orgaos		query		string	false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
+//	@Param			categorias	query		string	false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
+//	@Success		200			{file}		file	"Arquivo CSV com os dados."
+//	@Failure		400			{string}	string	"Erro de validação dos parâmetros."
+//	@Failure		500			{string}	string	"Erro interno do servidor."
+//	@Router			/uiapi/v2/download [get]
 func (h handler) DownloadByUrl(c echo.Context) error {
 	//Pegando os query params
 	years := c.QueryParam("anos")
@@ -806,15 +805,15 @@ func (h handler) DownloadByUrl(c echo.Context) error {
 	return nil
 }
 
-// @ID				GetAnnualSummary
-// @Tags			ui_api
-// @Description	Retorna os dados anuais de um orgão
-// @Produce		json
-// @Param			orgao	path		string			true	"Nome do orgão"
-// @Success		200		{object}	[]annualSummary	"Requisição bem sucedida."
-// @Failure		400		{string}	string			"Parâmetro orgao inválido"
-// @Failure		500		{string}	string			"Algo deu errado ao tentar coletar os dados anuais do orgao"
-// @Router			/uiapi/v1/orgao/resumo/{orgao} [get]
+//	@ID				GetAnnualSummary
+//	@Tags			ui_api
+//	@Description	Retorna os dados anuais de um orgão
+//	@Produce		json
+//	@Param			orgao	path		string			true	"Nome do orgão"
+//	@Success		200		{object}	[]annualSummary	"Requisição bem sucedida."
+//	@Failure		400		{string}	string			"Parâmetro orgao inválido"
+//	@Failure		500		{string}	string			"Algo deu errado ao tentar coletar os dados anuais do orgao"
+//	@Router			/uiapi/v1/orgao/resumo/{orgao} [get]
 func (h handler) GetAnnualSummary(c echo.Context) error {
 	agencyName := c.Param("orgao")
 	strAgency, err := h.client.Db.GetAgency(agencyName)
@@ -870,8 +869,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 				Hash: s.Package.Hash,
 				Size: s.Package.Size,
 			},
-			ItemSummary:  itemSummary,
-			Inconsistent: s.Inconsistent,
+			ItemSummary: itemSummary,
 		})
 	}
 	var collect []collecting
