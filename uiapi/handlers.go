@@ -863,15 +863,17 @@ func (h handler) DownloadReadme(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro ao ler o readme original: %q", err))
 		}
-		// Adicionar as novas linhas ao início do conteúdo original
-		updatedContent := "**Observações sobre este conjunto de dados**:\n" +
+		// Adicionar as novas linhas ao conteúdo original
+		updatedContent := "\n**Observações sobre este conjunto de dados**:\n\n" +
 			newLines +
-			" Em sua análise, esteja atento a possíveis valores estranhos. Em caso de dúvida, envie um email para: contato@dadosjusbr.org.\n\n" +
-			string(originalContent)
+			" Em sua análise, esteja atento a possíveis valores estranhos.\n\n"
+
+		// Organizando para que seja o 2º tópico
+		newContent := append(originalContent[:1733], append([]byte(updatedContent), originalContent[1734:]...)...)
 
 		// Gravar o conteúdo atualizado no arquivo temporário
 		readmeFile = "readme_atualizado.txt"
-		err = os.WriteFile(readmeFile, []byte(updatedContent), 0644)
+		err = os.WriteFile(readmeFile, newContent, 0644)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro ao gravar o arquivo temporário: %q", err))
 		}
