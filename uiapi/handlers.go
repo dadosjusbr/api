@@ -842,7 +842,7 @@ func (h handler) DownloadReadme(c echo.Context) error {
 		}
 		var results []*string
 		if results, err = h.client.Db.GetNotices(agency, yearInt, monthInt); err != nil {
-			return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro coletando os avisos: %q", err))
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro coletando os avisos: %q", err))
 		}
 		// Filtrar nulos e converter para []string
 		var cleanResults []string
