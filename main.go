@@ -158,8 +158,8 @@ func main() {
 				"http://dadosjusbr.org",
 				"https://www.dadosjusbr.org",
 				"http://www.dadosjusbr.org",
-				"https://dadosjusbr-site-novo.herokuapp.com",
-				"http://dadosjusbr-site-novo.herokuapp.com",
+				"http://dadosjusbr-site-v2.us-east-1.elasticbeanstalk.com",
+				"http://www.dadosjusbr-site-v2.us-east-1.elasticbeanstalk.com",
 			},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 		}))
