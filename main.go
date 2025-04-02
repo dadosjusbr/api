@@ -152,8 +152,6 @@ func main() {
 		uiAPIGroup.Use(nrecho.Middleware(nr))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{
-				"https://dadosjusbr.com",
-				"http://dadosjusbr.com",
 				"https://dadosjusbr.org",
 				"http://dadosjusbr.org",
 				"https://www.dadosjusbr.org",
