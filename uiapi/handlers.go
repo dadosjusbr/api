@@ -861,7 +861,7 @@ func (h handler) DownloadReadme(c echo.Context) error {
 
 		originalContent, err := os.ReadFile(readmeFile)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro ao ler o readme original: %q", err))
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro ao ler o readme original: %q", err))
 		}
 		// Adicionar as novas linhas ao conteúdo original
 		updatedContent := "\n**Observações sobre este conjunto de dados**:\n\n" +
@@ -875,7 +875,7 @@ func (h handler) DownloadReadme(c echo.Context) error {
 		readmeFile = "readme_atualizado.txt"
 		err = os.WriteFile(readmeFile, newContent, 0644)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro ao gravar o arquivo temporário: %q", err))
+			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro ao gravar o arquivo temporário: %q", err))
 		}
 		defer os.Remove(readmeFile)
 	}
@@ -883,7 +883,7 @@ func (h handler) DownloadReadme(c echo.Context) error {
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=README.txt")
 	c.Response().Header().Set("Content-Type", "text/plain")
 	if err := c.File(readmeFile); err != nil {
-		return c.JSON(http.StatusInternalServerError, fmt.Errorf("erro tentando fazer download do readme: %q", err))
+		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro tentando fazer download do readme: %q", err))
 	}
 	return nil
 }
