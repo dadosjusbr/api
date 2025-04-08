@@ -1,8 +1,9 @@
 name: Continuous Delivery
 
 on:
-  schedule:
-    - cron: "0 3 * * 2,4"
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 3 * * 2,4"
 jobs:
   deploy:
     runs-on: ubuntu-latest
