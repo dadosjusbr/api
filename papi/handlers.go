@@ -41,9 +41,9 @@ func (h handler) V1GetAgencyById(c echo.Context) error {
 
 // @ID				GetAgencyById
 // @Tags			public_api
-// @Description	Busca um órgão específico utilizando seu ID.
+// @Description	Busca informações gerais de um órgão como nome completo, jurisdição, tipo de entidade, uf do órgão, perfil do twitter e link para a ouvidoria. Se o órgão informado não for coletado pelo DadosJusBr, um objeto com o motivo da coleta não ser automatizada também será retornado. Não inclue informações de remuneração.
 // @Produce		json
-// @Param			orgao				path		string	true	"ID do órgão. Exemplos: tjal, tjba, mppb."
+// @Param			orgao				path		string	true	"Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb."
 // @Success		200					{object}	agency	"Requisição bem sucedida."
 // @Failure		404					{string}	string	"Órgão não encontrado."
 // @Router			/v2/orgao/{orgao} 	[get]
@@ -94,7 +94,7 @@ func (h handler) V1GetAllAgencies(c echo.Context) error {
 
 // @ID				GetAllAgencies
 // @Tags			public_api
-// @Description	Busca todos os órgãos disponíveis.
+// @Description	Busca informações gerais de todos os órgão como nome completo, jurisdição, tipo de entidade, uf do órgão, perfil do twitter e link para a ouvidoria. Se algum órgão da lista não for coletado pelo DadosJusBr, um objeto com o motivo da coleta não ser automatizada também será retornado. Não inclue informações de remuneração.
 // @Produce		json
 // @Success		200			{object}	[]agency	"Requisição bem sucedida."
 // @Failure		500			{string}	string		"Erro interno do servidor."
@@ -397,16 +397,16 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, sumMI)
 }
 
-// @ID GetMonthlyInfosByYear
-// @Tags public_api
-// @Description Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
-// @Produce json
-// @Success 200 {object} []summaryzedMI "Requisição bem-sucedida com dados mensais"
-// @Failure 400 {string} string "Parâmetros inválidos"
-// @Failure 404 {string} string "Não existem dados para os parâmetros informados"
-// @Param ano path int true "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018)."
-// @Param orgao path string true "Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb"
-// @Router /v2/dados/{orgao}/{ano} [get]
+// @ID				GetMonthlyInfosByYear
+// @Tags			public_api
+// @Description	Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
+// @Produce		json
+// @Success		200		{object}	[]summaryzedMI	"Requisição bem-sucedida com dados mensais"
+// @Failure		400		{string}	string			"Parâmetros inválidos"
+// @Failure		404		{string}	string			"Não existem dados para os parâmetros informados"
+// @Param			ano		path		int				true	"Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018)."
+// @Param			orgao	path		string			true	"Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb"
+// @Router			/v2/dados/{orgao}/{ano} [get]
 func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -533,14 +533,16 @@ func (h handler) GetMonthlyInfosByYear(c echo.Context) error {
 
 // @ID				GetAggregateIndexesWithParams
 // @Tags			public_api
-// @Description	Busca as informações de índices de um grupo ou órgão específico.
+// @Description	Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual, ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal, justica-eleitoral, justica-superior e conselhos-de-justica.
 // @Produce		json
 // @Success		200							{object}	[]aggregateIndexes	"Requisição bem sucedida."
 // @Failure		400							{string}	string				"Requisição inválida."
 // @Failure		500							{string}	string				"Erro interno do servidor."
-// @Param			param						path		string				true	"'grupo' ou 'orgao'"
-// @Param			valor						path		string				true	"Jurisdição ou ID do órgao"
-// @Router			/v2/indice/{param}/{valor} 	[get]
+// @Param			param						path		string				true	"'grupo' para pesquisar por jurisdição ou 'orgao' para pesquisar pela sigla do órgão"
+// @Param			valor						path		string				true	"Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual, etc."
+// @Param			agregado	query		boolean						false	"Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês."
+// @Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
+// @Router			/v2/indice/{param}/{valor}	[get]
 func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 	param := c.Param("param")
 	valor := c.Param("valor")
@@ -688,13 +690,50 @@ func (h handler) V2GetAggregateIndexesWithParams(c echo.Context) error {
 	return c.JSON(http.StatusOK, aggregate)
 }
 
+// @ID				GetAggregateIndexesWithParamsByYear
+// @Tags			public_api
+// @Description	Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual, ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal, justica-eleitoral, justica-superior e conselhos-de-justica.
+// @Produce		json
+// @Success		200							{object}	[]aggregateIndexes	"Requisição bem sucedida."
+// @Failure		400							{string}	string				"Requisição inválida."
+// @Failure		500							{string}	string				"Erro interno do servidor."
+// @Param			param						path		string				true	"'grupo' para pesquisar por jurisdição ou 'orgao' para pesquisar pela sigla do órgão"
+// @Param			valor						path		string				true	"Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual, etc."
+// @Param			ano							path		int					true	"Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018)."
+// @Param			agregado	query		boolean						false	"Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês."
+// @Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
+// @Router			/v2/indice/{param}/{valor}/{ano} [get]
+func (h handler) V2GetAggregateIndexesWithParamsByYear(c echo.Context) error {
+	return h.V2GetAggregateIndexesWithParams(c)
+}
+
+// @ID				GetAggregateIndexesWithParamsByYearAndMonth
+// @Tags			public_api
+// @Description	Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual, ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal, justica-eleitoral, justica-superior e conselhos-de-justica.
+// @Produce		json
+// @Success		200							{object}	[]aggregateIndexes	"Requisição bem sucedida."
+// @Failure		400							{string}	string				"Requisição inválida."
+// @Failure		500							{string}	string				"Erro interno do servidor."
+// @Param			param						path		string				true	"'grupo' para pesquisar por jurisdição ou 'orgao' para pesquisar pela sigla do órgão"
+// @Param			valor						path		string				true	"Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual, etc."
+// @Param			ano							path		int					true	"Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018)."
+// @Param			mes							path		int					true	"Mês para o qual os dados estão sendo solicitados (1-12)."
+// @Param			agregado	query		boolean						false	"Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês."
+// @Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
+// @Router			/v2/indice/{param}/{valor}/{ano}/{mes} [get]
+func (h handler) V2GetAggregateIndexesWithParamsByYearAndMonth(c echo.Context) error {
+	return h.V2GetAggregateIndexesWithParams(c)
+}
+
 // @ID				GetAggregateIndexes
 // @Tags			public_api
-// @Description	Busca as informações de índices de todos os órgãos.
+// @Description	Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos, Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral, Justiça Superior e Conselhos de Justiça.
 // @Produce		json
+// @Param			agregado	query		boolean						false	"Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês."
+// @Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
 // @Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 // @Failure		500			{string}	string						"Erro interno do servidor."
-// @Router			/v2/indice 																																																																																																													[get]
+// @Router			/v2/indice 																			[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -800,11 +839,11 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 
 // @ID				GetAllAgencyInformation
 // @Tags			public_api
-// @Description	Busca todas as informações de um órgão específico.
+// @Description	Busca todos os dados de um órgão específico trazendo informações de cada mês disponível para cada ano disponível a partir de 2018, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
 // @Produce		json
 // @Success		200					{object}	allAgencyInformation	"Requisição bem sucedida."
 // @Failure		400					{string}	string					"Requisição inválida."
-// @Param			orgao				path		string					true	"órgão"
+// @Param			orgao				path		string					true	"Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb"
 // @Router			/v2/dados/{orgao} 	[get]
 func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 	agency := strings.ToLower(c.Param("orgao"))

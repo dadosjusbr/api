@@ -541,7 +541,7 @@ const docTemplate = `{
         },
         "/v2/dados/{orgao}": {
             "get": {
-                "description": "Busca todas as informações de um órgão específico.",
+                "description": "Busca todos os dados de um órgão específico trazendo informações de cada mês disponível para cada ano disponível a partir de 2018, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).",
                 "produces": [
                     "application/json"
                 ],
@@ -552,7 +552,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "órgão",
+                        "description": "Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb",
                         "name": "orgao",
                         "in": "path",
                         "required": true
@@ -682,7 +682,7 @@ const docTemplate = `{
         },
         "/v2/indice": {
             "get": {
-                "description": "Busca as informações de índices de todos os órgãos.",
+                "description": "Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos, Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral, Justiça Superior e Conselhos de Justiça.",
                 "produces": [
                     "application/json"
                 ],
@@ -690,6 +690,20 @@ const docTemplate = `{
                     "public_api"
                 ],
                 "operationId": "GetAggregateIndexes",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês.",
+                        "name": "agregado",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Define se os metadados utilizados para calcular o índice serão retornados ou não.",
+                        "name": "detalhe",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Requisição bem sucedida.",
@@ -711,7 +725,7 @@ const docTemplate = `{
         },
         "/v2/indice/{param}/{valor}": {
             "get": {
-                "description": "Busca as informações de índices de um grupo ou órgão específico.",
+                "description": "Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual, ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal, justica-eleitoral, justica-superior e conselhos-de-justica.",
                 "produces": [
                     "application/json"
                 ],
@@ -722,17 +736,176 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "'grupo' ou 'orgao'",
+                        "description": "'grupo' para pesquisar por jurisdição ou 'orgao' para pesquisar pela sigla do órgão",
                         "name": "param",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Jurisdição ou ID do órgao",
+                        "description": "Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual, etc.",
                         "name": "valor",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês.",
+                        "name": "agregado",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Define se os metadados utilizados para calcular o índice serão retornados ou não.",
+                        "name": "detalhe",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.aggregateIndexes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/indice/{param}/{valor}/{ano}": {
+            "get": {
+                "description": "Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual, ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal, justica-eleitoral, justica-superior e conselhos-de-justica.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAggregateIndexesWithParamsByYear",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "'grupo' para pesquisar por jurisdição ou 'orgao' para pesquisar pela sigla do órgão",
+                        "name": "param",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual, etc.",
+                        "name": "valor",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018).",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês.",
+                        "name": "agregado",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Define se os metadados utilizados para calcular o índice serão retornados ou não.",
+                        "name": "detalhe",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/papi.aggregateIndexes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/indice/{param}/{valor}/{ano}/{mes}": {
+            "get": {
+                "description": "Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual, ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal, justica-eleitoral, justica-superior e conselhos-de-justica.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetAggregateIndexesWithParamsByYearAndMonth",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "'grupo' para pesquisar por jurisdição ou 'orgao' para pesquisar pela sigla do órgão",
+                        "name": "param",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual, etc.",
+                        "name": "valor",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018).",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Mês para o qual os dados estão sendo solicitados (1-12).",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês.",
+                        "name": "agregado",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Define se os metadados utilizados para calcular o índice serão retornados ou não.",
+                        "name": "detalhe",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -762,7 +935,7 @@ const docTemplate = `{
         },
         "/v2/orgao/{orgao}": {
             "get": {
-                "description": "Busca um órgão específico utilizando seu ID.",
+                "description": "Busca informações gerais de um órgão como nome completo, jurisdição, tipo de entidade, uf do órgão, perfil do twitter e link para a ouvidoria. Se o órgão informado não for coletado pelo DadosJusBr, um objeto com o motivo da coleta não ser automatizada também será retornado. Não inclue informações de remuneração.",
                 "produces": [
                     "application/json"
                 ],
@@ -773,7 +946,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "description": "Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb.",
                         "name": "orgao",
                         "in": "path",
                         "required": true
@@ -797,7 +970,7 @@ const docTemplate = `{
         },
         "/v2/orgaos": {
             "get": {
-                "description": "Busca todos os órgãos disponíveis.",
+                "description": "Busca informações gerais de todos os órgão como nome completo, jurisdição, tipo de entidade, uf do órgão, perfil do twitter e link para a ouvidoria. Se algum órgão da lista não for coletado pelo DadosJusBr, um objeto com o motivo da coleta não ser automatizada também será retornado. Não inclue informações de remuneração.",
                 "produces": [
                     "application/json"
                 ],
