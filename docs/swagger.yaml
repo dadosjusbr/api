@@ -1033,15 +1033,22 @@ paths:
       - public_api
   /v2/dados/{orgao}/{ano}:
     get:
-      description: Busca os dados mensais de um órgão por ano
+      description: Busca os dados mensais de um órgão específico trazendo informações
+        de cada mês disponível para o ano informado, retornando dados de coleta (duração
+        da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração
+        base/salário, outras remunerações/benefícios, descontos, remunerações líquidas,
+        quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados
+        de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
       operationId: GetMonthlyInfosByYear
       parameters:
-      - description: Ano
+      - description: Ano para o qual os dados estão sendo solicitados (dados disponíveis
+          a partir de 2018).
         in: path
         name: ano
         required: true
         type: integer
-      - description: Órgão
+      - description: 'Sigla do órgão para o qual os dados estão sendo solicitados.
+          Ex.: tjal, tjba, mppb'
         in: path
         name: orgao
         required: true
@@ -1050,7 +1057,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida
+          description: Requisição bem-sucedida com dados mensais
           schema:
             items:
               $ref: '#/definitions/papi.summaryzedMI'
@@ -1067,20 +1074,27 @@ paths:
       - public_api
   /v2/dados/{orgao}/{ano}/{mes}:
     get:
-      description: Busca um dado mensal de um órgão
+      description: Busca informações mensais de um órgão específico, incluindo dados
+        de coleta (duração da coleta e dados do coletor), dados de remuneração (dos
+        membros ativos, remuneração base/salário, outras remunerações/benefícios,
+        descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas
+        identificadas/penduricalhos), metadados de completude e facilidade de acesso
+        e pontuação de transparência (https://dadosjusbr.org/indice).
       operationId: GetMonthlyInfo
       parameters:
-      - description: Ano
+      - description: Ano para o qual os dados estão sendo solicitados (dados disponíveis
+          a partir de 2018).
         in: path
         name: ano
         required: true
         type: integer
-      - description: Órgão
+      - description: 'Sigla do órgão para o qual os dados estão sendo solicitados.
+          Ex.: tjal, tjba, mppb'
         in: path
         name: orgao
         required: true
         type: string
-      - description: Mês
+      - description: Mês para o qual os dados estão sendo solicitados (1-12).
         in: path
         name: mes
         required: true
@@ -1089,7 +1103,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida
+          description: Requisição bem-sucedida com dados mensais
           schema:
             $ref: '#/definitions/papi.summaryzedMI'
         "400":

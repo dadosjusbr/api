@@ -576,7 +576,7 @@ const docTemplate = `{
         },
         "/v2/dados/{orgao}/{ano}": {
             "get": {
-                "description": "Busca os dados mensais de um órgão por ano",
+                "description": "Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).",
                 "produces": [
                     "application/json"
                 ],
@@ -587,14 +587,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Ano",
+                        "description": "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018).",
                         "name": "ano",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Órgão",
+                        "description": "Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb",
                         "name": "orgao",
                         "in": "path",
                         "required": true
@@ -602,7 +602,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Requisição bem sucedida",
+                        "description": "Requisição bem-sucedida com dados mensais",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -627,7 +627,7 @@ const docTemplate = `{
         },
         "/v2/dados/{orgao}/{ano}/{mes}": {
             "get": {
-                "description": "Busca um dado mensal de um órgão",
+                "description": "Busca informações mensais de um órgão específico, incluindo dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).",
                 "produces": [
                     "application/json"
                 ],
@@ -638,21 +638,21 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Ano",
+                        "description": "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2018).",
                         "name": "ano",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Órgão",
+                        "description": "Sigla do órgão para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb",
                         "name": "orgao",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Mês",
+                        "description": "Mês para o qual os dados estão sendo solicitados (1-12).",
                         "name": "mes",
                         "in": "path",
                         "required": true
@@ -660,7 +660,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Requisição bem sucedida",
+                        "description": "Requisição bem-sucedida com dados mensais",
                         "schema": {
                             "$ref": "#/definitions/papi.summaryzedMI"
                         }
