@@ -82,10 +82,10 @@ func newS3Client(c config) (*file_storage.S3Client, error) {
 	return s3Client, nil
 }
 
-//	@title			API do dadosjusbr.org
-//	@version		1.0
-//	@contact.name	DadosJusBr
-//	@contact.url	https://dadosjusbr.org
+// @title			API do dadosjusbr.org
+// @version			1.0
+// @contact.name	DadosJusBr
+// @contact.url		https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
@@ -151,7 +151,14 @@ func main() {
 		}
 		uiAPIGroup.Use(nrecho.Middleware(nr))
 		uiAPIGroup.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"https://dadosjusbr.com", "http://dadosjusbr.com", "https://dadosjusbr.org", "http://dadosjusbr.org", "https://dadosjusbr-site-novo.herokuapp.com", "http://dadosjusbr-site-novo.herokuapp.com"},
+			AllowOrigins: []string{
+				"https://dadosjusbr.org",
+				"http://dadosjusbr.org",
+				"https://www.dadosjusbr.org",
+				"http://www.dadosjusbr.org",
+				"http://dadosjusbr-site-v2.us-east-1.elasticbeanstalk.com",
+				"http://www.dadosjusbr-site-v2.us-east-1.elasticbeanstalk.com",
+			},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderContentLength},
 		}))
 		log.Println("Using production CORS")
