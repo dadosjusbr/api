@@ -1,10 +1,10 @@
 package uiapi
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -806,6 +806,9 @@ func (h handler) DownloadByUrl(c echo.Context) error {
 	return nil
 }
 
+//go:embed readme_content.txt
+var readmeContent []byte
+
 //	@ID				DownloadReadme
 //	@Tags			ui_api
 //	@Description	Retorna um README sobre o pacote de dados
@@ -818,7 +821,7 @@ func (h handler) DownloadByUrl(c echo.Context) error {
 //	@Failure		500		{string}	string		"Algo deu errado ao retornar o README"
 //	@Router			/uiapi/v2/readme [get]
 func (h handler) DownloadReadme(c echo.Context) error {
-	readmeFile := "uiapi/readme_content.txt"
+	originalContent := readmeContent
 	year := c.QueryParam("ano")
 	month := c.QueryParam("mes")
 	agency := c.QueryParam("orgao")
@@ -859,10 +862,6 @@ func (h handler) DownloadReadme(c echo.Context) error {
 			newLines = "Não identificamos potenciais falhas na origem destes dados."
 		}
 
-		originalContent, err := os.ReadFile(readmeFile)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro ao ler o readme original: %q", err))
-		}
 		// Adicionar as novas linhas ao conteúdo original
 		updatedContent := "\n**Observações sobre este conjunto de dados**:\n\n" +
 			newLines +
@@ -870,19 +869,14 @@ func (h handler) DownloadReadme(c echo.Context) error {
 
 		// Organizando para que seja o 2º tópico
 		newContent := append(originalContent[:1733], append([]byte(updatedContent), originalContent[1734:]...)...)
-
-		// Gravar o conteúdo atualizado no arquivo temporário
-		readmeFile = "readme_atualizado.txt"
-		err = os.WriteFile(readmeFile, newContent, 0644)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro ao gravar o arquivo temporário: %q", err))
-		}
-		defer os.Remove(readmeFile)
+		originalContent = newContent
 	}
 
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=README.txt")
 	c.Response().Header().Set("Content-Type", "text/plain")
-	if err := c.File(readmeFile); err != nil {
+	c.Response().WriteHeader(http.StatusOK)
+	_, err = c.Response().Write(originalContent)
+	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("erro tentando fazer download do readme: %q", err))
 	}
 	return nil
