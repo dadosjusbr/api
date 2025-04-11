@@ -541,7 +541,7 @@ const docTemplate = `{
         },
         "/v2/dados/{orgao}": {
             "get": {
-                "description": "Busca todos os dados de um órgão específico trazendo informações de cada mês disponível para cada ano disponível a partir de 2018, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).",
+                "description": "Busca todos os dados de um órgão específico trazendo informações de cada mês disponível para cada ano disponível a partir de 2018, retornando status de coleta, dados de coleta (duração da coleta e dados do coletor), dados sumarizados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuações referentes ao índice de transparência nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).",
                 "produces": [
                     "application/json"
                 ],
@@ -576,7 +576,7 @@ const docTemplate = `{
         },
         "/v2/dados/{orgao}/{ano}": {
             "get": {
-                "description": "Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).",
+                "description": "Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando status de coleta, dados de coleta (duração da coleta e dados do coletor), dados sumarizados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuações referentes ao índice de transparência nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).",
                 "produces": [
                     "application/json"
                 ],
@@ -627,7 +627,7 @@ const docTemplate = `{
         },
         "/v2/dados/{orgao}/{ano}/{mes}": {
             "get": {
-                "description": "Busca informações mensais de um órgão específico, incluindo dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).",
+                "description": "Busca informações mensais de um órgão específico, incluindo dados de coleta (status e duração da coleta e dados do coletor), dados de remuneração sumarizados (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuações referentes ao índice de transparência nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).",
                 "produces": [
                     "application/json"
                 ],
@@ -682,7 +682,7 @@ const docTemplate = `{
         },
         "/v2/indice": {
             "get": {
-                "description": "Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos, Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral, Justiça Superior e Conselhos de Justiça.",
+                "description": "Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do Índice de Transparência) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos, Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral, Justiça Superior e Conselhos de Justiça.",
                 "produces": [
                     "application/json"
                 ],

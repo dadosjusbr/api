@@ -266,7 +266,7 @@ func (h handler) GetMonthlyInfo(c echo.Context) error {
 
 //	@ID				GetMonthlyInfo
 //	@Tags			public_api
-//	@Description	Busca informações mensais de um órgão específico, incluindo dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
+//	@Description	Busca informações mensais de um órgão específico, incluindo dados de coleta (status e duração da coleta e dados do coletor), dados de remuneração sumarizados (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuações referentes ao índice de transparência nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).
 //	@Produce		json
 //	@Success		200		{object}	summaryzedMI	"Requisição bem-sucedida com dados mensais"
 //	@Failure		400		{string}	string			"Parâmetros inválidos"
@@ -399,7 +399,7 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 
 //	@ID				GetMonthlyInfosByYear
 //	@Tags			public_api
-//	@Description	Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
+//	@Description	Busca os dados mensais de um órgão específico trazendo informações de cada mês disponível para o ano informado, retornando status de coleta, dados de coleta (duração da coleta e dados do coletor), dados sumarizados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuações referentes ao índice de transparência nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).
 //	@Produce		json
 //	@Success		200		{object}	[]summaryzedMI	"Requisição bem-sucedida com dados mensais"
 //	@Failure		400		{string}	string			"Parâmetros inválidos"
@@ -727,13 +727,13 @@ func (h handler) V2GetAggregateIndexesWithParamsByYearAndMonth(c echo.Context) e
 
 //	@ID				GetAggregateIndexes
 //	@Tags			public_api
-//	@Description	Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos, Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral, Justiça Superior e Conselhos de Justiça.
+//	@Description	Busca informações do Índice de Transparência (https://dadosjusbr.org/indice) de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados (critérios de avaliação do Índice de Transparência) e o objeto agregado do detalhamento (compilado do Índice de Trasparência médio do órgão ao longo dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos, Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral, Justiça Superior e Conselhos de Justiça.
 //	@Produce		json
 //	@Param			agregado	query		boolean						false	"Alterna entre o Índice de Transparência geral de todos os órgãos (true) ou o detalhamento do índice de cada órgão mês a mês."
 //	@Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																											[get]
+//	@Router			/v2/indice 																																			[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -839,7 +839,7 @@ func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 
 //	@ID				GetAllAgencyInformation
 //	@Tags			public_api
-//	@Description	Busca todos os dados de um órgão específico trazendo informações de cada mês disponível para cada ano disponível a partir de 2018, retornando dados de coleta (duração da coleta e dados do coletor), dados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuação de transparência (https://dadosjusbr.org/indice).
+//	@Description	Busca todos os dados de um órgão específico trazendo informações de cada mês disponível para cada ano disponível a partir de 2018, retornando status de coleta, dados de coleta (duração da coleta e dados do coletor), dados sumarizados de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios, descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas identificadas/penduricalhos), metadados de completude e facilidade de acesso e pontuações referentes ao índice de transparência nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).
 //	@Produce		json
 //	@Success		200					{object}	allAgencyInformation	"Requisição bem sucedida."
 //	@Failure		400					{string}	string					"Requisição inválida."
