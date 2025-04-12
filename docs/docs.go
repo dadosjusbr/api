@@ -197,7 +197,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
-                "description": "Endpoint de resumo financeiro dos órgãos. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados\n\nInformações Financeiras Detalhadas:\n- Remuneração base total e máxima\n- Outras remunerações e benefícios\n- Valor total de descontos\n- Contagem de membros\n- Análise de rubricas (penduricalhos) específicas\n\nContexto Adicional:\n- Marcadores de existência de dados anteriores/posteriores ao ano/mês consultados\n- Timestamp da coleta de dados\n- Detalhamento de diferentes tipos de remuneração (remuneração base, outras remunerações e descontos)",
+                "description": "Endpoint de resumo das remunerações mensal de um órgão. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados\n\nInformações Financeiras Detalhadas:\n- Remuneração base total e máxima\n- Outras remunerações e benefícios\n- Valor total de descontos\n- Contagem de membros\n- Análise de rubricas (penduricalhos) específicas\n\nContexto Adicional:\n- Marcadores de existência de dados anteriores/posteriores ao ano/mês consultados\n- Timestamp da coleta de dados\n- Detalhamento de diferentes tipos de remuneração (remuneração base, outras remunerações e descontos)",
                 "produces": [
                     "application/json"
                 ],

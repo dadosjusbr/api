@@ -855,7 +855,7 @@ paths:
   /uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}:
     get:
       description: |-
-        Endpoint de resumo financeiro dos órgãos. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados
+        Endpoint de resumo das remunerações mensal de um órgão. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados
 
         Informações Financeiras Detalhadas:
         - Remuneração base total e máxima

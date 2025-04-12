@@ -83,7 +83,7 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 
 //	@ID				GetSummaryOfAgency
 //	@Tags			ui_api
-//	@Description	Endpoint de resumo financeiro dos órgãos. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados
+//	@Description	Endpoint de resumo das remunerações mensal de um órgão. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados
 //	@Description
 //	@Description	Informações Financeiras Detalhadas:
 //	@Description	- Remuneração base total e máxima
