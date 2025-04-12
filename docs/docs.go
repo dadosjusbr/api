@@ -20,7 +20,7 @@ const docTemplate = `{
     "paths": {
         "/uiapi/v1/orgao/resumo/{orgao}": {
             "get": {
-                "description": "Retorna os dados anuais de um orgão",
+                "description": "Retorna os dados de remuneração de todos os anos disponíveis para um órgão específico, incluindo:\n- Remuneração base/salário, outras remunerações/benefícios, descontos e remuneração líquida (salário+benefícios-descontos). Dados brutos, agrupados por mês e per capita\n- Quantidade de meses com dados no determinado ano\n- Quantidade média de membros do órgão naquele ano\n- Resumo dos benefícios identificados (rubricas/penduricalhos) e seus respectivos valores no ano\n- Informações do pacote de dados, URL do pacote de dados para download, seu hash e tamanho do pacote de dados (em bytes)",
                 "produces": [
                     "application/json"
                 ],
@@ -64,7 +64,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/download": {
             "get": {
-                "description": "Baixa dados referentes a remunerações a partir de filtros",
+                "description": "Baixa um arquivo csv referentes a remunerações a partir de filtros. O arquivo tem um limite de 10 mil linhas. Para cada parâmetro, é possível passar múltiplos valores separados por vírgula. As colunas do arquivo csv são:\n\n- Nome do órgão\n- Mês de referência do contracheque\n- Ano de referência do contracheque\n- Matrícula do membro (identificador único do membro no órgão)\n- Nome do membro\n- Cargo que o membro exerce no órgão\n- Lotação (unidade na qual o membro do órgão desenvolve suas atividades)\n- Categoria do contracheque (base, outras remunerações ou descontos)\n- Detalhamento do contracheque (ex: subsídio, desconto, benefício, etc)\n- Valor do contracheque em reais, não corrigido pela inflação",
                 "produces": [
                     "application/json"
                 ],
@@ -98,7 +98,7 @@ const docTemplate = `{
                             "descontos"
                         ],
                         "type": "string",
-                        "description": "Categorias a serem pesquisadas",
+                        "description": "Categorias a serem pesquisadas. Se nada for informado, todas as categorias serão baixadas",
                         "name": "categorias",
                         "in": "query"
                     }
@@ -127,7 +127,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/geral/remuneracao/{ano}": {
             "get": {
-                "description": "Busca os dados, das remunerações de um ano inteiro, agrupados por mês.",
+                "description": "Busca os dados, das remunerações (remuneração base/salário, outras remunerações/benefícios, descontos) e benefícios identificados (rubricas/penduricalhos) de um ano inteiro, agrupados por mês.",
                 "produces": [
                     "application/json"
                 ],
@@ -138,7 +138,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Ano da remuneração. Exemplos: 2018, 2019, 2020...",
+                        "description": "Ano da remuneração. Ex.: 2018, 2019, 2020...",
                         "name": "ano",
                         "in": "path",
                         "required": true
@@ -171,7 +171,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/geral/resumo": {
             "get": {
-                "description": "Busca e resume os dados das remunerações de todos os anos",
+                "description": "Busca e resume os dados das remunerações de todos os anos, trazendo o número de órgão participantes das tetativas de coleta (inclue os órgãos da coleta automatizada, coleta manual e órgãos não coletados, mas que armazenamos alguma informação), número total de meses coletados, data do primeiro e último mês coletado e o valor total de remuneração considerando todos os meses.",
                 "produces": [
                     "application/json"
                 ],
@@ -197,7 +197,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
-                "description": "Resume os dados de remuneração mensal de um órgão.",
+                "description": "Endpoint de resumo financeiro dos órgãos. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados\n\nInformações Financeiras Detalhadas:\n- Remuneração base total e máxima\n- Outras remunerações e benefícios\n- Valor total de descontos\n- Contagem de membros\n- Análise de rubricas (penduricalhos) específicas\n\nContexto Adicional:\n- Marcadores de existência de dados anteriores/posteriores ao ano/mês consultados\n- Timestamp da coleta de dados\n- Detalhamento de diferentes tipos de remuneração (remuneração base, outras remunerações e descontos)",
                 "produces": [
                     "application/json"
                 ],
@@ -208,41 +208,47 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "description": "Sigla do órgão. Ex.: tjal, mppb, tjmmg",
                         "name": "orgao",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "Ano da remuneração. Exemplo: 2018.",
-                        "name": "ano",
+                        "type": "string",
+                        "description": "Mês de referência (1-12)",
+                        "name": "mes",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "Mês da remuneração. Exemplo: 1.",
-                        "name": "mes",
+                        "type": "string",
+                        "description": "Ano de referência",
+                        "name": "ano",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Requisição bem sucedida.",
+                        "description": "Resumo financeiro do órgão processado com sucesso",
                         "schema": {
                             "$ref": "#/definitions/uiapi.v2AgencySummary"
                         }
                     },
                     "400": {
-                        "description": "Parâmetro ano, mês ou nome do órgão são inválidos.",
+                        "description": "Erro de validação dos parâmetros de entrada",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Órgão não encontrado.",
+                        "description": "Órgão ou dados não encontrados",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno durante processamento da consulta",
                         "schema": {
                             "type": "string"
                         }
@@ -252,7 +258,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}": {
             "get": {
-                "description": "Busca dados das remunerações mensais de um órgão.",
+                "description": "Endpoint de análise detalhada de remunerações dos órgãos. Recupera informações financeiras granulares para um órgão específico em um mês e ano determinados\n\nInformações Fornecidos:\n- Remuneração máxima no período\n- Histograma de distribuição de rendimentos\n- Metadados do pacote de dados\n\nHistograma de Distribuição de Rendimentos:\n\nO histograma apresenta a quantidade de membros que receberam diferentes faixas de remunerações em um determinado mês.\nAs faixas de remuneração são definidas da seguinte forma:\n- 10000: quantidade de membros que receberam até R$ 10.000,00\n- 20000: quantidade de membros que receberam entre R$ 10.000,01 e R$ 20.000,00\n- 30000: quantidade de membros que receberam entre R$ 20.000,01 e R$ 30.000,00\n- 40000: quantidade de membros que receberam entre R$ 30.000,01 e R$ 40.000,00\n- 50000: quantidade de membros que receberam entre R$ 40.000,01 e R$ 50.000,00\n- -1: quantidade de membros que receberam acima de R$ 50.000,01",
                 "produces": [
                     "application/json"
                 ],
@@ -263,21 +269,21 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "description": "Sigla do órgão. Ex.: tjal, mppb, tjmmg",
                         "name": "orgao",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Mês da remuneração. Exemplos: 01, 02, 03...",
+                        "description": "Mês de referência (1-12)",
                         "name": "mes",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Ano da remuneração. Exemplos: 2018, 2019, 2020...",
+                        "description": "Ano de referência",
                         "name": "ano",
                         "in": "path",
                         "required": true
@@ -285,19 +291,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Requisição bem sucedida.",
+                        "description": "Dados de remuneração processados com sucesso",
                         "schema": {
                             "$ref": "#/definitions/uiapi.agencyRemuneration"
                         }
                     },
                     "206": {
-                        "description": "Requisição bem sucedida, mas os dados do órgão não foram bem processados",
+                        "description": "Dados coletados com informações de processamento",
                         "schema": {
                             "$ref": "#/definitions/uiapi.v2ProcInfoResult"
                         }
                     },
                     "400": {
-                        "description": "Parâmetros inválidos.",
+                        "description": "Erro de validação dos parâmetros de entrada",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno durante processamento da consulta",
                         "schema": {
                             "type": "string"
                         }
@@ -307,7 +319,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/orgao/totais/{orgao}/{ano}": {
             "get": {
-                "description": "Busca os dados de remuneração de um órgão em um ano específico.",
+                "description": "Recupera dados financeiros detalhados para um órgão em um ano específico\n\nDados Financeiros Mensais:\n- Remuneração base\n- Outras remunerações e benefícios\n- Descontos\n- Contagem de membros\n\nMétricas Adicionais:\n- Médias per capita\n- Detalhamento de rubricas (auxílios, férias, gratificações)\n- Informações gerais sobre o órgão pesquisado\n- Informações sobre o pacote de dados (URL para download, hash, tamanho)",
                 "produces": [
                     "application/json"
                 ],
@@ -318,14 +330,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID do órgão. Exemplos: tjal, tjba, mppb.",
+                        "description": "Identificador do órgão público",
                         "name": "orgao",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Ano. Exemplo: 2018.",
+                        "description": "Ano de referência para a consulta",
                         "name": "ano",
                         "in": "path",
                         "required": true
@@ -333,13 +345,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Requisição bem sucedida.",
+                        "description": "Dados financeiros completos do órgão no ano especificado",
                         "schema": {
                             "$ref": "#/definitions/uiapi.v2AgencyTotalsYear"
                         }
                     },
                     "400": {
-                        "description": "Parâmetro ano ou orgao inválido.",
+                        "description": "Erro de validação: parâmetros de órgão ou ano inválidos",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno durante processamento da consulta",
                         "schema": {
                             "type": "string"
                         }
@@ -426,7 +444,7 @@ const docTemplate = `{
         },
         "/uiapi/v2/pesquisar": {
             "get": {
-                "description": "Faz uma busca por remunerações a partir de filtros",
+                "description": "Endpoint de busca avançada para remunerações de servidores públicos\n\nPermite realizar pesquisas detalhadas nas remunerações de servidores públicos com múltiplos filtros flexíveis:\n\n- Filtragem por anos específicos\n- Seleção de meses específicos\n- Pesquisa por órgãos públicos de diferentes esferas\n- Categorias de remuneração\n\nCaracterísticas principais:\n- Suporta múltiplas seleções em cada filtro\n- Permite combinações complexas de busca\n- Retorna dados consolidados de remuneração dos contracheques por membros\n\nCasos de uso:\n- Análise comparativa de remunerações entre diferentes órgãos\n- Análise análise granular das remunerações por membros dos órgãos",
                 "produces": [
                     "application/json"
                 ],
@@ -437,19 +455,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020",
+                        "description": "Lista de anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020",
                         "name": "anos",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3",
+                        "description": "Lista de meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3",
                         "name": "meses",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb",
+                        "description": "Lista de órgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb",
                         "name": "orgaos",
                         "in": "query"
                     },
@@ -460,26 +478,26 @@ const docTemplate = `{
                             "descontos"
                         ],
                         "type": "string",
-                        "description": "Categorias a serem pesquisadas",
+                        "description": "Categorias a serem pesquisadas. Remuneração base (salário), outras remunerações (benefícios) e descontos",
                         "name": "categorias",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Requisição bem sucedida.",
+                        "description": "Requisição bem-sucedida com dados de remuneração",
                         "schema": {
                             "$ref": "#/definitions/uiapi.searchResponse"
                         }
                     },
                     "400": {
-                        "description": "Erro de validação dos parâmetros.",
+                        "description": "Erro de validação dos parâmetros de busca",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Erro interno do servidor.",
+                        "description": "Erro interno do servidor durante processamento da pesquisa",
                         "schema": {
                             "type": "string"
                         }
@@ -489,9 +507,9 @@ const docTemplate = `{
         },
         "/uiapi/v2/readme": {
             "get": {
-                "description": "Retorna um README sobre o pacote de dados",
+                "description": "Recupera o arquivo README com informações sobre o conjunto de dados. Permite filtrar o README com base em parâmetros opcionais de ano, mês e órgão\n\nComportamentos:\n- Se nenhum filtro for aplicado, retorna o README original\n- Com filtro de órgão, gera um README com observações específicas sobre potenciais falhas nos dados",
                 "produces": [
-                    "application/json"
+                    "text/plain"
                 ],
                 "tags": [
                     "ui_api"
@@ -500,38 +518,41 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Ano a ser filtrado",
+                        "default": "2024",
+                        "description": "Ano para filtragem dos dados",
                         "name": "ano",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Mês a ser filtrado",
+                        "default": "12",
+                        "description": "Mês para filtragem dos dados",
                         "name": "mes",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Orgão a ser filtrado",
+                        "default": "tjrr",
+                        "description": "Sigla do órgão para filtragem. Ex.: tjal, mppb, mpdft",
                         "name": "orgao",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "README.txt com conteúdo detalhado",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Parâmetro ano/mês inválido",
+                        "description": "Erro de validação de parâmetros (ano/mês inválidos)",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Algo deu errado ao retornar o README",
+                        "description": "Erro interno ao processar o README",
                         "schema": {
                             "type": "string"
                         }

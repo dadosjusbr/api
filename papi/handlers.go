@@ -733,7 +733,7 @@ func (h handler) V2GetAggregateIndexesWithParamsByYearAndMonth(c echo.Context) e
 //	@Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																			[get]
+//	@Router			/v2/indice 																																																																																																																																																																																																																																																																																																																											[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
