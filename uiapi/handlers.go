@@ -542,7 +542,7 @@ func (h handler) GetBasicInfoOfType(c echo.Context) error {
 
 //	@ID				GetBasicInfoOfType
 //	@Tags			ui_api
-//	@Description	Busca os órgãos de um determinado grupo.
+//	@Description	Busca informações de id (sigla), nome e entidade (jurisdiçãso) de um determinado grupo de órgãos. Ao Selecionar um grupo de órgãos por estado (Ex.: RJ, SP, etc.), retorna as informações dos tribunais de justiça desse estado (entidade=Tribunal).
 //	@Produce		json
 //	@Param			grupo						path		string	false	"Grupo de órgãos"	Enums(justica-eleitoral, ministerios-publicos, justica-estadual, justica-do-trabalho, justica-federal, justica-militar, justica-superior, conselhos-de-justica, AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO)
 //	@Success		200							{object}	state	"Órgãos do grupo"

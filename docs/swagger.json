@@ -358,7 +358,7 @@
         },
         "/uiapi/v2/orgao/{grupo}": {
             "get": {
-                "description": "Busca os órgãos de um determinado grupo.",
+                "description": "Busca informações de id (sigla), nome e entidade (jurisdiçãso) de um determinado grupo de órgãos. Ao Selecionar um grupo de órgãos por estado (Ex.: RJ, SP, etc.), retorna as informações dos tribunais de justiça desse estado (entidade=Tribunal).",
                 "produces": [
                     "application/json"
                 ],
