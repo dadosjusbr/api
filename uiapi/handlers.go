@@ -83,15 +83,28 @@ func (h handler) GetSummaryOfAgency(c echo.Context) error {
 
 //	@ID				GetSummaryOfAgency
 //	@Tags			ui_api
-//	@Description	Resume os dados de remuneração mensal de um órgão.
+//	@Description	Endpoint de resumo das remunerações mensal de um órgão. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados
+//	@Description
+//	@Description	Informações Financeiras Detalhadas:
+//	@Description	- Remuneração base total e máxima
+//	@Description	- Outras remunerações e benefícios
+//	@Description	- Valor total de descontos
+//	@Description	- Contagem de membros
+//	@Description	- Análise de rubricas (penduricalhos) específicas
+//	@Description
+//	@Description	Contexto Adicional:
+//	@Description	- Marcadores de existência de dados anteriores/posteriores ao ano/mês consultados
+//	@Description	- Timestamp da coleta de dados
+//	@Description	- Detalhamento de diferentes tipos de remuneração (remuneração base, outras remunerações e descontos)
 //	@Produce		json
-//	@Param			orgao										path		string			true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-//	@Param			ano											path		int				true	"Ano da remuneração. Exemplo: 2018."
-//	@Param			mes											path		int				true	"Mês da remuneração. Exemplo: 1."
-//	@Success		200											{object}	v2AgencySummary	"Requisição bem sucedida."
-//	@Failure		404											{string}	string			"Órgão não encontrado."
-//	@Failure		400											{string}	string			"Parâmetro ano, mês ou nome do órgão são inválidos."
-//	@Router			/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes} 	[get]
+//	@Param			orgao	path		string			true	"Sigla do órgão. Ex.: tjal, mppb, tjmmg"
+//	@Param			mes		path		string			true	"Mês de referência (1-12)"
+//	@Param			ano		path		string			true	"Ano de referência"
+//	@Success		200		{object}	v2AgencySummary	"Resumo financeiro do órgão processado com sucesso"
+//	@Failure		400		{string}	string			"Erro de validação dos parâmetros de entrada"
+//	@Failure		404		{string}	string			"Órgão ou dados não encontrados"
+//	@Failure		500		{string}	string			"Erro interno durante processamento da consulta"
+//	@Router			/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes} [get]
 func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -180,15 +193,32 @@ func (h handler) GetSalaryOfAgencyMonthYear(c echo.Context) error {
 
 //	@ID				GetSalaryOfAgencyMonthYear
 //	@Tags			ui_api
-//	@Description	Busca dados das remunerações mensais de um órgão.
+//	@Description	Endpoint de análise detalhada de remunerações dos órgãos. Recupera informações financeiras granulares para um órgão específico em um mês e ano determinados
+//	@Description
+//	@Description	Informações Fornecidos:
+//	@Description	- Remuneração máxima no período
+//	@Description	- Histograma de distribuição de rendimentos
+//	@Description	- Metadados do pacote de dados
+//	@Description
+//	@Description	Histograma de Distribuição de Rendimentos:
+//	@Description
+//	@Description	O histograma apresenta a quantidade de membros que receberam diferentes faixas de remunerações em um determinado mês.
+//	@Description	As faixas de remuneração são definidas da seguinte forma:
+//	@Description	- 10000: quantidade de membros que receberam até R$ 10.000,00
+//	@Description	- 20000: quantidade de membros que receberam entre R$ 10.000,01 e R$ 20.000,00
+//	@Description	- 30000: quantidade de membros que receberam entre R$ 20.000,01 e R$ 30.000,00
+//	@Description	- 40000: quantidade de membros que receberam entre R$ 30.000,01 e R$ 40.000,00
+//	@Description	- 50000: quantidade de membros que receberam entre R$ 40.000,01 e R$ 50.000,00
+//	@Description	- -1: quantidade de membros que receberam acima de R$ 50.000,01
 //	@Produce		json
-//	@Param			orgao											path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-//	@Param			mes												path		string				true	"Mês da remuneração. Exemplos: 01, 02, 03..."
-//	@Param			ano												path		string				true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
-//	@Success		200												{object}	agencyRemuneration	"Requisição bem sucedida."
-//	@Success		206												{object}	v2ProcInfoResult	"Requisição bem sucedida, mas os dados do órgão não foram bem processados"
-//	@Failure		400												{string}	string				"Parâmetros inválidos."
-//	@Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} 	[get]
+//	@Param			orgao	path		string				true	"Sigla do órgão. Ex.: tjal, mppb, tjmmg"
+//	@Param			mes		path		string				true	"Mês de referência (1-12)"
+//	@Param			ano		path		string				true	"Ano de referência"
+//	@Success		200		{object}	agencyRemuneration	"Dados de remuneração processados com sucesso"
+//	@Success		206		{object}	v2ProcInfoResult	"Dados coletados com informações de processamento"
+//	@Failure		400		{string}	string				"Erro de validação dos parâmetros de entrada"
+//	@Failure		500		{string}	string				"Erro interno durante processamento da consulta"
+//	@Router			/uiapi/v2/orgao/salario/{orgao}/{ano}/{mes} [get]
 func (h handler) V2GetSalaryOfAgencyMonthYear(c echo.Context) error {
 	month, err := strconv.Atoi(c.Param("mes"))
 	if err != nil {
@@ -303,13 +333,26 @@ func (h handler) GetTotalsOfAgencyYear(c echo.Context) error {
 
 //	@ID				GetTotalsOfAgencyYear
 //	@Tags			ui_api
-//	@Description	Busca os dados de remuneração de um órgão em um ano específico.
+//	@Description	Recupera dados financeiros detalhados para um órgão em um ano específico
+//	@Description
+//	@Description	Dados Financeiros Mensais:
+//	@Description	- Remuneração base
+//	@Description	- Outras remunerações e benefícios
+//	@Description	- Descontos
+//	@Description	- Contagem de membros
+//	@Description
+//	@Description	Métricas Adicionais:
+//	@Description	- Médias per capita
+//	@Description	- Detalhamento de rubricas (auxílios, férias, gratificações)
+//	@Description	- Informações gerais sobre o órgão pesquisado
+//	@Description	- Informações sobre o pacote de dados (URL para download, hash, tamanho)
 //	@Produce		json
-//	@Param			orgao									path		string				true	"ID do órgão. Exemplos: tjal, tjba, mppb."
-//	@Param			ano										path		int					true	"Ano. Exemplo: 2018."
-//	@Success		200										{object}	v2AgencyTotalsYear	"Requisição bem sucedida."
-//	@Failure		400										{string}	string				"Parâmetro ano ou orgao inválido."
-//	@Router			/uiapi/v2/orgao/totais/{orgao}/{ano} 	[get]
+//	@Param			orgao	path		string				true	"Identificador do órgão público"	example:"tjal"
+//	@Param			ano		path		int					true	"Ano de referência para a consulta"	example:"2022"
+//	@Success		200		{object}	v2AgencyTotalsYear	"Dados financeiros completos do órgão no ano especificado"
+//	@Failure		400		{string}	string				"Erro de validação: parâmetros de órgão ou ano inválidos"
+//	@Failure		500		{string}	string				"Erro interno durante processamento da consulta"
+//	@Router			/uiapi/v2/orgao/totais/{orgao}/{ano} [get]
 func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("ano"))
 	if err != nil {
@@ -499,7 +542,7 @@ func (h handler) GetBasicInfoOfType(c echo.Context) error {
 
 //	@ID				GetBasicInfoOfType
 //	@Tags			ui_api
-//	@Description	Busca os órgãos de um determinado grupo.
+//	@Description	Busca informações de id (sigla), nome e entidade (jurisdiçãso) de um determinado grupo de órgãos. Ao Selecionar um grupo de órgãos por estado (Ex.: RJ, SP, etc.), retorna as informações dos tribunais de justiça desse estado (entidade=Tribunal).
 //	@Produce		json
 //	@Param			grupo						path		string	false	"Grupo de órgãos"	Enums(justica-eleitoral, ministerios-publicos, justica-estadual, justica-do-trabalho, justica-federal, justica-militar, justica-superior, conselhos-de-justica, AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO)
 //	@Success		200							{object}	state	"Órgãos do grupo"
@@ -592,9 +635,9 @@ func (h handler) GetGeneralRemunerationFromYear(c echo.Context) error {
 
 //	@ID				GetGeneralRemunerationFromYear
 //	@Tags			ui_api
-//	@Description	Busca os dados, das remunerações de um ano inteiro, agrupados por mês.
+//	@Description	Busca os dados, das remunerações (remuneração base/salário, outras remunerações/benefícios, descontos) e benefícios identificados (rubricas/penduricalhos) de um ano inteiro, agrupados por mês.
 //	@Produce		json
-//	@Param			ano									path		string					true	"Ano da remuneração. Exemplos: 2018, 2019, 2020..."
+//	@Param			ano									path		string					true	"Ano da remuneração. Ex.: 2018, 2019, 2020..."
 //	@Success		200									{object}	[]mensalRemuneration	"Requisição bem sucedida."
 //	@Failure		400									{string}	string					"Parâmetro ano inválido."
 //	@Failure		500									{string}	string					"Erro interno."
@@ -672,7 +715,7 @@ func (h handler) GeneralSummaryHandler(c echo.Context) error {
 
 //	@ID				GetGeneralSummary
 //	@Tags			ui_api
-//	@Description	Busca e resume os dados das remunerações de todos os anos
+//	@Description	Busca e resume os dados das remunerações de todos os anos, trazendo o número de órgão participantes das tetativas de coleta (inclue os órgãos da coleta automatizada, coleta manual e órgãos não coletados, mas que armazenamos alguma informação), número total de meses coletados, data do primeiro e último mês coletado e o valor total de remuneração considerando todos os meses.
 //	@Produce		json
 //	@Success		200						{object}	generalSummary	"Requisição bem sucedida."
 //	@Failure		500						{string}	string			"Erro interno do servidor."
@@ -714,15 +757,31 @@ func (h handler) GetGeneralSummary(c echo.Context) error {
 
 //	@ID				SearchByUrl
 //	@Tags			ui_api
-//	@Description	Faz uma busca por remunerações a partir de filtros
+//	@Description	Endpoint de busca avançada para remunerações de servidores públicos
+//	@Description
+//	@Description	Permite realizar pesquisas detalhadas nas remunerações de servidores públicos com múltiplos filtros flexíveis:
+//	@Description
+//	@Description	- Filtragem por anos específicos
+//	@Description	- Seleção de meses específicos
+//	@Description	- Pesquisa por órgãos públicos de diferentes esferas
+//	@Description	- Categorias de remuneração
+//	@Description
+//	@Description	Características principais:
+//	@Description	- Suporta múltiplas seleções em cada filtro
+//	@Description	- Permite combinações complexas de busca
+//	@Description	- Retorna dados consolidados de remuneração dos contracheques por membros
+//	@Description
+//	@Description	Casos de uso:
+//	@Description	- Análise comparativa de remunerações entre diferentes órgãos
+//	@Description	- Análise análise granular das remunerações por membros dos órgãos
 //	@Produce		json
-//	@Param			anos		query		string			false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
-//	@Param			meses		query		string			false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
-//	@Param			orgaos		query		string			false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
-//	@Param			categorias	query		string			false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
-//	@Success		200			{object}	searchResponse	"Requisição bem sucedida."
-//	@Failure		400			{string}	string			"Erro de validação dos parâmetros."
-//	@Failure		500			{string}	string			"Erro interno do servidor."
+//	@Param			anos		query		string			false	"Lista de anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
+//	@Param			meses		query		string			false	"Lista de meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
+//	@Param			orgaos		query		string			false	"Lista de órgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
+//	@Param			categorias	query		string			false	"Categorias a serem pesquisadas. Remuneração base (salário), outras remunerações (benefícios) e descontos"	Enums(base,outras,descontos)
+//	@Success		200			{object}	searchResponse	"Requisição bem-sucedida com dados de remuneração"
+//	@Failure		400			{string}	string			"Erro de validação dos parâmetros de busca"
+//	@Failure		500			{string}	string			"Erro interno do servidor durante processamento da pesquisa"
 //	@Router			/uiapi/v2/pesquisar [get]
 func (h handler) SearchByUrl(c echo.Context) error {
 	//Pegando os query params
@@ -764,12 +823,23 @@ func (h handler) SearchByUrl(c echo.Context) error {
 
 //	@ID				DownloadByUrl
 //	@Tags			ui_api
-//	@Description	Baixa dados referentes a remunerações a partir de filtros
+//	@Description	Baixa um arquivo csv referentes a remunerações a partir de filtros. O arquivo tem um limite de 10 mil linhas. Para cada parâmetro, é possível passar múltiplos valores separados por vírgula. As colunas do arquivo csv são:
+//	@Description
+//	@Description	- Nome do órgão
+//	@Description	- Mês de referência do contracheque
+//	@Description	- Ano de referência do contracheque
+//	@Description	- Matrícula do membro (identificador único do membro no órgão)
+//	@Description	- Nome do membro
+//	@Description	- Cargo que o membro exerce no órgão
+//	@Description	- Lotação (unidade na qual o membro do órgão desenvolve suas atividades)
+//	@Description	- Categoria do contracheque (base, outras remunerações ou descontos)
+//	@Description	- Detalhamento do contracheque (ex: subsídio, desconto, benefício, etc)
+//	@Description	- Valor do contracheque em reais, não corrigido pela inflação
 //	@Produce		json
 //	@Param			anos		query		string	false	"Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020"
 //	@Param			meses		query		string	false	"Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3"
 //	@Param			orgaos		query		string	false	"Orgãos a serem pesquisados, separados por virgula. Exemplo: tjal,mpal,mppb"
-//	@Param			categorias	query		string	false	"Categorias a serem pesquisadas"	Enums(base,outras,descontos)
+//	@Param			categorias	query		string	false	"Categorias a serem pesquisadas. Se nada for informado, todas as categorias serão baixadas"	Enums(base,outras,descontos)
 //	@Success		200			{file}		file	"Arquivo CSV com os dados."
 //	@Failure		400			{string}	string	"Erro de validação dos parâmetros."
 //	@Failure		500			{string}	string	"Erro interno do servidor."
@@ -811,14 +881,18 @@ var readmeContent []byte
 
 //	@ID				DownloadReadme
 //	@Tags			ui_api
-//	@Description	Retorna um README sobre o pacote de dados
-//	@Produce		json
-//	@Param			ano		query		string		false	"Ano a ser filtrado"
-//	@Param			mes		query		string		false	"Mês a ser filtrado"
-//	@Param			orgao	query		string		false	"Orgão a ser filtrado"
-//	@Success		200		{string}	text/plain	"Requisição bem sucedida."
-//	@Failure		400		{string}	string		"Parâmetro ano/mês inválido"
-//	@Failure		500		{string}	string		"Algo deu errado ao retornar o README"
+//	@Description	Recupera o arquivo README com informações sobre o conjunto de dados. Permite filtrar o README com base em parâmetros opcionais de ano, mês e órgão
+//	@Description
+//	@Description	Comportamentos:
+//	@Description	- Se nenhum filtro for aplicado, retorna o README original
+//	@Description	- Com filtro de órgão, gera um README com observações específicas sobre potenciais falhas nos dados
+//	@Produce		text/plain
+//	@Param			ano		query		string	false	"Ano para filtragem dos dados"							default(2024)
+//	@Param			mes		query		string	false	"Mês para filtragem dos dados"							default(12)
+//	@Param			orgao	query		string	false	"Sigla do órgão para filtragem. Ex.: tjal, mppb, mpdft"	default(tjrr)
+//	@Success		200		{string}	string	"README.txt com conteúdo detalhado"
+//	@Failure		400		{string}	string	"Erro de validação de parâmetros (ano/mês inválidos)"
+//	@Failure		500		{string}	string	"Erro interno ao processar o README"
 //	@Router			/uiapi/v2/readme [get]
 func (h handler) DownloadReadme(c echo.Context) error {
 	originalContent := readmeContent
@@ -884,7 +958,12 @@ func (h handler) DownloadReadme(c echo.Context) error {
 
 //	@ID				GetAnnualSummary
 //	@Tags			ui_api
-//	@Description	Retorna os dados anuais de um orgão
+//	@Description	Retorna os dados de remuneração de todos os anos disponíveis para um órgão específico, incluindo:
+//	@Description	- Remuneração base/salário, outras remunerações/benefícios, descontos e remuneração líquida (salário+benefícios-descontos). Dados brutos, agrupados por mês e per capita
+//	@Description	- Quantidade de meses com dados no determinado ano
+//	@Description	- Quantidade média de membros do órgão naquele ano
+//	@Description	- Resumo dos benefícios identificados (rubricas/penduricalhos) e seus respectivos valores no ano
+//	@Description	- Informações do pacote de dados, URL do pacote de dados para download, seu hash e tamanho do pacote de dados (em bytes)
 //	@Produce		json
 //	@Param			orgao	path		string			true	"Nome do orgão"
 //	@Success		200		{object}	[]annualSummary	"Requisição bem sucedida."

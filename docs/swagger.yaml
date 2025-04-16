@@ -649,7 +649,13 @@ info:
 paths:
   /uiapi/v1/orgao/resumo/{orgao}:
     get:
-      description: Retorna os dados anuais de um orgão
+      description: |-
+        Retorna os dados de remuneração de todos os anos disponíveis para um órgão específico, incluindo:
+        - Remuneração base/salário, outras remunerações/benefícios, descontos e remuneração líquida (salário+benefícios-descontos). Dados brutos, agrupados por mês e per capita
+        - Quantidade de meses com dados no determinado ano
+        - Quantidade média de membros do órgão naquele ano
+        - Resumo dos benefícios identificados (rubricas/penduricalhos) e seus respectivos valores no ano
+        - Informações do pacote de dados, URL do pacote de dados para download, seu hash e tamanho do pacote de dados (em bytes)
       operationId: GetAnnualSummary
       parameters:
       - description: Nome do orgão
@@ -678,7 +684,19 @@ paths:
       - ui_api
   /uiapi/v2/download:
     get:
-      description: Baixa dados referentes a remunerações a partir de filtros
+      description: |-
+        Baixa um arquivo csv referentes a remunerações a partir de filtros. O arquivo tem um limite de 10 mil linhas. Para cada parâmetro, é possível passar múltiplos valores separados por vírgula. As colunas do arquivo csv são:
+
+        - Nome do órgão
+        - Mês de referência do contracheque
+        - Ano de referência do contracheque
+        - Matrícula do membro (identificador único do membro no órgão)
+        - Nome do membro
+        - Cargo que o membro exerce no órgão
+        - Lotação (unidade na qual o membro do órgão desenvolve suas atividades)
+        - Categoria do contracheque (base, outras remunerações ou descontos)
+        - Detalhamento do contracheque (ex: subsídio, desconto, benefício, etc)
+        - Valor do contracheque em reais, não corrigido pela inflação
       operationId: DownloadByUrl
       parameters:
       - description: 'Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020'
@@ -694,7 +712,8 @@ paths:
         in: query
         name: orgaos
         type: string
-      - description: Categorias a serem pesquisadas
+      - description: Categorias a serem pesquisadas. Se nada for informado, todas
+          as categorias serão baixadas
         enum:
         - base
         - outras
@@ -721,11 +740,12 @@ paths:
       - ui_api
   /uiapi/v2/geral/remuneracao/{ano}:
     get:
-      description: Busca os dados, das remunerações de um ano inteiro, agrupados por
-        mês.
+      description: Busca os dados, das remunerações (remuneração base/salário, outras
+        remunerações/benefícios, descontos) e benefícios identificados (rubricas/penduricalhos)
+        de um ano inteiro, agrupados por mês.
       operationId: GetGeneralRemunerationFromYear
       parameters:
-      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
+      - description: 'Ano da remuneração. Ex.: 2018, 2019, 2020...'
         in: path
         name: ano
         required: true
@@ -751,7 +771,11 @@ paths:
       - ui_api
   /uiapi/v2/geral/resumo:
     get:
-      description: Busca e resume os dados das remunerações de todos os anos
+      description: Busca e resume os dados das remunerações de todos os anos, trazendo
+        o número de órgão participantes das tetativas de coleta (inclue os órgãos
+        da coleta automatizada, coleta manual e órgãos não coletados, mas que armazenamos
+        alguma informação), número total de meses coletados, data do primeiro e último
+        mês coletado e o valor total de remuneração considerando todos os meses.
       operationId: GetGeneralSummary
       produces:
       - application/json
@@ -768,7 +792,10 @@ paths:
       - ui_api
   /uiapi/v2/orgao/{grupo}:
     get:
-      description: Busca os órgãos de um determinado grupo.
+      description: 'Busca informações de id (sigla), nome e entidade (jurisdiçãso)
+        de um determinado grupo de órgãos. Ao Selecionar um grupo de órgãos por estado
+        (Ex.: RJ, SP, etc.), retorna as informações dos tribunais de justiça desse
+        estado (entidade=Tribunal).'
       operationId: GetBasicInfoOfType
       parameters:
       - description: Grupo de órgãos
@@ -830,57 +857,91 @@ paths:
       - ui_api
   /uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}:
     get:
-      description: Resume os dados de remuneração mensal de um órgão.
+      description: |-
+        Endpoint de resumo das remunerações mensal de um órgão. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados
+
+        Informações Financeiras Detalhadas:
+        - Remuneração base total e máxima
+        - Outras remunerações e benefícios
+        - Valor total de descontos
+        - Contagem de membros
+        - Análise de rubricas (penduricalhos) específicas
+
+        Contexto Adicional:
+        - Marcadores de existência de dados anteriores/posteriores ao ano/mês consultados
+        - Timestamp da coleta de dados
+        - Detalhamento de diferentes tipos de remuneração (remuneração base, outras remunerações e descontos)
       operationId: GetSummaryOfAgency
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+      - description: 'Sigla do órgão. Ex.: tjal, mppb, tjmmg'
         in: path
         name: orgao
         required: true
         type: string
-      - description: 'Ano da remuneração. Exemplo: 2018.'
-        in: path
-        name: ano
-        required: true
-        type: integer
-      - description: 'Mês da remuneração. Exemplo: 1.'
+      - description: Mês de referência (1-12)
         in: path
         name: mes
         required: true
-        type: integer
+        type: string
+      - description: Ano de referência
+        in: path
+        name: ano
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida.
+          description: Resumo financeiro do órgão processado com sucesso
           schema:
             $ref: '#/definitions/uiapi.v2AgencySummary'
         "400":
-          description: Parâmetro ano, mês ou nome do órgão são inválidos.
+          description: Erro de validação dos parâmetros de entrada
           schema:
             type: string
         "404":
-          description: Órgão não encontrado.
+          description: Órgão ou dados não encontrados
+          schema:
+            type: string
+        "500":
+          description: Erro interno durante processamento da consulta
           schema:
             type: string
       tags:
       - ui_api
   /uiapi/v2/orgao/salario/{orgao}/{ano}/{mes}:
     get:
-      description: Busca dados das remunerações mensais de um órgão.
+      description: |-
+        Endpoint de análise detalhada de remunerações dos órgãos. Recupera informações financeiras granulares para um órgão específico em um mês e ano determinados
+
+        Informações Fornecidos:
+        - Remuneração máxima no período
+        - Histograma de distribuição de rendimentos
+        - Metadados do pacote de dados
+
+        Histograma de Distribuição de Rendimentos:
+
+        O histograma apresenta a quantidade de membros que receberam diferentes faixas de remunerações em um determinado mês.
+        As faixas de remuneração são definidas da seguinte forma:
+        - 10000: quantidade de membros que receberam até R$ 10.000,00
+        - 20000: quantidade de membros que receberam entre R$ 10.000,01 e R$ 20.000,00
+        - 30000: quantidade de membros que receberam entre R$ 20.000,01 e R$ 30.000,00
+        - 40000: quantidade de membros que receberam entre R$ 30.000,01 e R$ 40.000,00
+        - 50000: quantidade de membros que receberam entre R$ 40.000,01 e R$ 50.000,00
+        - -1: quantidade de membros que receberam acima de R$ 50.000,01
       operationId: GetSalaryOfAgencyMonthYear
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+      - description: 'Sigla do órgão. Ex.: tjal, mppb, tjmmg'
         in: path
         name: orgao
         required: true
         type: string
-      - description: 'Mês da remuneração. Exemplos: 01, 02, 03...'
+      - description: Mês de referência (1-12)
         in: path
         name: mes
         required: true
         type: string
-      - description: 'Ano da remuneração. Exemplos: 2018, 2019, 2020...'
+      - description: Ano de referência
         in: path
         name: ano
         required: true
@@ -889,31 +950,47 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida.
+          description: Dados de remuneração processados com sucesso
           schema:
             $ref: '#/definitions/uiapi.agencyRemuneration'
         "206":
-          description: Requisição bem sucedida, mas os dados do órgão não foram bem
-            processados
+          description: Dados coletados com informações de processamento
           schema:
             $ref: '#/definitions/uiapi.v2ProcInfoResult'
         "400":
-          description: Parâmetros inválidos.
+          description: Erro de validação dos parâmetros de entrada
+          schema:
+            type: string
+        "500":
+          description: Erro interno durante processamento da consulta
           schema:
             type: string
       tags:
       - ui_api
   /uiapi/v2/orgao/totais/{orgao}/{ano}:
     get:
-      description: Busca os dados de remuneração de um órgão em um ano específico.
+      description: |-
+        Recupera dados financeiros detalhados para um órgão em um ano específico
+
+        Dados Financeiros Mensais:
+        - Remuneração base
+        - Outras remunerações e benefícios
+        - Descontos
+        - Contagem de membros
+
+        Métricas Adicionais:
+        - Médias per capita
+        - Detalhamento de rubricas (auxílios, férias, gratificações)
+        - Informações gerais sobre o órgão pesquisado
+        - Informações sobre o pacote de dados (URL para download, hash, tamanho)
       operationId: GetTotalsOfAgencyYear
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+      - description: Identificador do órgão público
         in: path
         name: orgao
         required: true
         type: string
-      - description: 'Ano. Exemplo: 2018.'
+      - description: Ano de referência para a consulta
         in: path
         name: ano
         required: true
@@ -922,34 +999,58 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida.
+          description: Dados financeiros completos do órgão no ano especificado
           schema:
             $ref: '#/definitions/uiapi.v2AgencyTotalsYear'
         "400":
-          description: Parâmetro ano ou orgao inválido.
+          description: 'Erro de validação: parâmetros de órgão ou ano inválidos'
+          schema:
+            type: string
+        "500":
+          description: Erro interno durante processamento da consulta
           schema:
             type: string
       tags:
       - ui_api
   /uiapi/v2/pesquisar:
     get:
-      description: Faz uma busca por remunerações a partir de filtros
+      description: |-
+        Endpoint de busca avançada para remunerações de servidores públicos
+
+        Permite realizar pesquisas detalhadas nas remunerações de servidores públicos com múltiplos filtros flexíveis:
+
+        - Filtragem por anos específicos
+        - Seleção de meses específicos
+        - Pesquisa por órgãos públicos de diferentes esferas
+        - Categorias de remuneração
+
+        Características principais:
+        - Suporta múltiplas seleções em cada filtro
+        - Permite combinações complexas de busca
+        - Retorna dados consolidados de remuneração dos contracheques por membros
+
+        Casos de uso:
+        - Análise comparativa de remunerações entre diferentes órgãos
+        - Análise análise granular das remunerações por membros dos órgãos
       operationId: SearchByUrl
       parameters:
-      - description: 'Anos a serem pesquisados, separados por virgula. Exemplo: 2018,2019,2020'
+      - description: 'Lista de anos a serem pesquisados, separados por virgula. Exemplo:
+          2018,2019,2020'
         in: query
         name: anos
         type: string
-      - description: 'Meses a serem pesquisados, separados por virgula. Exemplo: 1,2,3'
+      - description: 'Lista de meses a serem pesquisados, separados por virgula. Exemplo:
+          1,2,3'
         in: query
         name: meses
         type: string
-      - description: 'Orgãos a serem pesquisados, separados por virgula. Exemplo:
-          tjal,mpal,mppb'
+      - description: 'Lista de órgãos a serem pesquisados, separados por virgula.
+          Exemplo: tjal,mpal,mppb'
         in: query
         name: orgaos
         type: string
-      - description: Categorias a serem pesquisadas
+      - description: Categorias a serem pesquisadas. Remuneração base (salário), outras
+          remunerações (benefícios) e descontos
         enum:
         - base
         - outras
@@ -961,59 +1062,75 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida.
+          description: Requisição bem-sucedida com dados de remuneração
           schema:
             $ref: '#/definitions/uiapi.searchResponse'
         "400":
-          description: Erro de validação dos parâmetros.
+          description: Erro de validação dos parâmetros de busca
           schema:
             type: string
         "500":
-          description: Erro interno do servidor.
+          description: Erro interno do servidor durante processamento da pesquisa
           schema:
             type: string
       tags:
       - ui_api
   /uiapi/v2/readme:
     get:
-      description: Retorna um README sobre o pacote de dados
+      description: |-
+        Recupera o arquivo README com informações sobre o conjunto de dados. Permite filtrar o README com base em parâmetros opcionais de ano, mês e órgão
+
+        Comportamentos:
+        - Se nenhum filtro for aplicado, retorna o README original
+        - Com filtro de órgão, gera um README com observações específicas sobre potenciais falhas nos dados
       operationId: DownloadReadme
       parameters:
-      - description: Ano a ser filtrado
+      - default: "2024"
+        description: Ano para filtragem dos dados
         in: query
         name: ano
         type: string
-      - description: Mês a ser filtrado
+      - default: "12"
+        description: Mês para filtragem dos dados
         in: query
         name: mes
         type: string
-      - description: Orgão a ser filtrado
+      - default: tjrr
+        description: 'Sigla do órgão para filtragem. Ex.: tjal, mppb, mpdft'
         in: query
         name: orgao
         type: string
       produces:
-      - application/json
+      - text/plain
       responses:
         "200":
-          description: OK
+          description: README.txt com conteúdo detalhado
           schema:
             type: string
         "400":
-          description: Parâmetro ano/mês inválido
+          description: Erro de validação de parâmetros (ano/mês inválidos)
           schema:
             type: string
         "500":
-          description: Algo deu errado ao retornar o README
+          description: Erro interno ao processar o README
           schema:
             type: string
       tags:
       - ui_api
   /v2/dados/{orgao}:
     get:
-      description: Busca todas as informações de um órgão específico.
+      description: Busca todos os dados de um órgão específico trazendo informações
+        de cada mês disponível para cada ano disponível a partir de 2018, retornando
+        status de coleta, dados de coleta (duração da coleta e dados do coletor),
+        dados sumarizados de remuneração (dos membros ativos, remuneração base/salário,
+        outras remunerações/benefícios, descontos, remunerações líquidas, quantidade
+        de membros, e gasto em rubricas identificadas/penduricalhos), metadados de
+        completude e facilidade de acesso e pontuações referentes ao índice de transparência
+        nas dimensões de completude, facilidade de acesso e transparência (https://dadosjusbr.org/indice).
       operationId: GetAllAgencyInformation
       parameters:
-      - description: órgão
+      - description: 'Sigla do órgão para o qual os dados estão sendo solicitados.
+          Ex.: tjal, tjba, mppb'
         in: path
         name: orgao
         required: true
@@ -1033,15 +1150,24 @@ paths:
       - public_api
   /v2/dados/{orgao}/{ano}:
     get:
-      description: Busca os dados mensais de um órgão por ano
+      description: Busca os dados mensais de um órgão específico trazendo informações
+        de cada mês disponível para o ano informado, retornando status de coleta,
+        dados de coleta (duração da coleta e dados do coletor), dados sumarizados
+        de remuneração (dos membros ativos, remuneração base/salário, outras remunerações/benefícios,
+        descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas
+        identificadas/penduricalhos), metadados de completude e facilidade de acesso
+        e pontuações referentes ao índice de transparência nas dimensões de completude,
+        facilidade de acesso e transparência (https://dadosjusbr.org/indice).
       operationId: GetMonthlyInfosByYear
       parameters:
-      - description: Ano
+      - description: Ano para o qual os dados estão sendo solicitados (dados disponíveis
+          a partir de 2018).
         in: path
         name: ano
         required: true
         type: integer
-      - description: Órgão
+      - description: 'Sigla do órgão para o qual os dados estão sendo solicitados.
+          Ex.: tjal, tjba, mppb'
         in: path
         name: orgao
         required: true
@@ -1050,7 +1176,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida
+          description: Requisição bem-sucedida com dados mensais
           schema:
             items:
               $ref: '#/definitions/papi.summaryzedMI'
@@ -1067,20 +1193,28 @@ paths:
       - public_api
   /v2/dados/{orgao}/{ano}/{mes}:
     get:
-      description: Busca um dado mensal de um órgão
+      description: Busca informações mensais de um órgão específico, incluindo dados
+        de coleta (status e duração da coleta e dados do coletor), dados de remuneração
+        sumarizados (dos membros ativos, remuneração base/salário, outras remunerações/benefícios,
+        descontos, remunerações líquidas, quantidade de membros, e gasto em rubricas
+        identificadas/penduricalhos), metadados de completude e facilidade de acesso
+        e pontuações referentes ao índice de transparência nas dimensões de completude,
+        facilidade de acesso e transparência (https://dadosjusbr.org/indice).
       operationId: GetMonthlyInfo
       parameters:
-      - description: Ano
+      - description: Ano para o qual os dados estão sendo solicitados (dados disponíveis
+          a partir de 2018).
         in: path
         name: ano
         required: true
         type: integer
-      - description: Órgão
+      - description: 'Sigla do órgão para o qual os dados estão sendo solicitados.
+          Ex.: tjal, tjba, mppb'
         in: path
         name: orgao
         required: true
         type: string
-      - description: Mês
+      - description: Mês para o qual os dados estão sendo solicitados (1-12).
         in: path
         name: mes
         required: true
@@ -1089,7 +1223,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Requisição bem sucedida
+          description: Requisição bem-sucedida com dados mensais
           schema:
             $ref: '#/definitions/papi.summaryzedMI'
         "400":
@@ -1104,8 +1238,25 @@ paths:
       - public_api
   /v2/indice:
     get:
-      description: Busca as informações de índices de todos os órgãos.
+      description: 'Busca informações do Índice de Transparência (https://dadosjusbr.org/indice)
+        de todos os órgãos, trazendo o detalhamento (granularidade mensal), os metadados
+        (critérios de avaliação do Índice de Transparência) e o objeto agregado do
+        detalhamento (compilado do Índice de Trasparência médio do órgão ao longo
+        dos meses) organizando-os por jurisdição: Justiça Estadual, Ministérios Públicos,
+        Justiça do Trabalho, Justiça Militar, Justiça Federal, Justiça Eleitoral,
+        Justiça Superior e Conselhos de Justiça.'
       operationId: GetAggregateIndexes
+      parameters:
+      - description: Alterna entre o Índice de Transparência geral de todos os órgãos
+          (true) ou o detalhamento do índice de cada órgão mês a mês.
+        in: query
+        name: agregado
+        type: boolean
+      - description: Define se os metadados utilizados para calcular o índice serão
+          retornados ou não.
+        in: query
+        name: detalhe
+        type: boolean
       produces:
       - application/json
       responses:
@@ -1123,19 +1274,158 @@ paths:
       - public_api
   /v2/indice/{param}/{valor}:
     get:
-      description: Busca as informações de índices de um grupo ou órgão específico.
+      description: 'Busca informações do Índice de Transparência (https://dadosjusbr.org/indice)
+        do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo
+        o detalhamento (granularidade mensal), os metadados (critérios de avaliação
+        do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência
+        médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual,
+        ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal,
+        justica-eleitoral, justica-superior e conselhos-de-justica.'
       operationId: GetAggregateIndexesWithParams
       parameters:
-      - description: '''grupo'' ou ''orgao'''
+      - description: '''grupo'' para pesquisar por jurisdição ou ''orgao'' para pesquisar
+          pela sigla do órgão'
         in: path
         name: param
         required: true
         type: string
-      - description: Jurisdição ou ID do órgao
+      - description: 'Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual,
+          etc.'
         in: path
         name: valor
         required: true
         type: string
+      - description: Alterna entre o Índice de Transparência geral de todos os órgãos
+          (true) ou o detalhamento do índice de cada órgão mês a mês.
+        in: query
+        name: agregado
+        type: boolean
+      - description: Define se os metadados utilizados para calcular o índice serão
+          retornados ou não.
+        in: query
+        name: detalhe
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            items:
+              $ref: '#/definitions/papi.aggregateIndexes'
+            type: array
+        "400":
+          description: Requisição inválida.
+          schema:
+            type: string
+        "500":
+          description: Erro interno do servidor.
+          schema:
+            type: string
+      tags:
+      - public_api
+  /v2/indice/{param}/{valor}/{ano}:
+    get:
+      description: 'Busca informações do Índice de Transparência (https://dadosjusbr.org/indice)
+        do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo
+        o detalhamento (granularidade mensal), os metadados (critérios de avaliação
+        do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência
+        médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual,
+        ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal,
+        justica-eleitoral, justica-superior e conselhos-de-justica.'
+      operationId: GetAggregateIndexesWithParamsByYear
+      parameters:
+      - description: '''grupo'' para pesquisar por jurisdição ou ''orgao'' para pesquisar
+          pela sigla do órgão'
+        in: path
+        name: param
+        required: true
+        type: string
+      - description: 'Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual,
+          etc.'
+        in: path
+        name: valor
+        required: true
+        type: string
+      - description: Ano para o qual os dados estão sendo solicitados (dados disponíveis
+          a partir de 2018).
+        in: path
+        name: ano
+        required: true
+        type: integer
+      - description: Alterna entre o Índice de Transparência geral de todos os órgãos
+          (true) ou o detalhamento do índice de cada órgão mês a mês.
+        in: query
+        name: agregado
+        type: boolean
+      - description: Define se os metadados utilizados para calcular o índice serão
+          retornados ou não.
+        in: query
+        name: detalhe
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requisição bem sucedida.
+          schema:
+            items:
+              $ref: '#/definitions/papi.aggregateIndexes'
+            type: array
+        "400":
+          description: Requisição inválida.
+          schema:
+            type: string
+        "500":
+          description: Erro interno do servidor.
+          schema:
+            type: string
+      tags:
+      - public_api
+  /v2/indice/{param}/{valor}/{ano}/{mes}:
+    get:
+      description: 'Busca informações do Índice de Transparência (https://dadosjusbr.org/indice)
+        do órgão (param=orgao) ou da jurisdição (param=grupo) informada, trazendo
+        o detalhamento (granularidade mensal), os metadados (critérios de avaliação
+        do índice) e o objeto agregado do detalhamento (compilado do Índice de Trasparência
+        médio do órgão ao longo dos meses). As jurisdições possíveis são: justica-estadual,
+        ministerios-publicos, justica-do-trabalho, justica-militar, justica-federal,
+        justica-eleitoral, justica-superior e conselhos-de-justica.'
+      operationId: GetAggregateIndexesWithParamsByYearAndMonth
+      parameters:
+      - description: '''grupo'' para pesquisar por jurisdição ou ''orgao'' para pesquisar
+          pela sigla do órgão'
+        in: path
+        name: param
+        required: true
+        type: string
+      - description: 'Jurisdição ou sigla do órgao. Ex.: tjal, mpdft, justica-estadual,
+          etc.'
+        in: path
+        name: valor
+        required: true
+        type: string
+      - description: Ano para o qual os dados estão sendo solicitados (dados disponíveis
+          a partir de 2018).
+        in: path
+        name: ano
+        required: true
+        type: integer
+      - description: Mês para o qual os dados estão sendo solicitados (1-12).
+        in: path
+        name: mes
+        required: true
+        type: integer
+      - description: Alterna entre o Índice de Transparência geral de todos os órgãos
+          (true) ou o detalhamento do índice de cada órgão mês a mês.
+        in: query
+        name: agregado
+        type: boolean
+      - description: Define se os metadados utilizados para calcular o índice serão
+          retornados ou não.
+        in: query
+        name: detalhe
+        type: boolean
       produces:
       - application/json
       responses:
@@ -1157,10 +1447,15 @@ paths:
       - public_api
   /v2/orgao/{orgao}:
     get:
-      description: Busca um órgão específico utilizando seu ID.
+      description: Busca informações gerais de um órgão como nome completo, jurisdição,
+        tipo de entidade, uf do órgão, perfil do twitter e link para a ouvidoria.
+        Se o órgão informado não for coletado pelo DadosJusBr, um objeto com o motivo
+        da coleta não ser automatizada também será retornado. Não inclue informações
+        de remuneração.
       operationId: GetAgencyById
       parameters:
-      - description: 'ID do órgão. Exemplos: tjal, tjba, mppb.'
+      - description: 'Sigla do órgão para o qual os dados estão sendo solicitados.
+          Ex.: tjal, tjba, mppb.'
         in: path
         name: orgao
         required: true
@@ -1180,7 +1475,11 @@ paths:
       - public_api
   /v2/orgaos:
     get:
-      description: Busca todos os órgãos disponíveis.
+      description: Busca informações gerais de todos os órgão como nome completo,
+        jurisdição, tipo de entidade, uf do órgão, perfil do twitter e link para a
+        ouvidoria. Se algum órgão da lista não for coletado pelo DadosJusBr, um objeto
+        com o motivo da coleta não ser automatizada também será retornado. Não inclue
+        informações de remuneração.
       operationId: GetAllAgencies
       produces:
       - application/json
