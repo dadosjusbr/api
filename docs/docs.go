@@ -1094,32 +1094,8 @@ const docTemplate = `{
         },
         "papi.itemSummary": {
             "type": "object",
-            "properties": {
-                "auxilio_alimentacao": {
-                    "type": "number"
-                },
-                "auxilio_saude": {
-                    "type": "number"
-                },
-                "ferias": {
-                    "type": "number"
-                },
-                "gratificacao_natalina": {
-                    "type": "number"
-                },
-                "indenizacao_de_ferias": {
-                    "type": "number"
-                },
-                "licenca_compensatoria": {
-                    "type": "number"
-                },
-                "licenca_premio": {
-                    "type": "number"
-                },
-                "outras": {
-                    "description": "valor agregado de outras rubricas não identificadas",
-                    "type": "number"
-                }
+            "additionalProperties": {
+                "type": "number"
             }
         },
         "papi.metadata": {
@@ -1454,32 +1430,8 @@ const docTemplate = `{
         },
         "uiapi.itemSummary": {
             "type": "object",
-            "properties": {
-                "auxilio_alimentacao": {
-                    "type": "number"
-                },
-                "auxilio_saude": {
-                    "type": "number"
-                },
-                "ferias": {
-                    "type": "number"
-                },
-                "gratificacao_natalina": {
-                    "type": "number"
-                },
-                "indenizacao_de_ferias": {
-                    "type": "number"
-                },
-                "licenca_compensatoria": {
-                    "type": "number"
-                },
-                "licenca_premio": {
-                    "type": "number"
-                },
-                "outras": {
-                    "description": "valor agregado de outras rubricas não identificadas",
-                    "type": "number"
-                }
+            "additionalProperties": {
+                "type": "number"
             }
         },
         "uiapi.mensalRemuneration": {
