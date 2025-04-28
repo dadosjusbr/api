@@ -34,8 +34,8 @@ github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ3
 github.com/dadosjusbr/datapackage v0.0.0-20240320203926-5f369dadd3a5/go.mod h1:xDZc4jX8VDOP7SFo793x0Q8gjUjuMSOmNEUG/wqLKAw=
 github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12 h1:ufl8nbCEo6g2VHUbedGy0gYk9Sgrynf9rcnzuSw4TEg=
 github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12/go.mod h1:gPA7VxjEmyez/xtln4qBj+tM1NO0/zcw3ryjxTRNSco=
-github.com/dadosjusbr/storage v0.0.0-20250212133431-b79ee305fcc5 h1:w3NNul4PA8lx2mvUfDrCGRouSsuncPc59dx3Zv6e84E=
-github.com/dadosjusbr/storage v0.0.0-20250212133431-b79ee305fcc5/go.mod h1:rIM/dbZMdrMfVnZgNgRNRRtsxfhSMH8S8X7MZEeKkrQ=
+github.com/dadosjusbr/storage v0.0.0-20250428175620-34e8ea1f49b6 h1:O8/o1IbRGtQvZ7FNu9T0rKatIIJJhdDAqHmFPDnzEHE=
+github.com/dadosjusbr/storage v0.0.0-20250428175620-34e8ea1f49b6/go.mod h1:rIM/dbZMdrMfVnZgNgRNRRtsxfhSMH8S8X7MZEeKkrQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
