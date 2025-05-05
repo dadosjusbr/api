@@ -184,24 +184,8 @@ definitions:
         $ref: '#/definitions/papi.metadata'
     type: object
   papi.itemSummary:
-    properties:
-      auxilio_alimentacao:
-        type: number
-      auxilio_saude:
-        type: number
-      ferias:
-        type: number
-      gratificacao_natalina:
-        type: number
-      indenizacao_de_ferias:
-        type: number
-      licenca_compensatoria:
-        type: number
-      licenca_premio:
-        type: number
-      outras:
-        description: valor agregado de outras rubricas não identificadas
-        type: number
+    additionalProperties:
+      type: number
     type: object
   papi.metadata:
     properties:
@@ -425,24 +409,8 @@ definitions:
         type: number
     type: object
   uiapi.itemSummary:
-    properties:
-      auxilio_alimentacao:
-        type: number
-      auxilio_saude:
-        type: number
-      ferias:
-        type: number
-      gratificacao_natalina:
-        type: number
-      indenizacao_de_ferias:
-        type: number
-      licenca_compensatoria:
-        type: number
-      licenca_premio:
-        type: number
-      outras:
-        description: valor agregado de outras rubricas não identificadas
-        type: number
+    additionalProperties:
+      type: number
     type: object
   uiapi.mensalRemuneration:
     properties:
