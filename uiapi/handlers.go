@@ -1026,6 +1026,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 				Size: s.Package.Size,
 			},
 			ItemSummary: itemSummary,
+			Inconsistent: s.Inconsistent,
 		})
 	}
 	var collect []collecting

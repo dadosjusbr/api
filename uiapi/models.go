@@ -272,6 +272,7 @@ type annualSummaryData struct {
 	NumMonthsWithData           int         `json:"meses_com_dados"`
 	Package                     *backup     `json:"package,omitempty"`
 	ItemSummary                 itemSummary `json:"resumo_rubricas"`
+	Inconsistent 				bool 		`json:"inconsistente"`
 }
 
 type itemSummary struct {

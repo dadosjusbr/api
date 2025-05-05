@@ -1558,6 +1558,9 @@ const docTemplate = `{
                 "descontos_por_mes": {
                     "type": "number"
                 },
+                "inconsistente": {
+                    "type": "boolean"
+                },
                 "meses_com_dados": {
                     "type": "integer"
                 },
