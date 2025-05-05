@@ -168,6 +168,7 @@ type v2MonthTotals struct {
 	RemunerationsPerCapita      float64     `json:"remuneracoes_por_membro"`
 	CrawlingTimestamp           timestamp   `json:"timestamp"`
 	ItemSummary                 itemSummary `json:"resumo_rubricas"`
+	Inconsistent 				bool 		`json:"inconsistente"`
 }
 
 type timestamp struct {

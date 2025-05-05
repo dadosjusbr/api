@@ -82,6 +82,7 @@ type summaryzedMI struct {
 	Collect          *collect   `json:"dados_coleta,omitempty"`
 	ManualCollection bool       `json:"coleta_manual"`
 	Error            *miError   `json:"error,omitempty"`
+	Inconsistent 	 bool 		`json:"inconsistente"`
 }
 
 type agency struct {

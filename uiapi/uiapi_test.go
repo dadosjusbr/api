@@ -1219,7 +1219,8 @@ func (g getTotalsOfAgencyYear) testWhenDataExists(t *testing.T) {
 						"licenca_compensatoria": 120,
 						"auxilio_saude": 300,
         	            "outras": 200
-					}
+					},
+					"inconsistente": false
 				}
 			],
 			"package": {
