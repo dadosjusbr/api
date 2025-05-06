@@ -136,16 +136,7 @@ func (h handler) V2GetSummaryOfAgency(c echo.Context) error {
 		},
 		HasNext:     time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).Before(time.Now().AddDate(0, 1, 0)),
 		HasPrevious: time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC).In(h.loc).After(time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).In(h.loc)),
-		ItemSummary: itemSummary{
-			FoodAllowance:        agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
-			BonusLicense:         agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
-			VacationCompensation: agencyMonthlyInfo.Summary.ItemSummary.VacationCompensation,
-			Vacation:             agencyMonthlyInfo.Summary.ItemSummary.Vacation,
-			ChristmasBonus:       agencyMonthlyInfo.Summary.ItemSummary.ChristmasBonus,
-			CompensatoryLicense:  agencyMonthlyInfo.Summary.ItemSummary.CompensatoryLicense,
-			HealthAllowance:      agencyMonthlyInfo.Summary.ItemSummary.HealthAllowance,
-			Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
-		},
+		ItemSummary: itemSummary(agencyMonthlyInfo.Summary.ItemSummary),
 	}
 	return c.JSON(http.StatusOK, agencySummary)
 }
@@ -393,16 +384,7 @@ func (h handler) V2GetTotalsOfAgencyYear(c echo.Context) error {
 					Nanos:   agencyMonthlyInfo.CrawlingTimestamp.GetNanos(),
 				},
 				MemberCount: agencyMonthlyInfo.Summary.Count,
-				ItemSummary: itemSummary{
-					FoodAllowance:        agencyMonthlyInfo.Summary.ItemSummary.FoodAllowance,
-					BonusLicense:         agencyMonthlyInfo.Summary.ItemSummary.BonusLicense,
-					VacationCompensation: agencyMonthlyInfo.Summary.ItemSummary.VacationCompensation,
-					Vacation:             agencyMonthlyInfo.Summary.ItemSummary.Vacation,
-					ChristmasBonus:       agencyMonthlyInfo.Summary.ItemSummary.ChristmasBonus,
-					CompensatoryLicense:  agencyMonthlyInfo.Summary.ItemSummary.CompensatoryLicense,
-					HealthAllowance:      agencyMonthlyInfo.Summary.ItemSummary.HealthAllowance,
-					Others:               agencyMonthlyInfo.Summary.ItemSummary.Others,
-				},
+				ItemSummary: itemSummary(agencyMonthlyInfo.Summary.ItemSummary),
 			}
 			monthTotalsOfYear = append(monthTotalsOfYear, monthTotals)
 
@@ -661,16 +643,7 @@ func (h handler) V2GetGeneralRemunerationFromYear(c echo.Context) error {
 			OtherRemunerations: d.OtherRemunerations,
 			Discounts:          d.Discounts,
 			Remunerations:      d.Remunerations,
-			ItemSummary: itemSummary{
-				FoodAllowance:        d.ItemSummary.FoodAllowance,
-				BonusLicense:         d.ItemSummary.BonusLicense,
-				VacationCompensation: d.ItemSummary.VacationCompensation,
-				Vacation:             d.ItemSummary.Vacation,
-				ChristmasBonus:       d.ItemSummary.ChristmasBonus,
-				CompensatoryLicense:  d.ItemSummary.CompensatoryLicense,
-				HealthAllowance:      d.ItemSummary.HealthAllowance,
-				Others:               d.ItemSummary.Others,
-			},
+			ItemSummary:        itemSummary(d.ItemSummary),
 		})
 	}
 	return c.JSON(http.StatusOK, annualRemu)
@@ -994,16 +967,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 		remPerCapita := s.RemunerationsPerCapita
 		discountsRemPerMonth := s.Discounts / float64(s.NumMonthsWithData)
 		discountsRemPerCapita := s.DiscountsPerCapita
-		itemSummary := itemSummary{
-			FoodAllowance:        s.ItemSummary.FoodAllowance,
-			BonusLicense:         s.ItemSummary.BonusLicense,
-			VacationCompensation: s.ItemSummary.VacationCompensation,
-			Vacation:             s.ItemSummary.Vacation,
-			ChristmasBonus:       s.ItemSummary.ChristmasBonus,
-			CompensatoryLicense:  s.ItemSummary.CompensatoryLicense,
-			HealthAllowance:      s.ItemSummary.HealthAllowance,
-			Others:               s.ItemSummary.Others,
-		}
+
 		annualData = append(annualData, annualSummaryData{
 			Year:                        s.Year,
 			AverageMemberCount:          s.AverageCount,
@@ -1025,7 +989,7 @@ func (h handler) GetAnnualSummary(c echo.Context) error {
 				Hash: s.Package.Hash,
 				Size: s.Package.Size,
 			},
-			ItemSummary: itemSummary,
+			ItemSummary: itemSummary(s.ItemSummary),
 			Inconsistent: s.Inconsistent,
 		})
 	}
