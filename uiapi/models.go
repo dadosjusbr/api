@@ -168,7 +168,7 @@ type v2MonthTotals struct {
 	RemunerationsPerCapita      float64     `json:"remuneracoes_por_membro"`
 	CrawlingTimestamp           timestamp   `json:"timestamp"`
 	ItemSummary                 itemSummary `json:"resumo_rubricas"`
-	Inconsistent 				bool 		`json:"inconsistente"`
+	Inconsistent                bool        `json:"inconsistente"`
 }
 
 type timestamp struct {
@@ -219,6 +219,8 @@ type searchResult struct {
 	CategoriaContracheque    string  `db:"categoria_contracheque" json:"categoria_contracheque" csv:"categoria_contracheque" tableheader:"categoria_contracheque"`
 	DetalhamentoContracheque string  `db:"detalhamento_contracheque" json:"detalhamento_contracheque" csv:"detalhamento_contracheque" tableheader:"detalhamento_contracheque"`
 	Valor                    string  `db:"valor" json:"valor" csv:"valor" tableheader:"valor"`
+	DesambiguacaoMicro       string  `db:"desambiguacao_micro" json:"desambiguacao_micro" csv:"desambiguacao_micro" tableheader:"desambiguacao_micro"`
+	DesambiguacaoMacro       string  `db:"desambiguacao_macro" json:"desambiguacao_macro" csv:"desambiguacao_macro" tableheader:"desambiguacao_macro"`
 }
 
 // A resposta que será enviada pela rota de pesquisa
@@ -272,7 +274,7 @@ type annualSummaryData struct {
 	NumMonthsWithData           int         `json:"meses_com_dados"`
 	Package                     *backup     `json:"package,omitempty"`
 	ItemSummary                 itemSummary `json:"resumo_rubricas"`
-	Inconsistent 				bool 		`json:"inconsistente"`
+	Inconsistent                bool        `json:"inconsistente"`
 }
 
 // DEPRECATED: The ItemSummary struct is deprecated
