@@ -1,10 +1,12 @@
 module github.com/dadosjusbr/api
 
-go 1.18
+go 1.23.0
+
+toolchain go1.23.9
 
 require (
 	github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12
-	github.com/dadosjusbr/storage v0.0.0-20250428175620-34e8ea1f49b6
+	github.com/dadosjusbr/storage v0.0.0-20250521134559-e17ec6ce3c9b
 	github.com/gocarina/gocsv v0.0.0-20220712153207-8b2118da4570
 	github.com/golang/mock v1.6.0
 	github.com/joho/godotenv v1.4.0
@@ -46,7 +48,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
 	golang.org/x/time v0.2.0 // indirect
-	golang.org/x/tools v0.14.0 // indirect
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.1.0 // indirect
@@ -62,11 +64,11 @@ require (
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
-	golang.org/x/net v0.16.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.24.0 // indirect
 	google.golang.org/genproto v0.0.0-20230127162408-596548ed4efa // indirect
 	google.golang.org/grpc v1.53.0 // indirect
 )
