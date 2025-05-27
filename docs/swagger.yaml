@@ -379,6 +379,13 @@ definitions:
       resumo_rubricas:
         $ref: '#/definitions/uiapi.itemSummary'
     type: object
+  uiapi.averagePerAgency:
+    properties:
+      id_orgao:
+        type: string
+      media_por_membro:
+        $ref: '#/definitions/uiapi.perCapitaData'
+    type: object
   uiapi.backup:
     properties:
       hash:
@@ -494,6 +501,10 @@ definitions:
       cargo:
         type: string
       categoria_contracheque:
+        type: string
+      desambiguacao_macro:
+        type: string
+      desambiguacao_micro:
         type: string
       detalhamento_contracheque:
         type: string
@@ -825,6 +836,36 @@ paths:
             type: string
         "404":
           description: Grupo não encontrado
+          schema:
+            type: string
+      tags:
+      - ui_api
+  /uiapi/v2/orgao/media/{ano}:
+    get:
+      description: Busca médias (remuneração base, outras remunerações, descontos
+        e remuneração total) de cada órgão em um ano especificado.
+      operationId: GetAveragePerAgency
+      parameters:
+      - description: Ano para filtrar os dados
+        in: path
+        name: ano
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de dados de médias dos órgãos
+          schema:
+            items:
+              $ref: '#/definitions/uiapi.averagePerAgency'
+            type: array
+        "400":
+          description: Parâmetro ANO inválido
+          schema:
+            type: string
+        "500":
+          description: Erro ao buscar dados
           schema:
             type: string
       tags:
