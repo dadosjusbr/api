@@ -195,6 +195,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/uiapi/v2/orgao/media/{ano}": {
+            "get": {
+                "description": "Busca médias (remuneração base, outras remunerações, descontos e remuneração total) de cada órgão em um ano especificado.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ui_api"
+                ],
+                "operationId": "GetAveragePerAgency",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Ano para filtrar os dados",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de dados de médias dos órgãos",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/uiapi.averagePerAgency"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro ANO inválido",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao buscar dados",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/uiapi/v2/orgao/resumo/{orgao}/{ano}/{mes}": {
             "get": {
                 "description": "Endpoint de resumo das remunerações mensal de um órgão. Fornece uma análise financeira abrangente para um órgão específico em um mês e ano determinados\n\nInformações Financeiras Detalhadas:\n- Remuneração base total e máxima\n- Outras remunerações e benefícios\n- Valor total de descontos\n- Contagem de membros\n- Análise de rubricas (penduricalhos) específicas\n\nContexto Adicional:\n- Marcadores de existência de dados anteriores/posteriores ao ano/mês consultados\n- Timestamp da coleta de dados\n- Detalhamento de diferentes tipos de remuneração (remuneração base, outras remunerações e descontos)",
@@ -1578,6 +1622,17 @@ const docTemplate = `{
                 }
             }
         },
+        "uiapi.averagePerAgency": {
+            "type": "object",
+            "properties": {
+                "id_orgao": {
+                    "type": "string"
+                },
+                "media_por_membro": {
+                    "$ref": "#/definitions/uiapi.perCapitaData"
+                }
+            }
+        },
         "uiapi.backup": {
             "type": "object",
             "properties": {
@@ -1752,6 +1807,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "categoria_contracheque": {
+                    "type": "string"
+                },
+                "desambiguacao_macro": {
+                    "type": "string"
+                },
+                "desambiguacao_micro": {
                     "type": "string"
                 },
                 "detalhamento_contracheque": {

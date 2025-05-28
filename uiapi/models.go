@@ -309,3 +309,8 @@ type perCapitaData struct {
 	Discounts          float64 `json:"descontos"`
 	Remunerations      float64 `json:"remuneracoes"`
 }
+
+type averagePerAgency struct {
+	ID               string         `json:"id_orgao"`
+	AveragePerMember *perCapitaData `json:"media_por_membro"`
+}

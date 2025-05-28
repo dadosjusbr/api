@@ -82,10 +82,10 @@ func newS3Client(c config) (*file_storage.S3Client, error) {
 	return s3Client, nil
 }
 
-//	@title			API do dadosjusbr.org
-//	@version		1.0
-//	@contact.name	DadosJusBr
-//	@contact.url	https://dadosjusbr.org
+// @title			API do dadosjusbr.org
+// @version		1.0
+// @contact.name	DadosJusBr
+// @contact.url	https://dadosjusbr.org
 func main() {
 	godotenv.Load() // There is no problem if the .env can not be loaded.
 	l, err := time.LoadLocation("America/Sao_Paulo")
@@ -199,7 +199,10 @@ func main() {
 	uiAPIGroup.GET("/v2/pesquisar", uiApiHandler.SearchByUrl)
 	// Baixa um conjunto de dados a partir de filtros informados por query params
 	uiAPIGroup.GET("/v2/download", uiApiHandler.DownloadByUrl)
+	// Baixa o readme do pacote de dados
 	uiAPIGroup.GET("/v2/readme", uiApiHandler.DownloadReadme)
+	// Retorna a média (base, benefícios, descontos e remuneração) de cada órgão em um ano
+	uiAPIGroup.GET("/v2/orgao/media/:ano", uiApiHandler.GetAveragePerAgency)
 
 	apiHandler := papi.NewHandler(pgS3Client, conf.DadosJusURL, conf.PackageRepoURL)
 	// Public API configuration

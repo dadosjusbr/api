@@ -1682,3 +1682,147 @@ func agencyMonthlyInfos() []models.AgencyMonthlyInfo {
 		},
 	}
 }
+
+func TestGetAveragePerAgency(t *testing.T) {
+	tests := getAveragePerAgency{}
+	t.Run("Test GetAveragePerAgency when data exists", tests.testWhenDataExists)
+	t.Run("Test GetAveragePerAgency when data does not exist", tests.testWhenDataDoesNotExist)
+	t.Run("Test GetAveragePerAgency when year is invalid", tests.testWhenYearIsInvalid)
+}
+
+type getAveragePerAgency struct{}
+
+func (g getAveragePerAgency) testWhenDataExists(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	data := []models.PerCapitaData{
+		{
+			AgencyID:           "tjal",
+			BaseRemuneration:   33173.01,
+			OtherRemunerations: 9119.56,
+			Discounts:          10382.61,
+			Remunerations:      33173.01,
+		},
+		{
+			AgencyID:           "tjpb",
+			BaseRemuneration:   25000.00,
+			OtherRemunerations: 5000.00,
+			Discounts:          8000.00,
+			Remunerations:      25000.00,
+		},
+	}
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAveragePerAgency(2020).Return(data, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/media/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetAveragePerAgency(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `
+		[
+			{
+				"id_orgao": "tjal",
+				"media_por_membro": {
+					"remuneracao_base": 33173.01,
+					"outras_remuneracoes": 9119.56,
+					"descontos": 10382.61,
+					"remuneracoes": 33173.01
+				}
+			},
+			{
+				"id_orgao": "tjpb",
+				"media_por_membro": {
+					"remuneracao_base": 25000.00,
+					"outras_remuneracoes": 5000.00,
+					"descontos": 8000.00,
+					"remuneracoes": 25000.00
+				}
+			}
+		]
+	`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getAveragePerAgency) testWhenDataDoesNotExist(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAveragePerAgency(2020).Return(nil, nil)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/media/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetAveragePerAgency(ctx)
+
+	expectedCode := http.StatusOK
+	expectedJson := `null`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.JSONEq(t, expectedJson, recorder.Body.String())
+}
+
+func (g getAveragePerAgency) testWhenYearIsInvalid(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/orgao/media/:ano",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+	ctx.SetParamNames("ano")
+	ctx.SetParamValues("2020a")
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetAveragePerAgency(ctx)
+
+	expectedCode := http.StatusBadRequest
+	expectedJson := `"Parâmetro ANO inválido: 2020a."`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
