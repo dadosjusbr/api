@@ -252,8 +252,9 @@ type collecting struct {
 }
 
 type annualSummary struct {
-	Agency *agency             `json:"orgao,omitempty"`
-	Data   []annualSummaryData `json:"dados_anuais,omitempty"`
+	Agency            *agency             `json:"orgao,omitempty"`
+	CrawlingTimestamp timestamp           `json:"timestamp,omitempty"`
+	Data              []annualSummaryData `json:"dados_anuais,omitempty"`
 }
 
 type annualSummaryData struct {
