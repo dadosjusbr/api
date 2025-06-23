@@ -722,6 +722,7 @@ func TestGetGeneralSummary(t *testing.T) {
 	t.Run("Test GetGeneralSummary when all data are returned", tests.testWhenAllDataAreReturned)
 	t.Run("Test GetGeneralSummary when GetAgenciesCount() returns an error", tests.testWhenGetAgenciesCountReturnsAnError)
 	t.Run("Test GetGeneralSummary when GetNumberOfMonthsCollected() returns an error", tests.testWhenGetNumberOfMonthsCollectedReturnsAnError)
+	t.Run("Test GetGeneralSummary when GetNumberOfPaychecksCollected() returns an error", tests.testWhenGetNumberOfPaychecksCollectedReturnsAnError)
 	t.Run("Test GetGeneralSummary when GetFirstDateWithMonthlyInfo() returns an error", tests.testWhenGetFirstDateWithMonthlyInfoReturnsAnError)
 	t.Run("Test GetGeneralSummary when GetLastDateWithMonthlyInfo() returns an error", tests.testWhenGetLastDateWithMonthlyInfoReturnsAnError)
 	t.Run("Test GetGeneralSummary when GetGeneralMonthlyInfo() returns an error", tests.testWhenGetGeneralMonthlyInfoReturnsAnError)
@@ -737,6 +738,7 @@ func (g getGeneralSummary) testWhenAllDataAreReturned(t *testing.T) {
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
 	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
 	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetNumberOfPaychecksCollected().Return(1000, nil)
 	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(1, 2018, nil)
 	dbMock.EXPECT().GetLastDateWithMonthlyInfo().Return(1, 2023, nil)
 	dbMock.EXPECT().GetGeneralMonthlyInfo().Return(float64(1000), nil)
@@ -762,6 +764,7 @@ func (g getGeneralSummary) testWhenAllDataAreReturned(t *testing.T) {
 		{
 			"num_orgaos": 5,
 			"num_meses_coletados": 10,
+			"num_contracheques": 1000,
 			"data_inicio": "2018-01-01T22:00:00-02:00",
 			"data_fim": "2023-01-01T21:00:00-03:00",
 			"remuneracao_total": 1000
@@ -835,6 +838,39 @@ func (g getGeneralSummary) testWhenGetNumberOfMonthsCollectedReturnsAnError(t *t
 	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
 }
 
+func (g getGeneralSummary) testWhenGetNumberOfPaychecksCollectedReturnsAnError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	dbMock := database.NewMockInterface(mockCtrl)
+	fsMock := file_storage.NewMockInterface(mockCtrl)
+
+	dbMock.EXPECT().Connect().Return(nil).Times(1)
+	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
+	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetNumberOfPaychecksCollected().Return(0, fmt.Errorf("error"))
+
+	e := echo.New()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/uiapi/v2/geral/resumo",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	ctx := e.NewContext(request, recorder)
+
+	client, _ := storage.NewClient(dbMock, fsMock)
+	handler, err := NewHandler(client, nil, nil, "us-east-1", "dadosjusbr_public", loc, []string{}, 100, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler.GetGeneralSummary(ctx)
+
+	expectedCode := http.StatusInternalServerError
+	expectedJson := `"Erro ao contar registros de contracheques coletados: \"error\""`
+
+	assert.Equal(t, expectedCode, recorder.Code)
+	assert.Equal(t, expectedJson, strings.Trim(recorder.Body.String(), "\n"))
+}
+
 func (g getGeneralSummary) testWhenGetFirstDateWithMonthlyInfoReturnsAnError(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	dbMock := database.NewMockInterface(mockCtrl)
@@ -843,6 +879,7 @@ func (g getGeneralSummary) testWhenGetFirstDateWithMonthlyInfoReturnsAnError(t *
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
 	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
 	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetNumberOfPaychecksCollected().Return(1000, nil)
 	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(0, 0, fmt.Errorf("error"))
 
 	e := echo.New()
@@ -876,6 +913,7 @@ func (g getGeneralSummary) testWhenGetLastDateWithMonthlyInfoReturnsAnError(t *t
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
 	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
 	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetNumberOfPaychecksCollected().Return(1000, nil)
 	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(2020, 1, nil)
 	dbMock.EXPECT().GetLastDateWithMonthlyInfo().Return(0, 0, fmt.Errorf("error"))
 
@@ -910,6 +948,7 @@ func (g getGeneralSummary) testWhenGetGeneralMonthlyInfoReturnsAnError(t *testin
 	dbMock.EXPECT().Connect().Return(nil).Times(1)
 	dbMock.EXPECT().GetAgenciesCount().Return(5, nil)
 	dbMock.EXPECT().GetNumberOfMonthsCollected().Return(10, nil)
+	dbMock.EXPECT().GetNumberOfPaychecksCollected().Return(1000, nil)
 	dbMock.EXPECT().GetFirstDateWithMonthlyInfo().Return(2020, 1, nil)
 	dbMock.EXPECT().GetLastDateWithMonthlyInfo().Return(2020, 1, nil)
 	dbMock.EXPECT().GetGeneralMonthlyInfo().Return(float64(0), fmt.Errorf("error"))
