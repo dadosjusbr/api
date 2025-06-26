@@ -1672,6 +1672,9 @@ const docTemplate = `{
                 "data_inicio": {
                     "type": "string"
                 },
+                "num_contracheques": {
+                    "type": "integer"
+                },
                 "num_meses_coletados": {
                     "type": "integer"
                 },

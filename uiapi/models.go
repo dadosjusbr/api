@@ -37,6 +37,7 @@ type generalTotals struct {
 type generalSummary struct {
 	Agencies                 int       `json:"num_orgaos"`
 	MonthlyInfos             int       `json:"num_meses_coletados"`
+	Paychecks                int       `json:"num_contracheques"`
 	StartDate                time.Time `json:"data_inicio"`
 	EndDate                  time.Time `json:"data_fim"`
 	GeneralRemunerationValue float64   `json:"remuneracao_total"`
