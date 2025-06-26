@@ -12,8 +12,10 @@ github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:ma
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12 h1:ufl8nbCEo6g2VHUbedGy0gYk9Sgrynf9rcnzuSw4TEg=
 github.com/dadosjusbr/proto v0.0.0-20221212025627-91c60aa3cd12/go.mod h1:gPA7VxjEmyez/xtln4qBj+tM1NO0/zcw3ryjxTRNSco=
-github.com/dadosjusbr/storage v0.0.0-20250527175952-898e1b7ea3a3 h1:yKu3lkCzvEtBjNY9FoBEHociNfazpnXhO6QKWFQxKx0=
-github.com/dadosjusbr/storage v0.0.0-20250527175952-898e1b7ea3a3/go.mod h1:y6Oi2/v4ebsTfgY8/ACqIA7IEApU8MoCRNBCl1iSlmI=
+github.com/dadosjusbr/storage v0.0.0-20250617142600-d41e3ae3ba35 h1:KRy+CpaESoLi03p/txD3+3dHUgz85FbLC7Yhepvr1Nw=
+github.com/dadosjusbr/storage v0.0.0-20250617142600-d41e3ae3ba35/go.mod h1:y6Oi2/v4ebsTfgY8/ACqIA7IEApU8MoCRNBCl1iSlmI=
+github.com/dadosjusbr/storage v0.0.0-20250626132847-328bdd0fec49 h1:9AIZuYnVTTrOxHsAg00BdGnZDeI6tnyCsVm7d0qAy94=
+github.com/dadosjusbr/storage v0.0.0-20250626132847-328bdd0fec49/go.mod h1:y6Oi2/v4ebsTfgY8/ACqIA7IEApU8MoCRNBCl1iSlmI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
