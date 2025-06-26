@@ -702,7 +702,7 @@ func (h handler) GetGeneralSummary(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar registros de meses coletados: %q", err))
 	}
-	paychechs, err := h.client.Db.GetNumberOfPaychecksCollected()
+	paychecks, err := h.client.Db.GetNumberOfPaychecksCollected()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Erro ao contar registros de contracheques coletados: %q", err))
 	}
@@ -726,7 +726,7 @@ func (h handler) GetGeneralSummary(c echo.Context) error {
 	return c.JSON(http.StatusOK, generalSummary{
 		Agencies:                 int(agencies),
 		MonthlyInfos:             int(collections),
-		Paychecks:                int(paychechs),
+		Paychecks:                int(paychecks),
 		StartDate:                fdate,
 		EndDate:                  ldate,
 		GeneralRemunerationValue: remuValue,
