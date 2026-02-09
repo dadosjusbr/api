@@ -1061,6 +1061,97 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v2/retroativos/{orgao}/{ano}": {
+            "get": {
+                "description": "Busca todos os dados de verbas referentes a exercícios anteriores de um órgão para um ano específico, retornando uma lista detalhada de pagamentos (valores, descontos, tributos, identificação do membro, lotação e dados processuais).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetRetroactivePayments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sigla do ministério público para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2023).",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/papi.retroactivePayment"
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/retroativos/{orgao}/{ano}/{mes}": {
+            "get": {
+                "description": "Busca todos os dados de verbas referentes a exercícios anteriores de um órgão para um ano e mês específicos, retornando uma lista detalhada de pagamentos (valores, descontos, tributos, identificação do membro, lotação e dados processuais).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public_api"
+                ],
+                "operationId": "GetRetroactivePaymentsByYearAndMonth",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sigla do ministério público para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb",
+                        "name": "orgao",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2023).",
+                        "name": "ano",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Mês para o qual os dados estão sendo solicitados.",
+                        "name": "mes",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requisição bem sucedida.",
+                        "schema": {
+                            "$ref": "#/definitions/papi.retroactivePayment"
+                        }
+                    },
+                    "400": {
+                        "description": "Requisição inválida.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1385,6 +1476,63 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                }
+            }
+        },
+        "papi.retroactivePayment": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "contribuicao_previdencial": {
+                    "type": "number"
+                },
+                "deducao_teto_salarial": {
+                    "type": "number"
+                },
+                "descontos": {
+                    "type": "number"
+                },
+                "funcao": {
+                    "type": "string"
+                },
+                "id_contracheque": {
+                    "description": "ID                 int     ` + "`" + `json:\"id,omitempty\"` + "`" + `",
+                    "type": "integer"
+                },
+                "imposto_renda": {
+                    "type": "number"
+                },
+                "local_trabalho": {
+                    "type": "string"
+                },
+                "matricula": {
+                    "type": "string"
+                },
+                "mes": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "numero_processo": {
+                    "type": "string"
+                },
+                "objeto_processo": {
+                    "type": "string"
+                },
+                "orgao": {
+                    "type": "string"
+                },
+                "origem_processo": {
+                    "type": "string"
+                },
+                "valor_bruto": {
+                    "type": "number"
+                },
+                "valor_liquido": {
+                    "type": "number"
                 }
             }
         },

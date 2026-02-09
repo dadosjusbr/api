@@ -87,7 +87,7 @@ type summaryzedMI struct {
 	Collect          *collect   `json:"dados_coleta,omitempty"`
 	ManualCollection bool       `json:"coleta_manual"`
 	Error            *miError   `json:"error,omitempty"`
-	Inconsistent 	 bool 		`json:"inconsistente"`
+	Inconsistent     bool       `json:"inconsistente"`
 }
 
 type agency struct {
@@ -147,4 +147,26 @@ type allAgencyInformation struct {
 	NumMonthsWithData int            `json:"meses_com_dados"`
 	Score             *score         `json:"indice_transparencia,omitempty"`
 	Collections       []summaryzedMI `json:"coletas"`
+}
+
+type retroactivePayment struct {
+	// ID                 int     `json:"id,omitempty"`
+	PaycheckID         int     `json:"id_contracheque,omitempty"`
+	Agency             string  `json:"orgao,omitempty"`
+	Month              int     `json:"mes,omitempty"`
+	Year               int     `json:"ano,omitempty"`
+	Name               string  `json:"nome,omitempty"`
+	RegisterID         string  `json:"matricula,omitempty"`
+	Role               string  `json:"funcao,omitempty"`
+	Workplace          string  `json:"local_trabalho,omitempty"`
+	ProcessNumber      string  `json:"numero_processo,omitempty"`
+	ProcessObject      string  `json:"objeto_processo,omitempty"`
+	ProcessOrigin      string  `json:"origem_processo,omitempty"`
+	Value              float64 `json:"valor_bruto,omitempty"`
+	SocialContribution float64 `json:"contribuicao_previdencial,omitempty"`
+	IncomeTax          float64 `json:"imposto_renda,omitempty"`
+	SalaryCapDeduction float64 `json:"deducao_teto_salarial,omitempty"`
+	Discounts          float64 `json:"descontos,omitempty"`
+	NetValue           float64 `json:"valor_liquido,omitempty"`
+	// SanitizedName      string  `json:"nome_sanitizado,omitempty"`
 }

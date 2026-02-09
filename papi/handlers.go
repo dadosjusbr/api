@@ -365,7 +365,7 @@ func (h handler) V2GetMonthlyInfo(c echo.Context) error {
 					ParserVersion:  monthlyInfo.ParserVersion,
 				},
 				ManualCollection: monthlyInfo.ManualCollection,
-				Inconsistent:    monthlyInfo.Inconsistent,
+				Inconsistent:     monthlyInfo.Inconsistent,
 			}
 		//O status 4 informa que os dados estão indisponíveis. Ao removê-los dos resultados da API, garantimos que eles sejam exibidos como se não houvesse dados.
 	} else if monthlyInfo.ProcInfo.Status != 4 {
@@ -716,7 +716,7 @@ func (h handler) V2GetAggregateIndexesWithParamsByYearAndMonth(c echo.Context) e
 //	@Param			detalhe		query		boolean						false	"Define se os metadados utilizados para calcular o índice serão retornados ou não."
 //	@Success		200			{object}	[]aggregateIndexesByGroup	"Requisição bem sucedida."
 //	@Failure		500			{string}	string						"Erro interno do servidor."
-//	@Router			/v2/indice 																																																																																																																																																																																																																																																																																																																																																			[get]
+//	@Router			/v2/indice 																																																																																																																																																																																																																																																																																																																																																																																											[get]
 func (h handler) V2GetAggregateIndexes(c echo.Context) error {
 	agregado := c.QueryParam("agregado")
 	detalhe := c.QueryParam("detalhe")
@@ -941,4 +941,85 @@ func (h handler) V2GetAllAgencyInformation(c echo.Context) error {
 
 func (h handler) formatDownloadUrl(url string) string {
 	return strings.Replace(url, h.packageRepoURL, h.dadosJusURL, -1)
+}
+
+//	@ID				GetRetroactivePayments
+//	@Tags			public_api
+//	@Description	Busca todos os dados de verbas referentes a exercícios anteriores de um órgão para um ano específico, retornando uma lista detalhada de pagamentos (valores, descontos, tributos, identificação do membro, lotação e dados processuais).
+//	@Produce		json
+//	@Success		200								{object}	retroactivePayment	"Requisição bem sucedida."
+//	@Failure		400								{string}	string				"Requisição inválida."
+//	@Param			orgao							path		string				true	"Sigla do ministério público para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb"
+//	@Param			ano								path		int					true	"Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2023)."
+//	@Router			/v2/retroativos/{orgao}/{ano} 	[get]
+func (h handler) V2GetRetroactivePayments(c echo.Context) error {
+	agency := strings.ToLower(c.Param("orgao"))
+	ano := c.Param("ano")
+	anoInt, err := strconv.Atoi(ano)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro ANO inválido: %s.", ano))
+	}
+
+	mes := c.Param("mes")
+
+	var mesInt int
+	if mes != "" {
+		mesInt, err = strconv.Atoi(mes)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Sprintf("Parâmetro MÊS inválido: %s.", mes))
+		}
+	} else {
+		mesInt = 0
+	}
+
+	ag, err := h.client.Db.GetAgency(agency)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("Órgão não encontrado: %s", strings.ToUpper(agency)))
+	}
+
+	retroactivePayments, err := h.client.Db.GetRetroactivePayments(*ag, anoInt, mesInt)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("Órgão não encontrado: %s", strings.ToUpper(agency)))
+	}
+
+	var result []retroactivePayment
+
+	for _, rp := range retroactivePayments {
+		result = append(result, retroactivePayment{
+			// ID:         rp.ID,
+			PaycheckID:         rp.PaycheckID,
+			Agency:             rp.Agency,
+			Month:              rp.Month,
+			Year:               rp.Year,
+			Name:               rp.Name,
+			RegisterID:         rp.RegisterID,
+			Role:               rp.Role,
+			Workplace:          rp.Workplace,
+			ProcessNumber:      rp.ProcessNumber,
+			ProcessObject:      rp.ProcessObject,
+			ProcessOrigin:      rp.ProcessOrigin,
+			Value:              rp.Value,
+			SocialContribution: rp.SocialContribution,
+			IncomeTax:          rp.IncomeTax,
+			SalaryCapDeduction: rp.SalaryCapDeduction,
+			Discounts:          rp.Discounts,
+			NetValue:           rp.NetValue,
+			// SanitizedName:      rp.SanitizedName,
+		})
+	}
+	return c.JSON(http.StatusOK, result)
+}
+
+//	@ID				GetRetroactivePaymentsByYearAndMonth
+//	@Tags			public_api
+//	@Description	Busca todos os dados de verbas referentes a exercícios anteriores de um órgão para um ano e mês específicos, retornando uma lista detalhada de pagamentos (valores, descontos, tributos, identificação do membro, lotação e dados processuais).
+//	@Produce		json
+//	@Success		200										{object}	retroactivePayment	"Requisição bem sucedida."
+//	@Failure		400										{string}	string				"Requisição inválida."
+//	@Param			orgao									path		string				true	"Sigla do ministério público para o qual os dados estão sendo solicitados. Ex.: tjal, tjba, mppb"
+//	@Param			ano										path		int					true	"Ano para o qual os dados estão sendo solicitados (dados disponíveis a partir de 2023)."
+//	@Param			mes										path		int					true	"Mês para o qual os dados estão sendo solicitados."
+//	@Router			/v2/retroativos/{orgao}/{ano}/{mes} 	[get]
+func (h handler) V2GetRetroactivePaymentsByYearAndMonth(c echo.Context) error {
+	return h.V2GetRetroactivePayments(c)
 }
